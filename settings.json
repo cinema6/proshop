@@ -1,0 +1,22 @@
+{
+    "appUrl": "/__dirname/<%= settings.appDir %>/",
+    "appModule": "c6.<%= package.name %>",
+    "appDir": "app",
+    "distDir": "dist",
+    "awsJSON": ".aws.json",
+    "saucelabsJSON": ".saucelabs.json",
+    "browserstackJSON": ".browserstack.json",
+    "connectPort": 9000,
+    "libUrl": "http://s3.amazonaws.com/c6.dev/ext/",
+    "defaultE2EEnv": "browserstack",
+    "s3": {
+        "test": {
+            "bucket": "com.cinema6.staging.proshop",
+            "app": ""
+        },
+        "production": {
+            "bucket": "com.cinema6.portal.proshop",
+            "app": ""
+        }
+    }
+}
