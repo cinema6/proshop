@@ -7,10 +7,7 @@
         },
         unit: {
             options: {
-                reporters: ['progress', 'junit'],
-                junitReporter: {
-                    outputFile: 'reports/unit.xml'
-                }
+                reporters: ['progress'],
             }
         },
         debug: {

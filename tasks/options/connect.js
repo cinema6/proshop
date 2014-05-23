@@ -1,6 +1,6 @@
 (function() {
     'use strict';
-    
+
     var grunt        = require('grunt'),
         proxySnippet = require('grunt-connect-proxy/lib/utils').proxyRequest;
 
@@ -10,14 +10,14 @@
             hostname: '0.0.0.0',
             livereload: true
         },
-        proxies: [ 
+        proxies: [
             {
                 context: '/api',
                 host: 'staging.cinema6.com',
                 port: 443,
                 https: true,
                 changeOrigin: true
-            } 
+            }
         ],
         dev: {
             options: {

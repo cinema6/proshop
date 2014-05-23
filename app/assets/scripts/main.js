@@ -7,10 +7,6 @@
     c6.kApiUrl   = '/api';   // rest api
     c6.kEnv      = 'production';
     c6.kDebug    = false;
-    c6.kTracker  = {
-        accountId : 'UA-44457821-1',
-        config    : 'auto'
-    };
 
     if ((window.location.host === 'portal.cinema6.com') ||
         (window.location.host === 'cinema6.com')) {
@@ -22,7 +18,6 @@
     } else {
         c6.kEnv   = 'dev';
         c6.kDebug = true;
-        c6.kTracker.config    = { 'cookieDomain' : 'none' };
     }
     c6.kLogFormats = c6.kDebug;
     c6.kLogLevels  = c6.kDebug ? ['error','warn','log','info'] : [];

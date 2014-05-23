@@ -11,15 +11,15 @@
                 deferredTimeout = $q.defer(),
                 cancelTimeout,
                 body = {
-                    email    : email,
-                    password : password
+                    email: email,
+                    password: password
                 };
 
             $http({
-                method       : 'POST',
-                url          : c6UrlMaker('auth/login','api'),
-                data         : body,
-                timeout      : deferredTimeout.promise
+                method: 'POST',
+                url: c6UrlMaker('auth/login','api'),
+                data: body,
+                timeout: deferredTimeout.promise
             })
             .success(function(data){
                 $timeout.cancel(cancelTimeout);
@@ -47,9 +47,9 @@
                 cancelTimeout;
 
             $http({
-                method       : 'GET',
-                url          : c6UrlMaker('auth/status','api'),
-                timeout      : deferredTimeout.promise
+                method: 'GET',
+                url: c6UrlMaker('auth/status','api'),
+                timeout: deferredTimeout.promise
             })
             .success(function(data ){
                 $timeout.cancel(cancelTimeout);
@@ -77,9 +77,9 @@
                 cancelTimeout;
 
             $http({
-                method       : 'POST',
-                url          : c6UrlMaker('auth/logout','api'),
-                timeout      : deferredTimeout.promise
+                method: 'POST',
+                url: c6UrlMaker('auth/logout','api'),
+                timeout: deferredTimeout.promise
             })
             .success(function(data){
                 $timeout.cancel(cancelTimeout);

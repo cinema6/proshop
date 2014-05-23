@@ -76,9 +76,6 @@
                 c6log: {
                     deps: ['c6ui']
                 },
-                templates: {
-                    deps: ['app']
-                },
                 app: {
                     deps: ['angular', 'angularRoute', 'angularMocks', 'modernizr', 'timelinemax', 'c6ui', 'c6log']
                 },

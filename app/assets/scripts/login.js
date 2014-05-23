@@ -3,33 +3,39 @@
     'use strict';
 
     angular.module('c6.proshop')
-    .controller('LoginCtrl',['$log','$scope','auth',
-        function(             $log , $scope , auth ){
+    .controller('LoginCtrl', ['$log','$scope','auth',
+        function(              $log , $scope , auth ){
 
         $log = $log.context('LoginCtrl');
-        $log.info('instantiated, scope=%1',$scope.$id);
+        $log.info('instantiated, scope=%1', $scope.$id);
 
-        $scope.email = '';
-        $scope.password = '';
-        $scope.loginError = '';
+        var self = this;
 
-        $scope.login = function(){
-            $log.info('logging in %1', $scope.email);
+        $scope.LoginCtrl = this;
 
-            if ( (!$scope.email) || (!$scope.password) ||
-                 ($scope.email.match(/^\s*$/)) || ($scope.password.match(/^\s*$/)) ){
-                $scope.loginError = 'Email and password required.';
+        self.email = '';
+        self.password = '';
+        self.loginError = '';
+
+        self.login = function(){
+            $log.info('logging in %1', self.email);
+
+            if ( (!self.email) || (!self.password) ||
+                 (self.email.match(/^\s*$/)) || (self.password.match(/^\s*$/)) ){
+                self.loginError = 'Email and password required.';
                 return;
             }
 
-            auth.login($scope.email,$scope.password)
+            auth.login(self.email, self.password)
             .then(function(data){
-                $log.info('success:',data);
-                $scope.$emit('loginSuccess',data);
+                $log.info('success:', data);
+
+                $scope.$emit('loginSuccess', data);
             })
             .catch(function(err){
-                $log.error('error:',err);
-                $scope.loginError = err;
+                $log.error('error:', err);
+
+                self.loginError = err;
             });
         };
 
