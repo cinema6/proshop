@@ -6,13 +6,13 @@
         </div>
         <div>
             <label>Email</label>
-            <input type="text" name="email" ng-model="LoginCtrl.email" autofocus autocomplete="off">
+            <input id="login__Email" type="text" name="email" ng-model="LoginCtrl.email" autofocus autocomplete="off">
         </div>
         <div>
             <label> Password </label>
-            <input type="password" name="password" ng-model="LoginCtrl.password" autocomplete="off">
+            <input id="login__password" type="password" name="password" ng-model="LoginCtrl.password" autocomplete="off">
         </div>
-        <p>{{LoginCtrl.loginError}}</p>
+        <p class="login__error">{{LoginCtrl.loginError}}</p>
         <input type="submit" value="Login">
     <form>
 </div>

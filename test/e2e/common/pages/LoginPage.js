@@ -1,9 +1,29 @@
-module.exports = function(ptor) {
+module.exports = function() {
     'use strict';
 
-    function LoginView() {
-        this.get = function() {
+    this.emailInput = element(by.model('LoginCtrl.email'));
+    this.passwordInput = element(by.model('LoginCtrl.password'));
+    this.loginError = element(by.binding('LoginCtrl.loginError'));
 
-        };
-    }
+    this.get = function() {
+        browser.get('http://localhost:9000/#/login');
+    };
+
+    this.setEmail = function(name) {
+        this.emailInput.sendKeys(name);
+    };
+
+    this.setPassword = function(password) {
+        this.passwordInput.sendKeys(password);
+    };
+
+    this.login = function() {
+        this.setEmail('kjhdfkjsd');
+        this.setPassword('sdfjhsdfs');
+        this.emailInput.submit();
+    };
+
+    this.url = function() {
+        return browser.getLocationAbsUrl();
+    };
 };
