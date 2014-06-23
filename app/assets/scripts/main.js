@@ -39,7 +39,9 @@
                 return [
                     'scripts/app',
                     'scripts/auth',
+                    'scripts/account',
                     'scripts/login',
+                    'scripts/orgs',
                     'scripts/mockHttp',
                     'scripts/mockHttpDefs'
                 ];

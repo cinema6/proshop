@@ -37,6 +37,7 @@
     function HttpMock(){
         this.GET   = {};
         this.POST  = {};
+        this.PUT   = {};
     }
 
     HttpMock.prototype.whenGET = function(url){
@@ -48,6 +49,13 @@
     HttpMock.prototype.whenPOST = function(url, handler){
         var responder = new HttpMockResponder();
         this.POST[url] = responder;
+        responder.handler = handler;
+        return responder;
+    };
+
+    HttpMock.prototype.whenPUT = function(url, handler){
+        var responder = new HttpMockResponder();
+        this.PUT[url] = responder;
         responder.handler = handler;
         return responder;
     };

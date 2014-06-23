@@ -1,0 +1,22 @@
+<div ng-init="currentView = 'password'" >
+    <div>&lsaquo; <a href="#/">Back to the Dashboard</a></div>
+    <h1>Account Settings</h1>
+    <div>
+        <div>
+            <nav>
+                <ul>
+                    <li ng-click="currentView='password'">Change Password</li>
+                    <li ng-click="currentView='email'">Change Email</li>
+                </ul>
+            </nav>
+        </div>
+        <div>
+            <section ng-if="currentView === ('email')">
+                <change-email email="{{AppCtrl.user.email}}"></change-email>
+            </section>
+            <section ng-if="currentView === 'password'">
+                <change-password email="{{AppCtrl.user.email}}"></change-password>
+            </section>
+        </div>
+    </div>
+</div>

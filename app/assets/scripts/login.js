@@ -3,15 +3,14 @@
     'use strict';
 
     angular.module('c6.proshop')
-    .controller('LoginCtrl', ['$log','$scope','auth',
-        function(              $log , $scope , auth ){
+    .controller('LoginCtrl', ['$log','$scope','auth','account',
+        function(              $log , $scope , auth , account ){
 
         $log = $log.context('LoginCtrl');
         $log.info('instantiated, scope=%1', $scope.$id);
 
-        var self = this;
-
-        $scope.LoginCtrl = this;
+        var self = this,
+            user;
 
         self.email = '';
         self.password = '';
@@ -27,16 +26,25 @@
             }
 
             auth.login(self.email, self.password)
-            .then(function(data){
-                $log.info('success:', data);
+                .then(function(data){
+                    $log.info('success:', data);
+                    user = data;
+                    return account.getOrg(user.org);
+                })
+                .then(function(org){
+                    user.org = org;
+                    $scope.$emit('loginSuccess', user);
+                })
+                .catch(function(err){
+                    $log.error('error:', err);
 
-                $scope.$emit('loginSuccess', data);
-            })
-            .catch(function(err){
-                $log.error('error:', err);
+                    if (user) {
+                        self.loginError = 'There is a problem with your account.';
+                        return;
+                    }
 
-                self.loginError = err;
-            });
+                    self.loginError = err;
+                });
         };
 
     }]);

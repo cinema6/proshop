@@ -1,5 +1,5 @@
 <!doctype html>
-<html ng-controller="AppController">
+<html ng-controller="AppController as AppCtrl">
     <head>
         <meta charset="utf-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
@@ -20,7 +20,12 @@
     <body >
         <div ng-show="AppCtrl.user">
             <span>{{AppCtrl.user.email}}</span>
+            <br>
+            <span>{{AppCtrl.user.org.name}}</span>
+            <br>
             <button ng-click="AppCtrl.logout()" title="Log Out">Log Out</button>
+            <a href="#/account" title="{{user.email}}">Account</a>
+            <a href="#/orgs" title="Organizations">Organizations</a>
         </div>
         <div>
             <ng-view></ng-view>

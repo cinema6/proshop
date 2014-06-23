@@ -23,13 +23,21 @@
                     controller: 'LoginCtrl',
                     controllerAs: 'LoginCtrl',
                     templateUrl: c6UrlMakerProvider.makeUrl('views/login.html')
+                })
+                .when('/account', {
+                    templateUrl  : c6UrlMakerProvider.makeUrl('views/account.html')
+                })
+                .when('/orgs', {
+                    controller: 'OrgController',
+                    controllerAs: 'OrgCtrl',
+                    templateUrl: c6UrlMakerProvider.makeUrl('views/orgs.html')
                 });
         }])
         .value('appData', {user: null, app: null})
         .controller('AppController', ['$scope', '$log', '$location', '$timeout',
-                                      'c6Defines','c6LocalStorage', 'auth', 'appData',
+                                      'c6Defines','c6LocalStorage', 'auth', 'appData', 'account',
             function(                  $scope ,  $log ,  $location ,  $timeout,
-                                       c6Defines , c6LocalStorage ,  auth ,  appData ) {
+                                       c6Defines , c6LocalStorage ,  auth ,  appData ,  account ) {
 
             var self = this;
 
@@ -38,52 +46,42 @@
             $log = $log.context('AppCtrl');
             $log.info('instantiated, scope=%1, entry=%2', $scope.$id, self.entryPath);
 
-            $scope.AppCtrl = this;
-
             self.ready = false;
             self.expStart = false;
             self.expDone = false;
 
-            self.goto = function(path){
+            self.goTo = function(path){
                 $log.info('goto request:', path);
 
                 $location.path(path);
             };
 
-            self.updateUser = function(rec, skipStore){
-                if (rec){
-                    if (isUndefined(rec.applications)){
-                        rec.applications = [];
-                    }
-                    if (rec.applications.length >= 1){
-                        rec.currentApp = rec.applications[0];
-                    } else {
-                        // lastError.set('No applications for user: ' + rec.email,500);
-                    }
+            self.updateUser = function(record, skipStore){
+                if (record){
                     if (!skipStore){
-                        c6LocalStorage.set('user', rec);
+                        c6LocalStorage.set('user', record);
                     }
                 } else {
                     c6LocalStorage.remove('user');
                 }
 
-                appData.user = self.user = (rec || null);
-                appData.app  = (rec) ? rec.currentApp : null;
+                appData.user = self.user = (record || null);
+                appData.app  = (record) ? record.currentApp : null;
 
-                return rec;
+                return record;
             };
 
             self.logout = function(){
                 $log.info('logging out');
 
                 auth.logout()
-                ['finally'](function(result){
-                    $log.info('log out returns:', result);
-                    $log.info('Logout user:', self.user);
+                    ['finally'](function(result){
+                        $log.info('log out returns:', result);
+                        $log.info('Logout user:', self.user);
 
-                    self.updateUser(null);
-                    self.goto('/login');
-                });
+                        self.updateUser(null);
+                        self.goTo('/login');
+                    });
             };
 
             self.updateUser(c6LocalStorage.get('user'), true);
@@ -92,19 +90,24 @@
                 $log.info('checking authStatus');
 
                 auth.checkStatus()
-                .then(function(user){
-                    $log.info('auth check passed: ', user);
+                    .then(function(user){
+                        $log.info('auth check passed: ', user);
 
-                    self.ready = true;
-                    self.updateUser(user);
-                    self.goto(self.entryPath || '/');
-                },
-                function(err){
-                    $log.info('auth check failed: ', err);
+                        return account.getOrg(user.org)
+                            .then(function(org){
+                                $log.info('found user org: ',org);
+                                user.org = org;
+                                self.ready = true;
+                                self.updateUser(user);
+                                self.goTo(self.entryPath || '/');
+                            });
+                    })
+                    .then(null, function(err){
+                        $log.info('auth check failed: ', err);
 
-                    self.updateUser(null);
-                    self.goto('/login');
-                });
+                        self.updateUser(null);
+                        self.goTo('/login');
+                    });
             }
 
             $scope.$on('$locationChangeStart',function(evt, newUrl, oldUrl){
@@ -116,7 +119,7 @@
                     evt.preventDefault();
 
                     $timeout(function(){
-                        self.goto('/login');
+                        self.goTo('/login');
                     });
 
                     return;
@@ -126,7 +129,7 @@
                     evt.preventDefault();
 
                     $timeout(function(){
-                        self.goto('/');
+                        self.goTo('/');
                     });
 
                     return;
@@ -137,7 +140,7 @@
                 $log.info('Login succeeded, new user:', user);
 
                 self.updateUser(user);
-                self.goto('/');
+                self.goTo('/');
             });
 
         }]);

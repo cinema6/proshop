@@ -12,6 +12,7 @@
                 AppCtrl,
                 appData,
                 auth,
+                account,
                 c6Defines,
                 localStorage,
                 createAppCtrl,
@@ -28,6 +29,10 @@
                     logout: jasmine.createSpy('auth.logout'),
                     checkStatus: jasmine.createSpy('auth.checkStatus')
                 };
+
+                account = {
+                    getOrg: jasmine.createSpy('account.getOrg')
+                }
 
                 c6Defines = {
                     kTracker: {
@@ -48,23 +53,26 @@
 
                 module('c6.proshop');
 
-                inject(function($injector, $controller ) {
+                inject(function($injector, $controller) {
                     $log = $injector.get('$log');
                     $q = $injector.get('$q');
                     $rootScope = $injector.get('$rootScope');
                     $timeout = $injector.get('$timeout');
 
+                    account.getOrg.deferred = $q.defer();
+                    account.getOrg.and.returnValue(account.getOrg.deferred.promise);
+
                     auth.checkStatus.deferred = $q.defer();
-                    auth.checkStatus.andReturn(auth.checkStatus.deferred.promise);
+                    auth.checkStatus.and.returnValue(auth.checkStatus.deferred.promise);
 
                     auth.logout.deferred = $q.defer();
-                    auth.logout.andReturn(auth.logout.deferred.promise);
+                    auth.logout.and.returnValue(auth.logout.deferred.promise);
 
                     $log.context = function(){ return $log; }
 
                     $scope = $rootScope.$new();
 
-                    spyOn($scope,'$on').andCallFake(function(e,h){
+                    spyOn($scope,'$on').and.callFake(function(e,h){
                         if (!$scope._on){
                             $scope._on = {};
                         }
@@ -80,6 +88,7 @@
                             auth: auth,
                             c6Defines: c6Defines,
                             c6LocalStorage: localStorage,
+                            account: account
                         });
                     };
                 });
@@ -90,11 +99,6 @@
                 it('should exist',function() {
                     createAppCtrl();
                     expect(AppCtrl).toBeDefined();
-                });
-
-                it('should be on the scope',function(){
-                    createAppCtrl();
-                    expect($scope.AppCtrl).toBe(AppCtrl);
                 });
 
                 it('should attempt to get a user from local storage',function(){
@@ -109,7 +113,7 @@
                             applications: ['app1','app2','app3']
                         }
 
-                        localStorage.get.andReturn(mockUser);
+                        localStorage.get.and.returnValue(mockUser);
                         createAppCtrl();
                     });
 
@@ -120,12 +124,13 @@
                     });
 
                     it('success should update user and move to entryPath if set',function(){
-                        var newUser = { id : 'new'};
+                        var newUser = { id : 'new'}, org = { id: 'o1' };
 
                         AppCtrl.entryPath = '/foo';
 
                         spyOn(AppCtrl, 'updateUser');
 
+                        account.getOrg.deferred.resolve(org)
                         auth.checkStatus.deferred.resolve(newUser);
 
                         $scope.$apply();
@@ -135,11 +140,12 @@
                     });
 
                     it('success should update user and move to / if no entryPath',function(){
-                        var newUser = {id: 'new'};
+                        var newUser = {id: 'new'}, org = { id: 'o1' };
 
                         spyOn(AppCtrl, 'updateUser');
 
                         auth.checkStatus.deferred.resolve(newUser);
+                        account.getOrg.deferred.resolve(org)
 
                         $scope.$apply();
 
@@ -160,10 +166,10 @@
                 });
             });
 
-            describe('goto',function(){
+            describe('goTo',function(){
                 it('will call $location.path with path if no errors',function(){
                     createAppCtrl();
-                    AppCtrl.goto('/monkey');
+                    AppCtrl.goTo('/monkey');
                     expect($location.path).toHaveBeenCalledWith('/monkey');
                 });
             });

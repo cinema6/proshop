@@ -34,7 +34,7 @@
 
                     spyOn($timeout, 'cancel');
 
-                    c6UrlMaker.andReturn('/api/auth/login');
+                    c6UrlMaker.and.returnValue('/api/auth/login');
                 });
 
                 it('will resolve promise if successfull',function(){
@@ -83,7 +83,7 @@
 
                     spyOn($timeout,'cancel');
 
-                    c6UrlMaker.andReturn('/api/auth/status');
+                    c6UrlMaker.and.returnValue('/api/auth/status');
                 });
 
                 it('will resolve promise if successfull',function(){
@@ -133,7 +133,7 @@
 
                     spyOn($timeout,'cancel');
 
-                    c6UrlMaker.andReturn('/api/auth/logout');
+                    c6UrlMaker.and.returnValue('/api/auth/logout');
                 });
 
                 it('will resolve promise if successfull',function(){

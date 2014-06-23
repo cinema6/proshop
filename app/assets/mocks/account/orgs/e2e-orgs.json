@@ -1,0 +1,76 @@
+[{
+  "name": "Org 1",
+  "minAdCount": 0,
+  "id": "o-111",
+  "created": "2014-06-13T19:28:39.408Z",
+  "lastUpdated": "2014-06-13T19:28:39.408Z",
+  "status": "active",
+  "tag": "foo",
+  "waterfalls": {
+    "video": [
+      "cinema6"
+    ],
+    "display": [
+      "cinema6"
+    ]
+  }
+},
+{
+  "name": "Org 2",
+  "minAdCount": 1,
+  "id": "o-112",
+  "created": "2014-06-13T19:28:39.408Z",
+  "lastUpdated": "2014-06-13T19:28:39.408Z",
+  "status": "active",
+  "tag": "foo",
+  "waterfalls": {
+    "video": [
+      "cinema6",
+      "cinema6-publisher",
+      "publisher",
+      "publisher-cinema6"
+    ],
+    "display": [
+      "cinema6",
+      "cinema6-publisher",
+      "publisher",
+      "publisher-cinema6"
+    ]
+  }
+},
+{
+  "name": "Org 3",
+  "minAdCount": 2,
+  "id": "o-113",
+  "created": "2014-06-13T19:28:39.408Z",
+  "lastUpdated": "2014-06-13T19:28:39.408Z",
+  "status": "active",
+  "tag": "baz",
+  "waterfalls": {
+    "video": [
+      "cinema6",
+      "cinema6-publisher"
+    ],
+    "display": [
+      "cinema6",
+      "cinema6-publisher"
+    ]
+  }
+},
+{
+  "name": "Org 4",
+  "minAdCount": 3,
+  "id": "o-114",
+  "created": "2014-06-13T19:28:39.408Z",
+  "lastUpdated": "2014-06-13T19:28:39.408Z",
+  "status": "inactive",
+  "tag": "bar",
+  "waterfalls": {
+    "video": [
+      "cinema6"
+    ],
+    "display": [
+      "cinema6"
+    ]
+  }
+}]
