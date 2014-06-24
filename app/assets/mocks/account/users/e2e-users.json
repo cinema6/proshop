@@ -1,0 +1,155 @@
+[{
+    "id": "e2e-12221",
+    "email": "test1@example.com",
+    "created": "2014-06-13T19:28:39.408Z",
+    "lastUpdated": "2014-06-13T19:28:39.408Z",
+    "applications": ["e-51ae37625cb57f"],
+    "org": "o-111",
+    "status": "active",
+    "permissions": {
+        "experiences": {
+            "read": "own",
+            "create": "own",
+            "edit": "own",
+            "delete": "own"
+        },
+        "elections": {
+            "read": "own",
+            "create": "own",
+            "edit": "own",
+            "delete": "own"
+        },
+        "users": {
+            "read": "own",
+            "edit": "own"
+        },
+        "orgs": {
+            "read": "own",
+            "edit": "own"
+        }
+    }
+},
+{
+    "id": "e2e-12222",
+    "email": "test2@example.com",
+    "created": "2014-06-13T19:28:39.408Z",
+    "lastUpdated": "2014-06-13T19:28:39.408Z",
+    "applications": ["e-51ae37625cb57f"],
+    "org": "o-111",
+    "status": "active",
+    "permissions": {
+        "experiences": {
+            "read": "own",
+            "create": "own",
+            "edit": "own",
+            "delete": "own"
+        },
+        "elections": {
+            "read": "own",
+            "create": "own",
+            "edit": "own",
+            "delete": "own"
+        },
+        "users": {
+            "read": "own",
+            "edit": "own"
+        },
+        "orgs": {
+            "read": "own",
+            "edit": "own"
+        }
+    }
+},
+{
+    "id": "e2e-12223",
+    "email": "test3@example.com",
+    "created": "2014-06-13T19:28:39.408Z",
+    "lastUpdated": "2014-06-13T19:28:39.408Z",
+    "applications": ["e-51ae37625cb57f"],
+    "org": "o-111",
+    "status": "active",
+    "permissions": {
+        "experiences": {
+            "read": "own",
+            "create": "own",
+            "edit": "own",
+            "delete": "own"
+        },
+        "elections": {
+            "read": "own",
+            "create": "own",
+            "edit": "own",
+            "delete": "own"
+        },
+        "users": {
+            "read": "own",
+            "edit": "own"
+        },
+        "orgs": {
+            "read": "own",
+            "edit": "own"
+        }
+    }
+},
+{
+    "id": "e2e-12224",
+    "email": "test4@example.com",
+    "created": "2014-06-13T19:28:39.408Z",
+    "lastUpdated": "2014-06-13T19:28:39.408Z",
+    "applications": ["e-51ae37625cb57f"],
+    "org": "o-111",
+    "status": "active",
+    "permissions": {
+        "experiences": {
+            "read": "own",
+            "create": "own",
+            "edit": "own",
+            "delete": "own"
+        },
+        "elections": {
+            "read": "own",
+            "create": "own",
+            "edit": "own",
+            "delete": "own"
+        },
+        "users": {
+            "read": "own",
+            "edit": "own"
+        },
+        "orgs": {
+            "read": "own",
+            "edit": "own"
+        }
+    }
+},
+{
+    "id": "e2e-12225",
+    "email": "test5@example.com",
+    "created": "2014-06-13T19:28:39.408Z",
+    "lastUpdated": "2014-06-13T19:28:39.408Z",
+    "applications": ["e-51ae37625cb57f"],
+    "org": "o-111",
+    "status": "active",
+    "permissions": {
+        "experiences": {
+            "read": "own",
+            "create": "own",
+            "edit": "own",
+            "delete": "own"
+        },
+        "elections": {
+            "read": "own",
+            "create": "own",
+            "edit": "own",
+            "delete": "own"
+        },
+        "users": {
+            "read": "own",
+            "edit": "own"
+        },
+        "orgs": {
+            "read": "own",
+            "edit": "own"
+        }
+    }
+}]

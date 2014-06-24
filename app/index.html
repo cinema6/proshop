@@ -24,8 +24,11 @@
             <span>{{AppCtrl.user.org.name}}</span>
             <br>
             <button ng-click="AppCtrl.logout()" title="Log Out">Log Out</button>
+            <br>
+            <a href="#/">Dashboard</a>
             <a href="#/account" title="{{user.email}}">Account</a>
             <a href="#/orgs" title="Organizations">Organizations</a>
+            <a href="#/users" title="Organizations">Users</a>
         </div>
         <div>
             <ng-view></ng-view>

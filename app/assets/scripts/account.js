@@ -102,6 +102,100 @@
 
     .service('account', ['c6UrlMaker', '$http', '$q', '$timeout',
     function            ( c6UrlMaker ,  $http ,  $q ,  $timeout ){
+        this.waterfallOptions = [
+            {
+                name: 'Cinema6',
+                value: 'cinema6',
+                checked: true
+            },
+            {
+                name: 'Cinema6 - Publisher',
+                value: 'cinema6-publisher',
+                checked: false
+            },
+            {
+                name: 'Publisher',
+                value: 'publisher',
+                checked: false
+            },
+            {
+                name: 'Publisher - Cinema6',
+                value: 'publisher-cinema6',
+                checked: false
+            }
+        ];
+
+        this.userPermissionOptions = {
+            experiences: {
+                name:   'Experience',
+                actions: {
+                    read:   {
+                        name: 'read',
+                        options: ['own','org','all']
+                    },
+                    create: {
+                        name: 'create',
+                        options: ['own','org','all']
+                    },
+                    edit:   {
+                        name: 'edit',
+                        options: ['own','org','all']
+                    },
+                    delete: {
+                        name: 'delete',
+                        options: ['own','org','all']
+                    }
+                }
+            },
+            elections: {
+                name:   'Election',
+                actions: {
+                    read:   {
+                        name: 'read',
+                        options: ['own','org','all']
+                    },
+                    create: {
+                        name: 'create',
+                        options: ['own','org','all']
+                    },
+                    edit:   {
+                        name: 'edit',
+                        options: ['own','org','all']
+                    },
+                    delete: {
+                        name: 'delete',
+                        options: ['own','org','all']
+                    }
+                }
+            },
+            users: {
+                name: 'User',
+                actions: {
+                    read:   {
+                        name: 'read',
+                        options: ['own','org','all']
+                    },
+                    edit:   {
+                        name: 'edit',
+                        options: ['own','org','all']
+                    }
+                }
+            },
+            orgs: {
+                name: 'Org',
+                actions: {
+                    read:   {
+                        name: 'read',
+                        options: ['own']
+                    },
+                    edit:   {
+                        name: 'edit',
+                        options: ['own']
+                    }
+                }
+            }
+        };
+
         this.changeEmail = function(email,password,newEmail){
             var deferred = $q.defer(), deferredTimeout = $q.defer(), cancelTimeout,
                 body = {
@@ -204,6 +298,37 @@
                 deferredTimeout = $q.defer(),
                 cancelTimeout,
                 url = c6UrlMaker('account/orgs' + (field ? '?sort=' + field : ''),'api');
+
+            $http({
+                method: 'GET',
+                url: url,
+                timeout: deferredTimeout.promise
+            })
+            .success(function(data) {
+                $timeout.cancel(cancelTimeout);
+                deferred.resolve(data);
+            })
+            .error(function(data) {
+                if (!data) {
+                    data = 'Unable to locate failed';
+                }
+                $timeout.cancel(cancelTimeout);
+                deferred.reject(data);
+            });
+
+            cancelTimeout = $timeout(function() {
+                deferredTimeout.resolve();
+                deferred.reject('Request timed out.');
+            },10000);
+
+            return deferred.promise;
+        };
+
+        this.getUsers = function(org) {
+            var deferred = $q.defer(),
+                deferredTimeout = $q.defer(),
+                cancelTimeout,
+                url = c6UrlMaker('account/users?org=' + org.id,'api');
 
             $http({
                 method: 'GET',

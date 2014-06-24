@@ -2,15 +2,15 @@
     'use strict';
 
     angular.module('c6.proshop')
-        .controller('OrgController', ['account',
-        function                     ( account ) {
+        .controller('OrgsController', ['account',
+        function                      ( account ) {
             var self = this;
 
             function updateOrgs(data) {
                 self.orgs = data;
             }
 
-            this.addNew = false;
+            // this.addNew = false;
 
             this.sortOrgs = function(field) {
                 // I imagine there will be something in the UI to allow sorting the list
@@ -22,32 +22,10 @@
 
         .controller('NewOrgController', ['account',
         function                        ( account ) {
-            var self = this,
-            waterfall = [
-                {
-                    name: 'Cinema6',
-                    value: 'cinema6',
-                    checked: true
-                },
-                {
-                    name: 'Cinema6 - Publisher',
-                    value: 'cinema6-publisher',
-                    checked: false
-                },
-                {
-                    name: 'Publisher',
-                    value: 'publisher',
-                    checked: false
-                },
-                {
-                    name: 'Publisher - Cinema6',
-                    value: 'publisher-cinema6',
-                    checked: false
-                }
-            ];
+            var self = this;
 
-            this.displayWaterfalls = angular.copy(waterfall);
-            this.videoWaterfalls = angular.copy(waterfall);
+            this.displayWaterfalls = angular.copy(account.waterfallOptions);
+            this.videoWaterfalls = angular.copy(account.waterfallOptions);
             this.status = 'pending';
 
             function convertWaterfall(data) {
@@ -78,9 +56,9 @@
                 controllerAs: 'NewOrgCtrl',
                 restrict: 'E',
                 templateUrl: c6UrlMaker('views/new_org.html'),
-                link: function(scope, element, attrs, ctrl) {
+                link: function(/*scope, element, attrs, ctrl*/) {
                     // can move any DOM stuff from Ctrl into here...
                 }
-            }
-        }])
+            };
+        }]);
 }());

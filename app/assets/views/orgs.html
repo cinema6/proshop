@@ -1,9 +1,10 @@
-<div>&lsaquo; <a href="#/">Back to the Dashboard</a></div>
 <h1>Organizations</h1>
-<span ng-hide="OrgCtrl.addNew" ng-click="OrgCtrl.addNew = true">Add New Organization</span>
-<span ng-show="OrgCtrl.addNew" ng-click="OrgCtrl.addNew = false">Go back to Org list</span>
-<new-org ng-show="OrgCtrl.addNew"></new-org>
-<div ng-hide="OrgCtrl.addNew" ng-repeat="org in OrgCtrl.orgs" style="padding-top:20px">
+<a href="#/org/new">Add New Organization</a>
+<!-- <button ng-hide="OrgsCtrl.addNew" ng-click="OrgsCtrl.addNew = true">Add New Organization</button>
+<section ng-if="OrgsCtrl.addNew">
+    <new-org></new-org>
+</section> -->
+<div ng-repeat="org in OrgsCtrl.orgs" style="padding-top:20px">
     <div>
         Name: <span>{{org.name}}</span>
     </div>

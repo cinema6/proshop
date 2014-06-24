@@ -28,12 +28,27 @@
                     templateUrl  : c6UrlMakerProvider.makeUrl('views/account.html')
                 })
                 .when('/orgs', {
-                    controller: 'OrgController',
-                    controllerAs: 'OrgCtrl',
+                    controller: 'OrgsController',
+                    controllerAs: 'OrgsCtrl',
                     templateUrl: c6UrlMakerProvider.makeUrl('views/orgs.html')
+                })
+                .when('/users', {
+                    controller: 'UsersController',
+                    controllerAs: 'UsersCtrl',
+                    templateUrl: c6UrlMakerProvider.makeUrl('views/users.html')
+                })
+                .when('/org/new', {
+                    controller: 'NewOrgController',
+                    controllerAs: 'NewOrgCtrl',
+                    templateUrl: c6UrlMakerProvider.makeUrl('views/new_org.html')
+                })
+                .when('/user/new', {
+                    controller: 'NewUserController',
+                    controllerAs: 'NewUserCtrl',
+                    templateUrl: c6UrlMakerProvider.makeUrl('views/new_user.html')
                 });
         }])
-        .value('appData', {user: null, app: null})
+        .value('appData', {user: null, app: null, orgs: null, org: null, users: null})
         .controller('AppController', ['$scope', '$log', '$location', '$timeout',
                                       'c6Defines','c6LocalStorage', 'auth', 'appData', 'account',
             function(                  $scope ,  $log ,  $location ,  $timeout,
@@ -109,6 +124,10 @@
                         self.goTo('/login');
                     });
             }
+
+            // $scope.app = {
+            //     data: appData
+            // };
 
             $scope.$on('$locationChangeStart',function(evt, newUrl, oldUrl){
                 $log.info('locationChange: %1 ===> %2', oldUrl, newUrl);

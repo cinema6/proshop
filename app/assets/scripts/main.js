@@ -41,6 +41,7 @@
                     'scripts/auth',
                     'scripts/account',
                     'scripts/login',
+                    'scripts/users',
                     'scripts/orgs',
                     'scripts/mockHttp',
                     'scripts/mockHttpDefs'

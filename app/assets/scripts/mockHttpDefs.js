@@ -19,6 +19,22 @@
     });
 
     /*
+     * Org Endpoints
+     */
+
+    httpMocks.whenGET('/api/account/users?org=o-111')
+        .proxy('assets/mocks/account/users/e2e-users.json');
+
+    httpMocks.whenGET('/api/account/users?org=o-112')
+        .proxy('assets/mocks/account/users/e2e-users.json');
+
+    httpMocks.whenGET('/api/account/users?org=o-113')
+        .proxy('assets/mocks/account/users/e2e-users.json');
+
+    httpMocks.whenGET('/api/account/users?org=o-114')
+        .proxy('assets/mocks/account/users/e2e-users.json');
+
+    /*
      * Auth Endpoints
      */
     httpMocks.whenGET('/api/auth/status')
