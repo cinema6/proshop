@@ -1,23 +1,7 @@
 <h1>Organizations</h1>
-<a href="#/org/new">Add New Organization</a>
-<!-- <button ng-hide="OrgsCtrl.addNew" ng-click="OrgsCtrl.addNew = true">Add New Organization</button>
-<section ng-if="OrgsCtrl.addNew">
-    <new-org></new-org>
-</section> -->
-<div ng-repeat="org in OrgsCtrl.orgs" style="padding-top:20px">
-    <div>
-        Name: <span>{{org.name}}</span>
-    </div>
-    <div>
-        ID: <span>{{org.id}}</span>
-    </div>
-    <div>
-        STATUS: <span>{{org.status}}</span>
-    </div>
-    <div>
-        TAG: <span>{{org.tag}}</span>
-    </div>
-    <div>
-        MIN AD COUNT: <span>{{org.minAdCount}}</span>
-    </div>
-</div>
+<section ng-switch="OrgsCtrl.action">
+    <all-orgs ng-switch-when="all"></all-orgs>
+    <new-org ng-switch-when="new"></new-org>
+    <edit-org ng-switch-when="edit"></edit-org>
+</section>
+

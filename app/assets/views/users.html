@@ -1,18 +1,7 @@
 <h1>Users</h1>
-<a href="#/user/new">Add New User</a>
-<!-- <button ng-hide="UsersCtrl.addNew" ng-click="UsersCtrl.addNew = true">Add New User</button>
-<section ng-if="UsersCtrl.addNew">
-    <new-user></new-user>
-</section> -->
-<select ng-model="UsersCtrl.org" ng-options="org.name for org in UsersCtrl.data.orgs"></select>
-<div ng-repeat="user in UsersCtrl.users" style="padding-top:20px">
-    <div>
-        Name: <span>{{user.email}}</span>
-    </div>
-    <div>
-        ID: <span>{{user.id}}</span>
-    </div>
-    <div>
-        STATUS: <span>{{user.status}}</span>
-    </div>
-</div>
+<section ng-switch="UsersCtrl.action">
+    <all-users ng-switch-when="all"></all-users>
+    <new-user ng-switch-when="new"></new-user>
+    <edit-user ng-switch-when="edit"></edit-user>
+</section>
+

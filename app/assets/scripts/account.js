@@ -264,6 +264,78 @@
             return deferred.promise;
         };
 
+        this.putUser = function(id,email,password,org,lastName,firstName) {
+            var deferred = $q.defer(), deferredTimeout = $q.defer(), cancelTimeout,
+                body = {
+                    email: email,
+                    password: password,
+                    org: org,
+                    lastName: lastName,
+                    firstName: firstName
+                };
+
+            $http({
+                method: 'PUT',
+                url: c6UrlMaker('account/user/' + id,'api'),
+                data: body,
+                timeout: deferredTimeout.promise
+            })
+            .success(function(data ){
+                $timeout.cancel(cancelTimeout);
+                deferred.resolve(data);
+            })
+            .error(function(data, status){
+                if (!data){
+                    data = status;
+                }
+                $timeout.cancel(cancelTimeout);
+                deferred.reject(data);
+            });
+
+            cancelTimeout = $timeout(function(){
+                deferredTimeout.resolve();
+                deferred.reject('Request timed out.');
+            },10000);
+
+            return deferred.promise;
+        };
+
+        this.postUser = function(email,password,org,lastName,firstName) {
+            var deferred = $q.defer(), deferredTimeout = $q.defer(), cancelTimeout,
+                body = {
+                    email: email,
+                    password: password,
+                    org: org,
+                    lastName: lastName,
+                    firstName: firstName
+                };
+
+            $http({
+                method: 'POST',
+                url: c6UrlMaker('account/user/','api'),
+                data: body,
+                timeout: deferredTimeout.promise
+            })
+            .success(function(data ){
+                $timeout.cancel(cancelTimeout);
+                deferred.resolve(data);
+            })
+            .error(function(data, status){
+                if (!data){
+                    data = status;
+                }
+                $timeout.cancel(cancelTimeout);
+                deferred.reject(data);
+            });
+
+            cancelTimeout = $timeout(function(){
+                deferredTimeout.resolve();
+                deferred.reject('Request timed out.');
+            },10000);
+
+            return deferred.promise;
+        };
+
         this.getOrg = function(orgId){
             var deferred = $q.defer(), deferredTimeout = $q.defer(), cancelTimeout,
                 url = c6UrlMaker('account/org/' + orgId,'api');
@@ -324,11 +396,42 @@
             return deferred.promise;
         };
 
+        this.getUser = function(id) {
+            var deferred = $q.defer(),
+                deferredTimeout = $q.defer(),
+                cancelTimeout,
+                url = c6UrlMaker('account/user/' + id,'api');
+
+            $http({
+                method: 'GET',
+                url: url,
+                timeout: deferredTimeout.promise
+            })
+            .success(function(data) {
+                $timeout.cancel(cancelTimeout);
+                deferred.resolve(data);
+            })
+            .error(function(data) {
+                if (!data) {
+                    data = 'Unable to locate failed';
+                }
+                $timeout.cancel(cancelTimeout);
+                deferred.reject(data);
+            });
+
+            cancelTimeout = $timeout(function() {
+                deferredTimeout.resolve();
+                deferred.reject('Request timed out.');
+            },10000);
+
+            return deferred.promise;
+        };
+
         this.getUsers = function(org) {
             var deferred = $q.defer(),
                 deferredTimeout = $q.defer(),
                 cancelTimeout,
-                url = c6UrlMaker('account/users?org=' + org.id,'api');
+                url = c6UrlMaker('account/users' + (org ? '?org=' + org.id : ''),'api');
 
             $http({
                 method: 'GET',

@@ -36,25 +36,18 @@
                     controller: 'UsersController',
                     controllerAs: 'UsersCtrl',
                     templateUrl: c6UrlMakerProvider.makeUrl('views/users.html')
-                })
-                .when('/org/new', {
-                    controller: 'NewOrgController',
-                    controllerAs: 'NewOrgCtrl',
-                    templateUrl: c6UrlMakerProvider.makeUrl('views/new_org.html')
-                })
-                .when('/user/new', {
-                    controller: 'NewUserController',
-                    controllerAs: 'NewUserCtrl',
-                    templateUrl: c6UrlMakerProvider.makeUrl('views/new_user.html')
                 });
         }])
-        .value('appData', {user: null, app: null, orgs: null, org: null, users: null})
+        .value('appData', {appUser: null, user: null, users: null, org: null, orgs: null})
         .controller('AppController', ['$scope', '$log', '$location', '$timeout',
                                       'c6Defines','c6LocalStorage', 'auth', 'appData', 'account',
             function(                  $scope ,  $log ,  $location ,  $timeout,
                                        c6Defines , c6LocalStorage ,  auth ,  appData ,  account ) {
 
-            var self = this;
+            var self = this,
+                data = {};
+
+            $scope.data = data;
 
             self.entryPath = $location.path();
 
@@ -80,10 +73,24 @@
                     c6LocalStorage.remove('user');
                 }
 
-                appData.user = self.user = (record || null);
-                appData.app  = (record) ? record.currentApp : null;
+                appData.appUser = self.user = (record || null);
 
                 return record;
+            };
+
+            self.initData = function() {
+                angular.forEach({
+                    user: null,
+                    users: account.getUsers,
+                    org: null,
+                    orgs: account.getOrgs
+                }, function(val, key) {
+                    if (typeof val === 'function') {
+                        data[key] = val();
+                    } else {
+                        data[key] = val;
+                    }
+                });
             };
 
             self.logout = function(){
@@ -114,6 +121,7 @@
                                 user.org = org;
                                 self.ready = true;
                                 self.updateUser(user);
+                                self.initData();
                                 self.goTo(self.entryPath || '/');
                             });
                     })
@@ -124,10 +132,6 @@
                         self.goTo('/login');
                     });
             }
-
-            // $scope.app = {
-            //     data: appData
-            // };
 
             $scope.$on('$locationChangeStart',function(evt, newUrl, oldUrl){
                 $log.info('locationChange: %1 ===> %2', oldUrl, newUrl);
@@ -162,6 +166,12 @@
                 self.goTo('/');
             });
 
-        }]);
+        }])
+
+        .filter('titlecase', function() {
+            return function(input) {
+                return input.charAt(0).toUpperCase() + input.slice(1);
+            }
+        });
 
 }(window));

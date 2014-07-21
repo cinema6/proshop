@@ -1,0 +1,25 @@
+<a href="" ng-click="OrgsCtrl.addNewOrg()">Add New Organization</a>
+<br>
+<br>
+<input type="text" ng-model="data.query" ng-change="OrgsCtrl.filterData()">
+
+<div ng-repeat="org in data.orgs" style="padding-top:20px">
+    <div>
+        Name: <span>{{org.name}}</span>
+    </div>
+    <div>
+        ID: <span>{{org.id}}</span>
+    </div>
+    <div>
+        STATUS: <span>{{org.status}}</span>
+    </div>
+    <div>
+        TAG: <span>{{org.tag}}</span>
+    </div>
+    <div>
+        MIN AD COUNT: <span>{{org.minAdCount}}</span>
+    </div>
+    <div>
+        <a href="" ng-click="OrgsCtrl.editOrg(org)">Edit</a>
+    </div>
+</div>

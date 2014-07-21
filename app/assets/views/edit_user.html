@@ -1,19 +1,24 @@
-<form name="theForm" id="new_user" ng-submit="UserCtrl.submit()">
-    <h1>Create New User </h1>
-    <a href="#/users">&lsaquo; Back to list</a>
-    <div>
+<h1>Users</h1>
+<form name="theForm" id="new_user" ng-submit="UsersCtrl.saveUser()">
+    <!-- <h1>{{ UsersCtrl.action | titlecase }} {{ UsersCtrl.email }} </h1> -->
+    <a href="" ng-click="UsersCtrl.action = 'all'">&lsaquo; Back to list</a>
+    <div style="padding-top:20px">
         <label for="new_user_name"> Name: </label>
-        <input id="new_user_name" type="text" name="name" ng-model="UserCtrl.name" autocomplete="off" ng-trim="false" ng-minlength="3" ng-maxlength="128" required>
+        <input id="new_user_name" type="text" name="name" ng-model="data.user.email" autocomplete="off" ng-trim="false" ng-minlength="3" ng-maxlength="128" required>
         <span ng-show="theForm.name.$error.required"> Required. </span>
         <span ng-show="theForm.name.$error.minlength"> Too short. </span>
         <span ng-show="theForm.name.$error.maxlength"> Too long. </span>
     </div>
     <br>
     Org:
-    <select ng-model="UserCtrl.org" ng-options="org.name for org in UserCtrl.data.orgs"></select>
+    <select ng-model="data.org" name="org" ng-options="org.name for org in data.orgs" required>
+        <option value="">-- choose org --</option>
+    </select>
+    <span ng-show="theForm.org.$error.required"> Required. </span>
     <br>
-    <div ng-if="UserCtrl.showUserSettings">
-        <div ng-repeat="permission in UserCtrl.userPermissionOptions">
+    <!-- Below are pieces that will be enabled later -->
+    <div ng-if="UsersCtrl.showUserSettings">
+        <div ng-repeat="permission in UsersCtrl.userPermissionOptions">
             {{permission.name}} Permissions:
             <div ng-repeat="action in permission.actions">
                 {{action.name}}:
@@ -31,18 +36,15 @@
         <div>
             Status:
             <label for="new_user_status"> Active</label>
-            <input type="radio" id="new_user_status" name="status" ng-model="UserCtrl.status" value="active" required>
+            <input type="radio" id="new_user_status" name="status" ng-model="UsersCtrl.status" value="active" required>
             <label for="new_user_status"> Inactive</label>
-            <input type="radio" id="new_user_status" name="status" ng-model="UserCtrl.status" value="inactive" required>
+            <input type="radio" id="new_user_status" name="status" ng-model="UsersCtrl.status" value="inactive" required>
             <label for="new_user_status"> Pending:</label>
-            <input type="radio" id="new_user_status" name="status" ng-model="UserCtrl.status" value="pending" required>
+            <input type="radio" id="new_user_status" name="status" ng-model="UsersCtrl.status" value="pending" required>
             <div>
                 <span ng-show="theForm.status.$error.required"> Required. </span>
             </div>
         </div>
     </div>
     <input type="submit" value="Save" ng-disabled="!theForm.$valid">
-    <div>
-        <span>{{lastStatus}}</span>
-    </div>
 </form>
