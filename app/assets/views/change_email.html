@@ -1,26 +1,31 @@
 <form name="theForm" id="change_email" ng-submit="submit()">
-    <h1>Change your Email </h1>
-    <p>Current Email : <strong>{{origEmail}}</strong></p>
-    <div>
-        <label for="change_email_addr" >Change Email To:</label>
-        <input id="change_email_addr" type="text" name="email" ng-model="email" autocomplete="off" ng-trim="false" ng-minlength="4" ng-maxlength="128" ng-pattern="emailPattern" required>
+    <h2>Change your Email </h2>
+    <p style="padding:10px 0">Current Email : <strong>{{origEmail}}</strong></p>
+    <!-- Current Email: {{origEmail}}</div> -->
+    <div class="form-group">
+        <label for="change_email_addr" class="control-label">Change Email To:</label>
         <div>
+            <input id="change_email_addr" type="text" name="email" ng-model="email" autocomplete="off" ng-trim="false" ng-minlength="4" ng-maxlength="128" ng-pattern="emailPattern" required>
             <span ng-show="theForm.email.$error.required"> Required. </span>
             <span ng-show="theForm.email.$error.minlength"> Too short. </span>
             <span ng-show="theForm.email.$error.maxlength"> Too long. </span>
             <span ng-show="theForm.email.$error.pattern"> Invalid email. </span>
         </div>
     </div>
-    <div>
-        <label for="change_email_password" >Current Password:</label>
-        <input id="change_email_password" type="password" name="password" ng-model="password" autocomplete="off" required ng-minlength="1" ng-maxlength="128" ng-trim="false">
+    <div class="form-group">
+        <label for="change_email_password" class="control-label">Current Password:</label>
         <div>
+            <input id="change_email_password" type="password" name="password" ng-model="password" autocomplete="off" required ng-minlength="1" ng-maxlength="128" ng-trim="false">
             <span ng-show="theForm.password.$error.required"> Required. </span>
             <span ng-show="theForm.password.$error.minlength"> Too short. </span>
             <span ng-show="theForm.password.$error.maxlength"> Too long. </span>
         </div>
     </div>
-    <input type="submit" value="Change Email" ng-disabled="((!theForm.$valid) || (email === origEmail))">
+    <div class="form-group">
+        <div>
+            <input type="submit" value="Change Email" ng-disabled="((!theForm.$valid) || (email === origEmail))">
+        </div>
+    </div>
     <div>
         <span>{{lastStatus}}</span>
     </div>

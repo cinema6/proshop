@@ -1,12 +1,14 @@
 <form name="theForm" id="new_org" ng-submit="OrgsCtrl.saveOrg()">
     <!-- <h1>{{OrgsCtrl.action |  titlecase}} {{OrgsCtrl.name}} </h1> -->
     <a href="" ng-click="OrgsCtrl.action = 'all'">&lsaquo; Back to list</a>
-    <div style="padding-top:20px">
-        <label for="new_org_name"> Name: </label>
-        <input id="new_org_name" type="text" name="name" ng-model="data.org.name" autocomplete="off" ng-trim="false" ng-minlength="3" ng-maxlength="128" required>
-        <span ng-show="theForm.name.$error.required"> Required. </span>
-        <span ng-show="theForm.name.$error.minlength"> Too short. </span>
-        <span ng-show="theForm.name.$error.maxlength"> Too long. </span>
+    <div class="form-group" style="padding-top:20px">
+        <label for="new_org_name" class="control-label"> Name: </label>
+        <div>
+            <input id="new_org_name" type="text" name="name" ng-model="data.org.name" autocomplete="off" ng-trim="false" ng-minlength="3" ng-maxlength="128" required>
+            <span ng-show="theForm.name.$error.required"> Required. </span>
+            <span ng-show="theForm.name.$error.minlength"> Too short. </span>
+            <span ng-show="theForm.name.$error.maxlength"> Too long. </span>
+        </div>
     </div>
     <br>
     <div ng-if="OrgsCtrl.showWaterfallSettings">

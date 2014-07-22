@@ -2,14 +2,13 @@
     <h2>Please log in to continue.</h2>
     <form ng-submit="LoginCtrl.login()">
         <div>
-            <span class="ir">Cinema6</span>
-        </div>
-        <div>
             <label>Email</label>
+            <br>
             <input id="login__Email" type="text" name="email" ng-model="LoginCtrl.email" autofocus autocomplete="off">
         </div>
         <div>
             <label> Password </label>
+            <br>
             <input id="login__password" type="password" name="password" ng-model="LoginCtrl.password" autocomplete="off">
         </div>
         <p class="login__error">{{LoginCtrl.loginError}}</p>

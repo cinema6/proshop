@@ -6,7 +6,7 @@
         function                      ( $scope ,  account ) {
             var self = this,
                 data = $scope.data,
-                _data = {};
+                _data = angular.copy(data);
 
             self.displayWaterfalls = angular.copy(account.waterfallOptions);
             self.videoWaterfalls = angular.copy(account.waterfallOptions);
@@ -39,7 +39,7 @@
 
             self.sortOrgs = function(field) {
                 // I imagine there will be something in the UI to allow sorting the list
-                return account.getOrgs(field).then(updateOrgs);
+                // return account.getOrgs(field).then(updateOrgs);
             };
 
             self.filterData = function() {
@@ -59,7 +59,7 @@
                     convertWaterfall(self.displayWaterfalls),
                     data.org.minAdCount
                 ]);
-
+                self.action = 'all';
                 // uncomment when body is ready
                 // return account.createOrg(body)
             };

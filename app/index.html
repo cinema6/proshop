@@ -7,6 +7,8 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width">
         <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <style type="text/css"> .menu { padding-top:20px; } .menu li { font-size: 1.2em; padding-bottom:5px; }</style>
         <script type="text/javascript">
             (function(w,b){c6={kBaseUrl:b,kIsBuild:false};w.c6=c6;}(window,'assets'));
         </script>
@@ -18,20 +20,34 @@
         </script>
     </head>
     <body >
-        <div ng-show="AppCtrl.user">
-            <span>{{AppCtrl.user.email}}</span>
-            <br>
-            <span>{{AppCtrl.user.org.name}}</span>
-            <br>
-            <button ng-click="AppCtrl.logout()" title="Log Out">Log Out</button>
-            <br>
-            <a href="#/">Dashboard</a>
-            <a href="#/account" title="{{user.email}}">Account</a>
-            <a href="#/orgs" title="Organizations">Organizations</a>
-            <a href="#/users" title="Organizations">Users</a>
-        </div>
-        <div>
-            <ng-view></ng-view>
+        <div class="container" ng-cloak>
+            <div ng-show="AppCtrl.user" class="row" style="padding-top:20px">
+                <div style="float:right">
+                    <span>{{AppCtrl.user.email}}</span>  |  <span>{{AppCtrl.user.org.name}}</span>
+                    <button ng-click="AppCtrl.logout()" title="Log Out">Log Out</button>
+                </div>
+            </div>
+            <div class="row">
+                <div ng-show="AppCtrl.user" class="col-xs-2">
+                    <ul class="list-unstyled menu">
+                        <li>
+                            <a href="#/">Dashboard</a>
+                        </li>
+                        <li>
+                            <a href="#/users" title="Organizations">Users</a>
+                        </li>
+                        <li>
+                            <a href="#/orgs" title="Organizations">Organizations</a>
+                        </li>
+                        <li>
+                            <a href="#/account" title="{{user.email}}">Account</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-xs-10">
+                    <ng-view></ng-view>
+                </div>
+            </div>
         </div>
 
         <script data-main="assets/scripts/main" src="//lib.cinema6.com/require/2.1.5/require.min.js"> </script>

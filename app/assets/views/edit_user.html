@@ -1,21 +1,42 @@
-<h1>Users</h1>
 <form name="theForm" id="new_user" ng-submit="UsersCtrl.saveUser()">
     <!-- <h1>{{ UsersCtrl.action | titlecase }} {{ UsersCtrl.email }} </h1> -->
     <a href="" ng-click="UsersCtrl.action = 'all'">&lsaquo; Back to list</a>
-    <div style="padding-top:20px">
-        <label for="new_user_name"> Name: </label>
-        <input id="new_user_name" type="text" name="name" ng-model="data.user.email" autocomplete="off" ng-trim="false" ng-minlength="3" ng-maxlength="128" required>
-        <span ng-show="theForm.name.$error.required"> Required. </span>
-        <span ng-show="theForm.name.$error.minlength"> Too short. </span>
-        <span ng-show="theForm.name.$error.maxlength"> Too long. </span>
+    <div class="form-group" style="padding-top:20px">
+        <label for="firstName" class="control-label"> First Name: </label>
+        <div>
+            <input id="firstName" type="text" name="firstName" ng-model="data.user.firstName" autocomplete="off" ng-trim="false" ng-minlength="3" ng-maxlength="128" required>
+            <span ng-show="theForm.firstName.$error.required"> Required. </span>
+            <span ng-show="theForm.firstName.$error.minlength"> Too short. </span>
+            <span ng-show="theForm.firstName.$error.maxlength"> Too long. </span>
+        </div>
     </div>
-    <br>
-    Org:
-    <select ng-model="data.org" name="org" ng-options="org.name for org in data.orgs" required>
-        <option value="">-- choose org --</option>
-    </select>
-    <span ng-show="theForm.org.$error.required"> Required. </span>
-    <br>
+    <div class="form-group">
+        <label for="lastName" class="control-label"> Last Name: </label>
+        <div>
+            <input id="lastName" type="text" name="lastName" ng-model="data.user.lastName" autocomplete="off" ng-trim="false" ng-minlength="3" ng-maxlength="128" required>
+            <span ng-show="theForm.lastName.$error.required"> Required. </span>
+            <span ng-show="theForm.lastName.$error.minlength"> Too short. </span>
+            <span ng-show="theForm.lastName.$error.maxlength"> Too long. </span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="email" class="control-label"> Email: </label>
+        <div>
+            <input id="email" type="text" name="email" ng-model="data.user.email" autocomplete="off" ng-trim="false" ng-minlength="3" ng-maxlength="128" required>
+            <span ng-show="theForm.email.$error.required"> Required. </span>
+            <span ng-show="theForm.email.$error.minlength"> Too short. </span>
+            <span ng-show="theForm.email.$error.maxlength"> Too long. </span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="org" class="control-label"> Org: </label>
+        <div>
+            <select ng-model="data.org" name="org" ng-options="org.name for org in data.orgs" required>
+                <option value="">-- choose org --</option>
+            </select>
+            <span ng-show="theForm.org.$error.required"> Required. </span>
+        </div>
+    </div>
     <!-- Below are pieces that will be enabled later -->
     <div ng-if="UsersCtrl.showUserSettings">
         <div ng-repeat="permission in UsersCtrl.userPermissionOptions">

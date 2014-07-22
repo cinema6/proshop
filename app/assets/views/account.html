@@ -1,15 +1,17 @@
-<div ng-init="currentView = 'password'" >
-    <h1>Account Settings</h1>
-    <div>
-        <div>
+<div ng-init="currentView = 'password'" class="row">
+    <div class="row">
+        <div class="col-sm-12">
+            <h1>Account Settings</h1>
             <nav>
-                <ul>
+                <ul class="list-unstyled">
                     <li ng-click="currentView='password'">Change Password</li>
                     <li ng-click="currentView='email'">Change Email</li>
                 </ul>
             </nav>
         </div>
-        <div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
             <section ng-if="currentView === ('email')">
                 <change-email email="{{AppCtrl.user.email}}"></change-email>
             </section>

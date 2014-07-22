@@ -24,6 +24,9 @@
                     controllerAs: 'LoginCtrl',
                     templateUrl: c6UrlMakerProvider.makeUrl('views/login.html')
                 })
+                // .when('/', {
+                //     templateUrl  : c6UrlMakerProvider.makeUrl('views/dashboard.html')
+                // })
                 .when('/account', {
                     templateUrl  : c6UrlMakerProvider.makeUrl('views/account.html')
                 })
@@ -36,18 +39,19 @@
                     controller: 'UsersController',
                     controllerAs: 'UsersCtrl',
                     templateUrl: c6UrlMakerProvider.makeUrl('views/users.html')
-                });
+                })
+                .otherwise({redirectTo: '/users'});
         }])
         .value('appData', {appUser: null, user: null, users: null, org: null, orgs: null})
-        .controller('AppController', ['$scope', '$log', '$location', '$timeout',
+        .controller('AppController', ['$scope', '$log', '$location', '$timeout', '$q',
                                       'c6Defines','c6LocalStorage', 'auth', 'appData', 'account',
-            function(                  $scope ,  $log ,  $location ,  $timeout,
+            function(                  $scope ,  $log ,  $location ,  $timeout ,  $q ,
                                        c6Defines , c6LocalStorage ,  auth ,  appData ,  account ) {
 
-            var self = this,
-                data = {};
+            var self = this;
+                // data = {};
 
-            $scope.data = data;
+            $scope.data = {};
 
             self.entryPath = $location.path();
 
@@ -79,18 +83,15 @@
             };
 
             self.initData = function() {
-                angular.forEach({
-                    user: null,
-                    users: account.getUsers,
-                    org: null,
-                    orgs: account.getOrgs
-                }, function(val, key) {
-                    if (typeof val === 'function') {
-                        data[key] = val();
-                    } else {
-                        data[key] = val;
-                    }
-                });
+                return $q.all([account.getUsers(), account.getOrgs()])
+                    .then(function(promises) {
+                        $scope.data = {
+                            users: promises[0],
+                            orgs: promises[1],
+                            user: null,
+                            org: null
+                        };
+                    });
             };
 
             self.logout = function(){
@@ -114,22 +115,22 @@
                 auth.checkStatus()
                     .then(function(user){
                         $log.info('auth check passed: ', user);
-
                         return account.getOrg(user.org)
                             .then(function(org){
                                 $log.info('found user org: ',org);
                                 user.org = org;
-                                self.ready = true;
                                 self.updateUser(user);
-                                self.initData();
-                                self.goTo(self.entryPath || '/');
+                            })
+                            .then(null, function(err) {
+                                $log.info('auth check failed: ', err);
+                                self.updateUser(null);
+                                self.goTo('/login');
                             });
                     })
-                    .then(null, function(err){
-                        $log.info('auth check failed: ', err);
-
-                        self.updateUser(null);
-                        self.goTo('/login');
+                    // .then(self.initData)
+                    .then(function(){
+                        self.ready = true;
+                        self.goTo(self.entryPath || '/');
                     });
             }
 
@@ -164,6 +165,10 @@
 
                 self.updateUser(user);
                 self.goTo('/');
+
+                // self.initData().then(function() {
+                //     self.goTo('/');
+                // });
             });
 
         }])
@@ -171,7 +176,7 @@
         .filter('titlecase', function() {
             return function(input) {
                 return input.charAt(0).toUpperCase() + input.slice(1);
-            }
+            };
         });
 
 }(window));
