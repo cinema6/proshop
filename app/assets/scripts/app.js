@@ -48,10 +48,12 @@
             function(                  $scope ,  $log ,  $location ,  $timeout ,  $q ,
                                        c6Defines , c6LocalStorage ,  auth ,  appData ,  account ) {
 
-            var self = this;
-                // data = {};
+            var self = this,
+                _user;
 
-            $scope.data = {};
+            $scope.data = {
+                appData: appData
+            };
 
             self.entryPath = $location.path();
 
@@ -69,6 +71,7 @@
             };
 
             self.updateUser = function(record, skipStore){
+                console.log('updateUser() called',record);
                 if (record){
                     if (!skipStore){
                         c6LocalStorage.set('user', record);
@@ -82,19 +85,7 @@
                 return record;
             };
 
-            self.initData = function() {
-                return $q.all([account.getUsers(), account.getOrgs()])
-                    .then(function(promises) {
-                        $scope.data = {
-                            users: promises[0],
-                            orgs: promises[1],
-                            user: null,
-                            org: null
-                        };
-                    });
-            };
-
-            self.logout = function(){
+            self.logout = function() {
                 $log.info('logging out');
 
                 auth.logout()
@@ -109,28 +100,26 @@
 
             self.updateUser(c6LocalStorage.get('user'), true);
 
-            if (self.user){
+            if (self.user) {
                 $log.info('checking authStatus');
 
                 auth.checkStatus()
-                    .then(function(user){
+                    .then(function(user) {
                         $log.info('auth check passed: ', user);
-                        return account.getOrg(user.org)
-                            .then(function(org){
-                                $log.info('found user org: ',org);
-                                user.org = org;
-                                self.updateUser(user);
-                            })
-                            .then(null, function(err) {
-                                $log.info('auth check failed: ', err);
-                                self.updateUser(null);
-                                self.goTo('/login');
-                            });
+                        _user = user;
+                        return account.getOrg(user.org);
                     })
-                    // .then(self.initData)
-                    .then(function(){
+                    .then(function(org){
+                        $log.info('found user org: ',org);
+                        _user.org = org;
+                        self.updateUser(_user);
                         self.ready = true;
                         self.goTo(self.entryPath || '/');
+                    })
+                    .catch(function(err) {
+                        $log.info('auth check failed: ', err);
+                        self.updateUser(null);
+                        self.goTo('/login');
                     });
             }
 
@@ -165,10 +154,6 @@
 
                 self.updateUser(user);
                 self.goTo('/');
-
-                // self.initData().then(function() {
-                //     self.goTo('/');
-                // });
             });
 
         }])

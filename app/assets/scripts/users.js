@@ -5,7 +5,7 @@
         .controller('UsersController', ['$scope', 'account',
         function                       ( $scope ,  account ) {
             var self = this,
-                data = $scope.data || {},
+                data = $scope.data,
                 _data = angular.copy(data);
 
             console.log('UsersCtrl init');
