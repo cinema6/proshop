@@ -5,8 +5,8 @@
         .controller('UsersController', ['$scope', 'account',
         function                       ( $scope ,  account ) {
             var self = this,
-                data = $scope.data,
-                _data = angular.copy(data);
+                data = $scope.data;
+                // _data = angular.copy(data);
 
             console.log('UsersCtrl init');
 
@@ -15,47 +15,50 @@
             self.userPermissionOptions = angular.copy(account.userPermissionOptions);
 
             function updateOrgs(orgs) {
+                data.appData.orgs = orgs;
                 data.orgs = orgs;
-                _data.orgs = orgs;
             }
 
             function updateUsers(users) {
+                users.forEach(function(user) {
+                    account.getOrg(user.org)
+                        .then(function(org) {
+                            user.org = org;
+                        });
+                });
+                data.appData.users = users;
                 data.users = users;
-                _data.users = users;
             }
 
             self.editUser = function(user){
                 self.action = 'edit';
                 data.user = user;
-                data.org = _data.orgs.filter(function(org) {
-                    return user.org === org.id;
+                data.org = data.appData.orgs.filter(function(org) {
+                    return user.org.id === org.id;
                 })[0];
             };
 
             self.addNewUser = function() {
                 self.action = 'edit';
                 data.user = null;
+                data.org = null;
             };
 
             self.filterData = function() {
                 var query = data.query.toLowerCase(),
-                    orgs = _data.orgs.filter(function(org) {
+                    orgs = data.appData.orgs.filter(function(org) {
                         return org.name.toLowerCase().indexOf(query) >= 0;
                     });
 
-                data.users = _data.users.filter(function(user) {
+                data.users = data.appData.users.filter(function(user) {
                     var bool = false;
 
                     orgs.forEach(function(org) {
-                        if (user.org.indexOf(org.id) >= 0) {
-                            bool = true;
-                        }
+                        bool = (user.org.id.indexOf(org.id) >= 0) || bool;
                     });
 
                     [user.email, user.firstName, user.lastname].forEach(function(field) {
-                        if (field && field.toLowerCase().indexOf(query) >= 0) {
-                            bool = true;
-                        }
+                        bool = (field && field.toLowerCase().indexOf(query) >= 0) || bool;
                     });
 
                     return bool;
@@ -84,35 +87,26 @@
         }])
 
         .directive('newUser', ['c6UrlMaker',
-        function             ( c6UrlMaker ) {
+        function              ( c6UrlMaker ) {
             return {
                 restrict: 'E',
-                templateUrl: c6UrlMaker('views/edit_user.html'),
-                link: function(/*scope, element, attrs, ctrl*/) {
-                    // can move any DOM stuff from Ctrl into here...
-                }
+                templateUrl: c6UrlMaker('views/edit_user.html')
             };
         }])
 
         .directive('editUser', ['c6UrlMaker',
-        function             ( c6UrlMaker ) {
+        function               ( c6UrlMaker ) {
             return {
                 restrict: 'E',
                 templateUrl: c6UrlMaker('views/edit_user.html'),
-                link: function(/*scope, element, attrs, ctrl*/) {
-                    // can move any DOM stuff from Ctrl into here...
-                }
             };
         }])
 
         .directive('allUsers', ['c6UrlMaker',
-        function             ( c6UrlMaker ) {
+        function               ( c6UrlMaker ) {
             return {
                 restrict: 'E',
                 templateUrl: c6UrlMaker('views/all_users.html'),
-                link: function(/*scope, element, attrs, ctrl*/) {
-                    // can move any DOM stuff from Ctrl into here...
-                }
             };
         }]);
 }());

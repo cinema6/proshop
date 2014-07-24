@@ -5,8 +5,7 @@
         .controller('OrgsController', ['$scope', 'account',
         function                      ( $scope ,  account ) {
             var self = this,
-                data = $scope.data,
-                _data = angular.copy(data);
+                data = $scope.data;
 
             self.displayWaterfalls = angular.copy(account.waterfallOptions);
             self.videoWaterfalls = angular.copy(account.waterfallOptions);
@@ -14,8 +13,8 @@
             self.action = 'all';
 
             function updateOrgs(orgs) {
+                data.appData.orgs = orgs;
                 data.orgs = orgs;
-                _data.orgs = orgs;
             }
 
             function convertWaterfall(data) {
@@ -45,7 +44,7 @@
             self.filterData = function() {
                 var query = data.query.toLowerCase();
 
-                data.orgs = _data.orgs.filter(function(org) {
+                data.orgs = data.appData.orgs.filter(function(org) {
                     return org.name.toLowerCase().indexOf(query) >= 0;
                 });
             };
@@ -69,13 +68,10 @@
         }])
 
         .directive('allOrgs', ['c6UrlMaker',
-        function             ( c6UrlMaker ) {
+        function              ( c6UrlMaker ) {
             return {
                 restrict: 'E',
                 templateUrl: c6UrlMaker('views/all_orgs.html'),
-                link: function(/*scope, element, attrs, ctrl*/) {
-                    // can move any DOM stuff from Ctrl into here...
-                }
             };
         }])
 
@@ -84,20 +80,14 @@
             return {
                 restrict: 'E',
                 templateUrl: c6UrlMaker('views/edit_org.html'),
-                link: function(/*scope, element, attrs, ctrl*/) {
-                    // can move any DOM stuff from Ctrl into here...
-                }
             };
         }])
 
         .directive('editOrg', ['c6UrlMaker',
-        function             ( c6UrlMaker ) {
+        function              ( c6UrlMaker ) {
             return {
                 restrict: 'E',
                 templateUrl: c6UrlMaker('views/edit_org.html'),
-                link: function(/*scope, element, attrs, ctrl*/) {
-                    // can move any DOM stuff from Ctrl into here...
-                }
             };
         }]);
 }());

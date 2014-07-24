@@ -1,5 +1,5 @@
 [{
-  "name": "Org 1",
+  "name": "Organization 1",
   "minAdCount": 0,
   "id": "o-111",
   "created": "2014-06-13T19:28:39.408Z",
@@ -16,7 +16,7 @@
   }
 },
 {
-  "name": "Org 2",
+  "name": "Test Org 2",
   "minAdCount": 1,
   "id": "o-112",
   "created": "2014-06-13T19:28:39.408Z",
@@ -39,7 +39,7 @@
   }
 },
 {
-  "name": "Org 3",
+  "name": "Example Org 3",
   "minAdCount": 2,
   "id": "o-113",
   "created": "2014-06-13T19:28:39.408Z",
@@ -58,7 +58,7 @@
   }
 },
 {
-  "name": "Org 4",
+  "name": "Test Org 4",
   "minAdCount": 3,
   "id": "o-114",
   "created": "2014-06-13T19:28:39.408Z",
@@ -75,14 +75,14 @@
   }
 },
 {
-    "id"            : "e2e-org",
-    "name"          : "Boy's Life Magazine",
-    "status"        : "active",
-    "created"       : "2014-04-30T19:09:19.018Z",
-    "lastUpdated"   : "2014-04-30T19:14:22.308Z",
-    "branding"      : "khaki",
-    "waterfalls"    : {
-        "video"     : ["c6"],
-        "display"   : ["c6"]
-    }
+  "id": "e2e-org",
+  "name": "Boy's Life Magazine",
+  "status": "active",
+  "created": "2014-04-30T19:09:19.018Z",
+  "lastUpdated": "2014-04-30T19:14:22.308Z",
+  "branding": "khaki",
+  "waterfalls": {
+    "video": ["cinema6"],
+    "display": ["cinema6"]
+  }
 }]

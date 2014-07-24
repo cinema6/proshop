@@ -1,0 +1,17 @@
+{
+  "name": "Test Org 4",
+  "minAdCount": 3,
+  "id": "o-114",
+  "created": "2014-06-13T19:28:39.408Z",
+  "lastUpdated": "2014-06-13T19:28:39.408Z",
+  "status": "inactive",
+  "tag": "bar",
+  "waterfalls": {
+    "video": [
+      "cinema6"
+    ],
+    "display": [
+      "cinema6"
+    ]
+  }
+}
