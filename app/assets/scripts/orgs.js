@@ -2,10 +2,13 @@
     'use strict';
 
     angular.module('c6.proshop')
-        .controller('OrgsController', ['$scope', 'account',
-        function                      ( $scope ,  account ) {
+        .controller('OrgsController', ['$scope', '$log', 'account',
+        function                      ( $scope ,  $log ,  account ) {
             var self = this,
                 data = $scope.data;
+
+            $log = $log.context('OrgsCtrl');
+            $log.info('instantiated');
 
             self.displayWaterfalls = angular.copy(account.waterfallOptions);
             self.videoWaterfalls = angular.copy(account.waterfallOptions);
@@ -33,10 +36,10 @@
                 data.org = {
                     name: null,
                     status: 'active'
-                }
+                };
             };
 
-            self.sortOrgs = function(field) {
+            self.sortOrgs = function(/*field*/) {
                 // I imagine there will be something in the UI to allow sorting the list
                 // return account.getOrgs(field).then(updateOrgs);
             };
@@ -50,7 +53,7 @@
             };
 
             self.saveOrg = function() {
-                console.log([
+                $log.info('save org: ', [
                     data.org.name,
                     data.org.status,
                     data.org.tag,

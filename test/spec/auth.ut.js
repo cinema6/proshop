@@ -3,7 +3,11 @@
 
     define(['auth'], function() {
         describe('auth', function() {
-            var $httpBackend, $timeout, auth, successSpy, failureSpy,
+            var $httpBackend,
+                $timeout,
+                auth,
+                successSpy,
+                failureSpy,
                 c6UrlMaker;
 
             beforeEach(function(){

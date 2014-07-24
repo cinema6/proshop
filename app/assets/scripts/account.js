@@ -294,7 +294,7 @@
             return httpWrapper({
                 method: 'GET',
                 url: c6UrlMaker('account/user/' + id,'api')
-            })
+            });
         };
 
         this.getUsers = function(org) {

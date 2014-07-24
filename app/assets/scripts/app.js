@@ -2,8 +2,6 @@
     /* jshint -W106 */
     'use strict';
 
-    var isUndefined = angular.isUndefined;
-
     angular.module('c6.proshop', window$.c6.kModDeps)
         .constant('c6Defines', window$.c6)
         .config(['$provide', function($provide) {
@@ -70,10 +68,9 @@
                 $location.path(path);
             };
 
-            self.updateUser = function(record, skipStore){
-                console.log('updateUser() called',record);
+            self.updateUser = function(record, skipStore) {
                 if (record){
-                    if (!skipStore){
+                    if (!skipStore) {
                         c6LocalStorage.set('user', record);
                     }
                 } else {
@@ -89,7 +86,7 @@
                 $log.info('logging out');
 
                 auth.logout()
-                    ['finally'](function(result){
+                    ['finally'](function(result) {
                         $log.info('log out returns:', result);
                         $log.info('Logout user:', self.user);
 
@@ -123,25 +120,25 @@
                     });
             }
 
-            $scope.$on('$locationChangeStart',function(evt, newUrl, oldUrl){
+            $scope.$on('$locationChangeStart',function(evt, newUrl, oldUrl) {
                 $log.info('locationChange: %1 ===> %2', oldUrl, newUrl);
 
                 var isLogin = !!newUrl.match(/\/login/);
 
-                if (!isLogin && !self.user){
+                if (!isLogin && !self.user) {
                     evt.preventDefault();
 
-                    $timeout(function(){
+                    $timeout(function() {
                         self.goTo('/login');
                     });
 
                     return;
                 }
 
-                if (isLogin && self.user){
+                if (isLogin && self.user) {
                     evt.preventDefault();
 
-                    $timeout(function(){
+                    $timeout(function() {
                         self.goTo('/');
                     });
 
@@ -149,7 +146,7 @@
                 }
             });
 
-            $scope.$on('loginSuccess',function(evt, user){
+            $scope.$on('loginSuccess',function(evt, user) {
                 $log.info('Login succeeded, new user:', user);
 
                 self.updateUser(user);
