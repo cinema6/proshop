@@ -71,39 +71,27 @@
      * User Endpoints
      */
 
-    httpMocks.whenGET('/api/account/user/e2e-12221')
-        .proxy('assets/mocks/account/user/e2e-user.json');
-
-    httpMocks.whenGET('/api/account/user/e2e-12222')
-        .proxy('assets/mocks/account/user/e2e-user.json');
-
-    httpMocks.whenGET('/api/account/user/e2e-12223')
-        .proxy('assets/mocks/account/user/e2e-user.json');
-
-    httpMocks.whenGET('/api/account/user/e2e-12224')
-        .proxy('assets/mocks/account/user/e2e-user.json');
-
-    httpMocks.whenGET('/api/account/user/e2e-12225')
-        .proxy('assets/mocks/account/user/e2e-user.json');
+    // httpMocks.whenPOST('/api/account/user')
+    //     .proxy('assets/mocks/account/user/e2e-user.json');
 
 
     /*
      * Users Endpoints
      */
 
-    httpMocks.whenGET('/api/account/users?org=o-111')
-        .proxy('assets/mocks/account/users/e2e-users.json');
-
-    httpMocks.whenGET('/api/account/users?org=o-112')
-        .proxy('assets/mocks/account/users/e2e-users.json');
-
-    httpMocks.whenGET('/api/account/users?org=o-113')
-        .proxy('assets/mocks/account/users/e2e-users.json');
-
-    httpMocks.whenGET('/api/account/users?org=o-114')
-        .proxy('assets/mocks/account/users/e2e-users.json');
-
     httpMocks.whenGET('/api/account/users')
         .proxy('assets/mocks/account/users/e2e-users.json');
+
+    // httpMocks.whenGET('/api/account/users?org=o-111')
+    //     .proxy('assets/mocks/account/users/e2e-users.json');
+
+    // httpMocks.whenGET('/api/account/users?org=o-112')
+    //     .proxy('assets/mocks/account/users/e2e-users.json');
+
+    // httpMocks.whenGET('/api/account/users?org=o-113')
+    //     .proxy('assets/mocks/account/users/e2e-users.json');
+
+    // httpMocks.whenGET('/api/account/users?org=o-114')
+    //     .proxy('assets/mocks/account/users/e2e-users.json');
 
 }(window.c6HttpMocks));
