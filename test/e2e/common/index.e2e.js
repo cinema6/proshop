@@ -30,15 +30,15 @@
                 indexPage.logoutButton.click();
             });
 
-            it('should resolve to /', function() {
+            it('should resolve to /users', function() {
                 indexPage.get();
 
-                expect(indexPage.url()).toBe('http://localhost:9000/#/');
+                expect(indexPage.url()).toBe('http://localhost:9000/#/users');
             });
 
-            it('should resolve /login to /', function() {
+            it('should resolve /login to /users', function() {
                 browser.get('http://localhost:9000/#/login');
-                expect(indexPage.url()).toBe('http://localhost:9000/#/');
+                expect(indexPage.url()).toBe('http://localhost:9000/#/users');
             });
 
             it('should show the user email and logout button', function() {

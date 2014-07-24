@@ -18,9 +18,9 @@
         });
 
         describe('when logged in', function() {
-            it('should redirect to /', function() {
+            it('should redirect to /users', function() {
                 loginPage.login();
-                expect(loginPage.url()).toBe('http://localhost:9000/#/');
+                expect(loginPage.url()).toBe('http://localhost:9000/#/users');
                 element(by.buttonText('Log Out')).click();
             });
         });
@@ -58,13 +58,13 @@
             });
 
             describe('with a valid username and password', function() {
-                it('should redirect to /', function() {
+                it('should redirect to /users', function() {
                     loginPage.setEmail('Julie');
                     loginPage.setPassword('password');
 
                     loginPage.emailInput.submit();
 
-                    expect(loginPage.url()).toBe('http://localhost:9000/#/');
+                    expect(loginPage.url()).toBe('http://localhost:9000/#/users');
                 });
             });
         });
