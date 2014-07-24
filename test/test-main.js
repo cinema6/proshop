@@ -84,6 +84,9 @@
                 },
                 login: {
                     deps: ['app']
+                },
+                users: {
+                    deps: ['app']
                 }
             },
 
