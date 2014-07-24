@@ -20,11 +20,11 @@
                 data.orgs = orgs;
             }
 
-            function convertWaterfall(data) {
-                return data.map(function(item) {
-                    if (item.checked) { return item.value; }
-                }).filter(function(item) { return !!item; });
-            }
+            // function convertWaterfall(data) {
+            //     return data.map(function(item) {
+            //         if (item.checked) { return item.value; }
+            //     }).filter(function(item) { return !!item; });
+            // }
 
             self.editOrg = function(org){
                 self.action = 'edit';
@@ -53,17 +53,29 @@
             };
 
             self.saveOrg = function() {
+                function handleError(err) {
+                    $log.error(err);
+                }
+
+                function handleSuccess(org) {
+                    $log.info('saved org: ', org);
+                    self.action = 'all';
+                }
+
                 $log.info('save org: ', [
                     data.org.name,
-                    data.org.status,
-                    data.org.tag,
-                    convertWaterfall(self.videoWaterfalls),
-                    convertWaterfall(self.displayWaterfalls),
-                    data.org.minAdCount
                 ]);
-                self.action = 'all';
-                // uncomment when body is ready
-                // return account.createOrg(body)
+
+                if (data.org.id) {
+                    account.putOrg({
+                        id: data.org.id,
+                        name: data.org.name
+                    }).then(handleSuccess, handleError);
+                } else {
+                    account.postOrg({
+                        name: data.org.name
+                    }).then(handleSuccess, handleError);
+                }
             };
 
             account.getOrgs().then(updateOrgs);

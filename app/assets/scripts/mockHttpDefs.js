@@ -67,13 +67,41 @@
     httpMocks.whenGET('/api/account/orgs')
         .proxy('assets/mocks/account/orgs/e2e-orgs.json');
 
+    httpMocks.whenPUT('/api/account/org/o-111', function() {
+        this.proxy('assets/mocks/account/org/e2e-org.json');
+    });
+
+    httpMocks.whenPUT('/api/account/org/o-112', function() {
+        this.proxy('assets/mocks/account/org/e2e-org.json');
+    });
+
+    httpMocks.whenPUT('/api/account/org/o-113', function() {
+        this.proxy('assets/mocks/account/org/e2e-org.json');
+    });
+
+    httpMocks.whenPUT('/api/account/org/o-114', function() {
+        this.proxy('assets/mocks/account/org/e2e-org.json');
+    });
+
+    httpMocks.whenPUT('/api/account/org/e2e-org', function() {
+        this.proxy('assets/mocks/account/org/e2e-org.json');
+    });
+
+    httpMocks.whenPOST('/api/account/org', function() {
+        this.proxy('assets/mocks/account/org/e2e-org.json');
+    });
+
     /*
      * User Endpoints
      */
 
-    // httpMocks.whenPOST('/api/account/user')
-    //     .proxy('assets/mocks/account/user/e2e-user.json');
+    httpMocks.whenPOST('/api/account/user', function() {
+        this.proxy('assets/mocks/account/user/e2e-user.json');
+    });
 
+    httpMocks.whenPUT('/api/account/user', function() {
+        this.proxy('assets/mocks/account/user/e2e-user.json');
+    });
 
     /*
      * Users Endpoints

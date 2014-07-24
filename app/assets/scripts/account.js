@@ -265,13 +265,34 @@
         this.postUser = function(user) {
             return httpWrapper({
                 method: 'POST',
-                url: c6UrlMaker('account/user/','api'),
+                url: c6UrlMaker('account/user','api'),
                 data: {
                     email:      user.email,
                     password:   user.password,
                     org:        user.org,
                     lastName:   user.lastName,
                     firstName:  user.firstName
+                }
+            });
+        };
+
+        this.putOrg = function(org) {
+            // id,email,password,org,lastName,firstName
+            return httpWrapper({
+                method: 'PUT',
+                url: c6UrlMaker('account/org/' + org.id,'api'),
+                data: {
+                    name: org.name
+                }
+            });
+        };
+
+        this.postOrg = function(org) {
+            return httpWrapper({
+                method: 'POST',
+                url: c6UrlMaker('account/org','api'),
+                data: {
+                    name: org.name,
                 }
             });
         };

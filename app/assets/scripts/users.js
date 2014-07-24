@@ -57,7 +57,7 @@
                         bool = (user.org.id.indexOf(org.id) >= 0) || bool;
                     });
 
-                    [user.email, user.firstName, user.lastname].forEach(function(field) {
+                    [user.email, user.firstName, user.lastName].forEach(function(field) {
                         bool = (field && field.toLowerCase().indexOf(query) >= 0) || bool;
                     });
 
@@ -71,15 +71,38 @@
             };
 
             this.saveUser = function() {
+                function handleError(err) {
+                    // print to page
+                    $log.info(err);
+                }
+
+                function handleSuccess(user) {
+                    data.user = user;
+                    self.action = 'all';
+                }
+
                 if (data.user.id) {
-                    // account.putUser(id,email,password,org,lastName,firstName);
                     $log.info('PUT', data.user.id, data.user.email, data.user.firstName, data.user.lastName, data.org.id);
+
+                    account.putUser({
+                        id: data.user.id,
+                        email: data.user.email,
+                        firstName: data.user.firstName,
+                        lastName: data.user.lastName,
+                        org: data.org.id
+                    }).then(handleSuccess, handleError);
                 } else {
                     // account.postUser(email,password,org,lastName,firstName);
                     $log.info('POST', data.user.id, data.user.email, data.user.firstName, data.user.lastName, data.org.id);
-                }
 
-                self.action = 'all';
+                    account.postUser({
+                        email: data.user.email,
+                        password: data.user.password,
+                        firstName: data.user.firstName,
+                        lastName: data.user.lastName,
+                        org: data.org.id
+                    }).then(handleSuccess, handleError);
+                }
             };
 
             account.getOrgs().then(updateOrgs);
