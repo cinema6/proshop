@@ -1,44 +1,52 @@
-(function(window$){
+define( [   'angular','ngAnimate','ngRoute','c6ui','c6log', 'c6defines',
+            'auth', 'login','users', 'orgs', 'mockHttp','mockHttpDefs','templates'],
+function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
+            auth, login, users, orgs, mockHttp, mockHttpDefs, templates ) {
     /* jshint -W106 */
     'use strict';
 
-    var isUndefined = angular.isUndefined;
-
-    angular.module('c6.proshop', window$.c6.kModDeps)
-        .constant('c6Defines', window$.c6)
+    return angular.module('c6.proshop', [
+            ngAnimate.name,
+            ngRoute.name,
+            c6ui.name,
+            c6log.name,
+            auth.name,
+            login.name,
+            users.name,
+            orgs.name,
+            templates.name
+        ])
+        .constant('c6Defines',c6Defines)
         .config(['$provide', function($provide) {
-            if (window$.c6HttpDecorator){
-                $provide.decorator('$http', ['$delegate', window$.c6HttpDecorator]);
+            if (mockHttp.httpDecorator){
+                $provide.decorator('$http', ['$delegate', mockHttp.httpDecorator]);
             }
         }])
-        .config(['c6UrlMakerProvider', 'c6Defines',
-        function( c6UrlMakerProvider ,  c6Defines ) {
-            c6UrlMakerProvider.location(c6Defines.kBaseUrl, 'default');
+        .config(['c6UrlMakerProvider', function( c6UrlMakerProvider ) {
             c6UrlMakerProvider.location(c6Defines.kApiUrl, 'api');
         }])
-        .config(['$routeProvider','c6UrlMakerProvider',
-        function( $routeProvider , c6UrlMakerProvider ){
+        .config(['$routeProvider', function( $routeProvider  ){
             $routeProvider
                 .when('/login', {
                     controller: 'LoginCtrl',
                     controllerAs: 'LoginCtrl',
-                    templateUrl: c6UrlMakerProvider.makeUrl('views/login.html')
+                    templateUrl: 'views/login.html'
                 })
                 // .when('/', {
                 //     templateUrl  : c6UrlMakerProvider.makeUrl('views/dashboard.html')
                 // })
                 .when('/account', {
-                    templateUrl  : c6UrlMakerProvider.makeUrl('views/account.html')
+                    templateUrl  : 'views/account.html'
                 })
                 .when('/orgs', {
                     controller: 'OrgsController',
                     controllerAs: 'OrgsCtrl',
-                    templateUrl: c6UrlMakerProvider.makeUrl('views/orgs.html')
+                    templateUrl: 'views/orgs.html'
                 })
                 .when('/users', {
                     controller: 'UsersController',
                     controllerAs: 'UsersCtrl',
-                    templateUrl: c6UrlMakerProvider.makeUrl('views/users.html')
+                    templateUrl: 'views/users.html'
                 })
                 .otherwise({redirectTo: '/users'});
         }])
@@ -71,7 +79,6 @@
             };
 
             self.updateUser = function(record, skipStore){
-                console.log('updateUser() called',record);
                 if (record){
                     if (!skipStore){
                         c6LocalStorage.set('user', record);
@@ -164,4 +171,4 @@
             };
         });
 
-}(window));
+});

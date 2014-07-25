@@ -1,27 +1,27 @@
-(function(httpMocks){
+define(['mockHttp'], function(mockHttp){
     'use strict';
-
+    var httpMocks = mockHttp.httpMocks;
     /*
      * Org Endpoints
      */
     httpMocks.whenGET('/api/account/org/e2e-org')
-        .proxy('assets/mocks/account/org/e2e-org.json');
+        .proxy('mocks/account/org/e2e-org.json');
 
     httpMocks.whenGET('/api/account/org/o-111')
-        .proxy('assets/mocks/account/org/e2e-org.json');
+        .proxy('mocks/account/org/e2e-org.json');
 
     httpMocks.whenGET('/api/account/org/o-112')
-        .proxy('assets/mocks/account/org/e2e-org.json');
+        .proxy('mocks/account/org/e2e-org.json');
 
     httpMocks.whenGET('/api/account/org/o-113')
-        .proxy('assets/mocks/account/org/e2e-org.json');
+        .proxy('mocks/account/org/e2e-org.json');
 
     httpMocks.whenGET('/api/account/org/o-114')
-        .proxy('assets/mocks/account/org/e2e-org.json');
+        .proxy('mocks/account/org/e2e-org.json');
 
     httpMocks.whenPOST('/api/account/org', function(rqs) {
         if (rqs.data.name === 'New Org') {
-            this.proxy('assets/mocks/org/new-org.json');
+            this.proxy('mocks/org/new-org.json');
         } else {
             this.respond(404,'failed');
         }
@@ -32,26 +32,26 @@
      */
 
     httpMocks.whenGET('/api/account/orgs')
-        .proxy('assets/mocks/account/orgs/e2e-orgs.json');
+        .proxy('mocks/account/orgs/e2e-orgs.json');
 
     /*
      * User Endpoints
      */
 
     httpMocks.whenGET('/api/account/user/e2e-12221')
-        .proxy('assets/mocks/account/user/e2e-user.json');
+        .proxy('mocks/account/user/e2e-user.json');
 
     httpMocks.whenGET('/api/account/user/e2e-12222')
-        .proxy('assets/mocks/account/user/e2e-user.json');
+        .proxy('mocks/account/user/e2e-user.json');
 
     httpMocks.whenGET('/api/account/user/e2e-12223')
-        .proxy('assets/mocks/account/user/e2e-user.json');
+        .proxy('mocks/account/user/e2e-user.json');
 
     httpMocks.whenGET('/api/account/user/e2e-12224')
-        .proxy('assets/mocks/account/user/e2e-user.json');
+        .proxy('mocks/account/user/e2e-user.json');
 
     httpMocks.whenGET('/api/account/user/e2e-12225')
-        .proxy('assets/mocks/account/user/e2e-user.json');
+        .proxy('mocks/account/user/e2e-user.json');
 
 
     /*
@@ -59,31 +59,31 @@
      */
 
     httpMocks.whenGET('/api/account/users?org=o-111')
-        .proxy('assets/mocks/account/users/e2e-users.json');
+        .proxy('mocks/account/users/e2e-users.json');
 
     httpMocks.whenGET('/api/account/users?org=o-112')
-        .proxy('assets/mocks/account/users/e2e-users.json');
+        .proxy('mocks/account/users/e2e-users.json');
 
     httpMocks.whenGET('/api/account/users?org=o-113')
-        .proxy('assets/mocks/account/users/e2e-users.json');
+        .proxy('mocks/account/users/e2e-users.json');
 
     httpMocks.whenGET('/api/account/users?org=o-114')
-        .proxy('assets/mocks/account/users/e2e-users.json');
+        .proxy('mocks/account/users/e2e-users.json');
 
     httpMocks.whenGET('/api/account/users')
-        .proxy('assets/mocks/account/users/e2e-users.json');
+        .proxy('mocks/account/users/e2e-users.json');
 
     /*
      * Auth Endpoints
      */
     httpMocks.whenGET('/api/auth/status')
-        .proxy('assets/mocks/auth/login.json');
+        .proxy('mocks/auth/login.json');
 
     httpMocks.whenPOST('/api/auth/login', function(rqs){
         if (rqs.data.email === 'fail@cinema6.com'){
             this.respond(404,'failed');
         } else {
-            this.proxy('assets/mocks/auth/login.json');
+            this.proxy('mocks/auth/login.json');
         }
     });
     httpMocks.whenPOST('/api/auth/logout').respond(200,'ok');
@@ -106,4 +106,4 @@
         }
     });
 
-}(window.c6HttpMocks));
+});

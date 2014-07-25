@@ -1,8 +1,8 @@
-(function(){
+define(['angular','c6ui'],function(angular,c6ui){
     /* jshint -W106 */
     'use strict';
 
-    angular.module('c6.proshop')
+    return angular.module('c6.proshop.auth',[c6ui.name])
     .service('auth', ['c6UrlMaker','$http','$q','$timeout',
         function(      c6UrlMaker , $http , $q , $timeout ){
 
@@ -103,5 +103,4 @@
             return deferred.promise;
         };
     }]);
-
-}());
+});

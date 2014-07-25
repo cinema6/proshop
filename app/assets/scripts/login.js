@@ -1,8 +1,8 @@
-(function(){
+define(['angular','account','auth'],function(angular,account,auth){
     /* jshint -W106 */
     'use strict';
 
-    angular.module('c6.proshop')
+    return angular.module('c6.proshop.login',[account.name,auth.name])
     .controller('LoginCtrl', ['$log','$scope','auth','account',
         function(              $log , $scope , auth , account ){
 
@@ -48,5 +48,4 @@
         };
 
     }]);
-}());
-
+});

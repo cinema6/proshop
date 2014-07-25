@@ -1,4 +1,4 @@
-(function(window$){
+define(function(){
     'use strict';
 
     function MockHttpResponse() {
@@ -104,7 +104,7 @@
     var httpMock = new HttpMock();
 
     function httpDecorator($delegate) {
-        window$.console.warn('Using c6HttpDecorator!');
+        window.console.warn('Using c6HttpDecorator!');
         var service = $delegate;
         $delegate = function(){
             var args = Array.prototype.slice.call(arguments,0);
@@ -116,6 +116,8 @@
         return $delegate;
     }
 
-    window$.c6HttpMocks         = httpMock;
-    window$.c6HttpDecorator     = httpDecorator;
-}(window));
+    return {
+        httpMocks        : httpMock,
+        httpDecorator    : httpDecorator
+    };
+});

@@ -12,6 +12,13 @@
             ],
             tasks: []
         },
+        style: {
+            files: [
+                '<%= settings.appDir %>/assets/styles/**/*.css',
+                '<%= settings.appDir %>/assets/img/**/*.{png,jpg,jpeg,gif,webp,svg}'
+            ],
+            tasks: []
+        },
         unit: {
             files: [
                 '<%= settings.appDir %>/assets/scripts/**/*.js',

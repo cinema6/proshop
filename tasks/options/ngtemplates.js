@@ -5,24 +5,30 @@
 
     module.exports = {
         options: {
-            htmlmin: {
-                collapseBooleanAttributes: true,
-                collapseWhitespace: true,
-                removeAttributeQuotes: true,
-                removeComments: true,
-                removeEmptyAttributes: true,
-                removeRedundantAttributes: true,
-                removeScriptTypeAttributes: true,
-                removeStyleLinkTypeAttributes: true
-            },
-            module: '<%= settings.appModule %>',
+            htmlmin: grunt.config.get('htmlmin.options'),
+            module: '<%= settings.appModule %>.templates',
+            bootstrap: function(module, script) {
+                return '(' + function(module) {
+                    define( ['angular'],
+                    function( angular ) {
+
+                        return angular.module(module, [])
+                            .run(    ['$templateCache',
+                            function ( $templateCache ) {
+                                /* SCRIPT */
+                            }]);
+                    });
+                }.toString().replace('/* SCRIPT */', script) + '("' + module + '"))';
+            }
+        },
+        dist: {
+            cwd: '<%= settings.appDir %>/assets',
+            src: 'views/**/*.html',
+            dest: '.tmp/templates.js'
         },
         test: {
-            options: {
-                prefix: ''
-            },
-            cwd: '<%= settings.appDir %>',
-            src: 'assets/views/**/*.html',
+            cwd: '<%= settings.appDir %>/assets',
+            src: 'views/**/*.html',
             dest: '.tmp/templates.js'
         }
     };

@@ -1,9 +1,9 @@
-(function() {
+define(['account'],function(account) {
     'use strict';
 
-    angular.module('c6.proshop')
-        .controller('OrgsController', ['$scope', 'account',
-        function                      ( $scope ,  account ) {
+    return angular.module('c6.proshop.orgs',[account.name])
+        .controller('OrgsController', ['$scope', '$log', 'account',
+        function                      ( $scope , $log,  account ) {
             var self = this,
                 data = $scope.data,
                 _data = angular.copy(data);
@@ -34,10 +34,10 @@
                 data.org = {
                     name: null,
                     status: 'active'
-                }
+                };
             };
 
-            self.sortOrgs = function(field) {
+            self.sortOrgs = function(/*field*/) {
                 // I imagine there will be something in the UI to allow sorting the list
                 // return account.getOrgs(field).then(updateOrgs);
             };
@@ -51,7 +51,7 @@
             };
 
             self.saveOrg = function() {
-                console.log([
+                $log.info([
                     data.org.name,
                     data.org.status,
                     data.org.tag,
@@ -68,36 +68,33 @@
 
         }])
 
-        .directive('allOrgs', ['c6UrlMaker',
-        function             ( c6UrlMaker ) {
+        .directive('allOrgs', [ function ( ) {
             return {
                 restrict: 'E',
-                templateUrl: c6UrlMaker('views/all_orgs.html'),
+                templateUrl: 'views/all_orgs.html',
                 link: function(/*scope, element, attrs, ctrl*/) {
                     // can move any DOM stuff from Ctrl into here...
                 }
             };
         }])
 
-        .directive('newOrg', ['c6UrlMaker',
-        function             ( c6UrlMaker ) {
+        .directive('newOrg', [ function ( ) {
             return {
                 restrict: 'E',
-                templateUrl: c6UrlMaker('views/edit_org.html'),
+                templateUrl: 'views/edit_org.html',
                 link: function(/*scope, element, attrs, ctrl*/) {
                     // can move any DOM stuff from Ctrl into here...
                 }
             };
         }])
 
-        .directive('editOrg', ['c6UrlMaker',
-        function             ( c6UrlMaker ) {
+        .directive('editOrg', [ function ( ) {
             return {
                 restrict: 'E',
-                templateUrl: c6UrlMaker('views/edit_org.html'),
+                templateUrl: 'views/edit_org.html',
                 link: function(/*scope, element, attrs, ctrl*/) {
                     // can move any DOM stuff from Ctrl into here...
                 }
             };
         }]);
-}());
+});

@@ -21,6 +21,7 @@
     "__C6_APP_BASE_URL__" : true,
     "__dirname" : true,
     "angular": false,
+    "define" : true,
     "ga": true,
     "module" : true,
     "process" : true,

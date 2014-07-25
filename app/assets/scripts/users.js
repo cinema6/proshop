@@ -1,14 +1,14 @@
-(function() {
+define(['account'],function(account) {
     'use strict';
 
-    angular.module('c6.proshop')
-        .controller('UsersController', ['$scope', 'account',
-        function                       ( $scope ,  account ) {
+    return angular.module('c6.proshop.users',[account.name])
+        .controller('UsersController', ['$scope', '$log', 'account',
+        function                       ( $scope , $log,  account ) {
             var self = this,
                 data = $scope.data,
                 _data = angular.copy(data);
 
-            console.log('UsersCtrl init');
+            $log.info('UsersCtrl init');
 
             self.action = 'all';
             self.showUserSettings = false;
@@ -62,7 +62,7 @@
                 });
             };
 
-            this.sortOrgs = function(field) {
+            this.sortOrgs = function(/*field*/) {
                 // I imagine there will be something in the UI to allow sorting the list
                 // return account.getOrgs(field).then(updateOrgs);
             };
@@ -70,10 +70,10 @@
             this.saveUser = function() {
                 if (data.user.id) {
                     // account.putUser(id,email,password,org,lastName,firstName);
-                    console.log('PUT', data.user.id, data.user.email, data.user.firstName, data.user.lastName, data.org.id);
+                    $log.info('PUT', data.user.id, data.user.email, data.user.firstName, data.user.lastName, data.org.id);
                 } else {
                     // account.postUser(email,password,org,lastName,firstName);
-                    console.log('POST', data.user.id, data.user.email, data.user.firstName, data.user.lastName, data.org.id);
+                    $log.info('POST', data.user.id, data.user.email, data.user.firstName, data.user.lastName, data.org.id);
                 }
 
                 self.action = 'all';
@@ -83,36 +83,33 @@
             account.getUsers().then(updateUsers);
         }])
 
-        .directive('newUser', ['c6UrlMaker',
-        function             ( c6UrlMaker ) {
+        .directive('newUser', [ function ( ) {
             return {
                 restrict: 'E',
-                templateUrl: c6UrlMaker('views/edit_user.html'),
+                templateUrl: 'views/edit_user.html',
                 link: function(/*scope, element, attrs, ctrl*/) {
                     // can move any DOM stuff from Ctrl into here...
                 }
             };
         }])
 
-        .directive('editUser', ['c6UrlMaker',
-        function             ( c6UrlMaker ) {
+        .directive('editUser', [ function ( ) {
             return {
                 restrict: 'E',
-                templateUrl: c6UrlMaker('views/edit_user.html'),
+                templateUrl: 'views/edit_user.html',
                 link: function(/*scope, element, attrs, ctrl*/) {
                     // can move any DOM stuff from Ctrl into here...
                 }
             };
         }])
 
-        .directive('allUsers', ['c6UrlMaker',
-        function             ( c6UrlMaker ) {
+        .directive('allUsers', [ function ( ) {
             return {
                 restrict: 'E',
-                templateUrl: c6UrlMaker('views/all_users.html'),
+                templateUrl: 'views/all_users.html',
                 link: function(/*scope, element, attrs, ctrl*/) {
                     // can move any DOM stuff from Ctrl into here...
                 }
             };
         }]);
-}());
+});
