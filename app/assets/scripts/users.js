@@ -1,9 +1,9 @@
-(function() {
+define(['account'],function(account) {
     'use strict';
 
-    angular.module('c6.proshop')
+    return angular.module('c6.proshop.users',[account.name])
         .controller('UsersController', ['$scope', '$log', 'account',
-        function                       ( $scope ,  $log ,  account ) {
+        function                       ( $scope ,  $log,   account ) {
             var self = this,
                 data = $scope.data;
 
@@ -115,27 +115,33 @@
             account.getUsers().then(updateUsers);
         }])
 
-        .directive('newUser', ['c6UrlMaker',
-        function              ( c6UrlMaker ) {
+        .directive('newUser', [ function ( ) {
             return {
                 restrict: 'E',
-                templateUrl: c6UrlMaker('views/edit_user.html')
+                templateUrl: 'views/edit_user.html',
+                link: function(/*scope, element, attrs, ctrl*/) {
+                    // can move any DOM stuff from Ctrl into here...
+                }
             };
         }])
 
-        .directive('editUser', ['c6UrlMaker',
-        function               ( c6UrlMaker ) {
+        .directive('editUser', [ function ( ) {
             return {
                 restrict: 'E',
-                templateUrl: c6UrlMaker('views/edit_user.html'),
+                templateUrl: 'views/edit_user.html',
+                link: function(/*scope, element, attrs, ctrl*/) {
+                    // can move any DOM stuff from Ctrl into here...
+                }
             };
         }])
 
-        .directive('allUsers', ['c6UrlMaker',
-        function               ( c6UrlMaker ) {
+        .directive('allUsers', [ function ( ) {
             return {
                 restrict: 'E',
-                templateUrl: c6UrlMaker('views/all_users.html'),
+                templateUrl: 'views/all_users.html',
+                link: function(/*scope, element, attrs, ctrl*/) {
+                    // can move any DOM stuff from Ctrl into here...
+                }
             };
         }]);
-}());
+});

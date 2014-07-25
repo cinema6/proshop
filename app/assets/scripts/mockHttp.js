@@ -1,5 +1,9 @@
-(function(window$){
+define(['c6defines'],function(c6){
     'use strict';
+
+    if (!c6.kLocal || c6.kHasKarma){
+        return {};
+    }
 
     function MockHttpResponse() {
         this.fnSuccess  = null;
@@ -104,7 +108,7 @@
     var httpMock = new HttpMock();
 
     function httpDecorator($delegate) {
-        window$.console.warn('Using c6HttpDecorator!');
+        window.console.warn('Using c6HttpDecorator!');
         var service = $delegate;
         $delegate = function(){
             var args = Array.prototype.slice.call(arguments,0);
@@ -116,6 +120,8 @@
         return $delegate;
     }
 
-    window$.c6HttpMocks         = httpMock;
-    window$.c6HttpDecorator     = httpDecorator;
-}(window));
+    return {
+        httpMocks        : httpMock,
+        httpDecorator    : httpDecorator
+    };
+});

@@ -1,14 +1,12 @@
 (function() {
     'use strict';
 
-    var grunt        = require('grunt'),
-        proxySnippet = require('grunt-connect-proxy/lib/utils').proxyRequest;
+    var grunt        = require('grunt');
 
     module.exports = {
         options: {
             port: '<%= settings.connectPort %>',
-            hostname: '0.0.0.0',
-            livereload: true
+            hostname: '*'
         },
         proxies: [
             {
@@ -23,9 +21,25 @@
             options: {
                 middleware: function(connect,options) {
                     return [
-                        proxySnippet,
-                        connect.static(grunt.config.get('settings.appDir')),
-                        connect.static('.tmp')
+                        require('grunt-connect-proxy/lib/utils').proxyRequest,
+                        require('connect-livereload')({
+                            rules : [
+                                {
+                                    match: /<!--C6INJECT-->/,
+                                    fn: function(match,snippet){
+                                        return [
+                                            snippet,
+                                            '<script>',
+                                            '(' + function(window) {
+                                                window.DEBUG = true;
+                                            }.toString() + '(window))',
+                                            '</script>'
+                                        ].join('\n');
+                                    }
+                                }
+                            ]
+                        }),
+                        connect.static(grunt.config.get('settings.appDir'))
                     ];
                 }
             }

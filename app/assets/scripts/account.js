@@ -1,8 +1,8 @@
-(function(){
+define(['angular','c6ui'], function(angular,c6ui){
     /* jshint -W106 */
     'use strict';
 
-    angular.module('c6.proshop')
+    return angular.module('c6.proshop.account',[c6ui.name])
     .controller('AcctChangeCtrl', ['$log', '$scope', 'account',
     function                      ( $log ,  $scope ,  account ){
         var self = this;
@@ -23,13 +23,12 @@
         };
     }])
 
-    .directive('changeEmail', ['$log', 'c6UrlMaker',
-    function                  ( $log ,  c6UrlMaker ){
+    .directive('changeEmail', ['$log', function ( $log  ){
         return {
             controller: 'AcctChangeCtrl',
             scope: {},
             restrict: 'E',
-            templateUrl: c6UrlMaker('views/change_email.html'),
+            templateUrl: 'views/change_email.html',
             link: function fnLink(scope,element,attrs,ctrl) {
                 scope.origEmail     = attrs.email;
                 scope.email         = null;
@@ -65,15 +64,14 @@
         };
     }])
 
-    .directive('changePassword', ['$log', 'c6UrlMaker',
-    function                     ( $log ,  c6UrlMaker){
+    .directive('changePassword', ['$log', function ( $log  ){
         return {
             controller : 'AcctChangeCtrl',
             scope : {
                 email : '@'
             },
             restrict : 'E',
-            templateUrl : c6UrlMaker('views/change_password.html'),
+            templateUrl : 'views/change_password.html',
             link : function fnLink(scope,element,attrs,ctrl){
                 scope.lastStatus    = null;
                 scope.lastCode      = 0;
@@ -325,6 +323,4 @@
             });
         };
     }]);
-}());
-
-
+});
