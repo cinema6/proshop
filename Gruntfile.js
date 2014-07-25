@@ -83,7 +83,7 @@ module.exports = function(grunt) {
 
     grunt.registerTask('build', 'build app into distDir', [
         'test:unit',
-        'git_describe_tags',
+        'git_describe_tags:any',
         'clean:build',
         'copy:dist',
         'ngtemplates:dist',
