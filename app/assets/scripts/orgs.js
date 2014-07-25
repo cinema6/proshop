@@ -27,11 +27,17 @@
             // }
 
             self.editOrg = function(org){
+                $scope.message = null;
                 self.action = 'edit';
                 data.org = org;
+                account.getUsers(org)
+                    .then(function(users) {
+                        data.users = users;
+                    });
             };
 
             self.addNewOrg = function() {
+                $scope.message = null;
                 self.action = 'new';
                 data.org = {
                     name: null,
@@ -55,16 +61,15 @@
             self.saveOrg = function() {
                 function handleError(err) {
                     $log.error(err);
+                    $scope.message = 'There was a problem saving the org.';
                 }
 
                 function handleSuccess(org) {
                     $log.info('saved org: ', org);
+                    $scope.message = 'Successfully saved org: ' + org.name;
+                    account.getOrgs().then(updateOrgs);
                     self.action = 'all';
                 }
-
-                $log.info('save org: ', [
-                    data.org.name,
-                ]);
 
                 if (data.org.id) {
                     account.putOrg({

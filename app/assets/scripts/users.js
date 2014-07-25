@@ -31,6 +31,7 @@
             }
 
             self.editUser = function(user){
+                $scope.message = null;
                 self.action = 'edit';
                 data.user = user;
                 data.org = data.appData.orgs.filter(function(org) {
@@ -39,6 +40,7 @@
             };
 
             self.addNewUser = function() {
+                $scope.message = null;
                 self.action = 'edit';
                 data.user = null;
                 data.org = null;
@@ -73,12 +75,17 @@
             this.saveUser = function() {
                 function handleError(err) {
                     // print to page
-                    $log.info(err);
+                    $log.error(err);
+                    $scope.message = 'There was a problem creating this user.';
                 }
 
                 function handleSuccess(user) {
-                    data.user = user;
+                    $log.info('saved user: ', user);
+                    $scope.message = 'Successfully saved user: ' + data.user.email;
+                    account.getOrgs().then(updateOrgs);
+                    account.getUsers().then(updateUsers);
                     self.action = 'all';
+                    data.user = user;
                 }
 
                 if (data.user.id) {
@@ -92,8 +99,7 @@
                         org: data.org.id
                     }).then(handleSuccess, handleError);
                 } else {
-                    // account.postUser(email,password,org,lastName,firstName);
-                    $log.info('POST', data.user.id, data.user.email, data.user.firstName, data.user.lastName, data.org.id);
+                    $log.info('POST', data.user.email, data.user.firstName, data.user.lastName, data.org.id);
 
                     account.postUser({
                         email: data.user.email,

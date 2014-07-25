@@ -99,7 +99,27 @@
         this.proxy('assets/mocks/account/user/e2e-user.json');
     });
 
-    httpMocks.whenPUT('/api/account/user', function() {
+    httpMocks.whenPUT('/api/account/user/e2e-12221', function() {
+        this.proxy('assets/mocks/account/user/e2e-user.json');
+    });
+
+    httpMocks.whenPUT('/api/account/user/e2e-12222', function() {
+        this.proxy('assets/mocks/account/user/e2e-user.json');
+    });
+
+    httpMocks.whenPUT('/api/account/user/e2e-12223', function() {
+        this.proxy('assets/mocks/account/user/e2e-user.json');
+    });
+
+    httpMocks.whenPUT('/api/account/user/e2e-12224', function() {
+        this.proxy('assets/mocks/account/user/e2e-user.json');
+    });
+
+    httpMocks.whenPUT('/api/account/user/e2e-12225', function() {
+        this.proxy('assets/mocks/account/user/e2e-user.json');
+    });
+
+    httpMocks.whenPUT('/api/account/user/e2e-light-user', function() {
         this.proxy('assets/mocks/account/user/e2e-user.json');
     });
 
@@ -110,16 +130,19 @@
     httpMocks.whenGET('/api/account/users')
         .proxy('assets/mocks/account/users/e2e-users.json');
 
-    // httpMocks.whenGET('/api/account/users?org=o-111')
-    //     .proxy('assets/mocks/account/users/e2e-users.json');
+    httpMocks.whenGET('/api/account/users?org=o-111')
+        .proxy('assets/mocks/account/users/o1-users.json');
 
-    // httpMocks.whenGET('/api/account/users?org=o-112')
-    //     .proxy('assets/mocks/account/users/e2e-users.json');
+    httpMocks.whenGET('/api/account/users?org=o-112')
+        .proxy('assets/mocks/account/users/o2-users.json');
 
-    // httpMocks.whenGET('/api/account/users?org=o-113')
-    //     .proxy('assets/mocks/account/users/e2e-users.json');
+    httpMocks.whenGET('/api/account/users?org=o-113')
+        .proxy('assets/mocks/account/users/o3-users.json');
 
-    // httpMocks.whenGET('/api/account/users?org=o-114')
-    //     .proxy('assets/mocks/account/users/e2e-users.json');
+    httpMocks.whenGET('/api/account/users?org=o-114')
+        .proxy('assets/mocks/account/users/o4-users.json');
+
+    httpMocks.whenGET('/api/account/users?org=e2e-org')
+        .proxy('assets/mocks/account/users/o5-org-users.json');
 
 }(window.c6HttpMocks));
