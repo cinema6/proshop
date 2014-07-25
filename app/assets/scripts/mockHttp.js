@@ -1,5 +1,9 @@
-define(function(){
+define(['c6defines'],function(c6){
     'use strict';
+
+    if (!c6.kLocal || c6.kHasKarma){
+        return {};
+    }
 
     function MockHttpResponse() {
         this.fnSuccess  = null;

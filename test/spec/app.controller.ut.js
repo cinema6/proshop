@@ -20,8 +20,8 @@
 
             beforeEach(function() {
                 appData = {
-                    user : null,
-                    app  : null
+                    appUser : null,
+                    user: null, users: null, org: null, orgs: null
                 };
 
                 auth = {
@@ -101,6 +101,11 @@
                     expect(AppCtrl).toBeDefined();
                 });
 
+                it('should put appData on the $scope', function() {
+                    createAppCtrl();
+                    expect($scope.data.appData).toEqual(appData);
+                });
+
                 it('should attempt to get a user from local storage',function(){
                     createAppCtrl();
                     expect(localStorage.get).toHaveBeenCalledWith('user');
@@ -119,7 +124,7 @@
 
                     it('should be checked if a user is found in storage',function(){
                         expect(AppCtrl.user).toBe(mockUser);
-                        expect(appData.user).toBe(mockUser);
+                        expect(appData.appUser).toBe(mockUser);
                         expect(auth.checkStatus).toHaveBeenCalled();
                     });
 
@@ -190,10 +195,9 @@
                         expect(AppCtrl.user).toBeNull();
                     });
 
-                    it('will set appData.user = null, appData.app = null',function(){
+                    it('will set appData.appUser = null',function(){
                         AppCtrl.updateUser(null);
-                        expect(appData.user).toBeNull();
-                        expect(appData.app).toBeNull();
+                        expect(appData.appUser).toBeNull();
                     });
                 });
 
@@ -210,8 +214,7 @@
 
                     it('will set appData.user = null, appData.app = null',function(){
                         AppCtrl.updateUser(undefined);
-                        expect(appData.user).toBeNull();
-                        expect(appData.app).toBeNull();
+                        expect(appData.appUser).toBeNull();
                     });
                 });
 
@@ -229,47 +232,17 @@
                     });
 
                     it('will set AppCtrl.user to new user',function(){
-                        AppCtrl.user = null;
+                        AppCtrl.appUser = null;
                         AppCtrl.updateUser(mockUser);
                         expect(AppCtrl.user).toBe(mockUser);
                     });
 
-                    it('will set currentApp with first app if it has any',function(){
-                        mockUser.applications = ['app1','app2'];
-                        AppCtrl.updateUser(mockUser);
-                        expect(mockUser.currentApp).toEqual('app1');
-                    });
-
                     it('will set userData based on user settings',function(){
-                        appData.user = null;
-                        appData.app = null;
+                        appData.appUser = null;
                         AppCtrl.updateUser(mockUser);
-                        expect(appData.user).toBe(mockUser);
-                        expect(appData.app).toEqual('e1');
+                        expect(appData.appUser).toBe(mockUser);
                     });
 
-                });
-
-                describe('user with no applications', function(){
-                    beforeEach(function(){
-                        mockUser = {
-                            id: 'howard1',
-                            email: 'howard1@u2.com'
-                        };
-                    });
-
-                    it('will set lastError and redirect to error page if missing',function(){
-                        AppCtrl.updateUser(mockUser);
-                        // expect(lastError.set)
-                        //     .toHaveBeenCalledWith('No applications for user: howard1@u2.com',500 );
-                    });
-
-                    it('will set lastError and redirect to error page if empty',function(){
-                        mockUser.applications = [];
-                        AppCtrl.updateUser(mockUser);
-                        // expect(lastError.set)
-                        //     .toHaveBeenCalledWith('No applications for user: howard1@u2.com',500 );
-                    });
                 });
             });
 
@@ -373,7 +346,7 @@
                 beforeEach(function(){
                     mockUser = {
                         id: 'user',
-                        applications: [ 'app1' ]
+                        org: 'org'
                     };
 
                     mockEvent = {

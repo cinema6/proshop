@@ -1,9 +1,13 @@
 (function(){
     'use strict';
 
-    define(['auth'], function() {
+    define(['auth'], function(authModule) {
         describe('auth', function() {
-            var $httpBackend, $timeout, auth, successSpy, failureSpy,
+            var $httpBackend,
+                $timeout,
+                auth,
+                successSpy,
+                failureSpy,
                 c6UrlMaker;
 
             beforeEach(function(){
@@ -17,7 +21,7 @@
                     });
                 }]);
 
-                module('c6.proshop');
+                module(authModule.name);
 
                 inject(['$injector',function($injector){
                     auth = $injector.get('auth');

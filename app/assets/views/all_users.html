@@ -9,11 +9,13 @@
         <tr>
             <th>Email</th>
             <th>ID</th>
+            <th>Org</th>
             <th>Status</th>
         </tr>
         <tr ng-repeat="user in data.users">
             <td><a href="" ng-click="UsersCtrl.editUser(user)">{{user.email}}</a></td>
             <td>{{user.id}}</td>
+            <td>{{user.org.name}}</td>
             <td>{{user.status}}</td>
         </tr>
     </tbody>

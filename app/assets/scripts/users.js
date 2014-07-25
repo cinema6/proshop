@@ -3,59 +3,64 @@ define(['account'],function(account) {
 
     return angular.module('c6.proshop.users',[account.name])
         .controller('UsersController', ['$scope', '$log', 'account',
-        function                       ( $scope , $log,  account ) {
+        function                       ( $scope ,  $log,   account ) {
             var self = this,
-                data = $scope.data,
-                _data = angular.copy(data);
+                data = $scope.data;
 
-            $log.info('UsersCtrl init');
+            $log = $log.context('UsersCtrl');
+            $log.info('instantiated');
 
             self.action = 'all';
             self.showUserSettings = false;
             self.userPermissionOptions = angular.copy(account.userPermissionOptions);
 
             function updateOrgs(orgs) {
+                data.appData.orgs = orgs;
                 data.orgs = orgs;
-                _data.orgs = orgs;
             }
 
             function updateUsers(users) {
+                users.forEach(function(user) {
+                    account.getOrg(user.org)
+                        .then(function(org) {
+                            user.org = org;
+                        });
+                });
+                data.appData.users = users;
                 data.users = users;
-                _data.users = users;
             }
 
             self.editUser = function(user){
+                $scope.message = null;
                 self.action = 'edit';
                 data.user = user;
-                data.org = _data.orgs.filter(function(org) {
-                    return user.org === org.id;
+                data.org = data.appData.orgs.filter(function(org) {
+                    return user.org.id === org.id;
                 })[0];
             };
 
             self.addNewUser = function() {
+                $scope.message = null;
                 self.action = 'edit';
                 data.user = null;
+                data.org = null;
             };
 
             self.filterData = function() {
                 var query = data.query.toLowerCase(),
-                    orgs = _data.orgs.filter(function(org) {
+                    orgs = data.appData.orgs.filter(function(org) {
                         return org.name.toLowerCase().indexOf(query) >= 0;
                     });
 
-                data.users = _data.users.filter(function(user) {
+                data.users = data.appData.users.filter(function(user) {
                     var bool = false;
 
                     orgs.forEach(function(org) {
-                        if (user.org.indexOf(org.id) >= 0) {
-                            bool = true;
-                        }
+                        bool = (user.org.id.indexOf(org.id) >= 0) || bool;
                     });
 
-                    [user.email, user.firstName, user.lastname].forEach(function(field) {
-                        if (field && field.toLowerCase().indexOf(query) >= 0) {
-                            bool = true;
-                        }
+                    [user.email, user.firstName, user.lastName].forEach(function(field) {
+                        bool = (field && field.toLowerCase().indexOf(query) >= 0) || bool;
                     });
 
                     return bool;
@@ -68,15 +73,42 @@ define(['account'],function(account) {
             };
 
             this.saveUser = function() {
-                if (data.user.id) {
-                    // account.putUser(id,email,password,org,lastName,firstName);
-                    $log.info('PUT', data.user.id, data.user.email, data.user.firstName, data.user.lastName, data.org.id);
-                } else {
-                    // account.postUser(email,password,org,lastName,firstName);
-                    $log.info('POST', data.user.id, data.user.email, data.user.firstName, data.user.lastName, data.org.id);
+                function handleError(err) {
+                    // print to page
+                    $log.error(err);
+                    $scope.message = 'There was a problem creating this user.';
                 }
 
-                self.action = 'all';
+                function handleSuccess(user) {
+                    $log.info('saved user: ', user);
+                    $scope.message = 'Successfully saved user: ' + data.user.email;
+                    account.getOrgs().then(updateOrgs);
+                    account.getUsers().then(updateUsers);
+                    self.action = 'all';
+                    data.user = user;
+                }
+
+                if (data.user.id) {
+                    $log.info('PUT', data.user.id, data.user.email, data.user.firstName, data.user.lastName, data.org.id);
+
+                    account.putUser({
+                        id: data.user.id,
+                        email: data.user.email,
+                        firstName: data.user.firstName,
+                        lastName: data.user.lastName,
+                        org: data.org.id
+                    }).then(handleSuccess, handleError);
+                } else {
+                    $log.info('POST', data.user.email, data.user.firstName, data.user.lastName, data.org.id);
+
+                    account.postUser({
+                        email: data.user.email,
+                        password: data.user.password,
+                        firstName: data.user.firstName,
+                        lastName: data.user.lastName,
+                        org: data.org.id
+                    }).then(handleSuccess, handleError);
+                }
             };
 
             account.getOrgs().then(updateOrgs);

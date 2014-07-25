@@ -3,10 +3,12 @@ define(['account'],function(account) {
 
     return angular.module('c6.proshop.orgs',[account.name])
         .controller('OrgsController', ['$scope', '$log', 'account',
-        function                      ( $scope , $log,  account ) {
+        function                      ( $scope ,  $log,   account ) {
             var self = this,
-                data = $scope.data,
-                _data = angular.copy(data);
+                data = $scope.data;
+
+            $log = $log.context('OrgsCtrl');
+            $log.info('instantiated');
 
             self.displayWaterfalls = angular.copy(account.waterfallOptions);
             self.videoWaterfalls = angular.copy(account.waterfallOptions);
@@ -14,22 +16,28 @@ define(['account'],function(account) {
             self.action = 'all';
 
             function updateOrgs(orgs) {
+                data.appData.orgs = orgs;
                 data.orgs = orgs;
-                _data.orgs = orgs;
             }
 
-            function convertWaterfall(data) {
-                return data.map(function(item) {
-                    if (item.checked) { return item.value; }
-                }).filter(function(item) { return !!item; });
-            }
+            // function convertWaterfall(data) {
+            //     return data.map(function(item) {
+            //         if (item.checked) { return item.value; }
+            //     }).filter(function(item) { return !!item; });
+            // }
 
             self.editOrg = function(org){
+                $scope.message = null;
                 self.action = 'edit';
                 data.org = org;
+                account.getUsers(org)
+                    .then(function(users) {
+                        data.users = users;
+                    });
             };
 
             self.addNewOrg = function() {
+                $scope.message = null;
                 self.action = 'new';
                 data.org = {
                     name: null,
@@ -45,23 +53,34 @@ define(['account'],function(account) {
             self.filterData = function() {
                 var query = data.query.toLowerCase();
 
-                data.orgs = _data.orgs.filter(function(org) {
+                data.orgs = data.appData.orgs.filter(function(org) {
                     return org.name.toLowerCase().indexOf(query) >= 0;
                 });
             };
 
             self.saveOrg = function() {
-                $log.info([
-                    data.org.name,
-                    data.org.status,
-                    data.org.tag,
-                    convertWaterfall(self.videoWaterfalls),
-                    convertWaterfall(self.displayWaterfalls),
-                    data.org.minAdCount
-                ]);
-                self.action = 'all';
-                // uncomment when body is ready
-                // return account.createOrg(body)
+                function handleError(err) {
+                    $log.error(err);
+                    $scope.message = 'There was a problem saving the org.';
+                }
+
+                function handleSuccess(org) {
+                    $log.info('saved org: ', org);
+                    $scope.message = 'Successfully saved org: ' + org.name;
+                    account.getOrgs().then(updateOrgs);
+                    self.action = 'all';
+                }
+
+                if (data.org.id) {
+                    account.putOrg({
+                        id: data.org.id,
+                        name: data.org.name
+                    }).then(handleSuccess, handleError);
+                } else {
+                    account.postOrg({
+                        name: data.org.name
+                    }).then(handleSuccess, handleError);
+                }
             };
 
             account.getOrgs().then(updateOrgs);

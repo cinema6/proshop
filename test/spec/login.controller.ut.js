@@ -9,10 +9,15 @@
                 $log,
                 $q,
                 auth,
+                account,
                 LoginCtrl;
 
             beforeEach(function() {
                 module('c6.proshop');
+
+                account = {
+                    getOrg: jasmine.createSpy('account.getOrg')
+                };
 
                 inject(function($injector){
                     $controller = $injector.get('$controller');
@@ -22,9 +27,12 @@
                     $rootScope = $injector.get('$rootScope');
                     $scope = $rootScope.$new();
 
+                    account.getOrg.deferred = $q.defer();
+                    account.getOrg.and.returnValue(account.getOrg.deferred.promise);
+
                     $log.context = function(){ return $log; }
 
-                    LoginCtrl = $controller('LoginCtrl', { $scope: $scope });
+                    LoginCtrl = $controller('LoginCtrl', { $scope: $scope, account: account });
                 });
             });
 
@@ -48,6 +56,7 @@
                             LoginCtrl.email = 'test';
                             LoginCtrl.password = 'password';
                             LoginCtrl.login();
+                            account.getOrg.deferred.resolve({name: 'Org1', id: 'org'});
                         });
 
                         expect($scope.$emit).toHaveBeenCalledWith('loginSuccess', user);
