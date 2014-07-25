@@ -2,6 +2,6 @@
     'use strict';
 
     module.exports = {
-        build: ['.tmp']
+        build: ['<%= settings.distDir %>','.tmp']
     };
 }());
