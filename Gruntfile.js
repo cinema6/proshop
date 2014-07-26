@@ -80,16 +80,32 @@ module.exports = function(grunt) {
      * BUILD TASKS
      *
      *********************************************************************************************/
+    grunt.registerTask('build', 'build app into distDir', function(){
+        if (!grunt.option('skip-tests')){
+            grunt.task.run('test:unit');
+        }
+        if (grunt.option('any')){
+            grunt.task.run('git_describe_tags:any');
+        } else {
+            grunt.task.run('git_describe_tags');
+        }
+        grunt.task.run('clean:build');
+        grunt.task.run('copy:dist');
+        grunt.task.run('ngtemplates:dist');
+        grunt.task.run('htmlmin:dist');
+        grunt.task.run('requirejs:dist');
+        grunt.task.run('replace:dist');
+    });
 
-    grunt.registerTask('build', 'build app into distDir', [
-        'test:unit',
-        'git_describe_tags:any',
-        'clean:build',
-        'copy:dist',
-        'ngtemplates:dist',
-        'htmlmin:dist',
-        'requirejs:dist',
-        'replace:dist'
-    ]);
+//    grunt.registerTask('build', 'build app into distDir', [
+//        'test:unit',
+//        'git_describe_tags:any',
+//        'clean:build',
+//        'copy:dist',
+//        'ngtemplates:dist',
+//        'htmlmin:dist',
+//        'requirejs:dist',
+//        'replace:dist'
+//    ]);
 
 };
