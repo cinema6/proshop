@@ -12,5 +12,19 @@ module.exports = {
                 }
             }
         ]
+    },
+    api: {
+        src:  ['<%= _versionDir %>/scripts/main.js'],
+        dest: ['<%= _versionDir %>/scripts/main.js'],
+        replacements: [
+            {
+                from: /kApiUrl="\/api"/,
+                to: function(match, index, text, matches) {
+                    var grunt = require('grunt'),
+                        target = grunt.option('target');
+                    return  'kApiUrl="//' + target + '/api"';
+                }
+            }
+        ]
     }
 };
