@@ -9,7 +9,7 @@
             options: {
                 reporters: ['progress','junit'],
                 junitReporter: {
-                    outputFile: 'reportx/unit.xml'
+                    outputFile: 'reports/unit.xml'
                 }
             }
         },
