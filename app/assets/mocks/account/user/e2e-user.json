@@ -1,6 +1,8 @@
 {
     "id": "e2e-12221",
     "email": "test1@example.com",
+    "firstName": "Johnny",
+    "lastName": "Testmonkey",
     "created": "2014-06-13T19:28:39.408Z",
     "lastUpdated": "2014-06-13T19:28:39.408Z",
     "applications": ["e-51ae37625cb57f"],

@@ -2,19 +2,19 @@
 <!-- <select ng-model="data.org" ng-options="org.name for org in data.orgs">
     <option value="">-- choose org --</option>
 </select> -->
-<input type="text" ng-model="data.query" ng-change="UsersCtrl.filterData()" placeholder="Search Users">
+<input style="float:right;width:250px;" type="text" ng-model="data.query" ng-change="UsersCtrl.filterData()" placeholder="Search Users by Email, Name or Org">
 
 <table class="table table-striped table-hover table-bordered" style="margin-top:20px">
     <tbody>
         <tr>
             <th>Email</th>
-            <th>ID</th>
+            <th>Name</th>
             <th>Org</th>
             <th>Status</th>
         </tr>
         <tr ng-repeat="user in data.users">
             <td><a href="" ng-click="UsersCtrl.editUser(user)">{{user.email}}</a></td>
-            <td>{{user.id}}</td>
+            <td>{{user.firstName}} {{user.lastName}}</td>
             <td>{{user.org.name}}</td>
             <td>{{user.status}}</td>
         </tr>
