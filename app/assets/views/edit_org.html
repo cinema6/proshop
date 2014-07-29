@@ -49,14 +49,12 @@
     <tbody>
         <tr>
             <th>Users</th>
-            <th>ID</th>
-            <th>Org</th>
+            <th>Name</th>
             <th>Status</th>
         </tr>
         <tr ng-repeat="user in data.users">
             <td>{{user.email}}</td>
-            <td>{{user.id}}</td>
-            <td>{{user.org.name}}</td>
+            <td>{{user.firstName}} {{user.lastName}}</td>
             <td>{{user.status}}</td>
         </tr>
     </tbody>

@@ -2,6 +2,8 @@
     "_id": "533dd22bbb3aab9e2997e7f6",
     "id": "e2e-light-user",
     "email": "saxguy@cinema6.com",
+    "firstName": "Sax",
+    "lastName": "Guy",
     "status": "active",
     "org": "e2e-org",
     "applications": [
