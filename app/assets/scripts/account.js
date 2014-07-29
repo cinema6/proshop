@@ -252,8 +252,6 @@ define(['angular','c6ui'], function(angular,c6ui){
                 method: 'PUT',
                 url: c6UrlMaker('account/user/' + user.id,'api'),
                 data: {
-                    email:      user.email,
-                    org:        user.org,
                     lastName:   user.lastName,
                     firstName:  user.firstName
                 }
