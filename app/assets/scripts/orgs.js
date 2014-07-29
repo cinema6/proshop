@@ -43,6 +43,7 @@ define(['account'],function(account) {
                     name: null,
                     status: 'active'
                 };
+                data.users = null;
             };
 
             self.sortOrgs = function(/*field*/) {
