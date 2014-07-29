@@ -25,7 +25,9 @@
                 account = {
                     getOrg: jasmine.createSpy('account.getOrg'),
                     getOrgs: jasmine.createSpy('account.getOrgs'),
-                    getUsers: jasmine.createSpy('account.getUsers')
+                    getUsers: jasmine.createSpy('account.getUsers'),
+                    putUser: jasmine.createSpy('account.putUser'),
+                    postUser: jasmine.createSpy('account.postUser')
                 };
 
                 mockOrgs = [
@@ -73,11 +75,16 @@
 
                     account.getOrgs.deferred = $q.defer();
                     account.getOrgs.and.returnValue(account.getOrgs.deferred.promise);
-                    // account.getOrgs.and.returnValue($q.when(angular.copy(mockOrgs)));
 
                     account.getUsers.deferred = $q.defer();
                     account.getUsers.and.returnValue(account.getUsers.deferred.promise);
-                    // account.getUsers.and.returnValue($q.when(angular.copy(mockUsers)));
+
+                    account.putUser.deferred = $q.defer();
+                    account.putUser.and.returnValue(account.putUser.deferred.promise);
+
+                    account.postUser.deferred = $q.defer();
+                    account.postUser.and.returnValue(account.postUser.deferred.promise);
+
 
                     $log.context = function(){ return $log; }
 
@@ -198,6 +205,119 @@
                         $scope.data.query = '';
                         UsersCtrl.filterData();
                         expect($scope.data.users.length).toBe(2);
+                    });
+                });
+
+                describe('saveUser()', function() {
+                    describe('when updating a user', function() {
+                        beforeEach(function() {
+                            $scope.$apply(function() {
+                                account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
+                                account.getUsers.deferred.resolve(angular.copy(mockUsers));
+                            });
+
+                            UsersCtrl.editUser($scope.data.users[0]);
+                        });
+
+                        it('should PUT the user', function() {
+                            UsersCtrl.saveUser();
+
+                            expect(account.putUser).toHaveBeenCalledWith({
+                                id: $scope.data.users[0].id,
+                                email: $scope.data.users[0].email,
+                                firstName: $scope.data.users[0].firstName,
+                                lastName: $scope.data.users[0].lastName,
+                                org: $scope.data.users[0].org.id
+                            });
+                        });
+
+                        it('on success should put a message on the scope, set the action, and reload org and user data', function() {
+                            UsersCtrl.saveUser();
+
+                            expect($scope.message).toBe(null);
+                            expect(account.getOrgs.calls.count()).toBe(1);
+                            expect(account.getUsers.calls.count()).toBe(1);
+
+                            $scope.$apply(function() {
+                                account.putUser.deferred.resolve($scope.data.users[0]);
+                            });
+
+                            expect($scope.message).toBe('Successfully saved user: ' + $scope.data.user.email);
+                            expect(account.getOrgs.calls.count()).toBe(2);
+                            expect(account.getUsers.calls.count()).toBe(2);
+                            expect(UsersCtrl.action).toBe('all');
+                        });
+
+                        it('on error should stay on the edit page and display an error message', function() {
+                            UsersCtrl.saveUser();
+
+                            expect($scope.message).toBe(null);
+
+                            $scope.$apply(function() {
+                                account.putUser.deferred.reject();
+                            });
+
+                            expect($scope.message).toBe('There was a problem creating this user.');
+                        });
+                    });
+
+                    describe('when creating a user', function() {
+                        beforeEach(function() {
+                            $scope.$apply(function() {
+                                account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
+                                account.getUsers.deferred.resolve(angular.copy(mockUsers));
+                            });
+
+                            UsersCtrl.addNewUser();
+
+                            $scope.data.user = {};
+                            $scope.data.user.email = 'foo@bar.com';
+                            $scope.data.user.password = 'secret';
+                            $scope.data.user.firstName = 'Test';
+                            $scope.data.user.lastName = 'Name';
+                            $scope.data.org = $scope.data.orgs[0];
+                        });
+
+                        it('should POST the user', function() {
+                            UsersCtrl.saveUser();
+
+                            expect(account.postUser).toHaveBeenCalledWith({
+                                email: $scope.data.user.email,
+                                password: $scope.data.user.password,
+                                firstName: $scope.data.user.firstName,
+                                lastName: $scope.data.user.lastName,
+                                org: $scope.data.org.id
+                            });
+                        });
+
+                        it('on success should put a message on the scope, set the action, and reload org and user data', function() {
+                            UsersCtrl.saveUser();
+
+                            expect($scope.message).toBe(null);
+                            expect(account.getOrgs.calls.count()).toBe(1);
+                            expect(account.getUsers.calls.count()).toBe(1);
+
+                            $scope.$apply(function() {
+                                account.postUser.deferred.resolve($scope.data.user);
+                            });
+
+                            expect($scope.message).toBe('Successfully saved user: ' + $scope.data.user.email);
+                            expect(account.getOrgs.calls.count()).toBe(2);
+                            expect(account.getUsers.calls.count()).toBe(2);
+                            expect(UsersCtrl.action).toBe('all');
+                        });
+
+                        it('on error should stay on the edit page and display an error message', function() {
+                            UsersCtrl.saveUser();
+
+                            expect($scope.message).toBe(null);
+
+                            $scope.$apply(function() {
+                                account.postUser.deferred.reject();
+                            });
+
+                            expect($scope.message).toBe('There was a problem creating this user.');
+                        });
                     });
                 });
             });
