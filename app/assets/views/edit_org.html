@@ -40,6 +40,12 @@
         </div>
     </div>
     <input type="submit" value="Save" ng-disabled="!theForm.$valid">
+    <input type="button" value="Delete" ng-show="data.org.id" ng-click="confirmDelete = true">
+    <div style="display:inline;padding-left:30px;" ng-show="confirmDelete === true">
+        <span>Are you sure?</span>
+        <input type="button" value="Yes" ng-click="OrgsCtrl.deleteUser()">
+        <input type="button" value="Cancel" ng-click="confirmDelete = false">
+    </div>
     <div>
         <span>{{lastStatus}}</span>
     </div>

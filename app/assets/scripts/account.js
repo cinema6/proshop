@@ -246,6 +246,26 @@ define(['angular','c6ui'], function(angular,c6ui){
             });
         };
 
+        /*
+        ********************
+        USERS
+        ********************
+        */
+
+        this.getUser = function(id) {
+            return httpWrapper({
+                method: 'GET',
+                url: c6UrlMaker('account/user/' + id,'api')
+            });
+        };
+
+        this.getUsers = function(org) {
+            return httpWrapper({
+                method: 'GET',
+                url: c6UrlMaker('account/users' + (org ? '?org=' + org.id : ''),'api')
+            });
+        };
+
         this.putUser = function(user) {
             // id,email,password,org,lastName,firstName
             return httpWrapper({
@@ -274,6 +294,33 @@ define(['angular','c6ui'], function(angular,c6ui){
             });
         };
 
+        this.deleteUser = function(user) {
+            return httpWrapper({
+                method: 'DELETE',
+                url: c6UrlMaker('account/user/' + user.id,'api')
+            });
+        };
+
+        /*
+        *****************
+        ORGS
+        *****************
+        */
+
+        this.getOrg = function(orgId) {
+            return httpWrapper({
+                method: 'GET',
+                url: c6UrlMaker('account/org/' + orgId,'api')
+            });
+        };
+
+        this.getOrgs = function(field) {
+            return httpWrapper({
+                method: 'GET',
+                url: c6UrlMaker('account/orgs' + (field ? '?sort=' + field : ''),'api')
+            });
+        };
+
         this.putOrg = function(org) {
             // id,email,password,org,lastName,firstName
             return httpWrapper({
@@ -295,31 +342,10 @@ define(['angular','c6ui'], function(angular,c6ui){
             });
         };
 
-        this.getOrg = function(orgId) {
+        this.deleteOrg = function(org) {
             return httpWrapper({
-                method: 'GET',
-                url: c6UrlMaker('account/org/' + orgId,'api')
-            });
-        };
-
-        this.getOrgs = function(field) {
-            return httpWrapper({
-                method: 'GET',
-                url: c6UrlMaker('account/orgs' + (field ? '?sort=' + field : ''),'api')
-            });
-        };
-
-        this.getUser = function(id) {
-            return httpWrapper({
-                method: 'GET',
-                url: c6UrlMaker('account/user/' + id,'api')
-            });
-        };
-
-        this.getUsers = function(org) {
-            return httpWrapper({
-                method: 'GET',
-                url: c6UrlMaker('account/users' + (org ? '?org=' + org.id : ''),'api')
+                method: 'DELETE',
+                url: c6UrlMaker('account/org/' + org.id,'api')
             });
         };
     }]);

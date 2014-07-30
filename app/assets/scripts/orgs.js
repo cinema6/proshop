@@ -46,6 +46,20 @@ define(['account'],function(account) {
                 data.users = null;
             };
 
+            self.deleteOrg = function() {
+                $log.info('deleting user: ', data.org);
+
+                account.deleteOrg(data.org)
+                    .then(function() {
+                        $scope.message = 'Successfully deleted org: ' + data.org.name;
+                        account.getOrgs().then(updateOrgs);
+                        self.action = 'all';
+                    }, function(err) {
+                        $log.error(err);
+                        $scope.message = 'There was a problem deleting this org.';
+                    });
+            };
+
             self.sortOrgs = function(/*field*/) {
                 // I imagine there will be something in the UI to allow sorting the list
                 // return account.getOrgs(field).then(updateOrgs);

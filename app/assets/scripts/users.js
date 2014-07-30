@@ -72,6 +72,21 @@ define(['account'],function(account) {
                 // return account.getOrgs(field).then(updateOrgs);
             };
 
+            self.deleteUser = function() {
+                $log.info('deleting user: ', data.user);
+
+                account.deleteUser(data.user)
+                    .then(function() {
+                        $scope.message = 'Successfully deleted user: ' + data.user.email;
+                        account.getOrgs().then(updateOrgs);
+                        account.getUsers().then(updateUsers);
+                        self.action = 'all';
+                    }, function(err) {
+                        $log.error(err);
+                        $scope.message = 'There was a problem deleting this user.';
+                    });
+            };
+
             this.saveUser = function() {
                 function handleError(err) {
                     // print to page
@@ -114,6 +129,14 @@ define(['account'],function(account) {
 
             account.getOrgs().then(updateOrgs);
             account.getUsers().then(updateUsers);
+
+            // $scope.$watch(function() { return self.action; }, function(action, lastAction) {
+            //     if (action === lastAction) { return; }
+            //     if (action === 'all') {
+            //         account.getOrgs().then(updateOrgs);
+            //         account.getUsers().then(updateUsers);
+            //     }
+            // });
         }])
 
         .directive('newUser', [ function ( ) {

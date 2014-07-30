@@ -25,7 +25,8 @@
                     getOrgs: jasmine.createSpy('account.getOrgs'),
                     getUsers: jasmine.createSpy('account.getUsers'),
                     putOrg: jasmine.createSpy('account.putUser'),
-                    postOrg: jasmine.createSpy('account.postUser')
+                    postOrg: jasmine.createSpy('account.postUser'),
+                    deleteOrg: jasmine.createSpy('account.deleteOrg')
                 };
 
                 mockOrgs = [
@@ -73,6 +74,9 @@
 
                     account.postOrg.deferred = $q.defer();
                     account.postOrg.and.returnValue(account.postOrg.deferred.promise);
+
+                    account.deleteOrg.deferred = $q.defer();
+                    account.deleteOrg.and.returnValue(account.deleteOrg.deferred.promise);
 
 
                     $log.context = function(){ return $log; }
@@ -263,6 +267,46 @@
 
                             expect($scope.message).toBe('There was a problem saving the org.');
                         });
+                    });
+                });
+
+                describe('deleteOrg()', function() {
+                    beforeEach(function() {
+                        $scope.$apply(function() {
+                            account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
+                        });
+
+                        OrgsCtrl.editOrg($scope.data.orgs[0]);
+                    });
+
+                    it('should DELETE the org', function() {
+                        OrgsCtrl.deleteOrg();
+
+                        expect(account.deleteOrg).toHaveBeenCalledWith($scope.data.orgs[0]);
+                    });
+
+                    it('on success should put a message on the scope, set the action, reload all the orgs data', function() {
+                        OrgsCtrl.deleteOrg();
+
+                        expect(account.getOrgs.calls.count()).toBe(1);
+
+                        $scope.$apply(function() {
+                            account.deleteOrg.deferred.resolve($scope.data.org);
+                        });
+
+                        expect($scope.message).toBe('Successfully deleted org: ' + $scope.data.org.name);
+                        expect(account.getOrgs.calls.count()).toBe(2);
+                        expect(OrgsCtrl.action).toBe('all');
+                    });
+
+                    it('on error should stay on the edit page and display an error message', function() {
+                        OrgsCtrl.deleteOrg();
+
+                        $scope.$apply(function() {
+                            account.deleteOrg.deferred.reject();
+                        });
+
+                        expect($scope.message).toBe('There was a problem deleting this org.');
                     });
                 });
             });

@@ -64,6 +64,26 @@ define(['mockHttp'], function(mockHttp){
         }
     });
 
+    httpMocks.whenDELETE('/api/account/org/o-111', function() {
+        this.proxy('mocks/account/org/e2e-org.json');
+    });
+
+    httpMocks.whenDELETE('/api/account/org/o-112', function() {
+        this.proxy('mocks/account/org/e2e-org.json');
+    });
+
+    httpMocks.whenDELETE('/api/account/org/o-113', function() {
+        this.proxy('mocks/account/org/e2e-org.json');
+    });
+
+    httpMocks.whenDELETE('/api/account/org/o-114', function() {
+        this.proxy('mocks/account/org/e2e-org.json');
+    });
+
+    httpMocks.whenDELETE('/api/account/org/e2e-org', function() {
+        this.proxy('mocks/account/org/e2e-org.json');
+    });
+
     /*
      * Orgs Endpoints
      */
@@ -124,6 +144,30 @@ define(['mockHttp'], function(mockHttp){
     });
 
     httpMocks.whenPUT('/api/account/user/e2e-light-user', function() {
+        this.proxy('mocks/account/user/e2e-user.json');
+    });
+
+    httpMocks.whenDELETE('/api/account/user/e2e-12221', function() {
+        this.proxy('mocks/account/user/e2e-user.json');
+    });
+
+    httpMocks.whenDELETE('/api/account/user/e2e-12222', function() {
+        this.proxy('mocks/account/user/e2e-user.json');
+    });
+
+    httpMocks.whenDELETE('/api/account/user/e2e-12223', function() {
+        this.proxy('mocks/account/user/e2e-user.json');
+    });
+
+    httpMocks.whenDELETE('/api/account/user/e2e-12224', function() {
+        this.proxy('mocks/account/user/e2e-user.json');
+    });
+
+    httpMocks.whenDELETE('/api/account/user/e2e-12225', function() {
+        this.proxy('mocks/account/user/e2e-user.json');
+    });
+
+    httpMocks.whenDELETE('/api/account/user/e2e-light-user', function() {
         this.proxy('mocks/account/user/e2e-user.json');
     });
 
