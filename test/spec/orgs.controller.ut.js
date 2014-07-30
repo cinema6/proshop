@@ -279,6 +279,17 @@
                         OrgsCtrl.editOrg($scope.data.orgs[0]);
                     });
 
+                    it('should not DELETE the org if there are users belonging to it', function() {
+                        $scope.$apply(function() {
+                            account.getUsers.deferred.resolve(mockUsers[0]);
+                        });
+
+                        OrgsCtrl.deleteOrg();
+
+                        expect($scope.message).toBe('You must delete or move the Users belonging to this Org before deleting it.');
+                        expect(account.deleteOrg).not.toHaveBeenCalled();
+                    });
+
                     it('should DELETE the org', function() {
                         OrgsCtrl.deleteOrg();
 

@@ -49,6 +49,11 @@ define(['account'],function(account) {
             self.deleteOrg = function() {
                 $log.info('deleting user: ', data.org);
 
+                if (data.users) {
+                    $scope.message = 'You must delete or move the Users belonging to this Org before deleting it.';
+                    return;
+                }
+
                 account.deleteOrg(data.org)
                     .then(function() {
                         $scope.message = 'Successfully deleted org: ' + data.org.name;
