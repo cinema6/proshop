@@ -30,6 +30,7 @@ define(['account'],function(account) {
                 $scope.message = null;
                 self.action = 'edit';
                 data.org = org;
+                data.users = null;
                 account.getUsers(org)
                     .then(function(users) {
                         data.users = users;
