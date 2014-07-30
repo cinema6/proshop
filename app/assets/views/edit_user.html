@@ -49,6 +49,15 @@
             </div>
         </div>
     </div>
+    <div class="form-group">
+            <label for="branding" class="control-label"> Branding: </label>
+            <div>
+                <input id="branding" type="text" name="branding" ng-model="data.user.branding" autocomplete="off" ng-trim="false" ng-minlength="3" ng-maxlength="128" required>
+                <span ng-show="theForm.email.$error.required"> Required. </span>
+                <span ng-show="theForm.email.$error.minlength"> Too short. </span>
+                <span ng-show="theForm.email.$error.maxlength"> Too long. </span>
+            </div>
+        </div>
     <!-- Below are pieces that will be enabled later -->
     <div ng-if="UsersCtrl.showUserSettings">
         <div ng-repeat="permission in UsersCtrl.userPermissionOptions">

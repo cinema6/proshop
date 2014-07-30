@@ -4,6 +4,7 @@
     "email": "saxguy@cinema6.com",
     "firstName": "Sax",
     "lastName": "Guy",
+    "branding": "saxtheme",
     "status": "active",
     "org": "e2e-org",
     "applications": [

@@ -3,6 +3,7 @@
     "email": "testerrr3@cinema6.com",
     "firstName": "Testy",
     "lastName": "McTest",
+    "branding": "test_branding",
     "created": "2014-06-13T19:28:39.408Z",
     "lastUpdated": "2014-06-13T19:28:39.408Z",
     "applications": ["e-51ae37625cb57f"],
