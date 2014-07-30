@@ -42,6 +42,7 @@ define(['c6defines'],function(c6){
         this.GET   = {};
         this.POST  = {};
         this.PUT   = {};
+        this.DELETE   = {};
     }
 
     HttpMock.prototype.whenGET = function(url){
@@ -60,6 +61,13 @@ define(['c6defines'],function(c6){
     HttpMock.prototype.whenPUT = function(url, handler){
         var responder = new HttpMockResponder();
         this.PUT[url] = responder;
+        responder.handler = handler;
+        return responder;
+    };
+
+    HttpMock.prototype.whenDELETE = function(url, handler){
+        var responder = new HttpMockResponder();
+        this.DELETE[url] = responder;
         responder.handler = handler;
         return responder;
     };

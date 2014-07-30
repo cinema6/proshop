@@ -1,5 +1,8 @@
 # ProShop
 
+* *[v0.4.0]*
+    *[FEATURE]: Ability to delete Users and Orgs. Orgs with Users cannot be deleted
+
 ## v0.3.0 (July 30, 2014)
 
 * *[v0.3.0]*

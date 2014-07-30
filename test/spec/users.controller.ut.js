@@ -27,7 +27,8 @@
                     getOrgs: jasmine.createSpy('account.getOrgs'),
                     getUsers: jasmine.createSpy('account.getUsers'),
                     putUser: jasmine.createSpy('account.putUser'),
-                    postUser: jasmine.createSpy('account.postUser')
+                    postUser: jasmine.createSpy('account.postUser'),
+                    deleteUser: jasmine.createSpy('account.deleteUser')
                 };
 
                 mockOrgs = [
@@ -86,6 +87,9 @@
 
                     account.postUser.deferred = $q.defer();
                     account.postUser.and.returnValue(account.postUser.deferred.promise);
+
+                    account.deleteUser.deferred = $q.defer();
+                    account.deleteUser.and.returnValue(account.deleteUser.deferred.promise);
 
 
                     $log.context = function(){ return $log; }
@@ -321,6 +325,51 @@
 
                             expect($scope.message).toBe('There was a problem creating this user.');
                         });
+                    });
+                });
+
+                describe('deleteUser(user)', function() {
+                    beforeEach(function() {
+                        $scope.$apply(function() {
+                            account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
+                            account.getUsers.deferred.resolve(angular.copy(mockUsers));
+                        });
+
+                        UsersCtrl.editUser($scope.data.users[0]);
+                    });
+
+                    it('should DELETE the user', function() {
+                        UsersCtrl.deleteUser();
+
+                        expect(account.deleteUser).toHaveBeenCalledWith($scope.data.users[0]);
+                    });
+
+                    it('on success should', function() {
+                        UsersCtrl.deleteUser();
+
+                        expect($scope.message).toBe(null);
+                        expect(account.getOrgs.calls.count()).toBe(1);
+                        expect(account.getUsers.calls.count()).toBe(1);
+
+                        $scope.$apply(function() {
+                            account.deleteUser.deferred.resolve();
+                        });
+
+                        expect($scope.message).toBe('Successfully deleted user: ' + $scope.data.user.email);
+                        expect(account.getOrgs.calls.count()).toBe(2);
+                        expect(account.getUsers.calls.count()).toBe(2);
+                        expect(UsersCtrl.action).toBe('all');
+                    });
+
+                    it('on error', function() {
+                        UsersCtrl.deleteUser();
+
+                        $scope.$apply(function() {
+                            account.deleteUser.deferred.reject();
+                        });
+
+                        expect(UsersCtrl.action).toBe('edit');
+                        expect($scope.message).toBe('There was a problem deleting this user.');
                     });
                 });
             });

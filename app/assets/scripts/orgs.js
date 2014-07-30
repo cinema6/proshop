@@ -30,6 +30,7 @@ define(['account'],function(account) {
                 $scope.message = null;
                 self.action = 'edit';
                 data.org = org;
+                data.users = null;
                 account.getUsers(org)
                     .then(function(users) {
                         data.users = users;
@@ -44,6 +45,25 @@ define(['account'],function(account) {
                     status: 'active'
                 };
                 data.users = null;
+            };
+
+            self.deleteOrg = function() {
+                $log.info('deleting user: ', data.org);
+
+                if (data.users) {
+                    $scope.message = 'You must delete or move the Users belonging to this Org before deleting it.';
+                    return;
+                }
+
+                account.deleteOrg(data.org)
+                    .then(function() {
+                        $scope.message = 'Successfully deleted org: ' + data.org.name;
+                        account.getOrgs().then(updateOrgs);
+                        self.action = 'all';
+                    }, function(err) {
+                        $log.error(err);
+                        $scope.message = 'There was a problem deleting this org.';
+                    });
             };
 
             self.sortOrgs = function(/*field*/) {
