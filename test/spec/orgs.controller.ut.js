@@ -133,7 +133,7 @@
                         expect($scope.data.org).toEqual($scope.data.orgs[1]);
                         expect(account.getUsers).toHaveBeenCalledWith($scope.data.orgs[1]);
 
-                        expect($scope.data.users).not.toBeDefined();
+                        expect($scope.data.users).toBe(null);
 
                         $scope.$apply(function() {
                             account.getUsers.deferred.resolve(mockUsers[1]);
