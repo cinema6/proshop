@@ -89,24 +89,25 @@ define(['account'],function(account) {
                 }
 
                 if (data.user.id) {
-                    $log.info('PUT', data.user.id, data.user.email, data.user.firstName, data.user.lastName, data.org.id);
+                    $log.info('PUT', data.user.id, data.user.email, data.user.firstName, data.user.lastName, data.org.id, data.user.branding);
 
                     account.putUser({
                         id: data.user.id,
-                        email: data.user.email,
                         firstName: data.user.firstName,
                         lastName: data.user.lastName,
-                        org: data.org.id
+                        org: data.org.id,
+                        branding: data.user.branding
                     }).then(handleSuccess, handleError);
                 } else {
-                    $log.info('POST', data.user.email, data.user.firstName, data.user.lastName, data.org.id);
+                    $log.info('POST', data.user.email, data.user.firstName, data.user.lastName, data.org.id, data.user.branding);
 
                     account.postUser({
                         email: data.user.email,
                         password: data.user.password,
                         firstName: data.user.firstName,
                         lastName: data.user.lastName,
-                        org: data.org.id
+                        org: data.org.id,
+                        branding: data.user.branding
                     }).then(handleSuccess, handleError);
                 }
             };

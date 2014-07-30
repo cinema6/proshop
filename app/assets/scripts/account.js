@@ -253,7 +253,8 @@ define(['angular','c6ui'], function(angular,c6ui){
                 url: c6UrlMaker('account/user/' + user.id,'api'),
                 data: {
                     lastName:   user.lastName,
-                    firstName:  user.firstName
+                    firstName:  user.firstName,
+                    branding:   user.branding
                 }
             });
         };
@@ -267,7 +268,8 @@ define(['angular','c6ui'], function(angular,c6ui){
                     password:   user.password,
                     org:        user.org,
                     lastName:   user.lastName,
-                    firstName:  user.firstName
+                    firstName:  user.firstName,
+                    branding:   user.branding
                 }
             });
         };

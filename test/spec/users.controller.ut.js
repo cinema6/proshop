@@ -47,14 +47,16 @@
                         email: 'e@mail.com',
                         firstName: 'J',
                         lastName: 'F',
-                        org: 'o-1'
+                        org: 'o-1',
+                        branding: 'theme1'
                     },
                     {
                         id: 'u-2',
                         email: 'mail@e.net',
                         firstName: 'B',
                         lastName: 'D',
-                        org: 'o-2'
+                        org: 'o-2',
+                        branding: 'theme2'
                     }
                 ];
 
@@ -224,10 +226,10 @@
 
                             expect(account.putUser).toHaveBeenCalledWith({
                                 id: $scope.data.users[0].id,
-                                email: $scope.data.users[0].email,
                                 firstName: $scope.data.users[0].firstName,
                                 lastName: $scope.data.users[0].lastName,
-                                org: $scope.data.users[0].org.id
+                                org: $scope.data.users[0].org.id,
+                                branding: $scope.data.users[0].branding
                             });
                         });
 
@@ -286,7 +288,8 @@
                                 password: $scope.data.user.password,
                                 firstName: $scope.data.user.firstName,
                                 lastName: $scope.data.user.lastName,
-                                org: $scope.data.org.id
+                                org: $scope.data.org.id,
+                                branding: $scope.data.user.branding
                             });
                         });
 
