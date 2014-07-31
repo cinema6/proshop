@@ -128,28 +128,158 @@ define(['angular','c6ui'], function(angular,c6ui){
             return deferred.promise;
         }
 
-        this.waterfallOptions = [
-            {
-                name: 'Cinema6',
-                value: 'cinema6',
-                checked: true
-            },
-            {
-                name: 'Cinema6 - Publisher',
-                value: 'cinema6-publisher',
-                checked: false
-            },
-            {
-                name: 'Publisher',
-                value: 'publisher',
-                checked: false
-            },
-            {
-                name: 'Publisher - Cinema6',
-                value: 'publisher-cinema6',
-                checked: false
-            }
-        ];
+        this.waterfallData = {
+            types: [
+                {
+                    title: 'Video Waterfall Options',
+                    description: 'These are options available to the publisher for ad cards in MiniReels',
+                    options: 'videoWaterfalls',
+                    type: 'options'
+                },
+                {
+                    title: 'Video Waterfall Default',
+                    description: 'This will be the default waterfall for MiniReels that do not explicitly set a waterfall option',
+                    options: 'videoWaterfalls',
+                    type: 'default'
+                },
+                {
+                    title: 'Display Waterfall Options',
+                    description: 'These are options available to the publisher for the display ad module in Companion Ad MiniReels',
+                    options: 'displayWaterfalls',
+                    type: 'options'
+                },
+                {
+                    title: 'Display Waterfall Default',
+                    description: 'This will be the default waterfall for Companion Ad MiniReels that do not explicitly set a waterfall option',
+                    options: 'displayWaterfalls',
+                    type: 'default'
+                }
+            ],
+            options: [
+                {
+                    name: 'Cinema6',
+                    value: 'cinema6',
+                    enabled: true,
+                },
+                {
+                    name: 'Cinema6 - Publisher',
+                    value: 'cinema6-publisher',
+                    enabled: false,
+                },
+                {
+                    name: 'Publisher',
+                    value: 'publisher',
+                    enabled: false,
+                },
+                {
+                    name: 'Publisher - Cinema6',
+                    value: 'publisher-cinema6',
+                    enabled: false,
+                }
+            ]
+        };
+
+        this.adConfig = {
+            types: [
+                {
+                    title: 'First Placement',
+                    description: 'Number of videos before the first ad is shown',
+                    label: 'firstPlacement',
+                    options: [
+                        {
+                            label:'No ads',
+                            value: -1
+                        },
+                        {
+                            label: 0,
+                            value: 0
+                        },
+                        {
+                            label: 1,
+                            value: 1
+                        },
+                        {
+                            label: 2,
+                            value: 2
+                        }
+                    ],
+                },
+                {
+                    title: 'Ad Frequency',
+                    description: 'Number of videos between ads',
+                    label: 'frequency',
+                    options: [
+                        {
+                            label: 'Only show first ad',
+                            value: 0
+                        },
+                        {
+                            label: 1,
+                            value: 1
+                        },
+                        {
+                            label: 2,
+                            value: 2
+                        },
+                        {
+                            label: 3,
+                            value: 3
+                        },
+                        {
+                            label: 4,
+                            value: 4
+                        },
+                        {
+                            label: 5,
+                            value: 5
+                        },
+                        {
+                            label: 6,
+                            value: 6
+                        }
+                    ]
+                },
+                {
+                    title: 'Skip Settings',
+                    description: 'Controls the users ability to skip the ad, and an optional countdown',
+                    label: 'skip',
+                    options: [
+                        {
+                            label: 'No skipping allowed',
+                            value: false
+                        },
+                        {
+                            label: 'Skip anytime',
+                            value: true
+                        },
+                        {
+                            label: 1,
+                            value: 1
+                        },
+                        {
+                            label: 2,
+                            value: 2
+                        },
+                        {
+                            label: 3,
+                            value: 3
+                        },
+                        {
+                            label: 4,
+                            value: 4
+                        },
+                        {
+                            label: 5,
+                            value: 5
+                        },
+                        {
+                            label: 6,
+                            value: 6
+                        }
+                    ]
+                }
+            ]
+        };
 
         this.userPermissionOptions = {
             experiences: {
@@ -307,6 +437,51 @@ define(['angular','c6ui'], function(angular,c6ui){
         *****************
         */
 
+        this.convertOrgForEditing = function(org) {
+            org._data = {};
+            org._data.videoWaterfalls = this.waterfallData.options.map(function(option) {
+                // var copied;
+
+                // Object.keys(option).forEach(function(opt) {
+                //     copied[opt] = option[opt];
+                // });
+
+                // copied.enabled = org.waterfalls.video.indexOf(option.value) > -1;
+
+                // return copied;
+
+                option.enabled = org.waterfalls.video.indexOf(option.value) > -1;
+                return option;
+            });
+
+            org._data.displayWaterfalls = this.waterfallData.options.map(function(option) {
+                // var copied;
+
+                // Object.keys(option).forEach(function(opt) {
+                //     copied[opt] = option[opt];
+                // });
+
+                // copied.enabled = org.waterfalls.video.indexOf(option.value) > -1;
+
+                // return copied;
+
+                option.enabled = org.waterfalls.display.indexOf(option.value) > -1;
+                return option;
+            });
+
+            org.adConfig = org.adConfig || {
+                video: {
+                    firstPlacement: 2,
+                    frequency: 0,
+                    waterfall: 'cinema6',
+                    skip: 6
+                },
+                display: {
+                    waterfall: 'cinema6'
+                }
+            };
+        };
+
         this.getOrg = function(orgId) {
             return httpWrapper({
                 method: 'GET',
@@ -322,6 +497,7 @@ define(['angular','c6ui'], function(angular,c6ui){
         };
 
         this.putOrg = function(org) {
+            // console.log(org);
             // id,email,password,org,lastName,firstName
             return httpWrapper({
                 method: 'PUT',
@@ -333,6 +509,7 @@ define(['angular','c6ui'], function(angular,c6ui){
         };
 
         this.postOrg = function(org) {
+            // console.log(org);
             return httpWrapper({
                 method: 'POST',
                 url: c6UrlMaker('account/org','api'),

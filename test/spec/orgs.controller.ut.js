@@ -1,7 +1,7 @@
 (function() {
     'user strict';
 
-    define(['orgs'], function() {
+    define(['orgs','account'], function(orgs, account) {
         describe('OrgsController', function() {
             var $rootScope,
                 $scope,
@@ -21,22 +21,24 @@
                     user: null, users: null, org: null, orgs: null
                 };
 
-                account = {
-                    getOrgs: jasmine.createSpy('account.getOrgs'),
-                    getUsers: jasmine.createSpy('account.getUsers'),
-                    putOrg: jasmine.createSpy('account.putUser'),
-                    postOrg: jasmine.createSpy('account.postUser'),
-                    deleteOrg: jasmine.createSpy('account.deleteOrg')
-                };
-
                 mockOrgs = [
                     {
                         id: 'o-1',
-                        name: 'Org1'
+                        name: 'Org1',
+                        status: 'active',
+                        waterfalls: {
+                            video: ['cinema6'],
+                            display: ['cinema6']
+                        }
                     },
                     {
                         id: 'o-2',
-                        name: 'Org2'
+                        name: 'Org2',
+                        status: 'active',
+                        waterfalls: {
+                            video: ['cinema6'],
+                            display: ['cinema6']
+                        }
                     }
                 ];
 
@@ -62,6 +64,14 @@
                     $log = $injector.get('$log');
                     $q = $injector.get('$q');
                     $rootScope = $injector.get('$rootScope');
+
+                    account = $injector.get('account');
+
+                    spyOn(account, 'getOrgs');
+                    spyOn(account, 'getUsers');
+                    spyOn(account, 'putOrg');
+                    spyOn(account, 'postOrg');
+                    spyOn(account, 'deleteOrg');
 
                     account.getOrgs.deferred = $q.defer();
                     account.getOrgs.and.returnValue(account.getOrgs.deferred.promise);
@@ -101,7 +111,7 @@
 
                 it('should set some defaults', function() {
                     expect(OrgsCtrl.action).toBe('all');
-                    expect(OrgsCtrl.showWaterfallSettings).toBe(false);
+                    expect(OrgsCtrl.showWaterfallSettings).toBe(true);
                 });
 
                 it('should call the account service to get all Orgs', function() {
@@ -198,7 +208,20 @@
 
                             expect(account.putOrg).toHaveBeenCalledWith({
                                 id: $scope.data.orgs[0].id,
-                                name: $scope.data.orgs[0].name
+                                name: $scope.data.orgs[0].name,
+                                status: $scope.data.orgs[0].status,
+                                waterfalls: $scope.data.orgs[0].waterfalls,
+                                adConfig: {
+                                    video: {
+                                        firstPlacement: 2,
+                                        frequency: 0,
+                                        waterfall: 'cinema6',
+                                        skip: 6
+                                    },
+                                    display: {
+                                        waterfall: 'cinema6'
+                                    }
+                                }
                             });
                         });
 
@@ -241,7 +264,25 @@
                         it('should reset the message and the org data', function() {
                             OrgsCtrl.saveOrg();
 
-                            expect(account.postOrg).toHaveBeenCalledWith({name: $scope.data.org.name });
+                            expect(account.postOrg).toHaveBeenCalledWith({
+                                name: $scope.data.org.name,
+                                status: 'active',
+                                waterfalls: {
+                                    video: ['cinema6'],
+                                    display: ['cinema6']
+                                },
+                                adConfig: {
+                                    video: {
+                                        firstPlacement: 2,
+                                        frequency: 0,
+                                        waterfall: 'cinema6',
+                                        skip: 6
+                                    },
+                                    display: {
+                                        waterfall: 'cinema6'
+                                    }
+                                }
+                            });
                         });
 
                         it('on success should put a message on the scope, set the action, reload all the orgs data', function() {

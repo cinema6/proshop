@@ -1,5 +1,4 @@
 <form name="theForm" id="new_org" ng-submit="OrgsCtrl.saveOrg()">
-    <!-- <h1>{{OrgsCtrl.action |  titlecase}} {{OrgsCtrl.name}} </h1> -->
     <a href="" ng-click="OrgsCtrl.action = 'all'">&lsaquo; Back to list</a>
     <div class="form-group" style="padding-top:20px">
         <label for="new_org_name" class="control-label"> Name: </label>
@@ -13,32 +12,54 @@
     <br>
     <div ng-if="OrgsCtrl.showWaterfallSettings">
         <div>
-            Video Waterfall:
-            <div ng-repeat="choice in OrgsCtrl.videoWaterfalls">
-                <input type="checkbox" id="video_waterfalls_{{choice.value}}" name="video_waterfalls_{{choice.value}}" ng-model="choice.checked">
-                <label for="video_waterfalls_{{choice.value}}"> {{choice.value}} </label>
-            </div>
-            <br>
-            Display Waterfall:
-            <div ng-repeat="choice in OrgsCtrl.displayWaterfalls">
-                <input type="checkbox" id ="display_waterfalls_{{choice.value}}" name="display_waterfalls_{{choice.value}}" ng-model="choice.checked">
-                <label for="display_waterfalls_{{choice.value}}"> {{choice.value}} </label>
+            <div ng-repeat="type in OrgsCtrl.waterfallData.types">
+                <span>{{type.title}}</span><br>
+                <span>({{type.description}})</span><br>
+                <div ng-if="type.options === 'videoWaterfalls'" ng-repeat="choice in OrgsCtrl.videoWaterfalls">
+                    <span ng-if="type.type === 'options'">
+                        <input type="checkbox" name="video_waterfalls_{{choice.value}}" ng-model="choice.enabled" ng-required="!OrgsCtrl.formIsValid()">
+                        <label for="video_waterfalls_{{choice.value}}"> {{choice.name}} </label>
+                    </span>
+                    <span ng-if="type.type === 'default'">
+                        <input type="radio" name="videoWaterfallDefault" ng-model="data.org.adConfig.video.waterfall" value="{{choice.value}}">
+                        <label for="org_videoWaterfallDefault">{{choice.name}}</label>
+                    </span>
+                </div>
+                <div ng-if="type.options === 'videoWaterfalls' && type.type === 'default'">
+                    <div ng-repeat="adOption in OrgsCtrl.adConfig.types">
+                        <label for="{{adOption.label}}">{{adOption.title}}</label>
+                        <select ng-model="data.org.adConfig.video[adOption.label]" ng-options="option.label for option in adOption.options"></select>
+                    </div>
+                </div>
+                <div ng-if="type.options === 'displayWaterfalls'" ng-repeat="choice in OrgsCtrl.displayWaterfalls">
+                    <span ng-if="type.type === 'options'">
+                        <input type="checkbox" name="display_waterfalls_{{choice.value}}" ng-model="choice.enabled" ng-required="!OrgsCtrl.formIsValid()">
+                        <label for="display_waterfalls_{{choice.value}}"> {{choice.name}} </label>
+                    </span>
+                    <span ng-if="type.type === 'default'">
+                        <input type="radio" name="displayWaterfallDefault" ng-model="data.org.adConfig.display.waterfall" value="{{choice.value}}">
+                        <label for="displayWaterfallDefault">{{choice.name}}</label>
+                    </span>
+                </div>
             </div>
         </div>
         <br>
         <div>
-            Status:
+            Status:<br>
+            <input type="radio" id="new_org_status" name="status" ng-model="data.org.status" value="active" required>
             <label for="new_org_status"> Active</label>
-            <input type="radio" id="new_org_status" name="status" ng-model="OrgsCtrl.status" value="active" required>
+            <br>
+            <input type="radio" id="new_org_status" name="status" ng-model="data.org.status" value="inactive" required>
             <label for="new_org_status"> Inactive</label>
-            <input type="radio" id="new_org_status" name="status" ng-model="OrgsCtrl.status" value="inactive" required>
+            <br>
+            <input type="radio" id="new_org_status" name="status" ng-model="data.org.status" value="pending" required>
             <label for="new_org_status"> Pending:</label>
-            <input type="radio" id="new_org_status" name="status" ng-model="OrgsCtrl.status" value="pending" required>
             <div>
                 <span ng-show="theForm.status.$error.required"> Required. </span>
             </div>
         </div>
     </div>
+    <br>
     <input type="submit" value="Save" ng-disabled="!theForm.$valid">
     <input type="button" value="Delete" ng-show="data.org.id" ng-click="confirmDelete = true">
     <div style="display:inline;padding-left:30px;" ng-show="confirmDelete === true">
