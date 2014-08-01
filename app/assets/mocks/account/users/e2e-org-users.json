@@ -10,6 +10,12 @@
     "applications": [
        "e-51ae37625cb57f"
     ],
+    "config": {
+        "defaultSplash": {
+            "ratio": "16-9",
+            "theme": "text-only"
+        }
+    },
     "permissions": {
         "experiences": {
             "read": "own",

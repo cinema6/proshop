@@ -170,7 +170,14 @@
                         UsersCtrl.addNewUser();
 
                         expect(UsersCtrl.action).toBe('edit');
-                        expect($scope.data.user).toBe(null);
+                        expect($scope.data.user).toEqual({
+                            config: {
+                                defaultSplash: {
+                                    ratio: '3-2',
+                                    theme: 'img-text-overlay'
+                                }
+                            }
+                        });
                         expect($scope.data.org).toBe(null);
                     });
                 });
@@ -233,7 +240,8 @@
                                 firstName: $scope.data.users[0].firstName,
                                 lastName: $scope.data.users[0].lastName,
                                 org: $scope.data.users[0].org.id,
-                                branding: $scope.data.users[0].branding
+                                branding: $scope.data.users[0].branding,
+                                config: $scope.data.users[0].config
                             });
                         });
 
@@ -293,7 +301,8 @@
                                 firstName: $scope.data.user.firstName,
                                 lastName: $scope.data.user.lastName,
                                 org: $scope.data.org.id,
-                                branding: $scope.data.user.branding
+                                branding: $scope.data.user.branding,
+                                config: $scope.data.user.config
                             });
                         });
 
