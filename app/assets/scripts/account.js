@@ -463,7 +463,8 @@ define(['angular','c6ui'], function(angular,c6ui){
                 data: {
                     lastName:   user.lastName,
                     firstName:  user.firstName,
-                    branding:   user.branding
+                    branding:   user.branding,
+                    config:     user.config
                 }
             });
         };
@@ -478,7 +479,8 @@ define(['angular','c6ui'], function(angular,c6ui){
                     org:        user.org,
                     lastName:   user.lastName,
                     firstName:  user.firstName,
-                    branding:   user.branding
+                    branding:   user.branding,
+                    config:     user.config
                 }
             });
         };

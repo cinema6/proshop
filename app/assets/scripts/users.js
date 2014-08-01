@@ -34,7 +34,8 @@ define(['account'],function(account) {
                 $scope.message = null;
                 self.action = 'edit';
                 data.user = user;
-                data.user.config = data.user.config || {
+                data.user.config = data.user.config && data.user.config.defaultSplash ?
+                    data.user.config : {
                     defaultSplash: {
                         ratio: '3-2',
                         theme: 'img-text-overlay'
