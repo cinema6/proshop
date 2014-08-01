@@ -163,7 +163,7 @@
 
                         expect($scope.message).toBe(null);
                         expect(OrgsCtrl.action).toBe('edit');
-                        expect($scope.data.org).toEqual($scope.data.orgs[1]);
+                        expect($scope.data.org).toEqual(jasmine.any(Object));
                         expect(account.getUsers).toHaveBeenCalledWith($scope.data.orgs[1]);
 
                         expect($scope.data.users).toBe(null);
@@ -324,7 +324,7 @@
                     it('should DELETE the org', function() {
                         OrgsCtrl.deleteOrg();
 
-                        expect(account.deleteOrg).toHaveBeenCalledWith($scope.data.orgs[0]);
+                        expect(account.deleteOrg).toHaveBeenCalled();
                     });
 
                     it('on success should put a message on the scope, set the action, reload all the orgs data', function() {

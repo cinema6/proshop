@@ -35,8 +35,9 @@ define(['account'],function(account) {
             self.editOrg = function(org){
                 $scope.message = null;
                 self.action = 'edit';
-                data.org = account.convertOrgForEditing(org);
                 data.users = null;
+                data.org = null;
+                data.org = account.convertOrgForEditing(angular.copy(org));
 
                 account.getUsers(org)
                     .then(function(users) {
@@ -48,6 +49,7 @@ define(['account'],function(account) {
                 $scope.message = null;
                 self.action = 'new';
                 data.users = null;
+                data.org = null;
                 data.org = account.convertOrgForEditing();
             };
 
