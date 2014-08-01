@@ -49,6 +49,7 @@ define(['account'],function(account) {
                 $scope.message = null;
                 self.action = 'new';
                 data.users = null;
+                data.org = null;
                 data.org = account.convertOrgForEditing();
             };
 
