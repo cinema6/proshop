@@ -12,32 +12,32 @@
     <br>
     <div ng-if="OrgsCtrl.showWaterfallSettings">
         <div>
-            <div style="padding-bottom:20px;" ng-repeat="type in data.appData.waterfallData.types">
-                <h3>{{type.title}}<br>
-                <small>({{type.description}})</small></h3>
-                <div ng-if="type.options === 'videoWaterfalls'" ng-repeat="choice in data.org._data.videoWaterfalls">
-                    <span ng-if="type.type === 'options'">
+            <div style="padding-bottom:20px;" ng-repeat="setting in data.appData.waterfallData.settings">
+                <h3>{{setting.title}}<br>
+                <small>({{setting.description}})</small></h3>
+                <div ng-if="setting.category === 'video'" ng-repeat="choice in data.org._data.videoWaterfalls">
+                    <span ng-if="setting.type === 'options'">
                         <input type="checkbox" name="video_waterfalls_{{choice.value}}" ng-model="choice.enabled" ng-required="!OrgsCtrl.formIsValid()">
                         <label for="video_waterfalls_{{choice.value}}"> {{choice.name}} </label>
                     </span>
-                    <span ng-if="type.type === 'default'">
+                    <span ng-if="setting.type === 'default'">
                         <input type="radio" name="videoWaterfallDefault" ng-model="data.org.adConfig.video.waterfall" value="{{choice.value}}">
-                        <label for="org_videoWaterfallDefault">{{choice.name}}</label>
+                        <label for="videoWaterfallDefault">{{choice.name}}</label>
                     </span>
                 </div>
-                <div style="padding-top:20px;" ng-if="type.options === 'videoWaterfalls' && type.type === 'default'">
+                <div style="padding-top:20px;" ng-if="setting.category === 'video' && setting.type === 'default'">
                     <h3>Dynamic Video Ad Settings</h3>
                     <div ng-repeat="adOption in data.appData.adConfig.types">
                         <label for="{{adOption.label}}">{{adOption.title}}</label>
                         <select ng-model="data.org._data.adConfig[adOption.label]" ng-options="option.label for option in adOption.options"></select>
                     </div>
                 </div>
-                <div ng-if="type.options === 'displayWaterfalls'" ng-repeat="choice in data.org._data.displayWaterfalls">
-                    <span ng-if="type.type === 'options'">
+                <div ng-if="setting.category === 'display'" ng-repeat="choice in data.org._data.displayWaterfalls">
+                    <span ng-if="setting.type === 'options'">
                         <input type="checkbox" name="display_waterfalls_{{choice.value}}" ng-model="choice.enabled" ng-required="!OrgsCtrl.formIsValid()">
                         <label for="display_waterfalls_{{choice.value}}"> {{choice.name}} </label>
                     </span>
-                    <span ng-if="type.type === 'default'">
+                    <span ng-if="setting.type === 'default'">
                         <input type="radio" name="displayWaterfallDefault" ng-model="data.org.adConfig.display.waterfall" value="{{choice.value}}">
                         <label for="displayWaterfallDefault">{{choice.name}}</label>
                     </span>

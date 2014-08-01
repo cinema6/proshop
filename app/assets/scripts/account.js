@@ -149,29 +149,29 @@ define(['angular','c6ui'], function(angular,c6ui){
         }
 
         this.waterfallData = {
-            types: [
+            settings: [
                 {
                     title: 'Video Waterfall Options',
                     description: 'These are options available to the publisher for ad cards in MiniReels',
-                    options: 'videoWaterfalls',
+                    category: 'video',
                     type: 'options'
                 },
                 {
                     title: 'Video Waterfall Default',
                     description: 'This will be the default waterfall for MiniReels that do not explicitly set a waterfall option',
-                    options: 'videoWaterfalls',
+                    category: 'video',
                     type: 'default'
                 },
                 {
                     title: 'Display Waterfall Options',
                     description: 'These are options available to the publisher for the display ad module in Companion Ad MiniReels',
-                    options: 'displayWaterfalls',
+                    category: 'display',
                     type: 'options'
                 },
                 {
                     title: 'Display Waterfall Default',
                     description: 'This will be the default waterfall for Companion Ad MiniReels that do not explicitly set a waterfall option',
-                    options: 'displayWaterfalls',
+                    category: 'display',
                     type: 'default'
                 }
             ],
