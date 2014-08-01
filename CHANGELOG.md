@@ -5,6 +5,7 @@
     *[FEATURE]: Ability to configure waterfall settings for video and display ads
     *[FEATURE]: Ability to configure dynamic ad settings (first ad placement, frequency and skip)
     *[FEATURE]: Ability to configure default splash settings for Users of the MR Studio
+    *[FEATURE]: Ability to configure embed types settings for Orgs in the MR Studio
 
 ## v0.3.0 (July 30, 2014)
 

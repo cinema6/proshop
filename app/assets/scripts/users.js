@@ -14,21 +14,6 @@ define(['account'],function(account) {
             self.showUserSettings = false;
             self.userPermissionOptions = angular.copy(account.userPermissionOptions);
 
-            self.defaultSplashOptions = [
-                {
-                    title: 'Default Splash Ratio',
-                    description: 'Sets the default aspect ratio for users in the MR Studio',
-                    options: ['1-1','3-2','6-5','16-9'],
-                    label: 'ratio'
-                },
-                {
-                    title: 'Default Splash Theme',
-                    description: 'Sets the default embed theme for users in the MR Studio',
-                    options: ['text-only','img-only','img-text-overlay','vertical-stack','horizontal-stack'],
-                    label: 'theme'
-                }
-            ];
-
             function updateOrgs(orgs) {
                 data.appData.orgs = orgs;
                 data.orgs = orgs;

@@ -386,6 +386,9 @@
                                 waterfall: 'cinema6-publisher'
                             }
                         };
+                        mockOrg.config = {
+                            embedTypes: ['script']
+                        };
 
                         expectedOrg = angular.copy(mockOrg);
                         delete expectedOrg.id;
@@ -455,6 +458,9 @@
                                 display: {
                                     waterfall: 'cinema6'
                                 }
+                            },
+                            config: {
+                                embedTypes: ['script']
                             }
                         };
                         $httpBackend.expectPOST('/api/account/org', org)
@@ -484,6 +490,9 @@
                                 display: {
                                     waterfall: 'publisher-cinema6'
                                 }
+                            },
+                            config: {
+                                embedTypes: ['script']
                             }
                         };
 

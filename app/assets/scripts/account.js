@@ -325,6 +325,21 @@ define(['angular','c6ui'], function(angular,c6ui){
             ]
         };
 
+        this.defaultSplashOptions = [
+            {
+                title: 'Default Splash Ratio',
+                description: 'Sets the default aspect ratio for users in the MR Studio',
+                options: ['1-1','3-2','6-5','16-9'],
+                label: 'ratio'
+            },
+            {
+                title: 'Default Splash Theme',
+                description: 'Sets the default embed theme for users in the MR Studio',
+                options: ['text-only','img-only','img-text-overlay','vertical-stack','horizontal-stack'],
+                label: 'theme'
+            }
+        ];
+
         this.userPermissionOptions = {
             experiences: {
                 name:   'Experience',
@@ -491,6 +506,9 @@ define(['angular','c6ui'], function(angular,c6ui){
                         video: ['cinema6'],
                         display: ['cinema6']
                     },
+                    config: {
+                        embedTypes: ['script']
+                    },
                     adConfig: {
                         video: {
                             firstPlacement: 2,
@@ -542,6 +560,29 @@ define(['angular','c6ui'], function(angular,c6ui){
                 org._data.adConfig[setting.label] = convertedProp;
             });
 
+            org.config = org.config || {
+                embedTypes: ['script']
+            };
+
+            org._data.config = {};
+
+            org._data.config.embedTypes = [
+                {
+                    title: 'Script Tag',
+                    value: 'script',
+                    enabled: false
+                },
+                {
+                    title: 'Wordpress Shortcode',
+                    value: 'shortcode',
+                    enabled: false
+                }
+            ];
+
+            org._data.config.embedTypes.forEach(function(setting) {
+                setting.enabled = org.config.embedTypes.indexOf(setting.value) > -1;
+            });
+
             return org;
         };
 
@@ -569,7 +610,8 @@ define(['angular','c6ui'], function(angular,c6ui){
                     name: org.name,
                     status: org.status,
                     adConfig: org.adConfig,
-                    waterfalls: org.waterfalls
+                    waterfalls: org.waterfalls,
+                    config: org.config
                 }
             });
         };
@@ -584,7 +626,8 @@ define(['angular','c6ui'], function(angular,c6ui){
                     name: org.name,
                     status: org.status,
                     adConfig: org.adConfig,
-                    waterfalls: org.waterfalls
+                    waterfalls: org.waterfalls,
+                    config: org.config
                 }
             });
         };

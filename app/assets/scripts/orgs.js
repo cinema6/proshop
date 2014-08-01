@@ -24,9 +24,12 @@ define(['account'],function(account) {
                     }),
                     displayWaterfall = data.org._data.displayWaterfalls.filter(function(option) {
                         return option.enabled;
+                    }),
+                    embedType = data.org._data.config.embedTypes.filter(function(option) {
+                        return option.enabled;
                     });
 
-                return !!(videoWaterfall.length && displayWaterfall.length);
+                return !!(videoWaterfall.length && displayWaterfall.length && embedType.length);
             };
 
             self.editOrg = function(org){
