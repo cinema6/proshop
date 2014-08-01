@@ -14,6 +14,21 @@ define(['account'],function(account) {
             self.showUserSettings = false;
             self.userPermissionOptions = angular.copy(account.userPermissionOptions);
 
+            self.defaultSplashOptions = [
+                {
+                    title: 'Default Splash Ratio',
+                    description: 'Sets the default aspect ratio for users in the MR Studio',
+                    options: ['1-1','3-2','6-5','16-9'],
+                    label: 'ratio'
+                },
+                {
+                    title: 'Default Splash Theme',
+                    description: 'Sets the default embed theme for users in the MR Studio',
+                    options: ['text-only','img-only','img-text-overlay','vertical-stack','horizontal-stack'],
+                    label: 'theme'
+                }
+            ];
+
             function updateOrgs(orgs) {
                 data.appData.orgs = orgs;
                 data.orgs = orgs;
@@ -34,6 +49,12 @@ define(['account'],function(account) {
                 $scope.message = null;
                 self.action = 'edit';
                 data.user = user;
+                data.user.config = data.user.config || {
+                    defaultSplash: {
+                        ratio: '3-2',
+                        theme: 'img-text-overlay'
+                    }
+                };
                 data.org = data.appData.orgs.filter(function(org) {
                     return user.org.id === org.id;
                 })[0];
@@ -42,7 +63,14 @@ define(['account'],function(account) {
             self.addNewUser = function() {
                 $scope.message = null;
                 self.action = 'edit';
-                data.user = null;
+                data.user = {
+                    config: {
+                        defaultSplash: {
+                            ratio: '3-2',
+                            theme: 'img-text-overlay'
+                        }
+                    }
+                };
                 data.org = null;
             };
 
@@ -111,7 +139,8 @@ define(['account'],function(account) {
                         firstName: data.user.firstName,
                         lastName: data.user.lastName,
                         org: data.org.id,
-                        branding: data.user.branding
+                        branding: data.user.branding,
+                        config: data.user.config
                     }).then(handleSuccess, handleError);
                 } else {
                     $log.info('POST', data.user.email, data.user.firstName, data.user.lastName, data.org.id, data.user.branding);
@@ -122,7 +151,8 @@ define(['account'],function(account) {
                         firstName: data.user.firstName,
                         lastName: data.user.lastName,
                         org: data.org.id,
-                        branding: data.user.branding
+                        branding: data.user.branding,
+                        config: data.user.config
                     }).then(handleSuccess, handleError);
                 }
             };
