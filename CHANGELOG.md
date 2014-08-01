@@ -1,5 +1,9 @@
 # ProShop
 
+* *[v0.4.0]*
+    *[FIX]: Saving a user now sends the config block
+    *[FIX]: Orgs' configuration settings are properly populated in the UI
+
 ## v0.4.0 (August 1, 2014)
 
 * *[v0.4.0]*
