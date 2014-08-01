@@ -1,7 +1,7 @@
 (function() {
     'user strict';
 
-    define(['orgs','account'], function(orgs, account) {
+    define(['orgs','account'], function() {
         describe('OrgsController', function() {
             var $rootScope,
                 $scope,
@@ -72,6 +72,7 @@
                     spyOn(account, 'putOrg');
                     spyOn(account, 'postOrg');
                     spyOn(account, 'deleteOrg');
+                    spyOn(account, 'convertOrgForEditing').and.callThrough();
 
                     account.getOrgs.deferred = $q.defer();
                     account.getOrgs.and.returnValue(account.getOrgs.deferred.promise);
@@ -129,6 +130,28 @@
             });
 
             describe('methods', function() {
+                describe('formIsValid()', function() {
+                    beforeEach(function() {
+                        $scope.$apply(function() {
+                            account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
+                        });
+
+                        OrgsCtrl.editOrg($scope.data.orgs[0]);
+                    });
+
+                    it('should be true by default because the defualts should be set!', function() {
+                        expect(OrgsCtrl.formIsValid()).toBe(true);
+                    });
+
+                    it('should be false if video or display waterfalls are not set', function() {
+                        $scope.data.org._data.videoWaterfalls = [];
+                        expect(OrgsCtrl.formIsValid()).toBe(false);
+
+                        $scope.data.org._data.videoWaterfalls = [{enabled: true}];
+                        expect(OrgsCtrl.formIsValid()).toBe(true);
+                    });
+                });
+
                 describe('editOrg()', function() {
                     it('should reset message, change the action, put the org on the scope, and get users by org', function() {
                         $scope.$apply(function() {
@@ -164,6 +187,7 @@
                         expect(OrgsCtrl.action).toBe('new');
                         expect($scope.data.org.name).toBe(null);
                         expect($scope.data.org.status).toBe('active');
+                        expect(account.convertOrgForEditing).toHaveBeenCalled();
                     });
                 });
 
@@ -206,23 +230,7 @@
                         it('should PUT the org', function() {
                             OrgsCtrl.saveOrg();
 
-                            expect(account.putOrg).toHaveBeenCalledWith({
-                                id: $scope.data.orgs[0].id,
-                                name: $scope.data.orgs[0].name,
-                                status: $scope.data.orgs[0].status,
-                                waterfalls: $scope.data.orgs[0].waterfalls,
-                                adConfig: {
-                                    video: {
-                                        firstPlacement: 2,
-                                        frequency: 0,
-                                        waterfall: 'cinema6',
-                                        skip: 6
-                                    },
-                                    display: {
-                                        waterfall: 'cinema6'
-                                    }
-                                }
-                            });
+                            expect(account.putOrg).toHaveBeenCalledWith($scope.data.org);
                         });
 
                         it('on success should put a message on the scope, set the action, reload all the orgs data', function() {
@@ -264,25 +272,7 @@
                         it('should reset the message and the org data', function() {
                             OrgsCtrl.saveOrg();
 
-                            expect(account.postOrg).toHaveBeenCalledWith({
-                                name: $scope.data.org.name,
-                                status: 'active',
-                                waterfalls: {
-                                    video: ['cinema6'],
-                                    display: ['cinema6']
-                                },
-                                adConfig: {
-                                    video: {
-                                        firstPlacement: 2,
-                                        frequency: 0,
-                                        waterfall: 'cinema6',
-                                        skip: 6
-                                    },
-                                    display: {
-                                        waterfall: 'cinema6'
-                                    }
-                                }
-                            });
+                            expect(account.postOrg).toHaveBeenCalledWith($scope.data.org);
                         });
 
                         it('on success should put a message on the scope, set the action, reload all the orgs data', function() {

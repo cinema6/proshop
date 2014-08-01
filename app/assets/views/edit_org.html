@@ -12,10 +12,10 @@
     <br>
     <div ng-if="OrgsCtrl.showWaterfallSettings">
         <div>
-            <div ng-repeat="type in OrgsCtrl.waterfallData.types">
-                <span>{{type.title}}</span><br>
-                <span>({{type.description}})</span><br>
-                <div ng-if="type.options === 'videoWaterfalls'" ng-repeat="choice in OrgsCtrl.videoWaterfalls">
+            <div style="padding-bottom:20px;" ng-repeat="type in data.appData.waterfallData.types">
+                <h3>{{type.title}}<br>
+                <small>({{type.description}})</small></h3>
+                <div ng-if="type.options === 'videoWaterfalls'" ng-repeat="choice in data.org._data.videoWaterfalls">
                     <span ng-if="type.type === 'options'">
                         <input type="checkbox" name="video_waterfalls_{{choice.value}}" ng-model="choice.enabled" ng-required="!OrgsCtrl.formIsValid()">
                         <label for="video_waterfalls_{{choice.value}}"> {{choice.name}} </label>
@@ -25,13 +25,14 @@
                         <label for="org_videoWaterfallDefault">{{choice.name}}</label>
                     </span>
                 </div>
-                <div ng-if="type.options === 'videoWaterfalls' && type.type === 'default'">
-                    <div ng-repeat="adOption in OrgsCtrl.adConfig.types">
+                <div style="padding-top:20px;" ng-if="type.options === 'videoWaterfalls' && type.type === 'default'">
+                    <h3>Dynamic Video Ad Settings</h3>
+                    <div ng-repeat="adOption in data.appData.adConfig.types">
                         <label for="{{adOption.label}}">{{adOption.title}}</label>
-                        <select ng-model="data.org.adConfig.video[adOption.label]" ng-options="option.label for option in adOption.options"></select>
+                        <select ng-model="data.org._data.adConfig[adOption.label]" ng-options="option.label for option in adOption.options"></select>
                     </div>
                 </div>
-                <div ng-if="type.options === 'displayWaterfalls'" ng-repeat="choice in OrgsCtrl.displayWaterfalls">
+                <div ng-if="type.options === 'displayWaterfalls'" ng-repeat="choice in data.org._data.displayWaterfalls">
                     <span ng-if="type.type === 'options'">
                         <input type="checkbox" name="display_waterfalls_{{choice.value}}" ng-model="choice.enabled" ng-required="!OrgsCtrl.formIsValid()">
                         <label for="display_waterfalls_{{choice.value}}"> {{choice.name}} </label>
@@ -45,7 +46,7 @@
         </div>
         <br>
         <div>
-            Status:<br>
+            <h3>Status:</h3>
             <input type="radio" id="new_org_status" name="status" ng-model="data.org.status" value="active" required>
             <label for="new_org_status"> Active</label>
             <br>

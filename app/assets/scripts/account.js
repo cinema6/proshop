@@ -2,6 +2,9 @@ define(['angular','c6ui'], function(angular,c6ui){
     /* jshint -W106 */
     'use strict';
 
+    var copy = angular.copy,
+        forEach = angular.forEach;
+
     return angular.module('c6.proshop.account',[c6ui.name])
     .controller('AcctChangeCtrl', ['$log', '$scope', 'account',
     function                      ( $log ,  $scope ,  account ){
@@ -128,6 +131,23 @@ define(['angular','c6ui'], function(angular,c6ui){
             return deferred.promise;
         }
 
+        function convertWaterfall(data) {
+            return data.map(function(item) {
+                if (item.enabled) { return item.value; }
+            }).filter(function(item) { return !!item; });
+        }
+
+        function convertOrgForSaving(org) {
+            forEach(org._data.adConfig, function(conf, key) {
+                org.adConfig.video[key] = conf.value;
+            });
+
+            org.waterfalls.video = convertWaterfall(org._data.videoWaterfalls);
+            org.waterfalls.display = convertWaterfall(org._data.displayWaterfalls);
+
+            return org;
+        }
+
         this.waterfallData = {
             types: [
                 {
@@ -201,6 +221,22 @@ define(['angular','c6ui'], function(angular,c6ui){
                         {
                             label: 2,
                             value: 2
+                        },
+                        {
+                            label: 3,
+                            value: 3
+                        },
+                        {
+                            label: 4,
+                            value: 4
+                        },
+                        {
+                            label: 5,
+                            value: 5
+                        },
+                        {
+                            label: 6,
+                            value: 6
                         }
                     ],
                 },
@@ -236,6 +272,18 @@ define(['angular','c6ui'], function(angular,c6ui){
                         {
                             label: 6,
                             value: 6
+                        },
+                        {
+                            label: 7,
+                            value: 7
+                        },
+                        {
+                            label: 8,
+                            value: 8
+                        },
+                        {
+                            label: 9,
+                            value: 9
                         }
                     ]
                 },
@@ -253,28 +301,24 @@ define(['angular','c6ui'], function(angular,c6ui){
                             value: true
                         },
                         {
-                            label: 1,
-                            value: 1
-                        },
-                        {
-                            label: 2,
-                            value: 2
-                        },
-                        {
-                            label: 3,
-                            value: 3
-                        },
-                        {
-                            label: 4,
-                            value: 4
-                        },
-                        {
-                            label: 5,
-                            value: 5
-                        },
-                        {
-                            label: 6,
+                            label: 'After 6 sec.',
                             value: 6
+                        },
+                        {
+                            label: 'After 15 sec.',
+                            value: 15
+                        },
+                        {
+                            label: 'After 30 sec.',
+                            value: 30
+                        },
+                        {
+                            label: 'After 45 sec.',
+                            value: 45
+                        },
+                        {
+                            label: 'After 1 min.',
+                            value: 60
                         }
                     ]
                 }
@@ -438,37 +482,44 @@ define(['angular','c6ui'], function(angular,c6ui){
         */
 
         this.convertOrgForEditing = function(org) {
+            if (!org) {
+                // we're creating a new org, here are the defaults
+                org = {
+                    name: null,
+                    status: 'active',
+                    waterfalls: {
+                        video: ['cinema6'],
+                        display: ['cinema6']
+                    },
+                    adConfig: {
+                        video: {
+                            firstPlacement: 2,
+                            frequency: 0,
+                            waterfall: 'cinema6',
+                            skip: 6
+                        },
+                        display: {
+                            waterfall: 'cinema6'
+                        }
+                    }
+                };
+            }
+
             org._data = {};
+
             org._data.videoWaterfalls = this.waterfallData.options.map(function(option) {
-                // var copied;
-
-                // Object.keys(option).forEach(function(opt) {
-                //     copied[opt] = option[opt];
-                // });
-
-                // copied.enabled = org.waterfalls.video.indexOf(option.value) > -1;
-
-                // return copied;
-
-                option.enabled = org.waterfalls.video.indexOf(option.value) > -1;
-                return option;
+                var copied = copy(option);
+                copied.enabled = org.waterfalls.video.indexOf(option.value) > -1;
+                return copied;
             });
 
             org._data.displayWaterfalls = this.waterfallData.options.map(function(option) {
-                // var copied;
-
-                // Object.keys(option).forEach(function(opt) {
-                //     copied[opt] = option[opt];
-                // });
-
-                // copied.enabled = org.waterfalls.video.indexOf(option.value) > -1;
-
-                // return copied;
-
-                option.enabled = org.waterfalls.display.indexOf(option.value) > -1;
-                return option;
+                var copied = copy(option);
+                copied.enabled = org.waterfalls.display.indexOf(option.value) > -1;
+                return copied;
             });
 
+            // if there's no adConfig then set the default!
             org.adConfig = org.adConfig || {
                 video: {
                     firstPlacement: 2,
@@ -480,6 +531,18 @@ define(['angular','c6ui'], function(angular,c6ui){
                     waterfall: 'cinema6'
                 }
             };
+
+            org._data.adConfig = {};
+
+            this.adConfig.types.forEach(function(setting) {
+                var convertedProp = setting.options.filter(function(option) {
+                    return org.adConfig.video[setting.label] === option.value;
+                })[0];
+
+                org._data.adConfig[setting.label] = convertedProp;
+            });
+
+            return org;
         };
 
         this.getOrg = function(orgId) {
@@ -497,24 +560,31 @@ define(['angular','c6ui'], function(angular,c6ui){
         };
 
         this.putOrg = function(org) {
-            // console.log(org);
-            // id,email,password,org,lastName,firstName
+            org = convertOrgForSaving(org);
+
             return httpWrapper({
                 method: 'PUT',
                 url: c6UrlMaker('account/org/' + org.id,'api'),
                 data: {
-                    name: org.name
+                    name: org.name,
+                    status: org.status,
+                    adConfig: org.adConfig,
+                    waterfalls: org.waterfalls
                 }
             });
         };
 
         this.postOrg = function(org) {
-            // console.log(org);
+            org = convertOrgForSaving(org);
+
             return httpWrapper({
                 method: 'POST',
                 url: c6UrlMaker('account/org','api'),
                 data: {
                     name: org.name,
+                    status: org.status,
+                    adConfig: org.adConfig,
+                    waterfalls: org.waterfalls
                 }
             });
         };
