@@ -2,6 +2,8 @@
 
 * *[v0.4.0]*
     *[FEATURE]: Ability to delete Users and Orgs. Orgs with Users cannot be deleted
+    *[FEATURE]: Ability to config waterfall settings for video and display ads
+    *[FEATURE]: Ability to config dynamic ad settings (first ad placement, frequency and skip)
 
 ## v0.3.0 (July 30, 2014)
 
