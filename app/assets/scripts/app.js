@@ -63,6 +63,10 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
                 appData: appData
             };
 
+            appData.waterfallData = account.waterfallData;
+            appData.adConfig = account.adConfig;
+            appData.defaultSplashOptions = account.defaultSplashOptions;
+
             self.entryPath = $location.path();
 
             $log = $log.context('AppCtrl');

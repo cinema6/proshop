@@ -191,6 +191,6 @@ define(['mockHttp'], function(mockHttp){
         .proxy('mocks/account/users/o4-users.json');
 
     httpMocks.whenGET('/api/account/users?org=e2e-org')
-        .proxy('mocks/account/users/o5-org-users.json');
+        .proxy('mocks/account/users/e2e-org-users.json');
 
 });

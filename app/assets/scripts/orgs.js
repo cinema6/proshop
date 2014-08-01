@@ -10,9 +10,7 @@ define(['account'],function(account) {
             $log = $log.context('OrgsCtrl');
             $log.info('instantiated');
 
-            self.displayWaterfalls = angular.copy(account.waterfallOptions);
-            self.videoWaterfalls = angular.copy(account.waterfallOptions);
-            self.showWaterfallSettings = false;
+            self.showWaterfallSettings = true;
             self.action = 'all';
 
             function updateOrgs(orgs) {
@@ -20,17 +18,26 @@ define(['account'],function(account) {
                 data.orgs = orgs;
             }
 
-            // function convertWaterfall(data) {
-            //     return data.map(function(item) {
-            //         if (item.checked) { return item.value; }
-            //     }).filter(function(item) { return !!item; });
-            // }
+            self.formIsValid = function() {
+                var videoWaterfall = data.org._data.videoWaterfalls.filter(function(option) {
+                        return option.enabled;
+                    }),
+                    displayWaterfall = data.org._data.displayWaterfalls.filter(function(option) {
+                        return option.enabled;
+                    }),
+                    embedType = data.org._data.config.embedTypes.filter(function(option) {
+                        return option.enabled;
+                    });
+
+                return !!(videoWaterfall.length && displayWaterfall.length && embedType.length);
+            };
 
             self.editOrg = function(org){
                 $scope.message = null;
                 self.action = 'edit';
-                data.org = org;
+                data.org = account.convertOrgForEditing(org);
                 data.users = null;
+
                 account.getUsers(org)
                     .then(function(users) {
                         data.users = users;
@@ -40,11 +47,8 @@ define(['account'],function(account) {
             self.addNewOrg = function() {
                 $scope.message = null;
                 self.action = 'new';
-                data.org = {
-                    name: null,
-                    status: 'active'
-                };
                 data.users = null;
+                data.org = account.convertOrgForEditing();
             };
 
             self.deleteOrg = function() {
@@ -67,7 +71,7 @@ define(['account'],function(account) {
             };
 
             self.sortOrgs = function(/*field*/) {
-                // I imagine there will be something in the UI to allow sorting the list
+                // There will be something in the UI to allow sorting the list
                 // return account.getOrgs(field).then(updateOrgs);
             };
 
@@ -93,14 +97,11 @@ define(['account'],function(account) {
                 }
 
                 if (data.org.id) {
-                    account.putOrg({
-                        id: data.org.id,
-                        name: data.org.name
-                    }).then(handleSuccess, handleError);
+                    account.putOrg(data.org)
+                        .then(handleSuccess, handleError);
                 } else {
-                    account.postOrg({
-                        name: data.org.name
-                    }).then(handleSuccess, handleError);
+                    account.postOrg(data.org)
+                        .then(handleSuccess, handleError);
                 }
             };
 

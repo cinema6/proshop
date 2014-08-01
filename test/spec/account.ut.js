@@ -8,9 +8,47 @@
                 account,
                 successSpy,
                 failureSpy,
-                c6UrlMaker;
+                c6UrlMaker,
+                mockOrg,
+                mockOrgs,
+                mockUser,
+                mockUsers;
 
             beforeEach(function() {
+                mockOrg = {
+                    id: 'o-1',
+                    name: 'Org1',
+                    status: 'active',
+                    waterfalls: {
+                        video: ['cinema6'],
+                        display: ['cinema6']
+                    }
+                };
+
+                mockOrgs = [
+                    {
+                        name:'Org1'
+                    },
+                    {
+                        name:'Org2'
+                    }
+                ];
+
+                mockUser = {
+                    id: 'u-1',
+                    email: 'foo@bar.com',
+                    org: 'o-1'
+                };
+
+                mockUsers = [
+                    {
+                        id:'u-1'
+                    },
+                    {
+                        name:'u-2'
+                    }
+                ];
+
                 module('c6.ui', function($provide) {
                     $provide.provider('c6UrlMaker', function(){
                         this.location = jasmine.createSpy('urlMaker.location');
@@ -115,14 +153,101 @@
                     });
                 });
 
-                describe('getOrg()', function() {
-                    var mockOrg;
+                describe('convertOrgForEditing()', function() {
+                    var newOrgDefaults;
 
+                    beforeEach(function() {
+                        newOrgDefaults = {
+                            name: null,
+                            status: 'active',
+                            waterfalls: {
+                                video: ['cinema6'],
+                                display: ['cinema6']
+                            },
+                            adConfig: {
+                                video: {
+                                    firstPlacement: 2,
+                                    frequency: 0,
+                                    skip: 6,
+                                    waterfall: 'cinema6'
+                                },
+                                display: {
+                                    waterfall: 'cinema6'
+                                }
+                            },
+                            _data: {
+                                videoWaterfalls: [],
+                                displayWaterfall: [],
+                                adConfig: {}
+                            }
+                        };
+                    });
+
+                    it('should create a default org if no org is passed in', function() {
+                        var org = account.convertOrgForEditing();
+                        expect(org.name).toEqual(newOrgDefaults.name);
+                        expect(org.status).toEqual(newOrgDefaults.status);
+                        expect(org.waterfalls).toEqual(newOrgDefaults.waterfalls);
+                        expect(org.adConfig).toEqual(newOrgDefaults.adConfig);
+                        expect(org._data.videoWaterfalls).toEqual(account.waterfallData.options);
+                        expect(org._data.displayWaterfalls).toEqual(account.waterfallData.options);
+                        expect(org._data.adConfig).toEqual({
+                            firstPlacement: {label: 2, value: 2},
+                            frequency: {label:'Only show first ad', value: 0},
+                            skip: { label:'After 6 sec.', value:6}
+                        });
+                    });
+
+                    it('should add waterfall options based on org', function() {
+                        var org = newOrgDefaults;
+                        org.waterfalls.video.push('cinema6-publisher');
+                        org.waterfalls.display.push('publisher');
+                        org = account.convertOrgForEditing(org);
+
+                        org._data.videoWaterfalls.forEach(function(option) {
+                            if (option.value === 'cinema6' || option.value === 'cinema6-publisher') {
+                                expect(option.enabled).toBe(true);
+                            } else {
+                                expect(option.enabled).toBe(false);
+                            }
+                        });
+
+                        org._data.displayWaterfalls.forEach(function(option) {
+                            if (option.value === 'cinema6' || option.value === 'publisher') {
+                                expect(option.enabled).toBe(true);
+                            } else {
+                                expect(option.enabled).toBe(false);
+                            }
+                        });
+                    });
+
+                    it('should add adConfig options based on org', function(){
+                        var org = newOrgDefaults;
+                        org.adConfig = {
+                            video: {
+                                firstPlacement: -1,
+                                frequency: 3,
+                                skip: false,
+                                waterfall: 'publisher'
+                            },
+                            display: {
+                                waterfall: 'cinema6-publisher'
+                            }
+                        };
+                        org = account.convertOrgForEditing(org);
+
+                        expect(org._data.adConfig.firstPlacement).toEqual({label:'No ads',value:-1});
+                        expect(org._data.adConfig.frequency).toEqual({label:3,value:3});
+                        expect(org._data.adConfig.skip).toEqual({label:'No skipping allowed',value:false});
+                        expect(org._data.adConfig.waterfall).toBe(undefined);
+                    });
+                });
+
+                describe('getOrg()', function() {
                     beforeEach(function(){
                         successSpy = jasmine.createSpy('getOrg.success');
                         failureSpy = jasmine.createSpy('getOrg.failure');
                         spyOn($timeout,'cancel');
-                        mockOrg = { id: 'o-1' };
                     });
 
                     it('will resolve promise if successfull',function(){
@@ -157,14 +282,13 @@
 
                 describe('getOrgs()', function() {
                     describe('when querying by field', function() {
-                        var mockField, mockOrgs;
+                        var mockField;
 
                         beforeEach(function(){
                             successSpy = jasmine.createSpy('getOrgs.success');
                             failureSpy = jasmine.createSpy('getOrgs.failure');
                             spyOn($timeout,'cancel');
                             mockField = 'name';
-                            mockOrgs = [{name:'Org1'}, {name:'Org2'}];
                         });
 
                         it('will resolve promise if successfull',function(){
@@ -198,13 +322,10 @@
                     });
 
                     describe('when querying all orgs', function() {
-                        var mockOrgs;
-
                         beforeEach(function(){
                             successSpy = jasmine.createSpy('getOrgs.success');
                             failureSpy = jasmine.createSpy('getOrgs.failure');
                             spyOn($timeout,'cancel');
-                            mockOrgs = [{name:'Org1'}, {name:'Org2'}];
                         });
 
                         it('will resolve promise if successfull',function(){
@@ -239,18 +360,50 @@
                 });
 
                 describe('putOrg()', function() {
-                    var mockOrg;
-
                     beforeEach(function(){
                         successSpy = jasmine.createSpy('putOrg.success');
                         failureSpy = jasmine.createSpy('putOrg.failure');
                         spyOn($timeout,'cancel');
-                        mockOrg = { id: 'o-1' };
+                    });
+
+                    it('will put the proper edited data', function() {
+                        var expectedOrg;
+
+                        mockOrg.name = 'Org1 Renames',
+                        mockOrg.status = 'pending',
+                        mockOrg.waterfalls = {
+                            video: ['cinema6','publisher'],
+                            display: ['cinema6','publisher']
+                        };
+                        mockOrg.adConfig = {
+                            video: {
+                                firstPlacement: -1,
+                                frequency: 3,
+                                skip: 15,
+                                waterfall: 'publisher'
+                            },
+                            display: {
+                                waterfall: 'cinema6-publisher'
+                            }
+                        };
+                        mockOrg.config = {
+                            embedTypes: ['script']
+                        };
+
+                        expectedOrg = angular.copy(mockOrg);
+                        delete expectedOrg.id;
+
+                        $httpBackend.expectPUT('/api/account/org/o-1', expectedOrg)
+                            .respond(200);
+                        mockOrg = account.convertOrgForEditing(mockOrg);
+                        account.putOrg(mockOrg).then(successSpy,failureSpy);
+                        $httpBackend.flush();
                     });
 
                     it('will resolve promise if successfull',function(){
                         $httpBackend.expectPUT('/api/account/org/o-1')
                             .respond(200,mockOrg);
+                        mockOrg = account.convertOrgForEditing(mockOrg);
                         account.putOrg(mockOrg).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).toHaveBeenCalledWith(mockOrg);
@@ -261,6 +414,7 @@
                     it('will reject promise if not successful',function(){
                         $httpBackend.expectPUT('/api/account/org/o-1')
                             .respond(404,'Unable to update org.');
+                        mockOrg = account.convertOrgForEditing(mockOrg);
                         account.putOrg(mockOrg).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).not.toHaveBeenCalled();
@@ -271,6 +425,7 @@
                     it('will reject promise if times out',function(){
                         $httpBackend.expectPUT('/api/account/org/o-1')
                             .respond(200,'');
+                        mockOrg = account.convertOrgForEditing(mockOrg);
                         account.putOrg(mockOrg).then(successSpy,failureSpy);
                         $timeout.flush(60000);
                         expect(successSpy).not.toHaveBeenCalled();
@@ -279,18 +434,81 @@
                 });
 
                 describe('postOrg()', function() {
-                    var mockOrg;
-
                     beforeEach(function(){
                         successSpy = jasmine.createSpy('postOrg.success');
                         failureSpy = jasmine.createSpy('postOrg.failure');
                         spyOn($timeout,'cancel');
-                        mockOrg = { name: 'o-1' };
+                    });
+
+                    it('will send the proper defaults', function() {
+                        var org = {
+                            name: 'Org1',
+                            status: 'active',
+                            waterfalls: {
+                                video: ['cinema6'],
+                                display: ['cinema6']
+                            },
+                            adConfig: {
+                                video: {
+                                    firstPlacement: 2,
+                                    frequency: 0,
+                                    skip: 6,
+                                    waterfall: 'cinema6'
+                                },
+                                display: {
+                                    waterfall: 'cinema6'
+                                }
+                            },
+                            config: {
+                                embedTypes: ['script']
+                            }
+                        };
+                        $httpBackend.expectPOST('/api/account/org', org)
+                            .respond(200);
+                        mockOrg = account.convertOrgForEditing(mockOrg);
+                        account.postOrg(mockOrg).then(successSpy,failureSpy);
+                        $httpBackend.flush();
+                    });
+
+                    it('will send the correct data', function() {
+                        var expectedOrg;
+
+                        mockOrg = {
+                            name: 'Some New Org',
+                            status: 'pending',
+                            waterfalls: {
+                                video: ['cinema6', 'cinema6-publisher', 'publisher'],
+                                display: ['publisher']
+                            },
+                            adConfig: {
+                                video: {
+                                    firstPlacement: 3,
+                                    frequency: 2,
+                                    skip: false,
+                                    waterfall: 'publisher'
+                                },
+                                display: {
+                                    waterfall: 'publisher-cinema6'
+                                }
+                            },
+                            config: {
+                                embedTypes: ['script']
+                            }
+                        };
+
+                        expectedOrg = angular.copy(mockOrg);
+
+                        $httpBackend.expectPOST('/api/account/org', expectedOrg)
+                            .respond(200);
+                        mockOrg = account.convertOrgForEditing(mockOrg);
+                        account.postOrg(mockOrg).then(successSpy,failureSpy);
+                        $httpBackend.flush();
                     });
 
                     it('will resolve promise if successfull',function(){
                         $httpBackend.expectPOST('/api/account/org')
                             .respond(200,mockOrg);
+                        mockOrg = account.convertOrgForEditing(mockOrg);
                         account.postOrg(mockOrg).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).toHaveBeenCalledWith(mockOrg);
@@ -301,6 +519,7 @@
                     it('will reject promise if not successful',function(){
                         $httpBackend.expectPOST('/api/account/org')
                             .respond(404,'Unable to create org.');
+                        mockOrg = account.convertOrgForEditing(mockOrg);
                         account.postOrg(mockOrg).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).not.toHaveBeenCalled();
@@ -311,7 +530,8 @@
                     it('will reject promise if times out',function(){
                         $httpBackend.expectPOST('/api/account/org')
                             .respond(200,'');
-                        account.postOrg({id:'o-1'}).then(successSpy,failureSpy);
+                        mockOrg = account.convertOrgForEditing(mockOrg);
+                        account.postOrg(mockOrg).then(successSpy,failureSpy);
                         $timeout.flush(60000);
                         expect(successSpy).not.toHaveBeenCalled();
                         expect(failureSpy).toHaveBeenCalledWith('Request timed out.');
@@ -319,13 +539,10 @@
                 });
 
                 describe('getUser()', function() {
-                    var mockUser;
-
                     beforeEach(function(){
                         successSpy = jasmine.createSpy('getUser.success');
                         failureSpy = jasmine.createSpy('getUser.failure');
                         spyOn($timeout,'cancel');
-                        mockUser = { id: 'u-1' };
                     });
 
                     it('will resolve promise if successfull',function(){
@@ -360,13 +577,10 @@
 
                 describe('getUsers()', function() {
                     describe('when querying by org', function() {
-                        var mockOrg, mockUsers;
-
                         beforeEach(function(){
                             successSpy = jasmine.createSpy('getUsers.success');
                             failureSpy = jasmine.createSpy('getUsers.failure');
                             spyOn($timeout,'cancel');
-                            mockOrg = {id:'o-1'};
                             mockUsers = [{id:'u-1'}, {name:'u-2'}];
                         });
 
@@ -401,13 +615,10 @@
                     });
 
                     describe('when querying all orgs', function() {
-                        var mockUsers;
-
                         beforeEach(function(){
                             successSpy = jasmine.createSpy('getUsers.success');
                             failureSpy = jasmine.createSpy('getUsers.failure');
                             spyOn($timeout,'cancel');
-                            mockUsers = [{id:'u-1'}, {id:'u-2'}];
                         });
 
                         it('will resolve promise if successfull',function(){
@@ -442,13 +653,10 @@
                 });
 
                 describe('putUser()', function() {
-                    var mockUser;
-
                     beforeEach(function(){
                         successSpy = jasmine.createSpy('putUser.success');
                         failureSpy = jasmine.createSpy('putUser.failure');
                         spyOn($timeout,'cancel');
-                        mockUser = { id: 'u-1', email: 'foo@bar.com', org: 'o-1'};
                     });
 
                     it('will resolve promise if successfull',function(){
@@ -482,13 +690,10 @@
                 });
 
                 describe('postOrg()', function() {
-                    var mockUser;
-
                     beforeEach(function(){
                         successSpy = jasmine.createSpy('putOrg.success');
                         failureSpy = jasmine.createSpy('putOrg.failure');
                         spyOn($timeout,'cancel');
-                        mockUser = { id: 'u-1', email: 'foo@bar.com', org: 'o-1'};
                     });
 
                     it('will resolve promise if successfull',function(){

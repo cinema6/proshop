@@ -2,6 +2,9 @@ define(['angular','c6ui'], function(angular,c6ui){
     /* jshint -W106 */
     'use strict';
 
+    var copy = angular.copy,
+        forEach = angular.forEach;
+
     return angular.module('c6.proshop.account',[c6ui.name])
     .controller('AcctChangeCtrl', ['$log', '$scope', 'account',
     function                      ( $log ,  $scope ,  account ){
@@ -128,26 +131,212 @@ define(['angular','c6ui'], function(angular,c6ui){
             return deferred.promise;
         }
 
-        this.waterfallOptions = [
+        function convertWaterfall(data) {
+            return data.map(function(item) {
+                if (item.enabled) { return item.value; }
+            }).filter(function(item) { return !!item; });
+        }
+
+        function convertOrgForSaving(org) {
+            forEach(org._data.adConfig, function(conf, key) {
+                org.adConfig.video[key] = conf.value;
+            });
+
+            org.waterfalls.video = convertWaterfall(org._data.videoWaterfalls);
+            org.waterfalls.display = convertWaterfall(org._data.displayWaterfalls);
+
+            return org;
+        }
+
+        this.waterfallData = {
+            settings: [
+                {
+                    title: 'Video Waterfall Options',
+                    description: 'These are options available to the publisher for ad cards in MiniReels',
+                    category: 'video',
+                    type: 'options'
+                },
+                {
+                    title: 'Video Waterfall Default',
+                    description: 'This will be the default waterfall for MiniReels that do not explicitly set a waterfall option',
+                    category: 'video',
+                    type: 'default'
+                },
+                {
+                    title: 'Display Waterfall Options',
+                    description: 'These are options available to the publisher for the display ad module in Companion Ad MiniReels',
+                    category: 'display',
+                    type: 'options'
+                },
+                {
+                    title: 'Display Waterfall Default',
+                    description: 'This will be the default waterfall for Companion Ad MiniReels that do not explicitly set a waterfall option',
+                    category: 'display',
+                    type: 'default'
+                }
+            ],
+            options: [
+                {
+                    name: 'Cinema6',
+                    value: 'cinema6',
+                    enabled: true,
+                },
+                {
+                    name: 'Cinema6 - Publisher',
+                    value: 'cinema6-publisher',
+                    enabled: false,
+                },
+                {
+                    name: 'Publisher',
+                    value: 'publisher',
+                    enabled: false,
+                },
+                {
+                    name: 'Publisher - Cinema6',
+                    value: 'publisher-cinema6',
+                    enabled: false,
+                }
+            ]
+        };
+
+        this.adConfig = {
+            types: [
+                {
+                    title: 'First Placement',
+                    description: 'Number of videos before the first ad is shown',
+                    label: 'firstPlacement',
+                    options: [
+                        {
+                            label:'No ads',
+                            value: -1
+                        },
+                        {
+                            label: 0,
+                            value: 0
+                        },
+                        {
+                            label: 1,
+                            value: 1
+                        },
+                        {
+                            label: 2,
+                            value: 2
+                        },
+                        {
+                            label: 3,
+                            value: 3
+                        },
+                        {
+                            label: 4,
+                            value: 4
+                        },
+                        {
+                            label: 5,
+                            value: 5
+                        },
+                        {
+                            label: 6,
+                            value: 6
+                        }
+                    ],
+                },
+                {
+                    title: 'Ad Frequency',
+                    description: 'Number of videos between ads',
+                    label: 'frequency',
+                    options: [
+                        {
+                            label: 'Only show first ad',
+                            value: 0
+                        },
+                        {
+                            label: 1,
+                            value: 1
+                        },
+                        {
+                            label: 2,
+                            value: 2
+                        },
+                        {
+                            label: 3,
+                            value: 3
+                        },
+                        {
+                            label: 4,
+                            value: 4
+                        },
+                        {
+                            label: 5,
+                            value: 5
+                        },
+                        {
+                            label: 6,
+                            value: 6
+                        },
+                        {
+                            label: 7,
+                            value: 7
+                        },
+                        {
+                            label: 8,
+                            value: 8
+                        },
+                        {
+                            label: 9,
+                            value: 9
+                        }
+                    ]
+                },
+                {
+                    title: 'Skip Settings',
+                    description: 'Controls the users ability to skip the ad, and an optional countdown',
+                    label: 'skip',
+                    options: [
+                        {
+                            label: 'No skipping allowed',
+                            value: false
+                        },
+                        {
+                            label: 'Skip anytime',
+                            value: true
+                        },
+                        {
+                            label: 'After 6 sec.',
+                            value: 6
+                        },
+                        {
+                            label: 'After 15 sec.',
+                            value: 15
+                        },
+                        {
+                            label: 'After 30 sec.',
+                            value: 30
+                        },
+                        {
+                            label: 'After 45 sec.',
+                            value: 45
+                        },
+                        {
+                            label: 'After 1 min.',
+                            value: 60
+                        }
+                    ]
+                }
+            ]
+        };
+
+        this.defaultSplashOptions = [
             {
-                name: 'Cinema6',
-                value: 'cinema6',
-                checked: true
+                title: 'Default Splash Ratio',
+                description: 'Sets the default aspect ratio for users in the MR Studio',
+                options: ['1-1','3-2','6-5','16-9'],
+                label: 'ratio'
             },
             {
-                name: 'Cinema6 - Publisher',
-                value: 'cinema6-publisher',
-                checked: false
-            },
-            {
-                name: 'Publisher',
-                value: 'publisher',
-                checked: false
-            },
-            {
-                name: 'Publisher - Cinema6',
-                value: 'publisher-cinema6',
-                checked: false
+                title: 'Default Splash Theme',
+                description: 'Sets the default embed theme for users in the MR Studio',
+                options: ['text-only','img-only','img-text-overlay','vertical-stack','horizontal-stack'],
+                label: 'theme'
             }
         ];
 
@@ -307,6 +496,96 @@ define(['angular','c6ui'], function(angular,c6ui){
         *****************
         */
 
+        this.convertOrgForEditing = function(org) {
+            if (!org) {
+                // we're creating a new org, here are the defaults
+                org = {
+                    name: null,
+                    status: 'active',
+                    waterfalls: {
+                        video: ['cinema6'],
+                        display: ['cinema6']
+                    },
+                    config: {
+                        embedTypes: ['script']
+                    },
+                    adConfig: {
+                        video: {
+                            firstPlacement: 2,
+                            frequency: 0,
+                            waterfall: 'cinema6',
+                            skip: 6
+                        },
+                        display: {
+                            waterfall: 'cinema6'
+                        }
+                    }
+                };
+            }
+
+            org._data = {};
+
+            org._data.videoWaterfalls = this.waterfallData.options.map(function(option) {
+                var copied = copy(option);
+                copied.enabled = org.waterfalls.video.indexOf(option.value) > -1;
+                return copied;
+            });
+
+            org._data.displayWaterfalls = this.waterfallData.options.map(function(option) {
+                var copied = copy(option);
+                copied.enabled = org.waterfalls.display.indexOf(option.value) > -1;
+                return copied;
+            });
+
+            // if there's no adConfig then set the default!
+            org.adConfig = org.adConfig || {
+                video: {
+                    firstPlacement: 2,
+                    frequency: 0,
+                    waterfall: 'cinema6',
+                    skip: 6
+                },
+                display: {
+                    waterfall: 'cinema6'
+                }
+            };
+
+            org._data.adConfig = {};
+
+            this.adConfig.types.forEach(function(setting) {
+                var convertedProp = setting.options.filter(function(option) {
+                    return org.adConfig.video[setting.label] === option.value;
+                })[0];
+
+                org._data.adConfig[setting.label] = convertedProp;
+            });
+
+            org.config = org.config || {
+                embedTypes: ['script']
+            };
+
+            org._data.config = {};
+
+            org._data.config.embedTypes = [
+                {
+                    title: 'Script Tag',
+                    value: 'script',
+                    enabled: false
+                },
+                {
+                    title: 'Wordpress Shortcode',
+                    value: 'shortcode',
+                    enabled: false
+                }
+            ];
+
+            org._data.config.embedTypes.forEach(function(setting) {
+                setting.enabled = org.config.embedTypes.indexOf(setting.value) > -1;
+            });
+
+            return org;
+        };
+
         this.getOrg = function(orgId) {
             return httpWrapper({
                 method: 'GET',
@@ -322,22 +601,33 @@ define(['angular','c6ui'], function(angular,c6ui){
         };
 
         this.putOrg = function(org) {
-            // id,email,password,org,lastName,firstName
+            org = convertOrgForSaving(org);
+
             return httpWrapper({
                 method: 'PUT',
                 url: c6UrlMaker('account/org/' + org.id,'api'),
                 data: {
-                    name: org.name
+                    name: org.name,
+                    status: org.status,
+                    adConfig: org.adConfig,
+                    waterfalls: org.waterfalls,
+                    config: org.config
                 }
             });
         };
 
         this.postOrg = function(org) {
+            org = convertOrgForSaving(org);
+
             return httpWrapper({
                 method: 'POST',
                 url: c6UrlMaker('account/org','api'),
                 data: {
                     name: org.name,
+                    status: org.status,
+                    adConfig: org.adConfig,
+                    waterfalls: org.waterfalls,
+                    config: org.config
                 }
             });
         };

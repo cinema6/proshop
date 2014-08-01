@@ -1,7 +1,7 @@
 (function() {
     'user strict';
 
-    define(['orgs'], function() {
+    define(['orgs','account'], function() {
         describe('OrgsController', function() {
             var $rootScope,
                 $scope,
@@ -21,22 +21,24 @@
                     user: null, users: null, org: null, orgs: null
                 };
 
-                account = {
-                    getOrgs: jasmine.createSpy('account.getOrgs'),
-                    getUsers: jasmine.createSpy('account.getUsers'),
-                    putOrg: jasmine.createSpy('account.putUser'),
-                    postOrg: jasmine.createSpy('account.postUser'),
-                    deleteOrg: jasmine.createSpy('account.deleteOrg')
-                };
-
                 mockOrgs = [
                     {
                         id: 'o-1',
-                        name: 'Org1'
+                        name: 'Org1',
+                        status: 'active',
+                        waterfalls: {
+                            video: ['cinema6'],
+                            display: ['cinema6']
+                        }
                     },
                     {
                         id: 'o-2',
-                        name: 'Org2'
+                        name: 'Org2',
+                        status: 'active',
+                        waterfalls: {
+                            video: ['cinema6'],
+                            display: ['cinema6']
+                        }
                     }
                 ];
 
@@ -62,6 +64,15 @@
                     $log = $injector.get('$log');
                     $q = $injector.get('$q');
                     $rootScope = $injector.get('$rootScope');
+
+                    account = $injector.get('account');
+
+                    spyOn(account, 'getOrgs');
+                    spyOn(account, 'getUsers');
+                    spyOn(account, 'putOrg');
+                    spyOn(account, 'postOrg');
+                    spyOn(account, 'deleteOrg');
+                    spyOn(account, 'convertOrgForEditing').and.callThrough();
 
                     account.getOrgs.deferred = $q.defer();
                     account.getOrgs.and.returnValue(account.getOrgs.deferred.promise);
@@ -101,7 +112,7 @@
 
                 it('should set some defaults', function() {
                     expect(OrgsCtrl.action).toBe('all');
-                    expect(OrgsCtrl.showWaterfallSettings).toBe(false);
+                    expect(OrgsCtrl.showWaterfallSettings).toBe(true);
                 });
 
                 it('should call the account service to get all Orgs', function() {
@@ -119,6 +130,28 @@
             });
 
             describe('methods', function() {
+                describe('formIsValid()', function() {
+                    beforeEach(function() {
+                        $scope.$apply(function() {
+                            account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
+                        });
+
+                        OrgsCtrl.editOrg($scope.data.orgs[0]);
+                    });
+
+                    it('should be true by default because the defualts should be set!', function() {
+                        expect(OrgsCtrl.formIsValid()).toBe(true);
+                    });
+
+                    it('should be false if video or display waterfalls are not set', function() {
+                        $scope.data.org._data.videoWaterfalls = [];
+                        expect(OrgsCtrl.formIsValid()).toBe(false);
+
+                        $scope.data.org._data.videoWaterfalls = [{enabled: true}];
+                        expect(OrgsCtrl.formIsValid()).toBe(true);
+                    });
+                });
+
                 describe('editOrg()', function() {
                     it('should reset message, change the action, put the org on the scope, and get users by org', function() {
                         $scope.$apply(function() {
@@ -154,6 +187,7 @@
                         expect(OrgsCtrl.action).toBe('new');
                         expect($scope.data.org.name).toBe(null);
                         expect($scope.data.org.status).toBe('active');
+                        expect(account.convertOrgForEditing).toHaveBeenCalled();
                     });
                 });
 
@@ -196,10 +230,7 @@
                         it('should PUT the org', function() {
                             OrgsCtrl.saveOrg();
 
-                            expect(account.putOrg).toHaveBeenCalledWith({
-                                id: $scope.data.orgs[0].id,
-                                name: $scope.data.orgs[0].name
-                            });
+                            expect(account.putOrg).toHaveBeenCalledWith($scope.data.org);
                         });
 
                         it('on success should put a message on the scope, set the action, reload all the orgs data', function() {
@@ -241,7 +272,7 @@
                         it('should reset the message and the org data', function() {
                             OrgsCtrl.saveOrg();
 
-                            expect(account.postOrg).toHaveBeenCalledWith({name: $scope.data.org.name });
+                            expect(account.postOrg).toHaveBeenCalledWith($scope.data.org);
                         });
 
                         it('on success should put a message on the scope, set the action, reload all the orgs data', function() {
