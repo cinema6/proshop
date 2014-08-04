@@ -131,7 +131,7 @@ define(['angular','c6ui'], function(angular,c6ui){
             return deferred.promise;
         }
 
-        function convertWaterfall(data) {
+        function getEnabledOptions(data) {
             return data.map(function(item) {
                 if (item.enabled) { return item.value; }
             }).filter(function(item) { return !!item; });
@@ -142,8 +142,9 @@ define(['angular','c6ui'], function(angular,c6ui){
                 org.adConfig.video[key] = conf.value;
             });
 
-            org.waterfalls.video = convertWaterfall(org._data.videoWaterfalls);
-            org.waterfalls.display = convertWaterfall(org._data.displayWaterfalls);
+            org.config.embedTypes = getEnabledOptions(org._data.config.embedTypes);
+            org.waterfalls.video = getEnabledOptions(org._data.videoWaterfalls);
+            org.waterfalls.display = getEnabledOptions(org._data.displayWaterfalls);
 
             return org;
         }
