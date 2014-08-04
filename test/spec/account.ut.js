@@ -230,8 +230,15 @@
                         var org = newOrgDefaults;
                         org.config.embedTypes = ['script', 'shortcode'];
                         org = account.convertOrgForEditing(org);
-                        expect(org.config).toEqual({
-                            embedTypes: ['script', 'shortcode']
+                        expect(org._data.config.embedTypes[0]).toEqual({
+                            title: 'Script Tag',
+                            value: 'script',
+                            enabled: true
+                        });
+                        expect(org._data.config.embedTypes[1]).toEqual({
+                            title: 'Wordpress Shortcode',
+                            value: 'shortcode',
+                            enabled: true
                         });
                     });
 
@@ -381,35 +388,50 @@
                     });
 
                     it('will put the proper edited data', function() {
-                        var expectedOrg;
+                        var expectedOrg = {};
+                        mockOrg = account.convertOrgForEditing(mockOrg);
 
                         mockOrg.name = 'Org1 Renames',
                         mockOrg.status = 'pending',
-                        mockOrg.waterfalls = {
-                            video: ['cinema6','publisher'],
-                            display: ['cinema6','publisher']
-                        };
-                        mockOrg.adConfig = {
+                        mockOrg.adConfig.video.waterfall = 'publisher';
+                        mockOrg.adConfig.display.waterfall = 'cinema6-publisher';
+                        mockOrg._data.videoWaterfalls[0].enabled = true;
+                        mockOrg._data.videoWaterfalls[1].enabled = true;
+                        mockOrg._data.videoWaterfalls[2].enabled = true;
+                        mockOrg._data.videoWaterfalls[3].enabled = true;
+                        mockOrg._data.displayWaterfalls[0].enabled = true;
+                        mockOrg._data.displayWaterfalls[1].enabled = true;
+                        mockOrg._data.displayWaterfalls[2].enabled = true;
+                        mockOrg._data.displayWaterfalls[3].enabled = true;
+                        mockOrg._data.adConfig.frequency.value = 3;
+                        mockOrg._data.adConfig.firstPlacement.value = -1;
+                        mockOrg._data.adConfig.skip.value = 60;
+                        mockOrg._data.config.embedTypes[0].enabled = false;
+                        mockOrg._data.config.embedTypes[1].enabled = true;
+
+                        expectedOrg.name = 'Org1 Renames';
+                        expectedOrg.status = 'pending';
+                        expectedOrg.adConfig = {
                             video: {
                                 firstPlacement: -1,
                                 frequency: 3,
-                                skip: 15,
+                                skip: 60,
                                 waterfall: 'publisher'
                             },
                             display: {
                                 waterfall: 'cinema6-publisher'
                             }
                         };
-                        mockOrg.config = {
-                            embedTypes: ['script']
+                        expectedOrg.waterfalls = {
+                            video: ['cinema6','cinema6-publisher','publisher','publisher-cinema6'],
+                            display: ['cinema6','cinema6-publisher','publisher','publisher-cinema6']
+                        }
+                        expectedOrg.config = {
+                            embedTypes: ['shortcode']
                         };
-
-                        expectedOrg = angular.copy(mockOrg);
-                        delete expectedOrg.id;
 
                         $httpBackend.expectPUT('/api/account/org/o-1', expectedOrg)
                             .respond(200);
-                        mockOrg = account.convertOrgForEditing(mockOrg);
                         account.putOrg(mockOrg).then(successSpy,failureSpy);
                         $httpBackend.flush();
                     });
@@ -485,36 +507,50 @@
                     });
 
                     it('will send the correct data', function() {
-                        var expectedOrg;
+                        var expectedOrg = {};
+                        mockOrg = account.convertOrgForEditing(mockOrg);
 
-                        mockOrg = {
-                            name: 'Some New Org',
-                            status: 'pending',
-                            waterfalls: {
-                                video: ['cinema6', 'cinema6-publisher', 'publisher'],
-                                display: ['publisher']
+                        mockOrg.name = 'Org1 Renames',
+                        mockOrg.status = 'pending',
+                        mockOrg.adConfig.video.waterfall = 'publisher';
+                        mockOrg.adConfig.display.waterfall = 'cinema6-publisher';
+                        mockOrg._data.videoWaterfalls[0].enabled = true;
+                        mockOrg._data.videoWaterfalls[1].enabled = true;
+                        mockOrg._data.videoWaterfalls[2].enabled = true;
+                        mockOrg._data.videoWaterfalls[3].enabled = true;
+                        mockOrg._data.displayWaterfalls[0].enabled = true;
+                        mockOrg._data.displayWaterfalls[1].enabled = true;
+                        mockOrg._data.displayWaterfalls[2].enabled = true;
+                        mockOrg._data.displayWaterfalls[3].enabled = true;
+                        mockOrg._data.adConfig.frequency.value = 3;
+                        mockOrg._data.adConfig.firstPlacement.value = -1;
+                        mockOrg._data.adConfig.skip.value = 60;
+                        mockOrg._data.config.embedTypes[0].enabled = false;
+                        mockOrg._data.config.embedTypes[1].enabled = true;
+
+                        expectedOrg.name = 'Org1 Renames';
+                        expectedOrg.status = 'pending';
+                        expectedOrg.adConfig = {
+                            video: {
+                                firstPlacement: -1,
+                                frequency: 3,
+                                skip: 60,
+                                waterfall: 'publisher'
                             },
-                            adConfig: {
-                                video: {
-                                    firstPlacement: 3,
-                                    frequency: 2,
-                                    skip: false,
-                                    waterfall: 'publisher'
-                                },
-                                display: {
-                                    waterfall: 'publisher-cinema6'
-                                }
-                            },
-                            config: {
-                                embedTypes: ['script']
+                            display: {
+                                waterfall: 'cinema6-publisher'
                             }
                         };
-
-                        expectedOrg = angular.copy(mockOrg);
+                        expectedOrg.waterfalls = {
+                            video: ['cinema6','cinema6-publisher','publisher','publisher-cinema6'],
+                            display: ['cinema6','cinema6-publisher','publisher','publisher-cinema6']
+                        }
+                        expectedOrg.config = {
+                            embedTypes: ['shortcode']
+                        };
 
                         $httpBackend.expectPOST('/api/account/org', expectedOrg)
                             .respond(200);
-                        mockOrg = account.convertOrgForEditing(mockOrg);
                         account.postOrg(mockOrg).then(successSpy,failureSpy);
                         $httpBackend.flush();
                     });
