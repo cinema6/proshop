@@ -19,6 +19,7 @@
                     id: 'o-1',
                     name: 'Org1',
                     status: 'active',
+                    config: {},
                     waterfalls: {
                         video: ['cinema6'],
                         display: ['cinema6']
@@ -160,6 +161,9 @@
                         newOrgDefaults = {
                             name: null,
                             status: 'active',
+                            config: {
+                                embedTypes: ['script']
+                            },
                             waterfalls: {
                                 video: ['cinema6'],
                                 display: ['cinema6']
@@ -189,6 +193,7 @@
                         expect(org.status).toEqual(newOrgDefaults.status);
                         expect(org.waterfalls).toEqual(newOrgDefaults.waterfalls);
                         expect(org.adConfig).toEqual(newOrgDefaults.adConfig);
+                        expect(org.config).toEqual(newOrgDefaults.config);
                         expect(org._data.videoWaterfalls).toEqual(account.waterfallData.options);
                         expect(org._data.displayWaterfalls).toEqual(account.waterfallData.options);
                         expect(org._data.adConfig).toEqual({
@@ -218,6 +223,15 @@
                             } else {
                                 expect(option.enabled).toBe(false);
                             }
+                        });
+                    });
+
+                    it('should add a config block based on org', function() {
+                        var org = newOrgDefaults;
+                        org.config.embedTypes = ['script', 'shortcode'];
+                        org = account.convertOrgForEditing(org);
+                        expect(org.config).toEqual({
+                            embedTypes: ['script', 'shortcode']
                         });
                     });
 

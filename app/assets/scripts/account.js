@@ -562,7 +562,8 @@ define(['angular','c6ui'], function(angular,c6ui){
                 org._data.adConfig[setting.label] = convertedProp;
             });
 
-            org.config = org.config || {
+            org.config = org.config && org.config.embedTypes ?
+                org.config : {
                 embedTypes: ['script']
             };
 

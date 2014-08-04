@@ -26,6 +26,7 @@
                         id: 'o-1',
                         name: 'Org1',
                         status: 'active',
+                        config: {},
                         waterfalls: {
                             video: ['cinema6'],
                             display: ['cinema6']
@@ -35,6 +36,7 @@
                         id: 'o-2',
                         name: 'Org2',
                         status: 'active',
+                        config: {},
                         waterfalls: {
                             video: ['cinema6'],
                             display: ['cinema6']
@@ -48,14 +50,16 @@
                         email: 'e@mail.com',
                         firstName: 'J',
                         lastName: 'F',
-                        org: 'o-1'
+                        org: 'o-1',
+                        config: {}
                     },
                     {
                         id: 'u-2',
                         email: 'mail@e.net',
                         firstName: 'B',
                         lastName: 'D',
-                        org: 'o-2'
+                        org: 'o-2',
+                        config: {}
                     }
                 ];
 
