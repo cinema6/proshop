@@ -1,5 +1,8 @@
 # ProShop
 
+* *[v0.5.0]*
+    *[FEATURE]: Existing user's org is now editable
+
 ## v0.4.2 (August 4, 2014)
 
 * *[v0.4.3]*

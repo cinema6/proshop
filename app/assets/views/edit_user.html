@@ -39,14 +39,14 @@
                 <span ng-show="theForm.email.$error.maxlength"> Too long. </span>
             </div>
         </div>
-        <div class="form-group">
-            <label for="org" class="control-label"> Org: </label>
-            <div>
-                <select ng-model="data.org" name="org" ng-options="org.name for org in data.orgs" required>
-                    <option value="">-- choose org --</option>
-                </select>
-                <span ng-show="theForm.org.$error.required"> Required. </span>
-            </div>
+    </div>
+    <div class="form-group">
+        <label for="org" class="control-label"> Org: </label>
+        <div>
+            <select ng-model="data.org" name="org" ng-options="org.name for org in data.orgs" required>
+                <option value="">-- choose org --</option>
+            </select>
+            <span ng-show="theForm.org.$error.required"> Required. </span>
         </div>
     </div>
     <div class="form-group">
