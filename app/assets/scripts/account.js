@@ -465,7 +465,8 @@ define(['angular','c6ui'], function(angular,c6ui){
                     lastName:   user.lastName,
                     firstName:  user.firstName,
                     branding:   user.branding,
-                    config:     user.config
+                    config:     user.config,
+                    org:        user.org
                 }
             });
         };

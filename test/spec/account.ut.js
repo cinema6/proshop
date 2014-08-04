@@ -38,7 +38,11 @@
                 mockUser = {
                     id: 'u-1',
                     email: 'foo@bar.com',
-                    org: 'o-1'
+                    org: 'o-1',
+                    firstName: 'Foo',
+                    lastName: 'Bar',
+                    branding: 'test_brand',
+                    config: {},
                 };
 
                 mockUsers = [
@@ -707,6 +711,17 @@
                         successSpy = jasmine.createSpy('putUser.success');
                         failureSpy = jasmine.createSpy('putUser.failure');
                         spyOn($timeout,'cancel');
+                    });
+
+                    it('should put the correct data fields', function() {
+                        var user = angular.copy(mockUser);
+                        delete user.id;
+                        delete user.email;
+
+                        $httpBackend.expectPUT('/api/account/user/u-1', user)
+                            .respond(200);
+                        account.putUser(mockUser);
+                        $httpBackend.flush();
                     });
 
                     it('will resolve promise if successfull',function(){
