@@ -1,7 +1,10 @@
 # ProShop
 
+## v0.4.2 (August 4, 2014)
+
 * *[v0.4.2]*
     *[FIX]: Org documents are properly converted for editing in the UI
+* *[/v0.4.2]*
 
 ## v0.4.1 (August 1, 2014)
 
