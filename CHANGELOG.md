@@ -1,5 +1,8 @@
 # ProShop
 
+* *[v0.4.3]*
+    *[FIX]: Org Embed Type changes are now properly saved
+
 ## v0.4.2 (August 4, 2014)
 
 * *[v0.4.2]*
