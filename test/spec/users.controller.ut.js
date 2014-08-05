@@ -49,7 +49,8 @@
                         firstName: 'J',
                         lastName: 'F',
                         org: 'o-1',
-                        branding: 'theme1'
+                        branding: 'theme1',
+                        type: 'publisher'
                     },
                     {
                         id: 'u-2',
@@ -57,7 +58,8 @@
                         firstName: 'B',
                         lastName: 'D',
                         org: 'o-2',
-                        branding: 'theme2'
+                        branding: 'theme2',
+                        type: 'publisher'
                     }
                 ];
 
@@ -189,7 +191,8 @@
                                     ratio: '3-2',
                                     theme: 'img-text-overlay'
                                 }
-                            }
+                            },
+                            type: 'publisher'
                         });
                         expect($scope.data.org).toBe(null);
                     });
@@ -254,7 +257,8 @@
                                 lastName: $scope.data.users[0].lastName,
                                 org: $scope.data.users[0].org.id,
                                 branding: $scope.data.users[0].branding,
-                                config: $scope.data.users[0].config
+                                config: $scope.data.users[0].config,
+                                type: $scope.data.users[0].type
                             });
                         });
 
@@ -297,7 +301,6 @@
 
                             UsersCtrl.addNewUser();
 
-                            $scope.data.user = {};
                             $scope.data.user.email = 'foo@bar.com';
                             $scope.data.user.password = 'secret';
                             $scope.data.user.firstName = 'Test';
@@ -315,7 +318,8 @@
                                 lastName: $scope.data.user.lastName,
                                 org: $scope.data.org.id,
                                 branding: $scope.data.user.branding,
-                                config: $scope.data.user.config
+                                config: $scope.data.user.config,
+                                type: $scope.data.users[0].type
                             });
                         });
 
