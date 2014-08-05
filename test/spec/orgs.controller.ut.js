@@ -133,6 +133,19 @@
                 });
             });
 
+            describe('$scope.doSort()', function() {
+                it('should sort', function() {
+                    $scope.doSort('status');
+                    expect($scope.sort).toEqual({column:'status',descending:false});
+                    $scope.doSort('status');
+                    expect($scope.sort).toEqual({column:'status',descending:true});
+                    $scope.doSort('minAdCount');
+                    expect($scope.sort).toEqual({column:'minAdCount',descending:false});
+                    $scope.doSort('name');
+                    expect($scope.sort).toEqual({column:'name',descending:false});
+                });
+            });
+
             describe('methods', function() {
                 describe('formIsValid()', function() {
                     beforeEach(function() {

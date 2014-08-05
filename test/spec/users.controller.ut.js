@@ -149,6 +149,19 @@
                 });
             });
 
+            describe('$scope.doSort()', function() {
+                it('should sort', function() {
+                    $scope.doSort('lastName');
+                    expect($scope.sort).toEqual({column:'lastName',descending:false});
+                    $scope.doSort('lastName');
+                    expect($scope.sort).toEqual({column:'lastName',descending:true});
+                    $scope.doSort('org.name');
+                    expect($scope.sort).toEqual({column:'org.name',descending:false});
+                    $scope.doSort('email');
+                    expect($scope.sort).toEqual({column:'email',descending:false});
+                });
+            });
+
             describe('methods', function() {
                 describe('editUser(user)', function() {
                     it('should set the action to edit and put the user and org on the scope', function() {
