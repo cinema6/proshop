@@ -569,6 +569,26 @@ define(['angular','c6ui'], function(angular,c6ui){
                 embedTypes: ['script']
             };
 
+            // don't need to worry about org.branding, that will be bound in UI
+            // need to ask josh about org.config.embedTypes, is that still top level config?
+
+            org.config.minireelinator = org.config.minireelinator || {
+                minireelDefaults: {
+                    mode: 'light',
+                    autoplay: true,
+                    splash: {
+                        ratio: '3-2',
+                        theme: 'img-text-overlay'
+                    }
+                },
+                embedDefaults: {
+                    size: null
+                }
+            };
+
+            // need to have data object for mode, splash ratio, splash theme
+            // should be able to use splash ratio and theme from above (used on the user)
+
             org._data.config = {};
 
             org._data.config.embedTypes = [

@@ -166,7 +166,20 @@
                             name: null,
                             status: 'active',
                             config: {
-                                embedTypes: ['script']
+                                embedTypes: ['script'],
+                                minireelinator: {
+                                    minireelDefaults: {
+                                        mode: 'light',
+                                        autoplay: true,
+                                        splash: {
+                                            ratio: '3-2',
+                                            theme: 'img-text-overlay'
+                                        }
+                                    },
+                                    embedDefaults: {
+                                        size: null
+                                    }
+                                }
                             },
                             waterfalls: {
                                 video: ['cinema6'],
@@ -399,6 +412,10 @@
                         mockOrg.status = 'pending',
                         mockOrg.adConfig.video.waterfall = 'publisher';
                         mockOrg.adConfig.display.waterfall = 'cinema6-publisher';
+                        mockOrg.config.minireelinator.minireelDefaults.mode = 'lightbox-ads';
+                        mockOrg.config.minireelinator.minireelDefaults.autoplay = false;
+                        mockOrg.config.minireelinator.minireelDefaults.splash.ratio = '16-9';
+                        mockOrg.config.minireelinator.minireelDefaults.splash.theme = 'text-only';
                         mockOrg._data.videoWaterfalls[0].enabled = true;
                         mockOrg._data.videoWaterfalls[1].enabled = true;
                         mockOrg._data.videoWaterfalls[2].enabled = true;
@@ -431,7 +448,20 @@
                             display: ['cinema6','cinema6-publisher','publisher','publisher-cinema6']
                         }
                         expectedOrg.config = {
-                            embedTypes: ['shortcode']
+                            embedTypes: ['shortcode'],
+                            minireelinator: {
+                                minireelDefaults: {
+                                    mode: 'lightbox-ads',
+                                    autoplay: false,
+                                    splash: {
+                                        ratio: '16-9',
+                                        theme: 'text-only'
+                                    }
+                                },
+                                embedDefaults: {
+                                    size: null
+                                }
+                            }
                         };
 
                         $httpBackend.expectPUT('/api/account/org/o-1', expectedOrg)
@@ -484,10 +514,6 @@
                         var org = {
                             name: 'Org1',
                             status: 'active',
-                            waterfalls: {
-                                video: ['cinema6'],
-                                display: ['cinema6']
-                            },
                             adConfig: {
                                 video: {
                                     firstPlacement: 2,
@@ -499,8 +525,25 @@
                                     waterfall: 'cinema6'
                                 }
                             },
+                            waterfalls: {
+                                video: ['cinema6'],
+                                display: ['cinema6']
+                            },
                             config: {
-                                embedTypes: ['script']
+                                embedTypes: ['script'],
+                                minireelinator: {
+                                    minireelDefaults: {
+                                        mode: 'light',
+                                        autoplay: true,
+                                        splash: {
+                                            ratio: '3-2',
+                                            theme: 'img-text-overlay'
+                                        }
+                                    },
+                                    embedDefaults: {
+                                        size: null
+                                    }
+                                }
                             }
                         };
                         $httpBackend.expectPOST('/api/account/org', org)
@@ -518,6 +561,10 @@
                         mockOrg.status = 'pending',
                         mockOrg.adConfig.video.waterfall = 'publisher';
                         mockOrg.adConfig.display.waterfall = 'cinema6-publisher';
+                        mockOrg.config.minireelinator.minireelDefaults.mode = 'lightbox-ads';
+                        mockOrg.config.minireelinator.minireelDefaults.autoplay = false;
+                        mockOrg.config.minireelinator.minireelDefaults.splash.ratio = '16-9';
+                        mockOrg.config.minireelinator.minireelDefaults.splash.theme = 'text-only';
                         mockOrg._data.videoWaterfalls[0].enabled = true;
                         mockOrg._data.videoWaterfalls[1].enabled = true;
                         mockOrg._data.videoWaterfalls[2].enabled = true;
@@ -550,7 +597,20 @@
                             display: ['cinema6','cinema6-publisher','publisher','publisher-cinema6']
                         }
                         expectedOrg.config = {
-                            embedTypes: ['shortcode']
+                            embedTypes: ['shortcode'],
+                            minireelinator: {
+                                minireelDefaults: {
+                                    mode: 'lightbox-ads',
+                                    autoplay: false,
+                                    splash: {
+                                        ratio: '16-9',
+                                        theme: 'text-only'
+                                    }
+                                },
+                                embedDefaults: {
+                                    size: null
+                                }
+                            }
                         };
 
                         $httpBackend.expectPOST('/api/account/org', expectedOrg)
