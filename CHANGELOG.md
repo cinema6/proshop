@@ -3,6 +3,7 @@
 * *[v0.5.0]*
     *[FEATURE]: Existing user's org is now editable
     *[FEATURE]: Table headings for All Users and All Orgs will sort data
+    *[FEATURE]: Added User Type setting
 
 ## v0.4.2 (August 4, 2014)
 
