@@ -4,6 +4,7 @@
     *[FEATURE]: Existing user's org is now editable
     *[FEATURE]: Table headings for All Users and All Orgs will sort data
     *[FEATURE]: Added User Type setting
+    *[FEATURE]: Added Org minireelinator settings
 
 ## v0.4.2 (August 4, 2014)
 
