@@ -10,6 +10,28 @@ define(['account'],function(account) {
             $log = $log.context('UsersCtrl');
             $log.info('instantiated');
 
+            $scope.tableHeaders = [
+                {label:'Email',value:'email'},
+                {label:'Name',value:'lastName'},
+                {label:'Org',value:'org.name'},
+                {label:'Status',value:'status'}
+            ];
+
+            $scope.sort = {
+                column: 'email',
+                descending: false
+            };
+
+            $scope.doSort = function(column) {
+                var sort = $scope.sort;
+                if (sort.column === column) {
+                    sort.descending = !sort.descending;
+                } else {
+                    sort.column = column;
+                    sort.descending = false;
+                }
+            };
+
             self.action = 'all';
             self.showUserSettings = false;
             self.userPermissionOptions = angular.copy(account.userPermissionOptions);
