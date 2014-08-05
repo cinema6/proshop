@@ -1,7 +1,7 @@
 define( [   'angular','ngAnimate','ngRoute','c6ui','c6log', 'c6defines',
-            'auth', 'login','users', 'orgs', 'mockHttp','mockHttpDefs','templates'],
+            'auth', 'login','users', 'orgs', 'minireels', 'mockHttp','mockHttpDefs','templates'],
 function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
-            auth, login, users, orgs, mockHttp, mockHttpDefs, templates ) {
+            auth, login, users, orgs, minireels, mockHttp, mockHttpDefs, templates ) {
     /* jshint -W106 */
     'use strict';
 
@@ -14,6 +14,7 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
             login.name,
             users.name,
             orgs.name,
+            minireels.name,
             templates.name
         ])
         .constant('c6Defines',c6Defines)
@@ -47,6 +48,11 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
                     controller: 'UsersController',
                     controllerAs: 'UsersCtrl',
                     templateUrl: 'views/users.html'
+                })
+                .when('/minireels', {
+                    controller: 'MinireelsController',
+                    controllerAs: 'MinireelsCtrl',
+                    templateUrl: 'views/minireels.html'
                 })
                 .otherwise({redirectTo: '/users'});
         }])

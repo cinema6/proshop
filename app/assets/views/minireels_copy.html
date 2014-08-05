@@ -1,0 +1,38 @@
+<form name="theForm" id="copy_experience" ng-submit="MinireelsCtrl.copyExperience()">
+    <!-- <h1>{{ UsersCtrl.action | titlecase }} {{ UsersCtrl.email }} </h1> -->
+    <a href="" ng-click="MinireelsCtrl.action = 'experiences'">&lsaquo; Back to Minireel list</a>
+    <div class="form-group" style="padding-top:20px">
+        <label for="org" class="control-label"> Choose an Org to copy to: </label>
+        <div>
+            <select ng-model="data.org" name="org" ng-options="org.name for org in data.orgs" required>
+                <option value="">-- choose org --</option>
+            </select>
+            <span ng-show="theForm.org.$error.required"> Required. </span>
+        </div>
+    </div>
+    <div ng-if="data.org" class="form-group">
+        <label for="branding" class="control-label"> Branding: </label>
+        <div>
+            <input id="branding" type="text" name="branding" ng-model="data.org.branding" autocomplete="off" ng-trim="false" ng-minlength="3" ng-maxlength="128" required>
+            <span ng-show="theForm.email.$error.required"> Required. </span>
+            <span ng-show="theForm.email.$error.minlength"> Too short. </span>
+            <span ng-show="theForm.email.$error.maxlength"> Too long. </span>
+        </div>
+        <div class="form-group">
+            <div ng-repeat="setting in data.appData.defaultSplashOptions">
+                <label for="{{setting.label}}">{{setting.title}}</label>
+                <div ng-repeat="option in setting.options">
+                    <input type="radio" name="{{setting.label}}" ng-model="data.org.config.defaultSplash[setting.label]" value="{{option}}" required>
+                    <span>{{option}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- <input type="submit" value="Save" ng-disabled="!theForm.$valid"> -->
+    <input type="button" value="Save" ng-click="confirmSave = true" ng-disabled="!theForm.$valid">
+    <div style="display:inline;padding-left:30px;" ng-show="confirmSave === true">
+        <span>Are you sure?</span>
+        <input type="button" value="Yes" ng-click="MinireelsCtrl.saveCopy()">
+        <input type="button" value="Cancel" ng-click="confirmSave = false">
+    </div>
+</form>
