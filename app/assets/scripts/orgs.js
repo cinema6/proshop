@@ -10,6 +10,28 @@ define(['account'],function(account) {
             $log = $log.context('OrgsCtrl');
             $log.info('instantiated');
 
+            $scope.tableHeaders = [
+                {label:'Name',value:'name'},
+                {label:'Status',value:'status'},
+                {label:'Tag',value:'tag'},
+                {label:'Min Ad Count',value:'minAdCount'}
+            ];
+
+            $scope.sort = {
+                column: 'name',
+                descending: false
+            };
+
+            $scope.doSort = function(column) {
+                var sort = $scope.sort;
+                if (sort.column === column) {
+                    sort.descending = !sort.descending;
+                } else {
+                    sort.column = column;
+                    sort.descending = false;
+                }
+            };
+
             self.showWaterfallSettings = true;
             self.action = 'all';
 
