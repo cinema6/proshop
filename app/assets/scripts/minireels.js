@@ -171,8 +171,8 @@ define(['account','content'],function(account,content) {
 
                 // TODO: handle splash image and collateral property
 
-                console.log(exp);
-            }
+                $log.info('save copy:', exp);
+            };
 
             $scope.$watch('data.user',function(newUser) {
                 if (newUser) {
@@ -186,7 +186,7 @@ define(['account','content'],function(account,content) {
         .directive('minireelsOrgs', [ function ( ) {
             return {
                 restrict: 'E',
-                templateUrl: 'views/minireels_orgs.html',
+                templateUrl: 'views/minireels/minireels_orgs.html',
                 link: function(/*scope, element, attrs, ctrl*/) {
                     // can move any DOM stuff from Ctrl into here...
                 }
@@ -196,7 +196,7 @@ define(['account','content'],function(account,content) {
         .directive('minireelsExperiences', [ function ( ) {
             return {
                 restrict: 'E',
-                templateUrl: 'views/minireels_experiences.html',
+                templateUrl: 'views/minireels/minireels_experiences.html',
                 link: function(/*scope, element, attrs, ctrl*/) {
                     // can move any DOM stuff from Ctrl into here...
                 }
@@ -206,7 +206,7 @@ define(['account','content'],function(account,content) {
         .directive('minireelsCopy', [ function ( ) {
             return {
                 restrict: 'E',
-                templateUrl: 'views/minireels_copy.html',
+                templateUrl: 'views/minireels/minireels_copy.html',
                 link: function(/*scope, element, attrs, ctrl*/) {
                     // can move any DOM stuff from Ctrl into here...
                 }

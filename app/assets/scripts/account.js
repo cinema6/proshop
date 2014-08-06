@@ -590,14 +590,6 @@ define(['angular','c6ui'], function(angular,c6ui){
                 org._data.adConfig[setting.label] = convertedProp;
             });
 
-            // org.config = org.config && org.config.embedTypes ?
-            //     org.config : {
-            //     embedTypes: ['script']
-            // };
-
-            // don't need to worry about org.branding, that will be bound in UI
-            // need to ask josh about org.config.embedTypes, is that still top level config?
-
             org.config.minireelinator = org.config.minireelinator &&
                 org.config.minireelinator.embedTypes &&
                 org.config.minireelinator.minireelDefaults &&
@@ -616,9 +608,6 @@ define(['angular','c6ui'], function(angular,c6ui){
                         size: null
                     }
                 };
-
-            // need to have appData object for mode, splash ratio, splash theme
-            // should be able to use splash ratio and theme from above (used on the user)
 
             org._data.config = {};
 
@@ -661,8 +650,6 @@ define(['angular','c6ui'], function(angular,c6ui){
         this.putOrg = function(org) {
             org = convertOrgForSaving(org);
 
-            console.log('PUT', org);
-
             return httpWrapper({
                 method: 'PUT',
                 url: c6UrlMaker('account/org/' + org.id,'api'),
@@ -679,8 +666,6 @@ define(['angular','c6ui'], function(angular,c6ui){
 
         this.postOrg = function(org) {
             org = convertOrgForSaving(org);
-
-            console.log('POST', org);
 
             return httpWrapper({
                 method: 'POST',

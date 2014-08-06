@@ -42,17 +42,17 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
                 .when('/orgs', {
                     controller: 'OrgsController',
                     controllerAs: 'OrgsCtrl',
-                    templateUrl: 'views/orgs.html'
+                    templateUrl: 'views/orgs/orgs.html'
                 })
                 .when('/users', {
                     controller: 'UsersController',
                     controllerAs: 'UsersCtrl',
-                    templateUrl: 'views/users.html'
+                    templateUrl: 'views/users/users.html'
                 })
                 .when('/minireels', {
                     controller: 'MinireelsController',
                     controllerAs: 'MinireelsCtrl',
-                    templateUrl: 'views/minireels.html'
+                    templateUrl: 'views/minireels/minireels.html'
                 })
                 .otherwise({redirectTo: '/users'});
         }])

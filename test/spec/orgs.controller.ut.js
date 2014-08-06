@@ -116,7 +116,6 @@
 
                 it('should set some defaults', function() {
                     expect(OrgsCtrl.action).toBe('all');
-                    expect(OrgsCtrl.showWaterfallSettings).toBe(true);
                 });
 
                 it('should call the account service to get all Orgs', function() {

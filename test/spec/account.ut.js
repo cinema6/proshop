@@ -171,7 +171,6 @@
                                     minireelDefaults: {
                                         mode: 'light',
                                         autoplay: true,
-                                        preload: true,
                                         splash: {
                                             ratio: '3-2',
                                             theme: 'img-text-overlay'
@@ -454,7 +453,6 @@
                                 minireelDefaults: {
                                     mode: 'lightbox-ads',
                                     autoplay: false,
-                                    preload: true,
                                     splash: {
                                         ratio: '16-9',
                                         theme: 'text-only'
@@ -537,7 +535,6 @@
                                     minireelDefaults: {
                                         mode: 'light',
                                         autoplay: true,
-                                        preload: true,
                                         splash: {
                                             ratio: '3-2',
                                             theme: 'img-text-overlay'
@@ -605,7 +602,6 @@
                                 minireelDefaults: {
                                     mode: 'lightbox-ads',
                                     autoplay: false,
-                                    preload: true,
                                     splash: {
                                         ratio: '16-9',
                                         theme: 'text-only'

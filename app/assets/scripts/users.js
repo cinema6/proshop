@@ -10,6 +10,22 @@ define(['account'],function(account) {
             $log = $log.context('UsersCtrl');
             $log.info('instantiated');
 
+            function updateOrgs(orgs) {
+                data.appData.orgs = orgs;
+                data.orgs = orgs;
+            }
+
+            function updateUsers(users) {
+                users.forEach(function(user) {
+                    account.getOrg(user.org)
+                        .then(function(org) {
+                            user.org = org;
+                        });
+                });
+                data.appData.users = users;
+                data.users = users;
+            }
+
             $scope.tableHeaders = [
                 {label:'Email',value:'email'},
                 {label:'Name',value:'lastName'},
@@ -40,22 +56,6 @@ define(['account'],function(account) {
                 {label:'Publisher',value:'publisher'},
                 {label:'Content Provider',value:'contentProvider'}
             ];
-
-            function updateOrgs(orgs) {
-                data.appData.orgs = orgs;
-                data.orgs = orgs;
-            }
-
-            function updateUsers(users) {
-                users.forEach(function(user) {
-                    account.getOrg(user.org)
-                        .then(function(org) {
-                            user.org = org;
-                        });
-                });
-                data.appData.users = users;
-                data.users = users;
-            }
 
             self.editUser = function(user){
                 $scope.message = null;
@@ -110,7 +110,7 @@ define(['account'],function(account) {
                 });
             };
 
-            this.sortOrgs = function(/*field*/) {
+            this.sortUsers = function(/*field*/) {
                 // I imagine there will be something in the UI to allow sorting the list
                 // return account.getOrgs(field).then(updateOrgs);
             };
@@ -132,7 +132,6 @@ define(['account'],function(account) {
 
             this.saveUser = function() {
                 function handleError(err) {
-                    // print to page
                     $log.error(err);
                     $scope.message = 'There was a problem creating this user.';
                 }
@@ -176,20 +175,12 @@ define(['account'],function(account) {
 
             account.getOrgs().then(updateOrgs);
             account.getUsers().then(updateUsers);
-
-            // $scope.$watch(function() { return self.action; }, function(action, lastAction) {
-            //     if (action === lastAction) { return; }
-            //     if (action === 'all') {
-            //         account.getOrgs().then(updateOrgs);
-            //         account.getUsers().then(updateUsers);
-            //     }
-            // });
         }])
 
         .directive('newUser', [ function ( ) {
             return {
                 restrict: 'E',
-                templateUrl: 'views/edit_user.html',
+                templateUrl: 'views/users/user_edit.html',
                 link: function(/*scope, element, attrs, ctrl*/) {
                     // can move any DOM stuff from Ctrl into here...
                 }
@@ -199,7 +190,7 @@ define(['account'],function(account) {
         .directive('editUser', [ function ( ) {
             return {
                 restrict: 'E',
-                templateUrl: 'views/edit_user.html',
+                templateUrl: 'views/users/user_edit.html',
                 link: function(/*scope, element, attrs, ctrl*/) {
                     // can move any DOM stuff from Ctrl into here...
                 }
@@ -209,7 +200,7 @@ define(['account'],function(account) {
         .directive('allUsers', [ function ( ) {
             return {
                 restrict: 'E',
-                templateUrl: 'views/all_users.html',
+                templateUrl: 'views/users/users_all.html',
                 link: function(/*scope, element, attrs, ctrl*/) {
                     // can move any DOM stuff from Ctrl into here...
                 }

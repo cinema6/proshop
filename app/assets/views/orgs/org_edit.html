@@ -10,7 +10,7 @@
         </div>
     </div>
     <br>
-    <div ng-if="OrgsCtrl.showWaterfallSettings">
+    <div>
         <div>
             <div style="padding-bottom:20px;" ng-repeat="setting in data.appData.waterfallData.settings">
                 <h3>{{setting.title}}<br>
@@ -95,11 +95,6 @@
         <div class="form-group">
             <h3>Default Autoplay</h3>
             <input name="autoplay" type="checkbox" ng-model="data.org.config.minireelinator.minireelDefaults.autoplay">
-            <label for="autoplay">Enabled</label>
-        </div>
-        <div class="form-group">
-            <h3>Default Preload</h3>
-            <input name="preload" type="checkbox" ng-model="data.org.config.minireelinator.minireelDefaults.preload">
             <label for="autoplay">Enabled</label>
         </div>
         <div class="form-group">
