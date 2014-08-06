@@ -1,5 +1,4 @@
 <form name="theForm" id="copy_experience" ng-submit="MinireelsCtrl.saveCopy()">
-    <!-- <h1>{{ UsersCtrl.action | titlecase }} {{ UsersCtrl.email }} </h1> -->
     <a href="" ng-click="MinireelsCtrl.action = 'experiences'">&lsaquo; Back to Minireel list</a>
     <div class="form-group" style="padding-top:20px">
         <label for="org" class="control-label"> <h3>Choose an Org to copy to: </h3></label>
@@ -36,32 +35,11 @@
                 </div>
             </div>
         </div>
-        <!-- <div>
-            <h3>Embed Type</h3>
-            <div ng-repeat="choice in data.experience._data.config.minireelinator.embedTypes">
-                <input type="checkbox" name="embed_type_{{choice.value}}" ng-model="choice.enabled" ng-required="!MinireelsCtrl.formIsValid()">
-                <label for="new_org_status">{{choice.title}}</label>
-            </div>
-        </div> -->
-        <!-- <div>
-            <h3>Embed Size</h3>
-            <div>
-                <label for="new_org_status">Width (in pixels)</label><br>
-                <input type="number" name="embed_size_width" ng-model="data.experience._data.config.minireelinator.embedDefaults.size.width"><br>
-                <label for="new_org_status">Height (in pixels)</label><br>
-                <input type="number" name="embed_size_height" ng-model="data.experience._data.config.minireelinator.embedDefaults.size.height">
-            </div>
-        </div> -->
         <div class="form-group">
             <h3>Autoplay</h3>
             <input name="autoplay" type="checkbox" ng-model="data.experience._data.config.minireelinator.minireelDefaults.autoplay">
             <label for="autoplay">Enabled</label>
         </div>
-        <!-- <div class="form-group">
-            <h3>Preload</h3>
-            <input name="preload" type="checkbox" ng-model="data.experience._data.config.minireelinator.minireelDefaults.preload">
-            <label for="autoplay">Enabled</label>
-        </div> -->
         <div class="form-group">
             <h3>Mode</h3>
             <div ng-repeat="setting in MinireelsCtrl.defaultModes">
@@ -70,7 +48,6 @@
             </div>
         </div>
     </div>
-    <!-- <input type="submit" value="Save" ng-disabled="!theForm.$valid"> -->
     <input type="button" value="Save" ng-click="confirmSave = true" ng-disabled="!theForm.$valid">
     <div style="display:inline;padding-left:30px;" ng-show="confirmSave === true">
         <span>Are you sure?</span>

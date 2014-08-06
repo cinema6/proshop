@@ -50,27 +50,6 @@ define(['account','content'],function(account,content) {
                 {label:'Lightbox, without Companion',value:'lightbox'}
             ];
 
-            self.embedTypes = [
-                {
-                    title: 'Script Tag',
-                    value: 'script',
-                    enabled: false
-                },
-                {
-                    title: 'Wordpress Shortcode',
-                    value: 'shortcode',
-                    enabled: false
-                }
-            ];
-
-            self.formIsValid = function() {
-                var embedType = self.embedTypes.filter(function(option) {
-                        return option.enabled;
-                    });
-
-                return !!(embedType.length);
-            };
-
             self.filterData = function() {
                 var query = data.query.toLowerCase();
 
