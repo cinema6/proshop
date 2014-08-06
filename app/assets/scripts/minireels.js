@@ -44,6 +44,33 @@ define(['account','content'],function(account,content) {
 
             self.action = 'orgs';
 
+            self.defaultModes = [
+                {label:'Embedded',value:'light'},
+                {label:'Lightbox, with Companion',value:'lightbox-ads'},
+                {label:'Lightbox, without Companion',value:'lightbox'}
+            ];
+
+            self.embedTypes = [
+                {
+                    title: 'Script Tag',
+                    value: 'script',
+                    enabled: false
+                },
+                {
+                    title: 'Wordpress Shortcode',
+                    value: 'shortcode',
+                    enabled: false
+                }
+            ];
+
+            self.formIsValid = function() {
+                var embedType = self.embedTypes.filter(function(option) {
+                        return option.enabled;
+                    });
+
+                return !!(embedType.length);
+            };
+
             self.filterData = function() {
                 var query = data.query.toLowerCase();
 
@@ -79,8 +106,100 @@ define(['account','content'],function(account,content) {
 
             self.startExperienceCopy = function(exp) {
                 self.action = 'copy';
+                data.org = null;
                 data.experience = content.convertExperienceForCopy(angular.copy(exp));
             };
+
+            function setOrgExperienceData(org) {
+                // TO DO: functional style like MRinator copy() conversions
+
+                function setMinireelDefaults() {
+                    var mrDefaults = (org.config &&
+                        org.config.minireelinator &&
+                        org.config.minireelinator.minireelDefaults) ?
+                        org.config.minireelinator.minireelDefaults :
+                        null;
+
+                    if (!mrDefaults) {
+                        return {
+                            mode: 'light',
+                            autoplay: true,
+                            splash: {
+                                ratio: '3-2',
+                                theme: 'img-text-overlay'
+                            }
+                        };
+                    } else {
+                        return {
+                            mode: mrDefaults.mode || 'light',
+                            autoplay: mrDefaults.autoplay === void 0 ? true : mrDefaults.autoplay,
+                            splash: {
+                                ratio: mrDefaults.splash && mrDefaults.splash.ratio ? mrDefaults.splash.ratio : '3-2',
+                                theme: mrDefaults.splash && mrDefaults.splash.theme ? mrDefaults.splash.theme : 'img-text-overlay'
+                            }
+                        };
+                    }
+                }
+
+                data.experience._data = {
+                    org: org.id,
+                    branding: org.branding,
+                    config: {
+                        minireelinator: {
+                            minireelDefaults: setMinireelDefaults()
+                        }
+                    },
+                    adConfig: org.adConfig
+                };
+            }
+
+            $scope.$watch('data.org',function(newOrg) {
+                if (newOrg) {
+                    setOrgExperienceData(newOrg);
+                    account.getUsers(newOrg)
+                        .then(function(users) {
+                            data.users = users;
+                        });
+                }
+            });
+
+            function setUserExperienceData(user) {
+                data.experience._data.user = user;
+            }
+
+            self.saveCopy = function() {
+                var _data = data.experience._data,
+                    exp = data.experience;
+
+                exp.data.title = data.experience.title; // do
+                exp.data.branding = _data.branding;
+                exp.data.mode = _data.config.minireelinator.minireelDefaults.mode;
+                exp.data.splash = {
+                    ratio: _data.config.minireelinator.minireelDefaults.splash.ratio,
+                    theme: _data.config.minireelinator.minireelDefaults.splash.theme,
+                    source: 'generated'
+                };
+                exp.user = _data.user;
+                exp.org = _data.org;
+                exp.adConfig = _data.adConfig;
+
+                delete exp.id;
+                delete exp.created;
+                delete exp.title;
+                delete exp.lastUpdated;
+                delete exp.versionId;
+                delete exp._data; // should only delete _data if successful POST/PUT
+
+                // TODO: handle splash image and collateral property
+
+                console.log(exp);
+            }
+
+            $scope.$watch('data.user',function(newUser) {
+                if (newUser) {
+                    setUserExperienceData(newUser);
+                }
+            });
 
             account.getOrgs().then(updateOrgs);
         }])

@@ -44,12 +44,29 @@
                 </div>
             </div>
         </div>
-        <br>
+        <div class="form-group">
+            <label for="branding" class="control-label"> Branding: </label>
+            <div>
+                <input id="branding" type="text" name="branding" ng-model="data.org.branding" autocomplete="off" ng-trim="false" ng-minlength="3" ng-maxlength="128" required>
+                <span ng-show="theForm.branding.$error.required"> Required. </span>
+                <span ng-show="theForm.branding.$error.minlength"> Too short. </span>
+                <span ng-show="theForm.branding.$error.maxlength"> Too long. </span>
+            </div>
+        </div>
         <div>
             <h3>Embed Type</h3>
-            <div ng-repeat="choice in data.org._data.config.embedTypes">
+            <div ng-repeat="choice in data.org._data.config.minireelinator.embedTypes">
                 <input type="checkbox" name="embed_type_{{choice.value}}" ng-model="choice.enabled" ng-required="!OrgsCtrl.formIsValid()">
                 <label for="new_org_status">{{choice.title}}</label>
+            </div>
+        </div>
+        <div>
+            <h3>Embed Size</h3>
+            <div>
+                <label for="new_org_status">Width (in pixels)</label><br>
+                <input type="number" name="embed_size_width" ng-model="data.org.config.minireelinator.embedDefaults.size.width"><br>
+                <label for="new_org_status">Height (in pixels)</label><br>
+                <input type="number" name="embed_size_height" ng-model="data.org.config.minireelinator.embedDefaults.size.height">
             </div>
         </div>
         <div>
@@ -78,6 +95,11 @@
         <div class="form-group">
             <h3>Default Autoplay</h3>
             <input name="autoplay" type="checkbox" ng-model="data.org.config.minireelinator.minireelDefaults.autoplay">
+            <label for="autoplay">Enabled</label>
+        </div>
+        <div class="form-group">
+            <h3>Default Preload</h3>
+            <input name="preload" type="checkbox" ng-model="data.org.config.minireelinator.minireelDefaults.preload">
             <label for="autoplay">Enabled</label>
         </div>
         <div class="form-group">

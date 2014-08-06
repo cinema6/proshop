@@ -1,8 +1,8 @@
-<form name="theForm" id="copy_experience" ng-submit="MinireelsCtrl.copyExperience()">
+<form name="theForm" id="copy_experience" ng-submit="MinireelsCtrl.saveCopy()">
     <!-- <h1>{{ UsersCtrl.action | titlecase }} {{ UsersCtrl.email }} </h1> -->
     <a href="" ng-click="MinireelsCtrl.action = 'experiences'">&lsaquo; Back to Minireel list</a>
     <div class="form-group" style="padding-top:20px">
-        <label for="org" class="control-label"> Choose an Org to copy to: </label>
+        <label for="org" class="control-label"> <h3>Choose an Org to copy to: </h3></label>
         <div>
             <select ng-model="data.org" name="org" ng-options="org.name for org in data.orgs" required>
                 <option value="">-- choose org --</option>
@@ -11,20 +11,62 @@
         </div>
     </div>
     <div ng-if="data.org" class="form-group">
-        <label for="branding" class="control-label"> Branding: </label>
         <div>
-            <input id="branding" type="text" name="branding" ng-model="data.org.branding" autocomplete="off" ng-trim="false" ng-minlength="3" ng-maxlength="128" required>
-            <span ng-show="theForm.email.$error.required"> Required. </span>
-            <span ng-show="theForm.email.$error.minlength"> Too short. </span>
-            <span ng-show="theForm.email.$error.maxlength"> Too long. </span>
+            <label for="user" class="control-label"> <h3>Choose an User to copy to: </h3></label>
+            <div>
+                <select ng-model="data.user" name="user" ng-options="user.email for user in data.users" required>
+                    <option value="">-- choose user --</option>
+                </select>
+                <span ng-show="theForm.user.$error.required"> Required. </span>
+            </div>
+        </div>
+        <label for="branding" class="control-label"> <h3>Branding: </h3></label>
+        <div>
+            <input id="branding" type="text" name="branding" ng-model="data.experience._data.branding" autocomplete="off" ng-trim="false" ng-minlength="3" ng-maxlength="128" required>
+            <span ng-show="theForm.branding.$error.required"> Required. </span>
+            <span ng-show="theForm.branding.$error.minlength"> Too short. </span>
+            <span ng-show="theForm.branding.$error.maxlength"> Too long. </span>
         </div>
         <div class="form-group">
             <div ng-repeat="setting in data.appData.defaultSplashOptions">
-                <label for="{{setting.label}}">{{setting.title}}</label>
+                <label for="{{setting.label}}"><h3>{{ setting.title.replace('Default','') }}</h3></label>
                 <div ng-repeat="option in setting.options">
-                    <input type="radio" name="{{setting.label}}" ng-model="data.org.config.defaultSplash[setting.label]" value="{{option}}" required>
+                    <input type="radio" name="{{setting.label}}" ng-model="data.experience._data.config.minireelinator.minireelDefaults.splash[setting.label]" value="{{option}}" required>
                     <span>{{option}}</span>
                 </div>
+            </div>
+        </div>
+        <!-- <div>
+            <h3>Embed Type</h3>
+            <div ng-repeat="choice in data.experience._data.config.minireelinator.embedTypes">
+                <input type="checkbox" name="embed_type_{{choice.value}}" ng-model="choice.enabled" ng-required="!MinireelsCtrl.formIsValid()">
+                <label for="new_org_status">{{choice.title}}</label>
+            </div>
+        </div> -->
+        <!-- <div>
+            <h3>Embed Size</h3>
+            <div>
+                <label for="new_org_status">Width (in pixels)</label><br>
+                <input type="number" name="embed_size_width" ng-model="data.experience._data.config.minireelinator.embedDefaults.size.width"><br>
+                <label for="new_org_status">Height (in pixels)</label><br>
+                <input type="number" name="embed_size_height" ng-model="data.experience._data.config.minireelinator.embedDefaults.size.height">
+            </div>
+        </div> -->
+        <div class="form-group">
+            <h3>Autoplay</h3>
+            <input name="autoplay" type="checkbox" ng-model="data.experience._data.config.minireelinator.minireelDefaults.autoplay">
+            <label for="autoplay">Enabled</label>
+        </div>
+        <!-- <div class="form-group">
+            <h3>Preload</h3>
+            <input name="preload" type="checkbox" ng-model="data.experience._data.config.minireelinator.minireelDefaults.preload">
+            <label for="autoplay">Enabled</label>
+        </div> -->
+        <div class="form-group">
+            <h3>Mode</h3>
+            <div ng-repeat="setting in MinireelsCtrl.defaultModes">
+                <input type="radio" name="defaultMode" ng-model="data.experience._data.config.minireelinator.minireelDefaults.mode" value="{{setting.value}}" required>
+                <label for="defaultMode">{{setting.label}}</label>
             </div>
         </div>
     </div>
@@ -32,7 +74,7 @@
     <input type="button" value="Save" ng-click="confirmSave = true" ng-disabled="!theForm.$valid">
     <div style="display:inline;padding-left:30px;" ng-show="confirmSave === true">
         <span>Are you sure?</span>
-        <input type="button" value="Yes" ng-click="MinireelsCtrl.saveCopy()">
+        <input type="submit" value="Yes">
         <input type="button" value="Cancel" ng-click="confirmSave = false">
     </div>
 </form>

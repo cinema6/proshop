@@ -166,11 +166,12 @@
                             name: null,
                             status: 'active',
                             config: {
-                                embedTypes: ['script'],
                                 minireelinator: {
+                                    embedTypes: ['script'],
                                     minireelDefaults: {
                                         mode: 'light',
                                         autoplay: true,
+                                        preload: true,
                                         splash: {
                                             ratio: '3-2',
                                             theme: 'img-text-overlay'
@@ -245,14 +246,14 @@
 
                     it('should add a config block based on org', function() {
                         var org = newOrgDefaults;
-                        org.config.embedTypes = ['script', 'shortcode'];
+                        org.config.minireelinator.embedTypes = ['script', 'shortcode'];
                         org = account.convertOrgForEditing(org);
-                        expect(org._data.config.embedTypes[0]).toEqual({
+                        expect(org._data.config.minireelinator.embedTypes[0]).toEqual({
                             title: 'Script Tag',
                             value: 'script',
                             enabled: true
                         });
-                        expect(org._data.config.embedTypes[1]).toEqual({
+                        expect(org._data.config.minireelinator.embedTypes[1]).toEqual({
                             title: 'Wordpress Shortcode',
                             value: 'shortcode',
                             enabled: true
@@ -427,8 +428,8 @@
                         mockOrg._data.adConfig.frequency.value = 3;
                         mockOrg._data.adConfig.firstPlacement.value = -1;
                         mockOrg._data.adConfig.skip.value = 60;
-                        mockOrg._data.config.embedTypes[0].enabled = false;
-                        mockOrg._data.config.embedTypes[1].enabled = true;
+                        mockOrg._data.config.minireelinator.embedTypes[0].enabled = false;
+                        mockOrg._data.config.minireelinator.embedTypes[1].enabled = true;
 
                         expectedOrg.name = 'Org1 Renames';
                         expectedOrg.status = 'pending';
@@ -448,11 +449,12 @@
                             display: ['cinema6','cinema6-publisher','publisher','publisher-cinema6']
                         }
                         expectedOrg.config = {
-                            embedTypes: ['shortcode'],
                             minireelinator: {
+                                embedTypes: ['shortcode'],
                                 minireelDefaults: {
                                     mode: 'lightbox-ads',
                                     autoplay: false,
+                                    preload: true,
                                     splash: {
                                         ratio: '16-9',
                                         theme: 'text-only'
@@ -530,11 +532,12 @@
                                 display: ['cinema6']
                             },
                             config: {
-                                embedTypes: ['script'],
                                 minireelinator: {
+                                    embedTypes: ['script'],
                                     minireelDefaults: {
                                         mode: 'light',
                                         autoplay: true,
+                                        preload: true,
                                         splash: {
                                             ratio: '3-2',
                                             theme: 'img-text-overlay'
@@ -576,8 +579,8 @@
                         mockOrg._data.adConfig.frequency.value = 3;
                         mockOrg._data.adConfig.firstPlacement.value = -1;
                         mockOrg._data.adConfig.skip.value = 60;
-                        mockOrg._data.config.embedTypes[0].enabled = false;
-                        mockOrg._data.config.embedTypes[1].enabled = true;
+                        mockOrg._data.config.minireelinator.embedTypes[0].enabled = false;
+                        mockOrg._data.config.minireelinator.embedTypes[1].enabled = true;
 
                         expectedOrg.name = 'Org1 Renames';
                         expectedOrg.status = 'pending';
@@ -597,11 +600,12 @@
                             display: ['cinema6','cinema6-publisher','publisher','publisher-cinema6']
                         }
                         expectedOrg.config = {
-                            embedTypes: ['shortcode'],
                             minireelinator: {
+                                embedTypes: ['shortcode'],
                                 minireelDefaults: {
                                     mode: 'lightbox-ads',
                                     autoplay: false,
+                                    preload: true,
                                     splash: {
                                         ratio: '16-9',
                                         theme: 'text-only'

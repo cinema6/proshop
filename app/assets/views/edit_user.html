@@ -53,9 +53,9 @@
         <label for="branding" class="control-label"> Branding: </label>
         <div>
             <input id="branding" type="text" name="branding" ng-model="data.user.branding" autocomplete="off" ng-trim="false" ng-minlength="3" ng-maxlength="128" required>
-            <span ng-show="theForm.email.$error.required"> Required. </span>
-            <span ng-show="theForm.email.$error.minlength"> Too short. </span>
-            <span ng-show="theForm.email.$error.maxlength"> Too long. </span>
+            <span ng-show="theForm.branding.$error.required"> Required. </span>
+            <span ng-show="theForm.branding.$error.minlength"> Too short. </span>
+            <span ng-show="theForm.branding.$error.maxlength"> Too long. </span>
         </div>
     </div>
     <div class="form-group">

@@ -53,7 +53,7 @@ define(['account'],function(account) {
                     displayWaterfall = data.org._data.displayWaterfalls.filter(function(option) {
                         return option.enabled;
                     }),
-                    embedType = data.org._data.config.embedTypes.filter(function(option) {
+                    embedType = data.org._data.config.minireelinator.embedTypes.filter(function(option) {
                         return option.enabled;
                     });
 

@@ -32,7 +32,7 @@
                                             '<script>',
                                             '(' + function(window) {
                                                 window.DEBUG = true;
-                                                window.LOCAL = true;
+                                                // window.LOCAL = true;
                                             }.toString() + '(window))',
                                             '</script>'
                                         ].join('\n');

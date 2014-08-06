@@ -138,11 +138,22 @@ define(['angular','c6ui'], function(angular,c6ui){
         }
 
         function convertOrgForSaving(org) {
+            var embedSize = org.config.minireelinator.embedDefaults.size;
+
+            org.config.minireelinator.embedDefaults.size = (embedSize && !embedSize.width && !embedSize.height) ? null : embedSize;
+
             forEach(org._data.adConfig, function(conf, key) {
                 org.adConfig.video[key] = conf.value;
             });
 
-            org.config.embedTypes = getEnabledOptions(org._data.config.embedTypes);
+            org.config = {
+                minireelinator: {
+                    embedTypes: getEnabledOptions(org._data.config.minireelinator.embedTypes),
+                    minireelDefaults: org.config.minireelinator.minireelDefaults,
+                    embedDefaults: org.config.minireelinator.embedDefaults
+                }
+            };
+
             org.waterfalls.video = getEnabledOptions(org._data.videoWaterfalls);
             org.waterfalls.display = getEnabledOptions(org._data.displayWaterfalls);
 
@@ -513,7 +524,20 @@ define(['angular','c6ui'], function(angular,c6ui){
                         display: ['cinema6']
                     },
                     config: {
-                        embedTypes: ['script']
+                        minireelinator: {
+                            embedTypes: ['script'],
+                            minireelDefaults: {
+                                mode: 'light',
+                                autoplay: true,
+                                splash: {
+                                    ratio: '3-2',
+                                    theme: 'img-text-overlay'
+                                }
+                            },
+                            embedDefaults: {
+                                size: null
+                            }
+                        }
                     },
                     adConfig: {
                         video: {
@@ -566,34 +590,41 @@ define(['angular','c6ui'], function(angular,c6ui){
                 org._data.adConfig[setting.label] = convertedProp;
             });
 
-            org.config = org.config && org.config.embedTypes ?
-                org.config : {
-                embedTypes: ['script']
-            };
+            // org.config = org.config && org.config.embedTypes ?
+            //     org.config : {
+            //     embedTypes: ['script']
+            // };
 
             // don't need to worry about org.branding, that will be bound in UI
             // need to ask josh about org.config.embedTypes, is that still top level config?
 
-            org.config.minireelinator = org.config.minireelinator || {
-                minireelDefaults: {
-                    mode: 'light',
-                    autoplay: true,
-                    splash: {
-                        ratio: '3-2',
-                        theme: 'img-text-overlay'
+            org.config.minireelinator = org.config.minireelinator &&
+                org.config.minireelinator.embedTypes &&
+                org.config.minireelinator.minireelDefaults &&
+                org.config.minireelinator.embedDefaults ?
+                org.config.minireelinator : {
+                    embedTypes: ['script'],
+                    minireelDefaults: {
+                        mode: 'light',
+                        autoplay: true,
+                        splash: {
+                            ratio: '3-2',
+                            theme: 'img-text-overlay'
+                        }
+                    },
+                    embedDefaults: {
+                        size: null
                     }
-                },
-                embedDefaults: {
-                    size: null
-                }
-            };
+                };
 
-            // need to have data object for mode, splash ratio, splash theme
+            // need to have appData object for mode, splash ratio, splash theme
             // should be able to use splash ratio and theme from above (used on the user)
 
             org._data.config = {};
 
-            org._data.config.embedTypes = [
+            org._data.config.minireelinator = {};
+
+            org._data.config.minireelinator.embedTypes = [
                 {
                     title: 'Script Tag',
                     value: 'script',
@@ -606,8 +637,8 @@ define(['angular','c6ui'], function(angular,c6ui){
                 }
             ];
 
-            org._data.config.embedTypes.forEach(function(setting) {
-                setting.enabled = org.config.embedTypes.indexOf(setting.value) > -1;
+            org._data.config.minireelinator.embedTypes.forEach(function(setting) {
+                setting.enabled = org.config.minireelinator.embedTypes.indexOf(setting.value) > -1;
             });
 
             return org;
@@ -630,6 +661,8 @@ define(['angular','c6ui'], function(angular,c6ui){
         this.putOrg = function(org) {
             org = convertOrgForSaving(org);
 
+            console.log('PUT', org);
+
             return httpWrapper({
                 method: 'PUT',
                 url: c6UrlMaker('account/org/' + org.id,'api'),
@@ -638,13 +671,16 @@ define(['angular','c6ui'], function(angular,c6ui){
                     status: org.status,
                     adConfig: org.adConfig,
                     waterfalls: org.waterfalls,
-                    config: org.config
+                    config: org.config,
+                    branding: org.branding
                 }
             });
         };
 
         this.postOrg = function(org) {
             org = convertOrgForSaving(org);
+
+            console.log('POST', org);
 
             return httpWrapper({
                 method: 'POST',
@@ -654,7 +690,8 @@ define(['angular','c6ui'], function(angular,c6ui){
                     status: org.status,
                     adConfig: org.adConfig,
                     waterfalls: org.waterfalls,
-                    config: org.config
+                    config: org.config,
+                    branding: org.branding
                 }
             });
         };
