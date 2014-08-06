@@ -61,9 +61,30 @@
             <label for="new_org_status"> Inactive</label>
             <br>
             <input type="radio" id="new_org_status" name="status" ng-model="data.org.status" value="pending" required>
-            <label for="new_org_status"> Pending:</label>
+            <label for="new_org_status"> Pending</label>
             <div>
                 <span ng-show="theForm.status.$error.required"> Required. </span>
+            </div>
+        </div>
+        <div class="form-group">
+            <div ng-repeat="setting in data.appData.defaultSplashOptions">
+                <h3>{{setting.title}}</h3>
+                <div ng-repeat="option in setting.options">
+                    <input type="radio" name="{{setting.label}}" ng-model="data.org.config.minireelinator.minireelDefaults.splash[setting.label]" value="{{option}}" required>
+                    <label for="{{setting.label}}">{{option}}</label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <h3>Default Autoplay</h3>
+            <input name="autoplay" type="checkbox" ng-model="data.org.config.minireelinator.minireelDefaults.autoplay">
+            <label for="autoplay">Enabled</label>
+        </div>
+        <div class="form-group">
+            <h3>Default Mode</h3>
+            <div ng-repeat="setting in OrgsCtrl.defaultModes">
+                <input type="radio" name="defaultMode" ng-model="data.org.config.minireelinator.minireelDefaults.mode" value="{{setting.value}}" required>
+                <label for="defaultMode">{{setting.label}}</label>
             </div>
         </div>
     </div>

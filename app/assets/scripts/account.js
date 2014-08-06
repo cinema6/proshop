@@ -466,7 +466,8 @@ define(['angular','c6ui'], function(angular,c6ui){
                     firstName:  user.firstName,
                     branding:   user.branding,
                     config:     user.config,
-                    org:        user.org
+                    org:        user.org,
+                    type:       user.type
                 }
             });
         };
@@ -482,7 +483,8 @@ define(['angular','c6ui'], function(angular,c6ui){
                     lastName:   user.lastName,
                     firstName:  user.firstName,
                     branding:   user.branding,
-                    config:     user.config
+                    config:     user.config,
+                    type:       user.type
                 }
             });
         };
@@ -568,6 +570,26 @@ define(['angular','c6ui'], function(angular,c6ui){
                 org.config : {
                 embedTypes: ['script']
             };
+
+            // don't need to worry about org.branding, that will be bound in UI
+            // need to ask josh about org.config.embedTypes, is that still top level config?
+
+            org.config.minireelinator = org.config.minireelinator || {
+                minireelDefaults: {
+                    mode: 'light',
+                    autoplay: true,
+                    splash: {
+                        ratio: '3-2',
+                        theme: 'img-text-overlay'
+                    }
+                },
+                embedDefaults: {
+                    size: null
+                }
+            };
+
+            // need to have data object for mode, splash ratio, splash theme
+            // should be able to use splash ratio and theme from above (used on the user)
 
             org._data.config = {};
 

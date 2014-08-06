@@ -36,6 +36,11 @@ define(['account'],function(account) {
             self.showUserSettings = false;
             self.userPermissionOptions = angular.copy(account.userPermissionOptions);
 
+            self.userTypes = [
+                {label:'Publisher',value:'publisher'},
+                {label:'Content Provider',value:'contentProvider'}
+            ];
+
             function updateOrgs(orgs) {
                 data.appData.orgs = orgs;
                 data.orgs = orgs;
@@ -63,6 +68,7 @@ define(['account'],function(account) {
                         theme: 'img-text-overlay'
                     }
                 };
+                data.user.type = data.user.type || 'publisher';
                 data.org = data.appData.orgs.filter(function(org) {
                     return user.org.id === org.id;
                 })[0];
@@ -77,7 +83,8 @@ define(['account'],function(account) {
                             ratio: '3-2',
                             theme: 'img-text-overlay'
                         }
-                    }
+                    },
+                    type: 'publisher'
                 };
                 data.org = null;
             };
@@ -148,7 +155,8 @@ define(['account'],function(account) {
                         lastName: data.user.lastName,
                         org: data.org.id,
                         branding: data.user.branding,
-                        config: data.user.config
+                        config: data.user.config,
+                        type: data.user.type
                     }).then(handleSuccess, handleError);
                 } else {
                     $log.info('POST', data.user.email, data.user.firstName, data.user.lastName, data.org.id, data.user.branding);
@@ -160,7 +168,8 @@ define(['account'],function(account) {
                         lastName: data.user.lastName,
                         org: data.org.id,
                         branding: data.user.branding,
-                        config: data.user.config
+                        config: data.user.config,
+                        type: data.user.type
                     }).then(handleSuccess, handleError);
                 }
             };
