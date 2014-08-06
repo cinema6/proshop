@@ -32,6 +32,12 @@ define(['account'],function(account) {
                 }
             };
 
+            self.defaultModes = [
+                {label:'Embedded',value:'light'},
+                {label:'Lightbox, with Companion',value:'lightbox-ads'},
+                {label:'Lightbox, without Companion',value:'lightbox'}
+            ];
+
             self.showWaterfallSettings = true;
             self.action = 'all';
 
