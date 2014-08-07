@@ -10,6 +10,13 @@ define(['account'],function(account) {
             $log = $log.context('OrgsCtrl');
             $log.info('instantiated');
 
+            function updateOrgs(orgs) {
+                data.appData.orgs = orgs;
+                data.orgs = orgs;
+            }
+
+            $scope.embedSizePattern  = /^\d+(px|%)$/;
+
             $scope.tableHeaders = [
                 {label:'Name',value:'name'},
                 {label:'Status',value:'status'},
@@ -38,13 +45,7 @@ define(['account'],function(account) {
                 {label:'Lightbox, without Companion',value:'lightbox'}
             ];
 
-            self.showWaterfallSettings = true;
             self.action = 'all';
-
-            function updateOrgs(orgs) {
-                data.appData.orgs = orgs;
-                data.orgs = orgs;
-            }
 
             self.formIsValid = function() {
                 var videoWaterfall = data.org._data.videoWaterfalls.filter(function(option) {
@@ -53,7 +54,7 @@ define(['account'],function(account) {
                     displayWaterfall = data.org._data.displayWaterfalls.filter(function(option) {
                         return option.enabled;
                     }),
-                    embedType = data.org._data.config.embedTypes.filter(function(option) {
+                    embedType = data.org._data.config.minireelinator.embedTypes.filter(function(option) {
                         return option.enabled;
                     });
 
@@ -140,7 +141,7 @@ define(['account'],function(account) {
         .directive('allOrgs', [ function ( ) {
             return {
                 restrict: 'E',
-                templateUrl: 'views/all_orgs.html',
+                templateUrl: 'views/orgs/orgs_all.html',
                 link: function(/*scope, element, attrs, ctrl*/) {
                     // can move any DOM stuff from Ctrl into here...
                 }
@@ -150,7 +151,7 @@ define(['account'],function(account) {
         .directive('newOrg', [ function ( ) {
             return {
                 restrict: 'E',
-                templateUrl: 'views/edit_org.html',
+                templateUrl: 'views/orgs/org_edit.html',
                 link: function(/*scope, element, attrs, ctrl*/) {
                     // can move any DOM stuff from Ctrl into here...
                 }
@@ -160,7 +161,7 @@ define(['account'],function(account) {
         .directive('editOrg', [ function ( ) {
             return {
                 restrict: 'E',
-                templateUrl: 'views/edit_org.html',
+                templateUrl: 'views/orgs/org_edit.html',
                 link: function(/*scope, element, attrs, ctrl*/) {
                     // can move any DOM stuff from Ctrl into here...
                 }

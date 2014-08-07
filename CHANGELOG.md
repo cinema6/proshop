@@ -5,6 +5,9 @@
     *[FEATURE]: Table headings for All Users and All Orgs will sort data
     *[FEATURE]: Added User Type setting
     *[FEATURE]: Added Org minireelinator settings
+    *[FEATURE]: Org and User config data is structured correctly
+    *[FEATURE]: Added Minireel area that allows for searching and copying of minireels
+    *[FIX]: User email is properly validated to field
 
 ## v0.4.2 (August 4, 2014)
 

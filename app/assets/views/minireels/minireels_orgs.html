@@ -1,0 +1,30 @@
+<form name="theForm" id="copy_experience" ng-submit="MinireelsCtrl.saveCopy()">
+    <div class="form-group" style="padding-top:20px">
+        <label for="org" class="control-label"> <h3>Choose an Org to view Minireels: </h3></label>
+        <div>
+            <select ng-model="data.org" name="org" ng-options="org.name for org in data.orgs" required>
+                <option value="">-- choose org --</option>
+            </select>
+            <input type="button" value="Go" ng-click="MinireelsCtrl.getExperiences(data.org)" ng-disabled="!theForm.$valid">
+            <!-- <span ng-show="theForm.org.$error.required"> Required. </span> -->
+        </div>
+    </div>
+</form>
+
+
+<input ng-if="false" style="width:250px;" type="text" ng-model="data.query" ng-change="MinireelsCtrl.filterOrgs()" placeholder="Search for Minireels by Org Name">
+
+<table ng-if="false" class="table table-striped table-hover table-bordered" style="margin-top:20px">
+    <tbody>
+        <tr>
+            <th ng-repeat="th in tableHeaders" ng-click="doSort(th.value)" style="cursor:pointer;">
+                {{th.label}} <span style="padding-left:5px;opacity:0.5;float:right;" ng-style="{visibility: sort.column === th.value ? 'visible' : 'hidden'}" ng-class="{'glyphicon-chevron-up': !sort.descending, 'glyphicon-chevron-down': sort.descending }" class="glyphicon "></span></th>
+        </tr>
+        <tr ng-repeat="org in data.orgs | orderBy:sort.column:sort.descending">
+            <td><a href="" ng-click="MinireelsCtrl.getExperiences(org)">{{org.name}}</a></td>
+            <td>{{org.status}}</td>
+            <td>{{org.tag}}</td>
+            <td>{{org.minAdCount}}</td>
+        </tr>
+    </tbody>
+</table>

@@ -10,6 +10,22 @@ define(['account'],function(account) {
             $log = $log.context('UsersCtrl');
             $log.info('instantiated');
 
+            function updateOrgs(orgs) {
+                data.appData.orgs = orgs;
+                data.orgs = orgs;
+            }
+
+            function updateUsers(users) {
+                users.forEach(function(user) {
+                    account.getOrg(user.org)
+                        .then(function(org) {
+                            user.org = org;
+                        });
+                });
+                data.appData.users = users;
+                data.users = users;
+            }
+
             $scope.tableHeaders = [
                 {label:'Email',value:'email'},
                 {label:'Name',value:'lastName'},
@@ -41,33 +57,23 @@ define(['account'],function(account) {
                 {label:'Content Provider',value:'contentProvider'}
             ];
 
-            function updateOrgs(orgs) {
-                data.appData.orgs = orgs;
-                data.orgs = orgs;
-            }
-
-            function updateUsers(users) {
-                users.forEach(function(user) {
-                    account.getOrg(user.org)
-                        .then(function(org) {
-                            user.org = org;
-                        });
-                });
-                data.appData.users = users;
-                data.users = users;
-            }
-
             self.editUser = function(user){
                 $scope.message = null;
                 self.action = 'edit';
                 data.user = user;
-                data.user.config = data.user.config && data.user.config.defaultSplash ?
+                data.user.config = data.user.config &&
+                    data.user.config.minireelinator &&
+                    data.user.config.minireelinator.minireelDefaults ?
                     data.user.config : {
-                    defaultSplash: {
-                        ratio: '3-2',
-                        theme: 'img-text-overlay'
-                    }
-                };
+                        minireelinator: {
+                            minireelDefaults: {
+                                splash: {
+                                    ratio: '3-2',
+                                    theme: 'img-text-overlay'
+                                }
+                            }
+                        }
+                    };
                 data.user.type = data.user.type || 'publisher';
                 data.org = data.appData.orgs.filter(function(org) {
                     return user.org.id === org.id;
@@ -79,9 +85,13 @@ define(['account'],function(account) {
                 self.action = 'edit';
                 data.user = {
                     config: {
-                        defaultSplash: {
-                            ratio: '3-2',
-                            theme: 'img-text-overlay'
+                        minireelinator: {
+                            minireelDefaults: {
+                                splash: {
+                                    ratio: '3-2',
+                                    theme: 'img-text-overlay'
+                                }
+                            }
                         }
                     },
                     type: 'publisher'
@@ -110,7 +120,7 @@ define(['account'],function(account) {
                 });
             };
 
-            this.sortOrgs = function(/*field*/) {
+            this.sortUsers = function(/*field*/) {
                 // I imagine there will be something in the UI to allow sorting the list
                 // return account.getOrgs(field).then(updateOrgs);
             };
@@ -132,7 +142,6 @@ define(['account'],function(account) {
 
             this.saveUser = function() {
                 function handleError(err) {
-                    // print to page
                     $log.error(err);
                     $scope.message = 'There was a problem creating this user.';
                 }
@@ -176,20 +185,12 @@ define(['account'],function(account) {
 
             account.getOrgs().then(updateOrgs);
             account.getUsers().then(updateUsers);
-
-            // $scope.$watch(function() { return self.action; }, function(action, lastAction) {
-            //     if (action === lastAction) { return; }
-            //     if (action === 'all') {
-            //         account.getOrgs().then(updateOrgs);
-            //         account.getUsers().then(updateUsers);
-            //     }
-            // });
         }])
 
         .directive('newUser', [ function ( ) {
             return {
                 restrict: 'E',
-                templateUrl: 'views/edit_user.html',
+                templateUrl: 'views/users/user_edit.html',
                 link: function(/*scope, element, attrs, ctrl*/) {
                     // can move any DOM stuff from Ctrl into here...
                 }
@@ -199,7 +200,7 @@ define(['account'],function(account) {
         .directive('editUser', [ function ( ) {
             return {
                 restrict: 'E',
-                templateUrl: 'views/edit_user.html',
+                templateUrl: 'views/users/user_edit.html',
                 link: function(/*scope, element, attrs, ctrl*/) {
                     // can move any DOM stuff from Ctrl into here...
                 }
@@ -209,7 +210,7 @@ define(['account'],function(account) {
         .directive('allUsers', [ function ( ) {
             return {
                 restrict: 'E',
-                templateUrl: 'views/all_users.html',
+                templateUrl: 'views/users/users_all.html',
                 link: function(/*scope, element, attrs, ctrl*/) {
                     // can move any DOM stuff from Ctrl into here...
                 }

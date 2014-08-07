@@ -33,13 +33,16 @@
                             <a href="/#/">Dashboard</a>
                         </li> -->
                         <li>
-                            <a href="/#/users" title="Organizations">Users</a>
+                            <a href="" ng-click="AppCtrl.goTo('/users')" title="Users">Users</a>
                         </li>
                         <li>
-                            <a href="/#/orgs" title="Organizations">Organizations</a>
+                            <a href="" ng-click="AppCtrl.goTo('/orgs')" title="Organizations">Organizations</a>
                         </li>
                         <li>
-                            <a href="/#/account" title="{{user.email}}">Account</a>
+                            <a href="" ng-click="AppCtrl.goTo('/minireels')"title="Minireels">Minireels</a>
+                        </li>
+                        <li>
+                            <a href="" ng-click="AppCtrl.goTo('/account')" title="{{user.email}}">Account</a>
                         </li>
                     </ul>
                 </div>

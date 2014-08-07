@@ -1,7 +1,7 @@
 (function() {
     'user strict';
 
-    define(['orgs','account'], function() {
+    define(['orgs'], function() {
         describe('OrgsController', function() {
             var $rootScope,
                 $scope,
@@ -116,7 +116,6 @@
 
                 it('should set some defaults', function() {
                     expect(OrgsCtrl.action).toBe('all');
-                    expect(OrgsCtrl.showWaterfallSettings).toBe(true);
                 });
 
                 it('should call the account service to get all Orgs', function() {
@@ -160,11 +159,23 @@
                         expect(OrgsCtrl.formIsValid()).toBe(true);
                     });
 
-                    it('should be false if video or display waterfalls are not set', function() {
+                    it('should be false if video or display waterfalls or embedTypes are not set', function() {
                         $scope.data.org._data.videoWaterfalls = [];
                         expect(OrgsCtrl.formIsValid()).toBe(false);
 
                         $scope.data.org._data.videoWaterfalls = [{enabled: true}];
+                        expect(OrgsCtrl.formIsValid()).toBe(true);
+
+                        $scope.data.org._data.displayWaterfalls = [];
+                        expect(OrgsCtrl.formIsValid()).toBe(false);
+
+                        $scope.data.org._data.displayWaterfalls = [{enabled: true}];
+                        expect(OrgsCtrl.formIsValid()).toBe(true);
+
+                        $scope.data.org._data.config.minireelinator.embedTypes = [];
+                        expect(OrgsCtrl.formIsValid()).toBe(false);
+
+                        $scope.data.org._data.config.minireelinator.embedTypes = [{enabled: true}];
                         expect(OrgsCtrl.formIsValid()).toBe(true);
                     });
                 });

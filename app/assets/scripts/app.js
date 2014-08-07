@@ -1,7 +1,7 @@
 define( [   'angular','ngAnimate','ngRoute','c6ui','c6log', 'c6defines',
-            'auth', 'login','users', 'orgs', 'mockHttp','mockHttpDefs','templates'],
+            'auth', 'login','users', 'orgs', 'minireels', 'mockHttp','mockHttpDefs','templates'],
 function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
-            auth, login, users, orgs, mockHttp, mockHttpDefs, templates ) {
+            auth, login, users, orgs, minireels, mockHttp, mockHttpDefs, templates ) {
     /* jshint -W106 */
     'use strict';
 
@@ -14,6 +14,7 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
             login.name,
             users.name,
             orgs.name,
+            minireels.name,
             templates.name
         ])
         .constant('c6Defines',c6Defines)
@@ -41,19 +42,24 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
                 .when('/orgs', {
                     controller: 'OrgsController',
                     controllerAs: 'OrgsCtrl',
-                    templateUrl: 'views/orgs.html'
+                    templateUrl: 'views/orgs/orgs.html'
                 })
                 .when('/users', {
                     controller: 'UsersController',
                     controllerAs: 'UsersCtrl',
-                    templateUrl: 'views/users.html'
+                    templateUrl: 'views/users/users.html'
+                })
+                .when('/minireels', {
+                    controller: 'MinireelsController',
+                    controllerAs: 'MinireelsCtrl',
+                    templateUrl: 'views/minireels/minireels.html'
                 })
                 .otherwise({redirectTo: '/users'});
         }])
         .value('appData', {appUser: null, user: null, users: null, org: null, orgs: null})
-        .controller('AppController', ['$scope', '$log', '$location', '$timeout', '$q',
+        .controller('AppController', ['$scope', '$log', '$location', '$timeout', '$q', '$route',
                                       'c6Defines','c6LocalStorage', 'auth', 'appData', 'account',
-            function(                  $scope ,  $log ,  $location ,  $timeout ,  $q ,
+            function(                  $scope ,  $log ,  $location ,  $timeout ,  $q , $route,
                                        c6Defines , c6LocalStorage ,  auth ,  appData ,  account ) {
 
             var self = this,
@@ -79,7 +85,11 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
             self.goTo = function(path){
                 $log.info('goto request:', path);
 
-                $location.path(path);
+                if ($location.path() === path) {
+                    $route.reload();
+                } else {
+                    $location.path(path);
+                }
             };
 
             self.updateUser = function(record, skipStore) {
