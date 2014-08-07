@@ -1,5 +1,7 @@
 # ProShop
 
+## v0.5.0 (August 7, 2014)
+
 * *[v0.5.0]*
     *[FEATURE]: Existing user's org is now editable
     *[FEATURE]: Table headings for All Users and All Orgs will sort data
@@ -8,6 +10,7 @@
     *[FEATURE]: Org and User config data is structured correctly
     *[FEATURE]: Added Minireel area that allows for searching and copying of minireels
     *[FIX]: User email is properly validated to field
+* *[/v0.5.0]*
 
 ## v0.4.2 (August 4, 2014)
 
