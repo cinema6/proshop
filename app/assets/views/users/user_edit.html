@@ -51,10 +51,11 @@
     <div class="form-group">
         <label for="branding" class="control-label"> Branding: </label>
         <div>
-            <input type="text" name="branding" ng-model="data.user.branding" autocomplete="off" ng-trim="false" ng-minlength="3" ng-maxlength="128" required>
+            <input type="text" name="branding" ng-model="data.user.branding" autocomplete="off" ng-trim="false" ng-minlength="3" ng-maxlength="128" ng-pattern="/^[\w]+$/" required>
             <span ng-show="theForm.branding.$error.required"> Required. </span>
             <span ng-show="theForm.branding.$error.minlength"> Too short. </span>
             <span ng-show="theForm.branding.$error.maxlength"> Too long. </span>
+            <span ng-show="theForm.branding.$error.pattern"> Invalid characters. </span>
         </div>
     </div>
     <div class="form-group">

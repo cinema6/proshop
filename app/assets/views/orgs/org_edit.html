@@ -47,10 +47,11 @@
         <div class="form-group">
             <label for="branding" class="control-label"> Branding: </label>
             <div>
-                <input type="text" name="branding" ng-model="data.org.branding" autocomplete="off" ng-trim="false" ng-minlength="3" ng-maxlength="128" required>
+                <input type="text" name="branding" ng-model="data.org.branding" autocomplete="off" ng-trim="false" ng-minlength="3" ng-maxlength="128" ng-pattern="/^[\w]+$/" required>
                 <span ng-show="theForm.branding.$error.required"> Required. </span>
                 <span ng-show="theForm.branding.$error.minlength"> Too short. </span>
                 <span ng-show="theForm.branding.$error.maxlength"> Too long. </span>
+                <span ng-show="theForm.branding.$error.pattern"> Invalid characters. </span>
             </div>
         </div>
         <div>
@@ -63,10 +64,10 @@
         <div>
             <h3>Embed Size</h3>
             <div>
-                <label for="new_org_status">Width (in pixels)</label><br>
-                <input type="number" name="embed_size_width" ng-model="data.org.config.minireelinator.embedDefaults.size.width"><br>
-                <label for="new_org_status">Height (in pixels)</label><br>
-                <input type="number" name="embed_size_height" ng-model="data.org.config.minireelinator.embedDefaults.size.height">
+                <label for="new_org_status">Width (in pixels or percentage, ex: 400px or 100%)</label><br>
+                <input type="text" name="embed_size_width" ng-model="data.org.config.minireelinator.embedDefaults.size.width" ng-pattern="embedSizePattern"><br>
+                <label for="new_org_status">Height (in pixels or percentage, ex: 400px or 100%)</label><br>
+                <input type="text" name="embed_size_height" ng-model="data.org.config.minireelinator.embedDefaults.size.height" ng-pattern="embedSizePattern">
             </div>
         </div>
         <div>

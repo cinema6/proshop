@@ -15,6 +15,8 @@ define(['account'],function(account) {
                 data.orgs = orgs;
             }
 
+            $scope.embedSizePattern  = /^\d+(px|%)$/;
+
             $scope.tableHeaders = [
                 {label:'Name',value:'name'},
                 {label:'Status',value:'status'},
