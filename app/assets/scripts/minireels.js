@@ -177,7 +177,7 @@ define(['account','content'],function(account,content) {
             };
 
             $scope.$watch('data.user',function(newUser) {
-                if (newUser) {
+                if (self.action === 'copy' && newUser) {
                     setUserExperienceData(newUser);
                 }
             });
