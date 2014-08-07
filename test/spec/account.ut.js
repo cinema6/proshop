@@ -814,10 +814,10 @@
                     });
                 });
 
-                describe('postOrg()', function() {
+                describe('postUser()', function() {
                     beforeEach(function(){
-                        successSpy = jasmine.createSpy('putOrg.success');
-                        failureSpy = jasmine.createSpy('putOrg.failure');
+                        successSpy = jasmine.createSpy('postUser.success');
+                        failureSpy = jasmine.createSpy('postUser.failure');
                         spyOn($timeout,'cancel');
                     });
 

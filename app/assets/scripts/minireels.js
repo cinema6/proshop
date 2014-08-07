@@ -50,7 +50,7 @@ define(['account','content'],function(account,content) {
                 {label:'Lightbox, without Companion',value:'lightbox'}
             ];
 
-            self.filterData = function() {
+            self.filterOrgs = function() {
                 var query = data.query.toLowerCase();
 
                 data.orgs = data.appData.orgs.filter(function(org) {
@@ -86,6 +86,7 @@ define(['account','content'],function(account,content) {
             self.startExperienceCopy = function(exp) {
                 self.action = 'copy';
                 data.org = null;
+                data.orgs = angular.copy(data.appData.orgs);
                 data.experience = content.convertExperienceForCopy(angular.copy(exp));
             };
 
