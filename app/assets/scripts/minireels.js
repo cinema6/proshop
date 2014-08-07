@@ -86,6 +86,7 @@ define(['account','content'],function(account,content) {
             self.startExperienceCopy = function(exp) {
                 self.action = 'copy';
                 data.org = null;
+                data.user = null;
                 data.orgs = angular.copy(data.appData.orgs);
                 data.experience = content.convertExperienceForCopy(angular.copy(exp));
             };
@@ -134,7 +135,7 @@ define(['account','content'],function(account,content) {
             }
 
             $scope.$watch('data.org',function(newOrg) {
-                if (newOrg) {
+                if (self.action === 'copy' && newOrg) {
                     setOrgExperienceData(newOrg);
                     account.getUsers(newOrg)
                         .then(function(users) {

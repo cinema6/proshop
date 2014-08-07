@@ -187,9 +187,13 @@
                         expect(UsersCtrl.action).toBe('edit');
                         expect($scope.data.user).toEqual({
                             config: {
-                                defaultSplash: {
-                                    ratio: '3-2',
-                                    theme: 'img-text-overlay'
+                                minireelinator: {
+                                    minireelDefaults: {
+                                        splash: {
+                                            ratio: '3-2',
+                                            theme: 'img-text-overlay'
+                                        }
+                                    }
                                 }
                             },
                             type: 'publisher'

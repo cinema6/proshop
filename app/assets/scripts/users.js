@@ -61,13 +61,19 @@ define(['account'],function(account) {
                 $scope.message = null;
                 self.action = 'edit';
                 data.user = user;
-                data.user.config = data.user.config && data.user.config.defaultSplash ?
+                data.user.config = data.user.config &&
+                    data.user.config.minireelinator &&
+                    data.user.config.minireelinator.minireelDefaults ?
                     data.user.config : {
-                    defaultSplash: {
-                        ratio: '3-2',
-                        theme: 'img-text-overlay'
-                    }
-                };
+                        minireelinator: {
+                            minireelDefaults: {
+                                splash: {
+                                    ratio: '3-2',
+                                    theme: 'img-text-overlay'
+                                }
+                            }
+                        }
+                    };
                 data.user.type = data.user.type || 'publisher';
                 data.org = data.appData.orgs.filter(function(org) {
                     return user.org.id === org.id;
@@ -79,9 +85,13 @@ define(['account'],function(account) {
                 self.action = 'edit';
                 data.user = {
                     config: {
-                        defaultSplash: {
-                            ratio: '3-2',
-                            theme: 'img-text-overlay'
+                        minireelinator: {
+                            minireelDefaults: {
+                                splash: {
+                                    ratio: '3-2',
+                                    theme: 'img-text-overlay'
+                                }
+                            }
                         }
                     },
                     type: 'publisher'

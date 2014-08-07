@@ -138,24 +138,29 @@ define(['angular','c6ui'], function(angular,c6ui){
         }
 
         function convertOrgForSaving(org) {
-            var embedSize = org.config.minireelinator.embedDefaults.size;
+            // we need to convert the embed size because size === null
+            // or an object with width and height set
+            var size = org.config.minireelinator.embedDefaults.size;
 
-            org.config.minireelinator.embedDefaults.size = (embedSize && !embedSize.width && !embedSize.height) ? null : embedSize;
-
-            forEach(org._data.adConfig, function(conf, key) {
-                org.adConfig.video[key] = conf.value;
-            });
-
+            // might as well just reset the entire config
             org.config = {
                 minireelinator: {
                     embedTypes: getEnabledOptions(org._data.config.minireelinator.embedTypes),
                     minireelDefaults: org.config.minireelinator.minireelDefaults,
-                    embedDefaults: org.config.minireelinator.embedDefaults
+                    embedDefaults: {
+                        size: (size && !size.width && !size.height) ? null : size
+                    }
                 }
             };
 
             org.waterfalls.video = getEnabledOptions(org._data.videoWaterfalls);
             org.waterfalls.display = getEnabledOptions(org._data.displayWaterfalls);
+
+            // loop through the temp adConfig settings and put
+            // the actual value on the org
+            forEach(org._data.adConfig, function(conf, key) {
+                org.adConfig.video[key] = conf.value;
+            });
 
             return org;
         }
@@ -553,21 +558,11 @@ define(['angular','c6ui'], function(angular,c6ui){
                 };
             }
 
-            org._data = {};
+            // now we need to make sure that any existing orgs
+            // have all the necessary default properties defined
 
-            org._data.videoWaterfalls = this.waterfallData.options.map(function(option) {
-                var copied = copy(option);
-                copied.enabled = org.waterfalls.video.indexOf(option.value) > -1;
-                return copied;
-            });
-
-            org._data.displayWaterfalls = this.waterfallData.options.map(function(option) {
-                var copied = copy(option);
-                copied.enabled = org.waterfalls.display.indexOf(option.value) > -1;
-                return copied;
-            });
-
-            // if there's no adConfig then set the default!
+            // not all existing orgs have an adConfig block
+            // so if there's no adConfig then set the defaults
             org.adConfig = org.adConfig || {
                 video: {
                     firstPlacement: 2,
@@ -580,16 +575,13 @@ define(['angular','c6ui'], function(angular,c6ui){
                 }
             };
 
-            org._data.adConfig = {};
-
-            this.adConfig.types.forEach(function(setting) {
-                var convertedProp = setting.options.filter(function(option) {
-                    return org.adConfig.video[setting.label] === option.value;
-                })[0];
-
-                org._data.adConfig[setting.label] = convertedProp;
-            });
-
+            // every existing org has a config block defined
+            // but most are empty, so we don't have to check for
+            // the existence of org.config, but we need to check
+            // for anything within it.
+            // right now we just need a minireelinator block
+            // and we're gonna check for every prop within it.
+            // if every prop is defined we'll go with it
             org.config.minireelinator = org.config.minireelinator &&
                 org.config.minireelinator.embedTypes &&
                 org.config.minireelinator.minireelDefaults &&
@@ -609,10 +601,49 @@ define(['angular','c6ui'], function(angular,c6ui){
                     }
                 };
 
-            org._data.config = {};
+            // now we need to set up the temp data that's
+            // used for binding in the UI
+            org._data = {
+                videoWaterfalls: null,
+                displayWaterfalls: null,
+                adConfig: {},
+                config: {
+                    minireelinator: {
+                        embedTypes: null,
+                    }
+                }
+            };
 
-            org._data.config.minireelinator = {};
+            // loop through the waterfall options, check if the org has the option
+            // enabled, and if so, set the enabled prop to true for binding in the UI
+            org._data.videoWaterfalls = this.waterfallData.options.map(function(option) {
+                var copied = copy(option);
+                // all existing orgs have waterfall.video defined
+                // so no need to protect against undefined
+                copied.enabled = org.waterfalls.video.indexOf(option.value) > -1;
+                return copied;
+            });
 
+            // loop through the waterfall options, check if the org has the option
+            // enabled, and if so, set the enabled prop to true for binding in the UI
+            org._data.displayWaterfalls = this.waterfallData.options.map(function(option) {
+                var copied = copy(option);
+                // all existing orgs have waterfall.display defined
+                // so no need to protect against undefined
+                copied.enabled = org.waterfalls.display.indexOf(option.value) > -1;
+                return copied;
+            });
+
+            // loop through the adConfig types...
+            this.adConfig.types.forEach(function(setting) {
+                var convertedProp = setting.options.filter(function(option) {
+                    return org.adConfig.video[setting.label] === option.value;
+                })[0];
+
+                org._data.adConfig[setting.label] = convertedProp;
+            });
+
+            // this should be stored somewhere else...
             org._data.config.minireelinator.embedTypes = [
                 {
                     title: 'Script Tag',
@@ -626,6 +657,7 @@ define(['angular','c6ui'], function(angular,c6ui){
                 }
             ];
 
+            // loop through the embed types and enable appropriately
             org._data.config.minireelinator.embedTypes.forEach(function(setting) {
                 setting.enabled = org.config.minireelinator.embedTypes.indexOf(setting.value) > -1;
             });

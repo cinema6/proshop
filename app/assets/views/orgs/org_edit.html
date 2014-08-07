@@ -1,9 +1,9 @@
-<form name="theForm" id="new_org" ng-submit="OrgsCtrl.saveOrg()">
+<form name="theForm" ng-submit="OrgsCtrl.saveOrg()">
     <a href="" ng-click="OrgsCtrl.action = 'all'">&lsaquo; Back to list</a>
     <div class="form-group" style="padding-top:20px">
         <label for="new_org_name" class="control-label"> Name: </label>
         <div>
-            <input id="new_org_name" type="text" name="name" ng-model="data.org.name" autocomplete="off" ng-trim="false" ng-minlength="3" ng-maxlength="128" required>
+            <input type="text" name="name" ng-model="data.org.name" autocomplete="off" ng-trim="false" ng-minlength="3" ng-maxlength="128" required>
             <span ng-show="theForm.name.$error.required"> Required. </span>
             <span ng-show="theForm.name.$error.minlength"> Too short. </span>
             <span ng-show="theForm.name.$error.maxlength"> Too long. </span>
@@ -47,7 +47,7 @@
         <div class="form-group">
             <label for="branding" class="control-label"> Branding: </label>
             <div>
-                <input id="branding" type="text" name="branding" ng-model="data.org.branding" autocomplete="off" ng-trim="false" ng-minlength="3" ng-maxlength="128" required>
+                <input type="text" name="branding" ng-model="data.org.branding" autocomplete="off" ng-trim="false" ng-minlength="3" ng-maxlength="128" required>
                 <span ng-show="theForm.branding.$error.required"> Required. </span>
                 <span ng-show="theForm.branding.$error.minlength"> Too short. </span>
                 <span ng-show="theForm.branding.$error.maxlength"> Too long. </span>
