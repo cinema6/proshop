@@ -57,9 +57,9 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
                 .otherwise({redirectTo: '/users'});
         }])
         .value('appData', {appUser: null, user: null, users: null, org: null, orgs: null})
-        .controller('AppController', ['$scope', '$log', '$location', '$timeout', '$q',
+        .controller('AppController', ['$scope', '$log', '$location', '$timeout', '$q', '$route',
                                       'c6Defines','c6LocalStorage', 'auth', 'appData', 'account',
-            function(                  $scope ,  $log ,  $location ,  $timeout ,  $q ,
+            function(                  $scope ,  $log ,  $location ,  $timeout ,  $q , $route,
                                        c6Defines , c6LocalStorage ,  auth ,  appData ,  account ) {
 
             var self = this,
@@ -85,7 +85,11 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
             self.goTo = function(path){
                 $log.info('goto request:', path);
 
-                $location.path(path);
+                if ($location.path() === path) {
+                    $route.reload();
+                } else {
+                    $location.path(path);
+                }
             };
 
             self.updateUser = function(record, skipStore) {

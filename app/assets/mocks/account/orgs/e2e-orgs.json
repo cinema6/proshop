@@ -81,6 +81,7 @@
   "lastUpdated": "2014-06-13T19:28:39.408Z",
   "status": "inactive",
   "tag": "bar",
+  "config": {},
   "waterfalls": {
     "video": [
       "cinema6"
@@ -97,6 +98,7 @@
   "created": "2014-04-30T19:09:19.018Z",
   "lastUpdated": "2014-04-30T19:14:22.308Z",
   "branding": "khaki",
+  "config": {},
   "waterfalls": {
     "video": ["cinema6"],
     "display": ["cinema6"]

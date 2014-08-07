@@ -315,6 +315,22 @@
                         expect($scope.data.experience._data.user).toEqual(mockUsers[0]);
                     });
                 });
+
+                describe('self.action', function() {
+                    it('should reset the org whenever action is "orgs"', function() {
+                        MinireelsCtrl.action = 'orgs';
+                        $scope.data.org = mockOrgs[0];
+                        $scope.$digest();
+
+                        MinireelsCtrl.action = 'experiences';
+                        $scope.$digest();
+
+                        MinireelsCtrl.action = 'orgs';
+                        $scope.$digest();
+
+                        expect($scope.data.org).toBe(null);
+                    });
+                });
             });
         });
     });

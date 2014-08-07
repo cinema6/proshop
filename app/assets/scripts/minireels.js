@@ -182,6 +182,12 @@ define(['account','content'],function(account,content) {
                 }
             });
 
+            $scope.$watch(function() { return self.action; }, function(newAction) {
+                if (newAction === 'orgs') {
+                    data.org = null;
+                }
+            });
+
             account.getOrgs().then(updateOrgs);
         }])
 
