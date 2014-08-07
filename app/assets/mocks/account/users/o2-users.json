@@ -9,6 +9,7 @@
     "applications": ["e-51ae37625cb57f"],
     "org": "o-112",
     "status": "active",
+    "config": {},
     "permissions": {
         "experiences": {
             "read": "own",

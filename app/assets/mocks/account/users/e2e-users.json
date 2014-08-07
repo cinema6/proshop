@@ -10,9 +10,13 @@
     "org": "o-111",
     "status": "active",
     "config": {
-        "defaultSplash": {
-            "ratio": "16-9",
-            "theme": "text-only"
+        "minireelinator": {
+            "minireelDefaults": {
+                "splash": {
+                    "ratio": "16-9",
+                    "theme": "text-only"
+                }
+            }
         }
     },
     "permissions": {
@@ -49,6 +53,7 @@
     "applications": ["e-51ae37625cb57f"],
     "org": "o-112",
     "status": "active",
+    "config": {},
     "permissions": {
         "experiences": {
             "read": "own",
@@ -83,6 +88,7 @@
     "applications": ["e-51ae37625cb57f"],
     "org": "o-113",
     "status": "active",
+    "config": {},
     "permissions": {
         "experiences": {
             "read": "own",
@@ -117,6 +123,7 @@
     "applications": ["e-51ae37625cb57f"],
     "org": "o-114",
     "status": "active",
+    "config": {},
     "permissions": {
         "experiences": {
             "read": "own",
@@ -151,6 +158,7 @@
     "applications": ["e-51ae37625cb57f"],
     "org": "o-114",
     "status": "active",
+    "config": {},
     "permissions": {
         "experiences": {
             "read": "own",
@@ -183,6 +191,7 @@
     "status": "active",
     "branding": "saxtheme",
     "org": "e2e-org",
+    "config": {},
     "applications": [
        "e-51ae37625cb57f"
     ],

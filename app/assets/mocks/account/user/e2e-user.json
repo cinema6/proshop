@@ -9,6 +9,7 @@
     "applications": ["e-51ae37625cb57f"],
     "org": "e2e-org",
     "status": "active",
+    "config": {},
     "permissions": {
         "experiences": {
             "read": "own",
