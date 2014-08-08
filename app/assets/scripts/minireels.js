@@ -22,13 +22,15 @@ define(['account','content'],function(account,content) {
             $scope.experienceTableHeaders = [
                 {label:'Title',value:'title'},
                 {label:'Mode',value:'data.mode'},
-                {label:'User',value:'user.email'},
+                {label:'Created By',value:'user.email'},
+                {label:'Branding',value:'branding'},
                 {label:'# of Cards',value:'data.deck.length'},
-                {label:'Status',value:'status'}
+                {label:'Status',value:'status'},
+                {label:'Last Updated',value:'lastUpdated'}
             ];
 
             $scope.sort = {
-                column: 'name',
+                column: 'title',
                 descending: false
             };
 

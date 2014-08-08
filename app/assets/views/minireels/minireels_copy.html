@@ -3,7 +3,7 @@
     <div class="form-group" style="padding-top:20px">
         <label for="org" class="control-label"> <h3>Choose an Org to copy to: </h3></label>
         <div>
-            <select ng-model="data.org" name="org" ng-options="org.name for org in data.orgs" required>
+            <select ng-model="data.org" name="org" ng-options="org.name for org in data.orgs | orderBy:'name'" required>
                 <option value="">-- choose org --</option>
             </select>
             <span ng-show="theForm.org.$error.required"> Required. </span>

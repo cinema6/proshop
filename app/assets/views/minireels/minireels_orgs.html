@@ -2,11 +2,10 @@
     <div class="form-group" style="padding-top:20px">
         <label for="org" class="control-label"> <h3>Choose an Org to view Minireels: </h3></label>
         <div>
-            <select ng-model="data.org" name="org" ng-options="org.name for org in data.orgs" required>
+            <select ng-model="data.org" name="org" ng-options="org.name for org in data.orgs | orderBy:'name'" required>
                 <option value="">-- choose org --</option>
             </select>
             <input type="button" value="Go" ng-click="MinireelsCtrl.getExperiences(data.org)" ng-disabled="!theForm.$valid">
-            <!-- <span ng-show="theForm.org.$error.required"> Required. </span> -->
         </div>
     </div>
 </form>

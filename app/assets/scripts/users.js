@@ -2,8 +2,8 @@ define(['account'],function(account) {
     'use strict';
 
     return angular.module('c6.proshop.users',[account.name])
-        .controller('UsersController', ['$scope', '$log', 'account',
-        function                       ( $scope ,  $log,   account ) {
+        .controller('UsersController', ['$scope', '$log', 'account', 'ConfirmDialogService',
+        function                       ( $scope ,  $log,   account ,  ConfirmDialogService ) {
             var self = this,
                 data = $scope.data;
 
@@ -38,6 +38,12 @@ define(['account'],function(account) {
                 descending: false
             };
 
+            Object.defineProperty($scope, 'passwordMessage', {
+                get: function() {
+                    return this.showPassword ? 'Hide Password' : 'Show Password';
+                }
+            });
+
             $scope.doSort = function(column) {
                 var sort = $scope.sort;
                 if (sort.column === column) {
@@ -53,18 +59,20 @@ define(['account'],function(account) {
             self.userPermissionOptions = angular.copy(account.userPermissionOptions);
 
             self.userTypes = [
-                {label:'Publisher',value:'publisher'},
-                {label:'Content Provider',value:'contentProvider'}
+                {label:'Publisher',value:'Publisher'},
+                {label:'Content Provider',value:'ContentProvider'}
             ];
 
-            self.editUser = function(user){
-                $scope.message = null;
-                self.action = 'edit';
-                data.user = user;
-                data.user.config = data.user.config &&
-                    data.user.config.minireelinator &&
-                    data.user.config.minireelinator.minireelDefaults ?
-                    data.user.config : {
+            function convertUserForEditing(user, org) {
+                user.branding = user.branding || org.branding;
+                user.type = user.type || 'Publisher';
+                user.config = (user.config &&
+                    user.config.minireelinator &&
+                    user.config.minireelinator.minireelDefaults) ?
+                    (user.config) : (org.config &&
+                        org.config.minireelinator &&
+                        org.config.minireelinator.minireelDefaults) ?
+                        (org.config) : {
                         minireelinator: {
                             minireelDefaults: {
                                 splash: {
@@ -74,30 +82,40 @@ define(['account'],function(account) {
                             }
                         }
                     };
-                data.user.type = data.user.type || 'publisher';
+
+                return user;
+            }
+
+            self.editUser = function(user){
+                $scope.message = null;
+                self.action = 'edit';
                 data.org = data.appData.orgs.filter(function(org) {
                     return user.org.id === org.id;
                 })[0];
+                data.user = convertUserForEditing(user, data.org);
             };
 
             self.addNewUser = function() {
                 $scope.message = null;
-                self.action = 'edit';
-                data.user = {
-                    config: {
-                        minireelinator: {
-                            minireelDefaults: {
-                                splash: {
-                                    ratio: '3-2',
-                                    theme: 'img-text-overlay'
-                                }
-                            }
-                        }
-                    },
-                    type: 'publisher'
-                };
+                self.action = 'new';
+                data.user = {};
                 data.org = null;
             };
+
+            Object.defineProperty($scope, 'errors', {
+                get: function() {
+                    var message = 'These field(s) are required: ';
+
+                    if (this.theForm.$error.required) {
+                        this.theForm.$error.required.forEach(function(error, i, arr) {
+                            var errorName = error.$name.replace(/([A-Z])/g, ' $1');
+                            errorName = errorName.charAt(0).toUpperCase() + errorName.slice(1);
+                            message += errorName + ((i === (arr.length - 1)) ? '' : ', ');
+                        });
+                    }
+                    return message;
+                }
+            });
 
             self.filterData = function() {
                 var query = data.query.toLowerCase(),
@@ -123,6 +141,12 @@ define(['account'],function(account) {
             this.sortUsers = function(/*field*/) {
                 // I imagine there will be something in the UI to allow sorting the list
                 // return account.getOrgs(field).then(updateOrgs);
+            };
+
+            self.backToList = function() {
+                self.action = 'all';
+                account.getOrgs().then(updateOrgs);
+                account.getUsers().then(updateUsers);
             };
 
             self.deleteUser = function() {
@@ -182,6 +206,51 @@ define(['account'],function(account) {
                     }).then(handleSuccess, handleError);
                 }
             };
+
+            self.cancelOrgChange = function() {
+                $scope.changingOrgWarning = false;
+                data.org = data.orgs.filter(function(org) {
+                    return org.id === data.user.org.id;
+                })[0];
+            };
+
+            self.confirmOrgChange = function() {
+                $scope.changingOrgWarning = false;
+                data.user.config = null;
+                data.user.branding = null;
+                data.user = convertUserForEditing(data.user, data.org);
+            };
+
+            this.popup = function() {
+                ConfirmDialogService.display({
+                    prompt: 'All of this User\'s Minireels will remain with the old Org.',
+                    affirm: 'OK',
+                    cancel: 'Cancel',
+                    onAffirm: function() {
+                        ConfirmDialogService.close();
+                        self.confirmOrgChange();
+                    },
+                    onCancel: function() {
+                        ConfirmDialogService.close();
+                        self.cancelOrgChange();
+                    }
+                });
+            };
+
+            $scope.$watch('data.org', function(newOrg) {
+                if (newOrg) {
+                    if (self.action === 'edit' && data.user.org.id !== data.org.id) {
+                        $scope.changingOrgWarning = true;
+                        self.popup();
+                    }
+
+                    if (self.action === 'new') {
+                        data.user.config = null;
+                        data.user.branding = null;
+                        data.user = convertUserForEditing(data.user, newOrg);
+                    }
+                }
+            });
 
             account.getOrgs().then(updateOrgs);
             account.getUsers().then(updateUsers);

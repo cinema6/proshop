@@ -179,6 +179,44 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
 
         }])
 
+        .service('ConfirmDialogService', [function() {
+            var model = {},
+                dialog = null;
+
+            Object.defineProperty(this, 'model', {
+                get: function() {
+                    return model;
+                }
+            });
+
+            Object.defineProperty(model, 'dialog', {
+                get: function() {
+                    return dialog;
+                }
+            });
+
+            this.display = function(dialogModel) {
+                dialog = dialogModel;
+                dialog.onDismiss = dialog.onDismiss || this.close;
+            };
+
+            this.close = function() {
+                dialog = null;
+            };
+        }])
+
+        .directive('confirmDialog', ['ConfirmDialogService',
+        function                    ( ConfirmDialogService ) {
+            return {
+                restrict: 'E',
+                templateUrl: 'views/directives/confirm_dialog.html',
+                scope: {},
+                link: function(scope) {
+                    scope.model = ConfirmDialogService.model;
+                }
+            };
+        }])
+
         .filter('titlecase', function() {
             return function(input) {
                 return input.charAt(0).toUpperCase() + input.slice(1);

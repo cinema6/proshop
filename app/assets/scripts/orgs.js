@@ -17,11 +17,16 @@ define(['account'],function(account) {
 
             $scope.embedSizePattern  = /^\d+(px|%)$/;
 
+            Object.defineProperty($scope, 'optionsMessage', {
+                get: function() {
+                    return this.showOptions ? 'Hide Options' : 'More Options';
+                }
+            });
+
             $scope.tableHeaders = [
                 {label:'Name',value:'name'},
-                {label:'Status',value:'status'},
-                {label:'Tag',value:'tag'},
-                {label:'Min Ad Count',value:'minAdCount'}
+                {label:'Branding',value:'branding'},
+                {label:'Status',value:'status'}
             ];
 
             $scope.sort = {

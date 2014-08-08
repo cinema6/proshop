@@ -9,9 +9,8 @@
         </tr>
         <tr ng-repeat="org in data.orgs | orderBy:sort.column:sort.descending">
             <td><a href="" ng-click="OrgsCtrl.editOrg(org)">{{org.name}}</a></td>
+            <td>{{org.branding}}</td>
             <td>{{org.status}}</td>
-            <td>{{org.tag}}</td>
-            <td>{{org.minAdCount}}</td>
         </tr>
     </tbody>
 </table>

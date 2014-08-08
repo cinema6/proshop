@@ -16,6 +16,37 @@
                 m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
             })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
         </script>
+        <style>
+            .ui__modal--confirmation {
+                width: 28em;
+                height: 10em;
+                margin: 0 0 0 -15.5em;
+                padding: 1.5em;
+            }
+
+            .ui__overlay {
+                background: rgb(0,0,0);
+                background: rgba(0,0,0,0.8);
+                position: fixed;
+                z-index: 10;
+                left: 0;
+                right: 0;
+                top: 0;
+                bottom: 0;
+            }
+
+            .ui__modal {
+                width: 46.5em;
+                height: 33.75em;
+                padding: 0 2.25em;
+                margin: 0 0 0 -25.5em;
+                position: absolute;
+                z-index: 11;
+                top: 5em;
+                left: 50%;
+                background: #fff;
+            }
+        </style>
         <!--C6INJECT-->
     </head>
     <body >
@@ -51,7 +82,7 @@
                 </div>
             </div>
         </div>
-
+        <confirm-dialog></confirm-dialog>
         <script data-main="scripts/main" src="//lib.cinema6.com/require/2.1.5/require.min.js"> </script>
     </body>
 </html>

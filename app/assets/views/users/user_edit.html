@@ -1,76 +1,102 @@
 <form name="theForm" ng-submit="UsersCtrl.saveUser()">
-    <a href="" ng-click="UsersCtrl.action = 'all'">&lsaquo; Back to list</a>
+    <a href="" ng-click="UsersCtrl.backToList()">&lsaquo; Back to list</a>
     <div class="form-group" style="padding-top:20px">
         <div ng-if="data.user.id" style="padding-bottom:20px;"><b>Username:<br>{{data.user.email}}</b></div>
         <label for="firstName" class="control-label"> First Name: </label>
         <div>
-            <input type="text" name="firstName" ng-model="data.user.firstName" autocomplete="off" ng-trim="false" ng-minlength="3" ng-maxlength="128" required>
-            <span ng-show="theForm.firstName.$error.required"> Required. </span>
-            <span ng-show="theForm.firstName.$error.minlength"> Too short. </span>
-            <span ng-show="theForm.firstName.$error.maxlength"> Too long. </span>
+            <input type="text" name="firstName" ng-model="data.user.firstName" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" required>
+            <span style="color:red">
+                <span ng-show="theForm.firstName.$error.required"> Required. </span>
+                <span ng-show="theForm.firstName.$error.minlength"> Too short. </span>
+                <span ng-show="theForm.firstName.$error.maxlength"> Too long. </span>
+            </span>
         </div>
     </div>
     <div class="form-group">
         <label for="lastName" class="control-label"> Last Name: </label>
         <div>
-            <input type="text" name="lastName" ng-model="data.user.lastName" autocomplete="off" ng-trim="false" ng-minlength="3" ng-maxlength="128" required>
-            <span ng-show="theForm.lastName.$error.required"> Required. </span>
-            <span ng-show="theForm.lastName.$error.minlength"> Too short. </span>
-            <span ng-show="theForm.lastName.$error.maxlength"> Too long. </span>
+            <input type="text" name="lastName" ng-model="data.user.lastName" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" required>
+            <span style="color:red">
+                <span ng-show="theForm.lastName.$error.required"> Required. </span>
+                <span ng-show="theForm.lastName.$error.minlength"> Too short. </span>
+                <span ng-show="theForm.lastName.$error.maxlength"> Too long. </span>
+            </span>
         </div>
     </div>
     <div ng-if="!data.user.id">
         <div class="form-group">
             <label for="email" class="control-label"> Email: </label>
             <div>
-                <input type="text" name="email" ng-model="data.user.email" autocomplete="off" ng-trim="false" ng-minlength="3" ng-maxlength="128" required>
-                <span ng-show="theForm.email.$error.required"> Required. </span>
-                <span ng-show="theForm.email.$error.minlength"> Too short. </span>
-                <span ng-show="theForm.email.$error.maxlength"> Too long. </span>
+                <input type="text" name="email" ng-model="data.user.email" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" required>
+                <span style="color:red">
+                    <span ng-show="theForm.email.$error.required"> Required. </span>
+                    <span ng-show="theForm.email.$error.minlength"> Too short. </span>
+                    <span ng-show="theForm.email.$error.maxlength"> Too long. </span>
+                </span>
             </div>
         </div>
         <div class="form-group">
             <label for="password" class="control-label"> Password: </label>
             <div>
-                <input type="password" name="password" ng-model="data.user.password" autocomplete="off" ng-trim="false" ng-minlength="3" ng-maxlength="128" required>
-                <span ng-show="theForm.password.$error.required"> Required. </span>
-                <span ng-show="theForm.password.$error.minlength"> Too short. </span>
-                <span ng-show="theForm.password.$error.maxlength"> Too long. </span>
+                <input type="password" name="password" ng-model="data.user.password" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" ng-show="!showPassword" required>
+                <input type="text" name="password" ng-model="data.user.password" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" ng-show="showPassword" required>
+                <span style="color:red">
+                    <span ng-show="theForm.password.$error.required"> Required. </span>
+                    <span ng-show="theForm.password.$error.minlength"> Too short. </span>
+                    <span ng-show="theForm.password.$error.maxlength"> Too long. </span>
+                </span>
+                <br>
+                <a href="" ng-click="showPassword = !showPassword"> {{passwordMessage}} </a>
             </div>
         </div>
     </div>
     <div class="form-group">
         <label for="org" class="control-label"> Org: </label>
         <div>
-            <select ng-model="data.org" name="org" ng-options="org.name for org in data.orgs" required>
+            <select ng-model="data.org" name="org" ng-options="org.name for org in data.orgs | orderBy:'name'" required>
                 <option value="">-- choose org --</option>
             </select>
-            <span ng-show="theForm.org.$error.required"> Required. </span>
+            <span style="color:red" ng-show="theForm.org.$error.required"> Required. </span>
+            <!-- <span ng-show="changingOrgWarning"> Warning:  <a href="" ng-click="UsersCtrl.confirmOrgChange()">Ok</a> <a href="" ng-click="UsersCtrl.cancelOrgChange()">Cancel</a> </span> -->
         </div>
     </div>
-    <div class="form-group">
-        <label for="branding" class="control-label"> Branding: </label>
-        <div>
-            <input type="text" name="branding" ng-model="data.user.branding" autocomplete="off" ng-trim="false" ng-minlength="3" ng-maxlength="128" ng-pattern="/^[\w]+$/" required>
-            <span ng-show="theForm.branding.$error.required"> Required. </span>
-            <span ng-show="theForm.branding.$error.minlength"> Too short. </span>
-            <span ng-show="theForm.branding.$error.maxlength"> Too long. </span>
-            <span ng-show="theForm.branding.$error.pattern"> Invalid characters. </span>
+    <div ng-if="data.org">
+        <div class="form-group">
+            <label for="branding" class="control-label"> Branding: </label>
+            <div>
+                <input type="text" name="branding" ng-model="data.user.branding" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" ng-pattern="/^[\w]*[a-zA-Z]+[\w]*$/" required>
+                <span style="color:red">
+                    <span ng-show="theForm.branding.$error.required"> Required. </span>
+                    <span ng-show="theForm.branding.$error.minlength"> Too short. </span>
+                    <span ng-show="theForm.branding.$error.maxlength"> Too long. </span>
+                    <span ng-show="theForm.branding.$error.pattern"> Invalid characters. </span>
+                </span>
+            </div>
         </div>
-    </div>
-    <div class="form-group">
-        <label for="user_type" class="control-label"> Type: </label>
-        <div ng-repeat="setting in UsersCtrl.userTypes">
-            <input type="radio" name="user_type" ng-model="data.user.type" value="{{setting.value}}" required>
-            <span>{{setting.label}}</span>
+        <div class="form-group">
+            <label for="user_type" class="control-label"> Type: </label>
+            <div ng-repeat="setting in UsersCtrl.userTypes">
+                <input type="radio" name="user_type" ng-model="data.user.type" value="{{setting.value}}" required>
+                <span>{{setting.label}}</span>
+            </div>
         </div>
-    </div>
-    <div class="form-group">
-        <div ng-repeat="setting in data.appData.defaultSplashOptions">
-            <label for="{{setting.label}}">{{setting.title}}</label>
-            <div ng-repeat="option in setting.options">
-                <input type="radio" name="{{setting.label}}" ng-model="data.user.config.minireelinator.minireelDefaults.splash[setting.label]" value="{{option}}" required>
-                <span>{{option}}</span>
+        <div class="form-group">
+            <div ng-repeat="setting in data.appData.defaultSplashOptions">
+                <label for="{{setting.label}}">{{setting.title}}</label>
+                <div ng-repeat="option in setting.options">
+                    <input type="radio" name="{{setting.label}}" ng-model="data.user.config.minireelinator.minireelDefaults.splash[setting.label]" value="{{option}}" required>
+                    <span>{{option}}</span>
+                </div>
+            </div>
+        </div>
+        <div style="padding-bottom:40px;">
+            <input type="submit" value="Save" ng-disabled="!theForm.$valid">
+            <input type="button" value="Delete" ng-show="data.user.id" ng-click="confirmDelete = true">
+            <span style="color:red" ng-show="!theForm.$valid"> {{errors}}</span>
+            <div style="display:inline;padding-left:30px;" ng-show="confirmDelete === true">
+                <span>Are you sure?</span>
+                <input type="button" value="Yes" ng-click="UsersCtrl.deleteUser()">
+                <input type="button" value="Cancel" ng-click="confirmDelete = false">
             </div>
         </div>
     </div>
@@ -103,12 +129,5 @@
                 <span ng-show="theForm.status.$error.required"> Required. </span>
             </div>
         </div>
-    </div>
-    <input type="submit" value="Save" ng-disabled="!theForm.$valid">
-    <input type="button" value="Delete" ng-show="data.user.id" ng-click="confirmDelete = true">
-    <div style="display:inline;padding-left:30px;" ng-show="confirmDelete === true">
-        <span>Are you sure?</span>
-        <input type="button" value="Yes" ng-click="UsersCtrl.deleteUser()">
-        <input type="button" value="Cancel" ng-click="confirmDelete = false">
     </div>
 </form>

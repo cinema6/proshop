@@ -3,14 +3,28 @@
     <div class="form-group" style="padding-top:20px">
         <label for="new_org_name" class="control-label"> Name: </label>
         <div>
-            <input type="text" name="name" ng-model="data.org.name" autocomplete="off" ng-trim="false" ng-minlength="3" ng-maxlength="128" required>
-            <span ng-show="theForm.name.$error.required"> Required. </span>
-            <span ng-show="theForm.name.$error.minlength"> Too short. </span>
-            <span ng-show="theForm.name.$error.maxlength"> Too long. </span>
+            <input type="text" name="name" ng-model="data.org.name" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" required>
+            <span style="color:red">
+                <span ng-show="theForm.name.$error.required"> Required. </span>
+                <span ng-show="theForm.name.$error.minlength"> Too short. </span>
+                <span ng-show="theForm.name.$error.maxlength"> Too long. </span>
+            </span>
         </div>
     </div>
-    <br>
-    <div>
+    <div class="form-group">
+        <label for="branding" class="control-label"> Branding: </label>
+        <div>
+            <input type="text" name="branding" ng-model="data.org.branding" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" ng-pattern="/^[\w]*[a-zA-Z]+[\w]*$/" required>
+            <span style="color:red">
+                <span ng-show="theForm.branding.$error.required"> Required. </span>
+                <span ng-show="theForm.branding.$error.minlength"> Too short. </span>
+                <span ng-show="theForm.branding.$error.maxlength"> Too long. </span>
+                <span ng-show="theForm.branding.$error.pattern"> Invalid characters. </span>
+            </span>
+        </div>
+    </div>
+    <a href="" ng-click="showOptions = !showOptions">{{optionsMessage}}</a>
+    <div ng-show="showOptions">
         <div>
             <div style="padding-bottom:20px;" ng-repeat="setting in data.appData.waterfallData.settings">
                 <h3>{{setting.title}}<br>
@@ -42,16 +56,6 @@
                         <label for="displayWaterfallDefault">{{choice.name}}</label>
                     </span>
                 </div>
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="branding" class="control-label"> Branding: </label>
-            <div>
-                <input type="text" name="branding" ng-model="data.org.branding" autocomplete="off" ng-trim="false" ng-minlength="3" ng-maxlength="128" ng-pattern="/^[\w]+$/" required>
-                <span ng-show="theForm.branding.$error.required"> Required. </span>
-                <span ng-show="theForm.branding.$error.minlength"> Too short. </span>
-                <span ng-show="theForm.branding.$error.maxlength"> Too long. </span>
-                <span ng-show="theForm.branding.$error.pattern"> Invalid characters. </span>
             </div>
         </div>
         <div>
@@ -105,21 +109,23 @@
                 <label for="defaultMode">{{setting.label}}</label>
             </div>
         </div>
-    </div>
-    <br>
-    <input type="submit" value="Save" ng-disabled="!theForm.$valid">
-    <input type="button" value="Delete" ng-show="data.org.id" ng-click="confirmDelete = true">
-    <div style="display:inline;padding-left:30px;" ng-show="confirmDelete === true">
-        <span>Are you sure?</span>
-        <input type="button" value="Yes" ng-click="OrgsCtrl.deleteOrg()">
-        <input type="button" value="Cancel" ng-click="confirmDelete = false">
+        <br>
+        <div style="padding-bottom:40px;">
+            <input type="submit" value="Save" ng-disabled="!theForm.$valid">
+            <input type="button" value="Delete" ng-show="data.org.id" ng-click="confirmDelete = true">
+            <div style="display:inline;padding-left:30px;" ng-show="confirmDelete === true">
+                <span>Are you sure?</span>
+                <input type="button" value="Yes" ng-click="OrgsCtrl.deleteOrg()">
+                <input type="button" value="Cancel" ng-click="confirmDelete = false">
+            </div>
+        </div>
     </div>
     <div>
         <span>{{lastStatus}}</span>
     </div>
 </form>
 
-<table ng-if="data.users" class="table table-striped table-hover table-bordered" style="margin-top:20px">
+<table ng-show="!showOptions" ng-if="data.users" class="table table-striped table-hover table-bordered" style="margin-top:20px">
     <tbody>
         <tr>
             <th>Users</th>

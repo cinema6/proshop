@@ -50,7 +50,7 @@
                         lastName: 'F',
                         org: 'o-1',
                         branding: 'theme1',
-                        type: 'publisher'
+                        type: 'Publisher'
                     },
                     {
                         id: 'u-2',
@@ -59,7 +59,7 @@
                         lastName: 'D',
                         org: 'o-2',
                         branding: 'theme2',
-                        type: 'publisher'
+                        type: 'Publisher'
                     }
                 ];
 
@@ -184,20 +184,8 @@
                     it('should set the action to edit and and clear any user or org data', function() {
                         UsersCtrl.addNewUser();
 
-                        expect(UsersCtrl.action).toBe('edit');
-                        expect($scope.data.user).toEqual({
-                            config: {
-                                minireelinator: {
-                                    minireelDefaults: {
-                                        splash: {
-                                            ratio: '3-2',
-                                            theme: 'img-text-overlay'
-                                        }
-                                    }
-                                }
-                            },
-                            type: 'publisher'
-                        });
+                        expect(UsersCtrl.action).toBe('new');
+                        expect($scope.data.user).toEqual({});
                         expect($scope.data.org).toBe(null);
                     });
                 });
@@ -310,6 +298,7 @@
                             $scope.data.user.firstName = 'Test';
                             $scope.data.user.lastName = 'Name';
                             $scope.data.org = $scope.data.orgs[0];
+                            $scope.$digest();
                         });
 
                         it('should POST the user', function() {
