@@ -11,7 +11,8 @@
                 account,
                 appData,
                 mockOrgs,
-                mockUsers;
+                mockUsers,
+                ConfirmDialogService;
 
             beforeEach(function() {
                 module('c6.proshop');
@@ -63,6 +64,10 @@
                     }
                 ];
 
+                ConfirmDialogService = {
+                    display: jasmine.createSpy('ConfirmDialogService.display()')
+                };
+
                 inject(function($injector) {
                     $controller = $injector.get('$controller');
                     $log = $injector.get('$log');
@@ -104,7 +109,8 @@
                     OrgsCtrl = $controller('OrgsController', {
                         $log: $log,
                         $scope: $scope,
-                        account: account
+                        account: account,
+                        ConfirmDialogService: ConfirmDialogService
                     });
                 });
             });
@@ -282,7 +288,7 @@
                                 account.putOrg.deferred.reject();
                             });
 
-                            expect($scope.message).toBe('There was a problem saving the org.');
+                            expect(ConfirmDialogService.display).toHaveBeenCalled();
                         });
                     });
 
@@ -324,7 +330,7 @@
                                 account.postOrg.deferred.reject();
                             });
 
-                            expect($scope.message).toBe('There was a problem saving the org.');
+                            expect(ConfirmDialogService.display).toHaveBeenCalled();
                         });
                     });
                 });

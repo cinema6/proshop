@@ -179,7 +179,8 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
 
         }])
 
-        .service('ConfirmDialogService', [function() {
+        .service('ConfirmDialogService', ['$window',
+        function                         ( $window ) {
             var model = {},
                 dialog = null;
 
@@ -196,6 +197,7 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
             });
 
             this.display = function(dialogModel) {
+                $window.scrollTo(0,0);
                 dialog = dialogModel;
                 dialog.onDismiss = dialog.onDismiss || this.close;
             };
@@ -213,6 +215,23 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
                 scope: {},
                 link: function(scope) {
                     scope.model = ConfirmDialogService.model;
+                }
+            };
+        }])
+
+        .directive('ignoreSpaces', [function() {
+            return {
+                restrict: 'A',
+                link: function(scope, element) {
+                    element.bind('keydown keypress', function (event) {
+                        var value = element[0].value,
+                            start = event.target.selectionStart;
+
+                        if(event.which === 32 &&
+                            (start === 0 || value.charAt(value.length - 1) === ' ')) {
+                            event.preventDefault();
+                        }
+                    });
                 }
             };
         }])

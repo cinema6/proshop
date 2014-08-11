@@ -2,10 +2,11 @@ define(['account'],function(account) {
     'use strict';
 
     return angular.module('c6.proshop.orgs',[account.name])
-        .controller('OrgsController', ['$scope', '$log', 'account',
-        function                      ( $scope ,  $log,   account ) {
+        .controller('OrgsController', ['$scope', '$log', 'account', 'ConfirmDialogService',
+        function                      ( $scope ,  $log,   account ,  ConfirmDialogService ) {
             var self = this,
-                data = $scope.data;
+                data = $scope.data,
+                bindBrandToName = true;
 
             $log = $log.context('OrgsCtrl');
             $log.info('instantiated');
@@ -13,6 +14,10 @@ define(['account'],function(account) {
             function updateOrgs(orgs) {
                 data.appData.orgs = orgs;
                 data.orgs = orgs;
+            }
+
+            function convertNameToBrand(name) {
+                return name.toLowerCase().split(',')[0].replace(/ /g, '_');
             }
 
             $scope.embedSizePattern  = /^\d+(px|%)$/;
@@ -52,18 +57,48 @@ define(['account'],function(account) {
 
             self.action = 'all';
 
-            self.formIsValid = function() {
-                var videoWaterfall = data.org._data.videoWaterfalls.filter(function(option) {
-                        return option.enabled;
-                    }),
-                    displayWaterfall = data.org._data.displayWaterfalls.filter(function(option) {
-                        return option.enabled;
-                    }),
-                    embedType = data.org._data.config.minireelinator.embedTypes.filter(function(option) {
-                        return option.enabled;
-                    });
+            Object.defineProperties($scope, {
+                validVideoWaterfalls: {
+                    get: function() {
+                        return !!data.org._data.videoWaterfalls.filter(function(option) {
+                            return option.enabled;
+                        }).length;
+                    }
+                },
+                validDisplayWaterfalls: {
+                    get: function() {
+                        return !!data.org._data.displayWaterfalls.filter(function(option) {
+                            return option.enabled;
+                        }).length;
+                    }
+                },
+                validEmbedTypes: {
+                    get: function() {
+                        return !!data.org._data.config.minireelinator.embedTypes.filter(function(option) {
+                            return option.enabled;
+                        }).length;
+                    }
+                },
+                validEmbedSize: {
+                    get: function() {
+                        var size = data.org.config.minireelinator.embedDefaults.size,
+                            validSize;
 
-                return !!(videoWaterfall.length && displayWaterfall.length && embedType.length);
+                        if (size) {
+                            validSize = (!!size.width && !!size.height) ||
+                                (!size.width && !size.height);
+                        }
+
+                        return !size || validSize;
+                    }
+                }
+            });
+
+            self.formIsValid = function() {
+                return $scope.validEmbedSize &&
+                    $scope.validEmbedTypes &&
+                    $scope.validDisplayWaterfalls &&
+                    $scope.validVideoWaterfalls;
             };
 
             self.editOrg = function(org){
@@ -120,7 +155,13 @@ define(['account'],function(account) {
             self.saveOrg = function() {
                 function handleError(err) {
                     $log.error(err);
-                    $scope.message = 'There was a problem saving the org.';
+                    ConfirmDialogService.display({
+                        prompt: 'There was a problem saving the org.',
+                        affirm: 'OK',
+                        onAffirm: function() {
+                            ConfirmDialogService.close();
+                        }
+                    });
                 }
 
                 function handleSuccess(org) {
@@ -138,6 +179,16 @@ define(['account'],function(account) {
                         .then(handleSuccess, handleError);
                 }
             };
+
+            self.disableBrandBinding = function() {
+                bindBrandToName = false;
+            };
+
+            $scope.$watch(function() {return data.org && data.org.name;}, function(newName) {
+                if (newName && bindBrandToName && self.action === 'new') {
+                    data.org.branding = convertNameToBrand(newName);
+                }
+            });
 
             account.getOrgs().then(updateOrgs);
 

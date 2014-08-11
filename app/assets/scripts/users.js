@@ -102,21 +102,6 @@ define(['account'],function(account) {
                 data.org = null;
             };
 
-            Object.defineProperty($scope, 'errors', {
-                get: function() {
-                    var message = 'These field(s) are required: ';
-
-                    if (this.theForm.$error.required) {
-                        this.theForm.$error.required.forEach(function(error, i, arr) {
-                            var errorName = error.$name.replace(/([A-Z])/g, ' $1');
-                            errorName = errorName.charAt(0).toUpperCase() + errorName.slice(1);
-                            message += errorName + ((i === (arr.length - 1)) ? '' : ', ');
-                        });
-                    }
-                    return message;
-                }
-            });
-
             self.filterData = function() {
                 var query = data.query.toLowerCase(),
                     orgs = data.appData.orgs.filter(function(org) {
@@ -167,7 +152,13 @@ define(['account'],function(account) {
             this.saveUser = function() {
                 function handleError(err) {
                     $log.error(err);
-                    $scope.message = 'There was a problem creating this user.';
+                    ConfirmDialogService.display({
+                        prompt: 'There was a problem saving the user.',
+                        affirm: 'OK',
+                        onAffirm: function() {
+                            ConfirmDialogService.close();
+                        }
+                    });
                 }
 
                 function handleSuccess(user) {
@@ -221,27 +212,23 @@ define(['account'],function(account) {
                 data.user = convertUserForEditing(data.user, data.org);
             };
 
-            this.popup = function() {
-                ConfirmDialogService.display({
-                    prompt: 'All of this User\'s Minireels will remain with the old Org.',
-                    affirm: 'OK',
-                    cancel: 'Cancel',
-                    onAffirm: function() {
-                        ConfirmDialogService.close();
-                        self.confirmOrgChange();
-                    },
-                    onCancel: function() {
-                        ConfirmDialogService.close();
-                        self.cancelOrgChange();
-                    }
-                });
-            };
-
             $scope.$watch('data.org', function(newOrg) {
                 if (newOrg) {
                     if (self.action === 'edit' && data.user.org.id !== data.org.id) {
                         $scope.changingOrgWarning = true;
-                        self.popup();
+                        ConfirmDialogService.display({
+                            prompt: 'Warning: All of this User\'s Minireels will remain with the original Org.',
+                            affirm: 'OK, move User without Minireels',
+                            cancel: 'No, leave the User on current Org',
+                            onAffirm: function() {
+                                ConfirmDialogService.close();
+                                self.confirmOrgChange();
+                            },
+                            onCancel: function() {
+                                ConfirmDialogService.close();
+                                self.cancelOrgChange();
+                            }
+                        });
                     }
 
                     if (self.action === 'new') {

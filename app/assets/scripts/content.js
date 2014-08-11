@@ -46,9 +46,9 @@ define(['angular','c6ui'],function(angular,c6ui) {
             };
 
             this.convertExperienceForCopy = function(exp) {
-                exp.originalExperienceId = exp.id; // change to origExpId
-                exp.originalOrg = exp.org; // change to origOrg
-                exp.originalUser = exp.user; // change to origUser
+                exp.origExpId = exp.id;
+                exp.origOrg = exp.org;
+                exp.origUser = exp.user;
                 exp.status = 'active';
                 exp.access = 'private';
 

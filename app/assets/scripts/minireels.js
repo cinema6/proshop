@@ -12,6 +12,10 @@ define(['account','content'],function(account,content) {
                 data.orgs = orgs;
             }
 
+            function setUserExperienceData(user) {
+                data.experience._data.user = user;
+            }
+
             $scope.tableHeaders = [
                 {label:'Choose an Org to view Minireels',value:'name'},
                 {label:'Status',value:'status'},
@@ -145,10 +149,6 @@ define(['account','content'],function(account,content) {
                         });
                 }
             });
-
-            function setUserExperienceData(user) {
-                data.experience._data.user = user;
-            }
 
             self.saveCopy = function() {
                 var _data = data.experience._data,

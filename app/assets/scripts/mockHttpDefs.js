@@ -100,7 +100,8 @@ define(['mockHttp'], function(mockHttp){
     });
 
     httpMocks.whenPUT('/api/account/org/o-113', function() {
-        this.proxy('mocks/account/org/e2e-org.json');
+        this.respond(404, 'failed');
+        // this.proxy('mocks/account/org/e2e-org.json');
     });
 
     httpMocks.whenPUT('/api/account/org/o-114', function() {

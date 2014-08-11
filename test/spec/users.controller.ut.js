@@ -12,7 +12,8 @@
                 account,
                 appData,
                 mockOrgs,
-                mockUsers;
+                mockUsers,
+                ConfirmDialogService;
 
             beforeEach(function() {
                 module('c6.proshop');
@@ -63,6 +64,10 @@
                     }
                 ];
 
+                ConfirmDialogService = {
+                    display: jasmine.createSpy('ConfirmDialogService.display()')
+                };
+
                 inject(function($injector) {
                     $controller = $injector.get('$controller');
                     $log = $injector.get('$log');
@@ -104,7 +109,8 @@
                     UsersCtrl = $controller('UsersController', {
                         $log: $log,
                         $scope: $scope,
-                        account: account
+                        account: account,
+                        ConfirmDialogService: ConfirmDialogService
                     });
                 });
             });
@@ -271,7 +277,7 @@
                             expect(UsersCtrl.action).toBe('all');
                         });
 
-                        it('on error should stay on the edit page and display an error message', function() {
+                        it('on error should stay on the edit page and display an error dialog', function() {
                             UsersCtrl.saveUser();
 
                             expect($scope.message).toBe(null);
@@ -280,7 +286,7 @@
                                 account.putUser.deferred.reject();
                             });
 
-                            expect($scope.message).toBe('There was a problem creating this user.');
+                            expect(ConfirmDialogService.display).toHaveBeenCalled();
                         });
                     });
 
@@ -342,7 +348,7 @@
                                 account.postUser.deferred.reject();
                             });
 
-                            expect($scope.message).toBe('There was a problem creating this user.');
+                            expect(ConfirmDialogService.display).toHaveBeenCalled();
                         });
                     });
                 });
