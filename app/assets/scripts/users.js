@@ -70,9 +70,14 @@ define(['account'],function(account) {
                     user.config.minireelinator &&
                     user.config.minireelinator.minireelDefaults) ?
                     (user.config) : (org.config &&
-                        org.config.minireelinator &&
-                        org.config.minireelinator.minireelDefaults) ?
-                        (org.config) : {
+                    org.config.minireelinator &&
+                    org.config.minireelinator.minireelDefaults) ? {
+                        minireelinator: {
+                            minireelDefaults: {
+                                splash: org.config.minireelinator.minireelDefaults.splash
+                            }
+                        }
+                    } : {
                         minireelinator: {
                             minireelDefaults: {
                                 splash: {

@@ -22,12 +22,6 @@ define(['account'],function(account) {
 
             $scope.embedSizePattern  = /^\d+(px|%)$/;
 
-            Object.defineProperty($scope, 'optionsMessage', {
-                get: function() {
-                    return this.showOptions ? 'Hide Options' : 'More Options';
-                }
-            });
-
             $scope.tableHeaders = [
                 {label:'Name',value:'name'},
                 {label:'Branding',value:'branding'},
@@ -58,6 +52,11 @@ define(['account'],function(account) {
             self.action = 'all';
 
             Object.defineProperties($scope, {
+                optionsMessage: {
+                    get: function() {
+                        return this.showOptions ? 'Hide Options' : 'More Options';
+                    }
+                },
                 validVideoWaterfalls: {
                     get: function() {
                         return !!data.org._data.videoWaterfalls.filter(function(option) {

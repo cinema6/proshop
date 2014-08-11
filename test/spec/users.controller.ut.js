@@ -184,6 +184,105 @@
                         expect($scope.data.user).toBe($scope.data.users[0]);
                         expect($scope.data.org).toEqual($scope.data.users[0].org);
                     });
+
+                    it('should handle defaults', function() {
+                        $scope.$apply(function() {
+                            account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
+                            account.getUsers.deferred.resolve(angular.copy(mockUsers));
+                        });
+
+                        var userWithNoConfig = angular.copy($scope.data.users[0]),
+                            userWithConfig = angular.copy($scope.data.users[0]),
+                            userWithNoBranding = angular.copy($scope.data.users[0]),
+                            userWithBranding = angular.copy($scope.data.users[0]),
+                            userWithType = angular.copy($scope.data.users[0]),
+                            userWithNoType = angular.copy($scope.data.users[0]),
+                            defaultConfig = {
+                                minireelinator: {
+                                    minireelDefaults: {
+                                        splash: {
+                                            ratio: '3-2',
+                                            theme: 'img-text-overlay'
+                                        }
+                                    }
+                                }
+                            };
+
+                        // user with no config block
+                        UsersCtrl.editUser(userWithNoConfig);
+                        expect($scope.data.user.config).toEqual(defaultConfig);
+
+                        delete userWithNoConfig.config;
+                        $scope.data.org.config = {
+                            minireelinator: {
+                                minireelDefaults: {
+                                    splash: {
+                                        ratio: '6-5',
+                                        theme: 'img-only'
+                                    }
+                                }
+                            }
+                        };
+                        UsersCtrl.editUser(userWithNoConfig);
+                        expect($scope.data.user.config).toEqual({
+                            minireelinator: {
+                                minireelDefaults: {
+                                    splash: {
+                                        ratio: '6-5',
+                                        theme: 'img-only'
+                                    }
+                                }
+                            }
+                        });
+
+                        // user with config block and minireelinator block
+                        userWithConfig.config = {
+                            minireelinator: {
+                                minireelDefaults: {
+                                    splash: {
+                                        ratio: '16-9',
+                                        theme: 'text-only'
+                                    }
+                                }
+                            }
+                        };
+                        UsersCtrl.editUser(userWithConfig);
+                        expect($scope.data.user.config).toEqual({
+                            minireelinator: {
+                                minireelDefaults: {
+                                    splash: {
+                                        ratio: '16-9',
+                                        theme: 'text-only'
+                                    }
+                                }
+                            }
+                        });
+
+                        // userWithNoBranding
+                        delete userWithNoBranding.branding;
+                        delete $scope.data.org.branding;
+                        UsersCtrl.editUser(userWithNoBranding);
+                        expect($scope.data.user.branding).toBe(undefined);
+
+                        $scope.data.org.branding = 'test_brand';
+                        UsersCtrl.editUser(userWithNoBranding);
+                        expect($scope.data.user.branding).toBe('test_brand');
+
+                        // user with branding (from mockUser above)
+                        userWithBranding.branding = 'different_brand';
+                        $scope.data.org.branding = 'some_org_brand';
+                        UsersCtrl.editUser(userWithBranding);
+                        expect($scope.data.user.branding).toBe('different_brand');
+
+                        // user with type
+                        userWithType.type = 'ContentPublisher';
+                        UsersCtrl.editUser(userWithType);
+                        expect($scope.data.user.type).toBe('ContentPublisher');
+
+                        delete userWithNoType.type;
+                        UsersCtrl.editUser(userWithNoType);
+                        expect($scope.data.user.type).toBe('Publisher');
+                    });
                 });
 
                 describe('addNewUser()', function() {

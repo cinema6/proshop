@@ -183,6 +183,15 @@
 
                         $scope.data.org._data.config.minireelinator.embedTypes = [{enabled: true}];
                         expect(OrgsCtrl.formIsValid()).toBe(true);
+
+                        $scope.data.org.config.minireelinator.embedDefaults.size = { width: '100px', height: '200px'};
+                        expect(OrgsCtrl.formIsValid()).toBe(true);
+
+                        $scope.data.org.config.minireelinator.embedDefaults.size = { width: '100px', height: ''};
+                        expect(OrgsCtrl.formIsValid()).toBe(false);
+
+                        $scope.data.org.config.minireelinator.embedDefaults.size = { width: '', height: ''};
+                        expect(OrgsCtrl.formIsValid()).toBe(true);
                     });
                 });
 
