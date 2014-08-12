@@ -11,7 +11,8 @@
                 account,
                 appData,
                 mockOrgs,
-                mockUsers;
+                mockUsers,
+                ConfirmDialogService;
 
             beforeEach(function() {
                 module('c6.proshop');
@@ -63,6 +64,11 @@
                     }
                 ];
 
+                ConfirmDialogService = {
+                    display: jasmine.createSpy('ConfirmDialogService.display()'),
+                    close: jasmine.createSpy('ConfirmDialogService.close()')
+                };
+
                 inject(function($injector) {
                     $controller = $injector.get('$controller');
                     $log = $injector.get('$log');
@@ -104,7 +110,8 @@
                     OrgsCtrl = $controller('OrgsController', {
                         $log: $log,
                         $scope: $scope,
-                        account: account
+                        account: account,
+                        ConfirmDialogService: ConfirmDialogService
                     });
                 });
             });
@@ -176,6 +183,15 @@
                         expect(OrgsCtrl.formIsValid()).toBe(false);
 
                         $scope.data.org._data.config.minireelinator.embedTypes = [{enabled: true}];
+                        expect(OrgsCtrl.formIsValid()).toBe(true);
+
+                        $scope.data.org.config.minireelinator.embedDefaults.size = { width: '100px', height: '200px'};
+                        expect(OrgsCtrl.formIsValid()).toBe(true);
+
+                        $scope.data.org.config.minireelinator.embedDefaults.size = { width: '100px', height: ''};
+                        expect(OrgsCtrl.formIsValid()).toBe(false);
+
+                        $scope.data.org.config.minireelinator.embedDefaults.size = { width: '', height: ''};
                         expect(OrgsCtrl.formIsValid()).toBe(true);
                     });
                 });
@@ -282,7 +298,7 @@
                                 account.putOrg.deferred.reject();
                             });
 
-                            expect($scope.message).toBe('There was a problem saving the org.');
+                            expect(ConfirmDialogService.display).toHaveBeenCalled();
                         });
                     });
 
@@ -324,7 +340,7 @@
                                 account.postOrg.deferred.reject();
                             });
 
-                            expect($scope.message).toBe('There was a problem saving the org.');
+                            expect(ConfirmDialogService.display).toHaveBeenCalled();
                         });
                     });
                 });
@@ -343,20 +359,27 @@
                             account.getUsers.deferred.resolve(mockUsers[0]);
                         });
 
-                        OrgsCtrl.deleteOrg();
+                        OrgsCtrl.confirmDelete();
 
-                        expect($scope.message).toBe('You must delete or move the Users belonging to this Org before deleting it.');
+                        ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm();
+
+                        expect(ConfirmDialogService.display.calls.mostRecent().args[0].prompt).toBe('You must delete or move the Users belonging to this Org before deleting it.');
+
                         expect(account.deleteOrg).not.toHaveBeenCalled();
                     });
 
                     it('should DELETE the org', function() {
-                        OrgsCtrl.deleteOrg();
+                        OrgsCtrl.confirmDelete();
+
+                        ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm();
 
                         expect(account.deleteOrg).toHaveBeenCalled();
                     });
 
                     it('on success should put a message on the scope, set the action, reload all the orgs data', function() {
-                        OrgsCtrl.deleteOrg();
+                        OrgsCtrl.confirmDelete();
+
+                        ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm();
 
                         expect(account.getOrgs.calls.count()).toBe(1);
 
@@ -370,13 +393,16 @@
                     });
 
                     it('on error should stay on the edit page and display an error message', function() {
-                        OrgsCtrl.deleteOrg();
+                        OrgsCtrl.confirmDelete();
+
+                        ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm();
 
                         $scope.$apply(function() {
                             account.deleteOrg.deferred.reject();
                         });
 
-                        expect($scope.message).toBe('There was a problem deleting this org.');
+                        expect(OrgsCtrl.action).toBe('edit');
+                        expect(ConfirmDialogService.display.calls.count()).toBe(2);
                     });
                 });
             });

@@ -1,4 +1,13 @@
-<a href="" ng-click="MinireelsCtrl.action = 'orgs'">&lsaquo; Back to Orgs list</a><br>
+<form name="theForm" id="copy_experience" ng-submit="MinireelsCtrl.saveCopy()">
+    <div class="form-group" style="padding-top:20px">
+        <label for="org" class="control-label"> <h3>Choose an Org to view Minireels: </h3></label>
+        <div>
+            <select ng-model="data.org" name="org" ng-options="org.name for org in data.orgs | orderBy:'name'" required>
+                <option value="">-- choose org --</option>
+            </select>
+        </div>
+    </div>
+</form>
 
 <input style="width:250px;margin-top:20px;" type="text" ng-model="data.query" ng-change="MinireelsCtrl.filterExperiences()" placeholder="Search Minireels by Title">
 
@@ -12,8 +21,10 @@
             <td>{{experience.title}}</td>
             <td>{{experience.data.mode}}</td>
             <td>{{experience.user.email}}</td>
+            <td>{{experience.branding}}</td>
             <td>{{experience.data.deck.length}}</td>
             <td>{{experience.status}}</td>
+            <td>{{experience.lastUpdated | date}}</td>
             <td><a href="" ng-click="MinireelsCtrl.startExperienceCopy(experience)">Copy</a></td>
         </tr>
     </tbody>

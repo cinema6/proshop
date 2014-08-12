@@ -1,5 +1,16 @@
 # ProShop
 
+* *[v0.5.1]*
+    *[FIX]: Better error handling and alerts
+    *[FIX]: Get rid of unnecessary table columns, replace with useful ones
+    *[FEATURE]: Convert new Org name into branding until user edits branding separately
+    *[FIX]: Trim and block all leading/trailing spaces in input fields
+    *[FEATURE]: Add toggle for Org options in Add/Edit UI
+    *[FIX]: Drop downs are sorted alphabetically expect for "Last Updated" which is chronological
+    *[FEATURE]: Link to Show/Hide password
+    *[FIX]: Warn user and ask for confirmation beofre changing a User's Org
+    *[FIX]: A User's branding defaulkts to the Org's branding if the User's is not defined
+
 ## v0.5.0 (August 7, 2014)
 
 * *[v0.5.0]*

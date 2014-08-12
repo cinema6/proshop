@@ -3,22 +3,13 @@
     "email": "test1@example.com",
     "firstName": "Johnny",
     "lastName": "Testmonkey",
-    "branding": "elitedaily",
+    "branding": "",
     "created": "2014-06-13T19:28:39.408Z",
     "lastUpdated": "2014-06-13T19:28:39.408Z",
     "applications": ["e-51ae37625cb57f"],
     "org": "o-111",
     "status": "active",
-    "config": {
-        "minireelinator": {
-            "minireelDefaults": {
-                "splash": {
-                    "ratio": "16-9",
-                    "theme": "text-only"
-                }
-            }
-        }
-    },
+    "config": {},
     "permissions": {
         "experiences": {
             "read": "own",
@@ -53,7 +44,16 @@
     "applications": ["e-51ae37625cb57f"],
     "org": "o-112",
     "status": "active",
-    "config": {},
+    "config": {
+        "minireelinator": {
+            "minireelDefaults": {
+                "splash": {
+                    "ratio": "6-5",
+                    "theme": "vertical-stack"
+                }
+            }
+        }
+    },
     "permissions": {
         "experiences": {
             "read": "own",

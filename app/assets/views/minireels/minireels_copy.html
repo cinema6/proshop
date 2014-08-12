@@ -3,28 +3,34 @@
     <div class="form-group" style="padding-top:20px">
         <label for="org" class="control-label"> <h3>Choose an Org to copy to: </h3></label>
         <div>
-            <select ng-model="data.org" name="org" ng-options="org.name for org in data.orgs" required>
+            <select ng-model="data.org" name="org" ng-options="org.name for org in data.orgs | orderBy:'name'" required>
                 <option value="">-- choose org --</option>
             </select>
-            <span ng-show="theForm.org.$error.required"> Required. </span>
         </div>
     </div>
-    <div ng-if="data.org" class="form-group">
-        <div>
-            <label for="user" class="control-label"> <h3>Choose an User to copy to: </h3></label>
+    <div ng-if="data.org">
+        <div class="form-group" ng-class="{'has-error': theForm.user.$error.required}">
+            <label for="user" class="control-label"> <h3>Choose a User to copy to: </h3></label>
             <div>
                 <select ng-model="data.user" name="user" ng-options="user.email for user in data.users" required>
                     <option value="">-- choose user --</option>
                 </select>
-                <span ng-show="theForm.user.$error.required"> Required. </span>
+                <span class="help-block">
+                    <span ng-show="theForm.user.$error.required"> Required. </span>
+                </span>
             </div>
         </div>
-        <label for="branding" class="control-label"> <h3>Branding: </h3></label>
-        <div>
-            <input id="branding" type="text" name="branding" ng-model="data.experience._data.branding" autocomplete="off" ng-trim="false" ng-minlength="3" ng-maxlength="128" required>
-            <span ng-show="theForm.branding.$error.required"> Required. </span>
-            <span ng-show="theForm.branding.$error.minlength"> Too short. </span>
-            <span ng-show="theForm.branding.$error.maxlength"> Too long. </span>
+        <div class="form-group" ng-class="{'has-error': theForm.branding.$error.required || theForm.branding.$error.pattern}">
+            <label for="branding" class="control-label"> <h3>Branding: </h3></label>
+            <div>
+                <input class="col-md-3" class="form-control" id="branding" type="text" name="branding" ng-model="data.experience._data.branding" autocomplete="off" ng-trim="false" ng-minlength="3" ng-maxlength="128" ng-pattern="/^[\w]*[a-zA-Z]+[\w]*$/" required ignore-spaces>
+                <span class="help-block">
+                    <span ng-show="theForm.branding.$error.required"> Required. </span>
+                    <span ng-show="theForm.branding.$error.minlength"> Too short. </span>
+                    <span ng-show="theForm.branding.$error.maxlength"> Too long. </span>
+                    <span ng-show="theForm.branding.$error.pattern"> Invalid characters. </span>
+                </span>
+            </div>
         </div>
         <div class="form-group">
             <div ng-repeat="setting in data.appData.defaultSplashOptions">
@@ -47,11 +53,14 @@
                 <label for="defaultMode">{{setting.label}}</label>
             </div>
         </div>
-    </div>
-    <input type="button" value="Save" ng-click="confirmSave = true" ng-disabled="!theForm.$valid">
-    <div style="display:inline;padding-left:30px;" ng-show="confirmSave === true">
-        <span>Are you sure?</span>
-        <input type="submit" value="Yes">
-        <input type="button" value="Cancel" ng-click="confirmSave = false">
+        <div style="padding-bottom:40px;">
+            <input type="button" value="Save" ng-click="confirmSave = true" ng-disabled="!theForm.$valid">
+            <span ng-show="!theForm.$valid" class="text-danger"> There are errors above. See highlighted fields. </span>
+            <div style="display:inline;padding-left:30px;" ng-show="confirmSave === true">
+                <span>Are you sure?</span>
+                <input type="submit" value="Yes">
+                <input type="button" value="Cancel" ng-click="confirmSave = false">
+            </div>
+        </div>
     </div>
 </form>

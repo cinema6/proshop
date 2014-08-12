@@ -1,24 +1,41 @@
 <form name="theForm" ng-submit="OrgsCtrl.saveOrg()">
     <a href="" ng-click="OrgsCtrl.action = 'all'">&lsaquo; Back to list</a>
-    <div class="form-group" style="padding-top:20px">
-        <label for="new_org_name" class="control-label"> Name: </label>
+
+    <div class="form-group" style="padding-top:20px" ng-class="{'has-error': theForm.name.$error.required}">
+        <label for="name" class="control-label"> Name: </label>
         <div>
-            <input type="text" name="name" ng-model="data.org.name" autocomplete="off" ng-trim="false" ng-minlength="3" ng-maxlength="128" required>
-            <span ng-show="theForm.name.$error.required"> Required. </span>
-            <span ng-show="theForm.name.$error.minlength"> Too short. </span>
-            <span ng-show="theForm.name.$error.maxlength"> Too long. </span>
+            <input class="col-md-3" class="form-control" type="text" name="name" ng-model="data.org.name" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" required ignore-spaces>
+            <span class="help-block">
+                <span ng-show="theForm.name.$error.required"> Required. </span>
+                <span ng-show="theForm.name.$error.minlength"> Too short. </span>
+                <span ng-show="theForm.name.$error.maxlength"> Too long. </span>
+            </span>
         </div>
     </div>
-    <br>
-    <div>
+
+    <div class="form-group" ng-class="{'has-error': theForm.branding.$error.required}">
+        <label for="branding" class="control-label"> Branding: </label>
+        <div>
+            <input class="col-md-3" ng-focus="OrgsCtrl.disableBrandBinding()" class="form-control" type="text" name="branding" ng-model="data.org.branding" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" ng-pattern="/^[\w]*[a-zA-Z]+[\w]*$/" required ignore-spaces>
+            <span class="help-block">
+                <span ng-show="theForm.branding.$error.required"> Required. </span>
+                <span ng-show="theForm.branding.$error.minlength"> Too short. </span>
+                <span ng-show="theForm.branding.$error.maxlength"> Too long. </span>
+                <span ng-show="theForm.branding.$error.pattern"> Invalid characters. </span>
+            </span>
+        </div>
+    </div>
+    <a href="" ng-click="showOptions = !showOptions">{{optionsMessage}}</a>
+    <div ng-show="showOptions">
         <div>
             <div style="padding-bottom:20px;" ng-repeat="setting in data.appData.waterfallData.settings">
                 <h3>{{setting.title}}<br>
                 <small>({{setting.description}})</small></h3>
                 <div ng-if="setting.category === 'video'" ng-repeat="choice in data.org._data.videoWaterfalls">
                     <span ng-if="setting.type === 'options'">
-                        <input type="checkbox" name="video_waterfalls_{{choice.value}}" ng-model="choice.enabled" ng-required="!OrgsCtrl.formIsValid()">
+                        <input type="checkbox" name="video_waterfalls_{{choice.value}}" ng-model="choice.enabled">
                         <label for="video_waterfalls_{{choice.value}}"> {{choice.name}} </label>
+                        <span ng-show="!validVideoWaterfalls" class="text-danger"> Please select at least one. </span>
                     </span>
                     <span ng-if="setting.type === 'default'">
                         <input type="radio" name="videoWaterfallDefault" ng-model="data.org.adConfig.video.waterfall" value="{{choice.value}}">
@@ -34,8 +51,9 @@
                 </div>
                 <div ng-if="setting.category === 'display'" ng-repeat="choice in data.org._data.displayWaterfalls">
                     <span ng-if="setting.type === 'options'">
-                        <input type="checkbox" name="display_waterfalls_{{choice.value}}" ng-model="choice.enabled" ng-required="!OrgsCtrl.formIsValid()">
+                        <input type="checkbox" name="display_waterfalls_{{choice.value}}" ng-model="choice.enabled">
                         <label for="display_waterfalls_{{choice.value}}"> {{choice.name}} </label>
+                        <span ng-show="!validDisplayWaterfalls" class="text-danger"> Please select at least one. </span>
                     </span>
                     <span ng-if="setting.type === 'default'">
                         <input type="radio" name="displayWaterfallDefault" ng-model="data.org.adConfig.display.waterfall" value="{{choice.value}}">
@@ -45,32 +63,33 @@
             </div>
         </div>
         <div class="form-group">
-            <label for="branding" class="control-label"> Branding: </label>
-            <div>
-                <input type="text" name="branding" ng-model="data.org.branding" autocomplete="off" ng-trim="false" ng-minlength="3" ng-maxlength="128" ng-pattern="/^[\w]+$/" required>
-                <span ng-show="theForm.branding.$error.required"> Required. </span>
-                <span ng-show="theForm.branding.$error.minlength"> Too short. </span>
-                <span ng-show="theForm.branding.$error.maxlength"> Too long. </span>
-                <span ng-show="theForm.branding.$error.pattern"> Invalid characters. </span>
-            </div>
-        </div>
-        <div>
             <h3>Embed Type</h3>
             <div ng-repeat="choice in data.org._data.config.minireelinator.embedTypes">
-                <input type="checkbox" name="embed_type_{{choice.value}}" ng-model="choice.enabled" ng-required="!OrgsCtrl.formIsValid()">
-                <label for="new_org_status">{{choice.title}}</label>
+                <input type="checkbox" name="embed_type_{{choice.value}}" ng-model="choice.enabled">
+                <label for="embed_type_{{choice.value}}">{{choice.title}}</label>
+                <span ng-show="!validEmbedTypes" class="text-danger"> Please select at least one. </span>
             </div>
         </div>
         <div>
             <h3>Embed Size</h3>
-            <div>
-                <label for="new_org_status">Width (in pixels or percentage, ex: 400px or 100%)</label><br>
-                <input type="text" name="embed_size_width" ng-model="data.org.config.minireelinator.embedDefaults.size.width" ng-pattern="embedSizePattern"><br>
-                <label for="new_org_status">Height (in pixels or percentage, ex: 400px or 100%)</label><br>
-                <input type="text" name="embed_size_height" ng-model="data.org.config.minireelinator.embedDefaults.size.height" ng-pattern="embedSizePattern">
+            <div class="form-group" ng-class="{'has-error': theForm.embed_size_width.$error.pattern || !validEmbedSize}">
+                <label class="control-label" for="new_org_status">Width (in pixels or percentage, ex: 400px or 100%)</label><br>
+                <input type="text" class="col-md-3" class="form-control" name="embed_size_width" ng-model="data.org.config.minireelinator.embedDefaults.size.width" ng-pattern="embedSizePattern" ignore-spaces>
+                <span class="help-block">
+                    <span ng-show="theForm.embed_size_width.$error.pattern"> Invalid characters. </span>
+                    <span ng-show="!validEmbedSize"> Width and Height required. </span>
+                </span>
+            </div>
+            <div class="form-group" ng-class="{'has-error': theForm.embed_size_height.$error.pattern || !validEmbedSize}">
+                <label class="control-label" for="new_org_status">Height (in pixels or percentage, ex: 400px or 100%)</label><br>
+                <input type="text" class="col-md-3" class="form-control" name="embed_size_height" ng-model="data.org.config.minireelinator.embedDefaults.size.height" ng-pattern="embedSizePattern" ignore-spaces>
+                <span class="help-block">
+                    <span ng-show="theForm.embed_size_height.$error.pattern"> Invalid characters. </span>
+                    <span ng-show="!validEmbedSize"> Width and Height required. </span>
+                </span>
             </div>
         </div>
-        <div>
+        <div class="form-group">
             <h3>Status:</h3>
             <input type="radio" id="new_org_status" name="status" ng-model="data.org.status" value="active" required>
             <label for="new_org_status"> Active</label>
@@ -106,20 +125,22 @@
             </div>
         </div>
     </div>
-    <br>
-    <input type="submit" value="Save" ng-disabled="!theForm.$valid">
-    <input type="button" value="Delete" ng-show="data.org.id" ng-click="confirmDelete = true">
-    <div style="display:inline;padding-left:30px;" ng-show="confirmDelete === true">
-        <span>Are you sure?</span>
-        <input type="button" value="Yes" ng-click="OrgsCtrl.deleteOrg()">
-        <input type="button" value="Cancel" ng-click="confirmDelete = false">
+    <div style="padding:20px 0 40px 0;">
+        <input type="submit" value="Save" ng-disabled="!theForm.$valid || !OrgsCtrl.formIsValid()">
+        <input type="button" value="Delete" ng-show="data.org.id" ng-click="OrgsCtrl.confirmDelete()">
+        <span ng-show="!theForm.$valid || !OrgsCtrl.formIsValid()" class="text-danger"> There are errors above. See highlighted fields. </span>
+        <!-- <div style="display:inline;padding-left:30px;" ng-show="confirmDelete === true">
+            <span>Are you sure?</span>
+            <input type="button" value="Yes" ng-click="OrgsCtrl.deleteOrg()">
+            <input type="button" value="Cancel" ng-click="confirmDelete = false">
+        </div> -->
     </div>
     <div>
         <span>{{lastStatus}}</span>
     </div>
 </form>
 
-<table ng-if="data.users" class="table table-striped table-hover table-bordered" style="margin-top:20px">
+<table ng-show="!showOptions" ng-if="data.users" class="table table-striped table-hover table-bordered" style="margin-top:20px">
     <tbody>
         <tr>
             <th>Users</th>

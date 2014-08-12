@@ -100,7 +100,8 @@ define(['mockHttp'], function(mockHttp){
     });
 
     httpMocks.whenPUT('/api/account/org/o-113', function() {
-        this.proxy('mocks/account/org/e2e-org.json');
+        this.respond(404, 'The Org is not editable for some reason');
+        // this.proxy('mocks/account/org/e2e-org.json');
     });
 
     httpMocks.whenPUT('/api/account/org/o-114', function() {
@@ -136,7 +137,8 @@ define(['mockHttp'], function(mockHttp){
     });
 
     httpMocks.whenPUT('/api/account/user/e2e-12224', function() {
-        this.proxy('mocks/account/user/e2e-user.json');
+        this.respond(404, 'This User cannot be edited for some reason');
+        // this.proxy('mocks/account/user/e2e-user.json');
     });
 
     httpMocks.whenPUT('/api/account/user/e2e-12225', function() {

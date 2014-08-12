@@ -1,0 +1,14 @@
+<div ng-if="model.dialog">
+    <div class="ui__modal ui__modal--confirmation">
+        <h1 ng-show="model.dialog.prompt" class="modal__title">{{model.dialog.prompt}}</h1>
+        <div ng-show="model.dialog.message" class="modal__message">
+            {{dialog.message}}
+        </div>
+        <footer class="modal__btnFooter modal__btnFooter--confirmation">
+            <button class="modal__btn modal__btn--last toolbar__confirm btn btn-success" ng-click="model.dialog.onAffirm()" title="{{model.dialog.affirm}}">{{model.dialog.affirm}}</button>
+            <button ng-hide="!model.dialog.cancel" class="modal__btn modal__btn--first toolbar__neutral btn btn-default" ng-click="model.dialog.onCancel()" title="{{model.dialog.cancel}}">{{model.dialog.cancel}}</button>
+        </footer>
+        <!-- <button ng-click="model.dialog.onDismiss()" class="modal__closeBtn sprite--alpha"><span class="ir">Close</span></button> -->
+    </div>
+    <div class="ui__overlay">&nbsp;</div>
+</div>

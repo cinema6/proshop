@@ -10,9 +10,6 @@
                 failureSpy,
                 c6UrlMaker,
                 mockOrg,
-                // mockOrgs,
-                // mockUser,
-                // mockUsers,
                 mockExperiences;
 
             beforeEach(function() {
@@ -26,34 +23,6 @@
                         display: ['cinema6']
                     }
                 };
-
-                // mockOrgs = [
-                //     {
-                //         name:'Org1'
-                //     },
-                //     {
-                //         name:'Org2'
-                //     }
-                // ];
-
-                // mockUser = {
-                //     id: 'u-1',
-                //     email: 'foo@bar.com',
-                //     org: 'o-1',
-                //     firstName: 'Foo',
-                //     lastName: 'Bar',
-                //     branding: 'test_brand',
-                //     config: {},
-                // };
-
-                // mockUsers = [
-                //     {
-                //         id:'u-1'
-                //     },
-                //     {
-                //         name:'u-2'
-                //     }
-                // ];
 
                 mockExperiences = [
                     {
@@ -136,9 +105,9 @@
                     it('should add properties', function() {
                         var exp = content.convertExperienceForCopy(angular.copy(mockExperiences[0]));
 
-                        expect(exp.originalExperienceId).toBe(mockExperiences[0].id);
-                        expect(exp.originalOrg).toBe(mockExperiences[0].org);
-                        expect(exp.originalUser).toBe(mockExperiences[0].user);
+                        expect(exp.origExpId).toBe(mockExperiences[0].id);
+                        expect(exp.origOrg).toBe(mockExperiences[0].org);
+                        expect(exp.origUser).toBe(mockExperiences[0].user);
                         expect(exp.status).toBe('active');
                         expect(exp.access).toBe('private');
                     });

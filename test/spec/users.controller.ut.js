@@ -12,7 +12,8 @@
                 account,
                 appData,
                 mockOrgs,
-                mockUsers;
+                mockUsers,
+                ConfirmDialogService;
 
             beforeEach(function() {
                 module('c6.proshop');
@@ -50,7 +51,7 @@
                         lastName: 'F',
                         org: 'o-1',
                         branding: 'theme1',
-                        type: 'publisher'
+                        type: 'Publisher'
                     },
                     {
                         id: 'u-2',
@@ -59,9 +60,14 @@
                         lastName: 'D',
                         org: 'o-2',
                         branding: 'theme2',
-                        type: 'publisher'
+                        type: 'Publisher'
                     }
                 ];
+
+                ConfirmDialogService = {
+                    display: jasmine.createSpy('ConfirmDialogService.display()'),
+                    close: jasmine.createSpy('ConfirmDialogService.close()')
+                };
 
                 inject(function($injector) {
                     $controller = $injector.get('$controller');
@@ -104,7 +110,8 @@
                     UsersCtrl = $controller('UsersController', {
                         $log: $log,
                         $scope: $scope,
-                        account: account
+                        account: account,
+                        ConfirmDialogService: ConfirmDialogService
                     });
                 });
             });
@@ -178,15 +185,20 @@
                         expect($scope.data.user).toBe($scope.data.users[0]);
                         expect($scope.data.org).toEqual($scope.data.users[0].org);
                     });
-                });
 
-                describe('addNewUser()', function() {
-                    it('should set the action to edit and and clear any user or org data', function() {
-                        UsersCtrl.addNewUser();
+                    it('should handle defaults', function() {
+                        $scope.$apply(function() {
+                            account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
+                            account.getUsers.deferred.resolve(angular.copy(mockUsers));
+                        });
 
-                        expect(UsersCtrl.action).toBe('edit');
-                        expect($scope.data.user).toEqual({
-                            config: {
+                        var userWithNoConfig = angular.copy($scope.data.users[0]),
+                            userWithConfig = angular.copy($scope.data.users[0]),
+                            userWithNoBranding = angular.copy($scope.data.users[0]),
+                            userWithBranding = angular.copy($scope.data.users[0]),
+                            userWithType = angular.copy($scope.data.users[0]),
+                            userWithNoType = angular.copy($scope.data.users[0]),
+                            defaultConfig = {
                                 minireelinator: {
                                     minireelDefaults: {
                                         splash: {
@@ -195,9 +207,91 @@
                                         }
                                     }
                                 }
-                            },
-                            type: 'publisher'
+                            };
+
+                        // user with no config block
+                        UsersCtrl.editUser(userWithNoConfig);
+                        expect($scope.data.user.config).toEqual(defaultConfig);
+
+                        delete userWithNoConfig.config;
+                        $scope.data.org.config = {
+                            minireelinator: {
+                                minireelDefaults: {
+                                    splash: {
+                                        ratio: '6-5',
+                                        theme: 'img-only'
+                                    }
+                                }
+                            }
+                        };
+                        UsersCtrl.editUser(userWithNoConfig);
+                        expect($scope.data.user.config).toEqual({
+                            minireelinator: {
+                                minireelDefaults: {
+                                    splash: {
+                                        ratio: '6-5',
+                                        theme: 'img-only'
+                                    }
+                                }
+                            }
                         });
+
+                        // user with config block and minireelinator block
+                        userWithConfig.config = {
+                            minireelinator: {
+                                minireelDefaults: {
+                                    splash: {
+                                        ratio: '16-9',
+                                        theme: 'text-only'
+                                    }
+                                }
+                            }
+                        };
+                        UsersCtrl.editUser(userWithConfig);
+                        expect($scope.data.user.config).toEqual({
+                            minireelinator: {
+                                minireelDefaults: {
+                                    splash: {
+                                        ratio: '16-9',
+                                        theme: 'text-only'
+                                    }
+                                }
+                            }
+                        });
+
+                        // userWithNoBranding
+                        delete userWithNoBranding.branding;
+                        delete $scope.data.org.branding;
+                        UsersCtrl.editUser(userWithNoBranding);
+                        expect($scope.data.user.branding).toBe(undefined);
+
+                        $scope.data.org.branding = 'test_brand';
+                        UsersCtrl.editUser(userWithNoBranding);
+                        expect($scope.data.user.branding).toBe('test_brand');
+
+                        // user with branding (from mockUser above)
+                        userWithBranding.branding = 'different_brand';
+                        $scope.data.org.branding = 'some_org_brand';
+                        UsersCtrl.editUser(userWithBranding);
+                        expect($scope.data.user.branding).toBe('different_brand');
+
+                        // user with type
+                        userWithType.type = 'ContentPublisher';
+                        UsersCtrl.editUser(userWithType);
+                        expect($scope.data.user.type).toBe('ContentPublisher');
+
+                        delete userWithNoType.type;
+                        UsersCtrl.editUser(userWithNoType);
+                        expect($scope.data.user.type).toBe('Publisher');
+                    });
+                });
+
+                describe('addNewUser()', function() {
+                    it('should set the action to edit and and clear any user or org data', function() {
+                        UsersCtrl.addNewUser();
+
+                        expect(UsersCtrl.action).toBe('new');
+                        expect($scope.data.user).toEqual({});
                         expect($scope.data.org).toBe(null);
                     });
                 });
@@ -283,7 +377,7 @@
                             expect(UsersCtrl.action).toBe('all');
                         });
 
-                        it('on error should stay on the edit page and display an error message', function() {
+                        it('on error should stay on the edit page and display an error dialog', function() {
                             UsersCtrl.saveUser();
 
                             expect($scope.message).toBe(null);
@@ -292,7 +386,7 @@
                                 account.putUser.deferred.reject();
                             });
 
-                            expect($scope.message).toBe('There was a problem creating this user.');
+                            expect(ConfirmDialogService.display).toHaveBeenCalled();
                         });
                     });
 
@@ -310,6 +404,7 @@
                             $scope.data.user.firstName = 'Test';
                             $scope.data.user.lastName = 'Name';
                             $scope.data.org = $scope.data.orgs[0];
+                            $scope.$digest();
                         });
 
                         it('should POST the user', function() {
@@ -353,12 +448,12 @@
                                 account.postUser.deferred.reject();
                             });
 
-                            expect($scope.message).toBe('There was a problem creating this user.');
+                            expect(ConfirmDialogService.display).toHaveBeenCalled();
                         });
                     });
                 });
 
-                describe('deleteUser(user)', function() {
+                describe('confirmDelete()', function() {
                     beforeEach(function() {
                         $scope.$apply(function() {
                             account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
@@ -368,14 +463,26 @@
                         UsersCtrl.editUser($scope.data.users[0]);
                     });
 
-                    it('should DELETE the user', function() {
-                        UsersCtrl.deleteUser();
+                    it('should DELETE the user when confirmed', function() {
+                        UsersCtrl.confirmDelete();
+
+                        ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm();
 
                         expect(account.deleteUser).toHaveBeenCalledWith($scope.data.users[0]);
                     });
 
+                    it('should not DELETE the user if canceled', function() {
+                        UsersCtrl.confirmDelete();
+
+                        ConfirmDialogService.display.calls.mostRecent().args[0].onCancel();
+
+                        expect(account.deleteUser).not.toHaveBeenCalled();
+                    });
+
                     it('on success should', function() {
-                        UsersCtrl.deleteUser();
+                        UsersCtrl.confirmDelete();
+
+                        ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm();
 
                         expect($scope.message).toBe(null);
                         expect(account.getOrgs.calls.count()).toBe(1);
@@ -392,14 +499,16 @@
                     });
 
                     it('on error', function() {
-                        UsersCtrl.deleteUser();
+                        UsersCtrl.confirmDelete();
+
+                        ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm();
 
                         $scope.$apply(function() {
                             account.deleteUser.deferred.reject();
                         });
 
                         expect(UsersCtrl.action).toBe('edit');
-                        expect($scope.message).toBe('There was a problem deleting this user.');
+                        expect(ConfirmDialogService.display.calls.count()).toBe(2);
                     });
                 });
             });

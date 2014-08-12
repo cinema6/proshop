@@ -12,6 +12,10 @@ define(['account','content'],function(account,content) {
                 data.orgs = orgs;
             }
 
+            function setUserExperienceData(user) {
+                data.experience._data.user = user;
+            }
+
             $scope.tableHeaders = [
                 {label:'Choose an Org to view Minireels',value:'name'},
                 {label:'Status',value:'status'},
@@ -22,13 +26,15 @@ define(['account','content'],function(account,content) {
             $scope.experienceTableHeaders = [
                 {label:'Title',value:'title'},
                 {label:'Mode',value:'data.mode'},
-                {label:'User',value:'user.email'},
+                {label:'Created By',value:'user.email'},
+                {label:'Branding',value:'branding'},
                 {label:'# of Cards',value:'data.deck.length'},
-                {label:'Status',value:'status'}
+                {label:'Status',value:'status'},
+                {label:'Last Updated',value:'lastUpdated'}
             ];
 
             $scope.sort = {
-                column: 'name',
+                column: 'title',
                 descending: false
             };
 
@@ -135,6 +141,10 @@ define(['account','content'],function(account,content) {
             }
 
             $scope.$watch('data.org',function(newOrg) {
+                if ((self.action === 'orgs' || self.action === 'experiences') && newOrg) {
+                    self.getExperiences(newOrg);
+                }
+
                 if (self.action === 'copy' && newOrg) {
                     setOrgExperienceData(newOrg);
                     account.getUsers(newOrg)
@@ -143,10 +153,6 @@ define(['account','content'],function(account,content) {
                         });
                 }
             });
-
-            function setUserExperienceData(user) {
-                data.experience._data.user = user;
-            }
 
             self.saveCopy = function() {
                 var _data = data.experience._data,

@@ -2,8 +2,8 @@ define(['account'],function(account) {
     'use strict';
 
     return angular.module('c6.proshop.users',[account.name])
-        .controller('UsersController', ['$scope', '$log', 'account',
-        function                       ( $scope ,  $log,   account ) {
+        .controller('UsersController', ['$scope', '$log', 'account', 'ConfirmDialogService',
+        function                       ( $scope ,  $log,   account ,  ConfirmDialogService ) {
             var self = this,
                 data = $scope.data;
 
@@ -26,6 +26,55 @@ define(['account'],function(account) {
                 data.users = users;
             }
 
+            function deleteUser() {
+                $log.info('deleting user: ', data.user);
+
+                account.deleteUser(data.user)
+                    .then(function() {
+                        $scope.message = 'Successfully deleted user: ' + data.user.email;
+                        account.getOrgs().then(updateOrgs);
+                        account.getUsers().then(updateUsers);
+                        self.action = 'all';
+                    }, function(err) {
+                        $log.error(err);
+                        ConfirmDialogService.display({
+                            prompt: 'There was a problem deleting the user. ' + err + '.',
+                            affirm: 'Close',
+                            onAffirm: function() {
+                                ConfirmDialogService.close();
+                            }
+                        });
+                    });
+            }
+
+            function convertUserForEditing(user, org) {
+                user.branding = user.branding || org.branding;
+                user.type = user.type || 'Publisher';
+                user.config = (user.config &&
+                    user.config.minireelinator &&
+                    user.config.minireelinator.minireelDefaults) ?
+                    (user.config) : (org.config &&
+                    org.config.minireelinator &&
+                    org.config.minireelinator.minireelDefaults) ? {
+                        minireelinator: {
+                            minireelDefaults: {
+                                splash: org.config.minireelinator.minireelDefaults.splash
+                            }
+                        }
+                    } : {
+                        minireelinator: {
+                            minireelDefaults: {
+                                splash: {
+                                    ratio: '3-2',
+                                    theme: 'img-text-overlay'
+                                }
+                            }
+                        }
+                    };
+
+                return user;
+            }
+
             $scope.tableHeaders = [
                 {label:'Email',value:'email'},
                 {label:'Name',value:'lastName'},
@@ -37,6 +86,12 @@ define(['account'],function(account) {
                 column: 'email',
                 descending: false
             };
+
+            Object.defineProperty($scope, 'passwordMessage', {
+                get: function() {
+                    return this.showPassword ? 'Hide Password' : 'Show Password';
+                }
+            });
 
             $scope.doSort = function(column) {
                 var sort = $scope.sort;
@@ -53,49 +108,23 @@ define(['account'],function(account) {
             self.userPermissionOptions = angular.copy(account.userPermissionOptions);
 
             self.userTypes = [
-                {label:'Publisher',value:'publisher'},
-                {label:'Content Provider',value:'contentProvider'}
+                {label:'Publisher',value:'Publisher'},
+                {label:'Content Provider',value:'ContentProvider'}
             ];
 
             self.editUser = function(user){
                 $scope.message = null;
                 self.action = 'edit';
-                data.user = user;
-                data.user.config = data.user.config &&
-                    data.user.config.minireelinator &&
-                    data.user.config.minireelinator.minireelDefaults ?
-                    data.user.config : {
-                        minireelinator: {
-                            minireelDefaults: {
-                                splash: {
-                                    ratio: '3-2',
-                                    theme: 'img-text-overlay'
-                                }
-                            }
-                        }
-                    };
-                data.user.type = data.user.type || 'publisher';
                 data.org = data.appData.orgs.filter(function(org) {
                     return user.org.id === org.id;
                 })[0];
+                data.user = convertUserForEditing(user, data.org);
             };
 
             self.addNewUser = function() {
                 $scope.message = null;
-                self.action = 'edit';
-                data.user = {
-                    config: {
-                        minireelinator: {
-                            minireelDefaults: {
-                                splash: {
-                                    ratio: '3-2',
-                                    theme: 'img-text-overlay'
-                                }
-                            }
-                        }
-                    },
-                    type: 'publisher'
-                };
+                self.action = 'new';
+                data.user = {};
                 data.org = null;
             };
 
@@ -125,25 +154,37 @@ define(['account'],function(account) {
                 // return account.getOrgs(field).then(updateOrgs);
             };
 
-            self.deleteUser = function() {
-                $log.info('deleting user: ', data.user);
+            self.backToList = function() {
+                self.action = 'all';
+                account.getOrgs().then(updateOrgs);
+                account.getUsers().then(updateUsers);
+            };
 
-                account.deleteUser(data.user)
-                    .then(function() {
-                        $scope.message = 'Successfully deleted user: ' + data.user.email;
-                        account.getOrgs().then(updateOrgs);
-                        account.getUsers().then(updateUsers);
-                        self.action = 'all';
-                    }, function(err) {
-                        $log.error(err);
-                        $scope.message = 'There was a problem deleting this user.';
-                    });
+            self.confirmDelete = function() {
+                ConfirmDialogService.display({
+                    prompt: 'Are you sure you want to delete this User?',
+                    affirm: 'Yes',
+                    cancel: 'Cancel',
+                    onAffirm: function() {
+                        ConfirmDialogService.close();
+                        deleteUser();
+                    },
+                    onCancel: function() {
+                        ConfirmDialogService.close();
+                    }
+                });
             };
 
             this.saveUser = function() {
                 function handleError(err) {
                     $log.error(err);
-                    $scope.message = 'There was a problem creating this user.';
+                    ConfirmDialogService.display({
+                        prompt: 'There was a problem saving the user. ' + err + '.',
+                        affirm: 'Close',
+                        onAffirm: function() {
+                            ConfirmDialogService.close();
+                        }
+                    });
                 }
 
                 function handleSuccess(user) {
@@ -182,6 +223,47 @@ define(['account'],function(account) {
                     }).then(handleSuccess, handleError);
                 }
             };
+
+            self.cancelOrgChange = function() {
+                $scope.changingOrgWarning = false;
+                data.org = data.orgs.filter(function(org) {
+                    return org.id === data.user.org.id;
+                })[0];
+            };
+
+            self.confirmOrgChange = function() {
+                $scope.changingOrgWarning = false;
+                data.user.config = null;
+                data.user.branding = null;
+                data.user = convertUserForEditing(data.user, data.org);
+            };
+
+            $scope.$watch('data.org', function(newOrg) {
+                if (newOrg) {
+                    if (self.action === 'edit' && data.user.org.id !== data.org.id) {
+                        $scope.changingOrgWarning = true;
+                        ConfirmDialogService.display({
+                            prompt: 'Warning: All of this User\'s Minireels will remain with the original Org.',
+                            affirm: 'OK, move User without Minireels',
+                            cancel: 'No, leave the User on current Org',
+                            onAffirm: function() {
+                                ConfirmDialogService.close();
+                                self.confirmOrgChange();
+                            },
+                            onCancel: function() {
+                                ConfirmDialogService.close();
+                                self.cancelOrgChange();
+                            }
+                        });
+                    }
+
+                    if (self.action === 'new') {
+                        data.user.config = null;
+                        data.user.branding = null;
+                        data.user = convertUserForEditing(data.user, newOrg);
+                    }
+                }
+            });
 
             account.getOrgs().then(updateOrgs);
             account.getUsers().then(updateUsers);

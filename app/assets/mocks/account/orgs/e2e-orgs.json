@@ -7,7 +7,16 @@
   "status": "active",
   "tag": "foo",
   "config": {
-    "embedTypes": ["shortcode"]
+    "minireelinator": {
+      "minireelDefaults": {
+        "mode": "light",
+        "autoplay": true,
+        "splash": {
+          "ratio": "16-9",
+          "theme": "text-only"
+        }
+      }
+    }
   },
   "waterfalls": {
     "video": [
@@ -25,8 +34,20 @@
   "created": "2014-06-13T19:28:39.408Z",
   "lastUpdated": "2014-06-13T19:28:39.408Z",
   "status": "active",
+  "branding": "test_org_2",
   "tag": "foo",
-  "config": {},
+  "config": {
+    "minireelinator": {
+      "minireelDefaults": {
+        "mode": "light",
+        "autoplay": true,
+        "splash": {
+          "ratio": "16-9",
+          "theme": "horizontal-stack"
+        }
+      }
+    }
+  },
   "adConfig": {
     "video" : {
       "firstPlacement" : 1,
