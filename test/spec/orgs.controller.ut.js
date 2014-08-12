@@ -65,7 +65,8 @@
                 ];
 
                 ConfirmDialogService = {
-                    display: jasmine.createSpy('ConfirmDialogService.display()')
+                    display: jasmine.createSpy('ConfirmDialogService.display()'),
+                    close: jasmine.createSpy('ConfirmDialogService.close()')
                 };
 
                 inject(function($injector) {
@@ -358,20 +359,27 @@
                             account.getUsers.deferred.resolve(mockUsers[0]);
                         });
 
-                        OrgsCtrl.deleteOrg();
+                        OrgsCtrl.confirmDelete();
 
-                        expect($scope.message).toBe('You must delete or move the Users belonging to this Org before deleting it.');
+                        ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm();
+
+                        expect(ConfirmDialogService.display.calls.mostRecent().args[0].prompt).toBe('You must delete or move the Users belonging to this Org before deleting it.');
+
                         expect(account.deleteOrg).not.toHaveBeenCalled();
                     });
 
                     it('should DELETE the org', function() {
-                        OrgsCtrl.deleteOrg();
+                        OrgsCtrl.confirmDelete();
+
+                        ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm();
 
                         expect(account.deleteOrg).toHaveBeenCalled();
                     });
 
                     it('on success should put a message on the scope, set the action, reload all the orgs data', function() {
-                        OrgsCtrl.deleteOrg();
+                        OrgsCtrl.confirmDelete();
+
+                        ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm();
 
                         expect(account.getOrgs.calls.count()).toBe(1);
 
@@ -385,13 +393,16 @@
                     });
 
                     it('on error should stay on the edit page and display an error message', function() {
-                        OrgsCtrl.deleteOrg();
+                        OrgsCtrl.confirmDelete();
+
+                        ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm();
 
                         $scope.$apply(function() {
                             account.deleteOrg.deferred.reject();
                         });
 
-                        expect($scope.message).toBe('There was a problem deleting this org.');
+                        expect(OrgsCtrl.action).toBe('edit');
+                        expect(ConfirmDialogService.display.calls.count()).toBe(2);
                     });
                 });
             });

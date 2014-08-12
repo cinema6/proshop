@@ -5,7 +5,6 @@
             <select ng-model="data.org" name="org" ng-options="org.name for org in data.orgs | orderBy:'name'" required>
                 <option value="">-- choose org --</option>
             </select>
-            <input type="button" value="Go" ng-click="MinireelsCtrl.getExperiences(data.org)" ng-disabled="!theForm.$valid">
         </div>
     </div>
 </form>

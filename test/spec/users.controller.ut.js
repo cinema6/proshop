@@ -65,7 +65,8 @@
                 ];
 
                 ConfirmDialogService = {
-                    display: jasmine.createSpy('ConfirmDialogService.display()')
+                    display: jasmine.createSpy('ConfirmDialogService.display()'),
+                    close: jasmine.createSpy('ConfirmDialogService.close()')
                 };
 
                 inject(function($injector) {
@@ -452,7 +453,7 @@
                     });
                 });
 
-                describe('deleteUser(user)', function() {
+                describe('confirmDelete()', function() {
                     beforeEach(function() {
                         $scope.$apply(function() {
                             account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
@@ -462,14 +463,26 @@
                         UsersCtrl.editUser($scope.data.users[0]);
                     });
 
-                    it('should DELETE the user', function() {
-                        UsersCtrl.deleteUser();
+                    it('should DELETE the user when confirmed', function() {
+                        UsersCtrl.confirmDelete();
+
+                        ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm();
 
                         expect(account.deleteUser).toHaveBeenCalledWith($scope.data.users[0]);
                     });
 
+                    it('should not DELETE the user if canceled', function() {
+                        UsersCtrl.confirmDelete();
+
+                        ConfirmDialogService.display.calls.mostRecent().args[0].onCancel();
+
+                        expect(account.deleteUser).not.toHaveBeenCalled();
+                    });
+
                     it('on success should', function() {
-                        UsersCtrl.deleteUser();
+                        UsersCtrl.confirmDelete();
+
+                        ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm();
 
                         expect($scope.message).toBe(null);
                         expect(account.getOrgs.calls.count()).toBe(1);
@@ -486,14 +499,16 @@
                     });
 
                     it('on error', function() {
-                        UsersCtrl.deleteUser();
+                        UsersCtrl.confirmDelete();
+
+                        ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm();
 
                         $scope.$apply(function() {
                             account.deleteUser.deferred.reject();
                         });
 
                         expect(UsersCtrl.action).toBe('edit');
-                        expect($scope.message).toBe('There was a problem deleting this user.');
+                        expect(ConfirmDialogService.display.calls.count()).toBe(2);
                     });
                 });
             });

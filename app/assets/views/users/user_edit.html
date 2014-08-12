@@ -9,7 +9,7 @@
     <div class="form-group" ng-class="{'has-error': theForm.firstName.$error.required}">
         <label for="firstName" class="control-label"> First Name: </label>
         <div>
-            <input type="text" class="col-md-3" class="form-control" name="firstName" ng-model="data.user.firstName" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" required ignore-spaces>
+            <input type="text" class="col-md-3" class="form-control" name="firstName" ng-model="data.user.firstName" autocomplete="off" ng-trim="true" ng-minlength="2" ng-maxlength="128" required ignore-spaces>
             <span class="help-block">
                 <span ng-show="theForm.firstName.$error.required"> Required. </span>
                 <span ng-show="theForm.firstName.$error.minlength"> Too short. </span>
@@ -21,7 +21,7 @@
     <div class="form-group" ng-class="{'has-error': theForm.lastName.$error.required}">
         <label for="lastName" class="control-label"> Last Name: </label>
         <div>
-            <input type="text" class="col-md-3" class="form-control" name="lastName" ng-model="data.user.lastName" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" required ignore-spaces>
+            <input type="text" class="col-md-3" class="form-control" name="lastName" ng-model="data.user.lastName" autocomplete="off" ng-trim="true" ng-minlength="2" ng-maxlength="128" required ignore-spaces>
             <span class="help-block">
                 <span ng-show="theForm.lastName.$error.required"> Required. </span>
                 <span ng-show="theForm.lastName.$error.minlength"> Too short. </span>
@@ -99,13 +99,8 @@
         </div>
         <div style="padding-bottom:40px;">
             <input type="submit" value="Save" ng-disabled="!theForm.$valid">
-            <input type="button" value="Delete" ng-show="data.user.id" ng-click="confirmDelete = true">
+            <input type="button" value="Delete" ng-show="data.user.id" ng-click="UsersCtrl.confirmDelete()">
             <span ng-show="!theForm.$valid" class="text-danger"> There are errors above. See highlighted fields. </span>
-            <div style="display:inline;padding-left:30px;" ng-show="confirmDelete === true">
-                <span>Are you sure?</span>
-                <input type="button" value="Yes" ng-click="UsersCtrl.deleteUser()">
-                <input type="button" value="Cancel" ng-click="confirmDelete = false">
-            </div>
         </div>
     </div>
     <!-- Below are pieces that will be enabled later -->

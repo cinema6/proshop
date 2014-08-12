@@ -119,8 +119,8 @@ define(['account'],function(account) {
                 data.org = account.convertOrgForEditing();
             };
 
-            self.deleteOrg = function() {
-                $log.info('deleting user: ', data.org);
+            function deleteOrg() {
+                $log.info('deleting org: ', data.org);
 
                 if (data.users) {
                     $scope.message = 'You must delete or move the Users belonging to this Org before deleting it.';
@@ -134,8 +134,43 @@ define(['account'],function(account) {
                         self.action = 'all';
                     }, function(err) {
                         $log.error(err);
-                        $scope.message = 'There was a problem deleting this org.';
+                        ConfirmDialogService.display({
+                            prompt: 'There was a problem deleting the org. ' + err + '.',
+                            affirm: 'Close',
+                            onAffirm: function() {
+                                ConfirmDialogService.close();
+                            }
+                        });
                     });
+            }
+
+            self.confirmDelete = function() {
+                var dialogObject;
+
+                if (data.users) {
+                    dialogObject = {
+                        prompt: 'You must delete or move the Users belonging to this Org before deleting it.',
+                        affirm: 'Close',
+                        onAffirm: function() {
+                            ConfirmDialogService.close();
+                        }
+                    };
+                } else {
+                    dialogObject = {
+                        prompt: 'Are you sure you want to delete this Org?',
+                        affirm: 'Yes',
+                        cancel: 'Cancel',
+                        onAffirm: function() {
+                            ConfirmDialogService.close();
+                            deleteOrg();
+                        },
+                        onCancel: function() {
+                            ConfirmDialogService.close();
+                        }
+                    };
+                }
+
+                ConfirmDialogService.display(dialogObject);
             };
 
             self.sortOrgs = function(/*field*/) {

@@ -26,6 +26,55 @@ define(['account'],function(account) {
                 data.users = users;
             }
 
+            function deleteUser() {
+                $log.info('deleting user: ', data.user);
+
+                account.deleteUser(data.user)
+                    .then(function() {
+                        $scope.message = 'Successfully deleted user: ' + data.user.email;
+                        account.getOrgs().then(updateOrgs);
+                        account.getUsers().then(updateUsers);
+                        self.action = 'all';
+                    }, function(err) {
+                        $log.error(err);
+                        ConfirmDialogService.display({
+                            prompt: 'There was a problem deleting the user. ' + err + '.',
+                            affirm: 'Close',
+                            onAffirm: function() {
+                                ConfirmDialogService.close();
+                            }
+                        });
+                    });
+            }
+
+            function convertUserForEditing(user, org) {
+                user.branding = user.branding || org.branding;
+                user.type = user.type || 'Publisher';
+                user.config = (user.config &&
+                    user.config.minireelinator &&
+                    user.config.minireelinator.minireelDefaults) ?
+                    (user.config) : (org.config &&
+                    org.config.minireelinator &&
+                    org.config.minireelinator.minireelDefaults) ? {
+                        minireelinator: {
+                            minireelDefaults: {
+                                splash: org.config.minireelinator.minireelDefaults.splash
+                            }
+                        }
+                    } : {
+                        minireelinator: {
+                            minireelDefaults: {
+                                splash: {
+                                    ratio: '3-2',
+                                    theme: 'img-text-overlay'
+                                }
+                            }
+                        }
+                    };
+
+                return user;
+            }
+
             $scope.tableHeaders = [
                 {label:'Email',value:'email'},
                 {label:'Name',value:'lastName'},
@@ -62,34 +111,6 @@ define(['account'],function(account) {
                 {label:'Publisher',value:'Publisher'},
                 {label:'Content Provider',value:'ContentProvider'}
             ];
-
-            function convertUserForEditing(user, org) {
-                user.branding = user.branding || org.branding;
-                user.type = user.type || 'Publisher';
-                user.config = (user.config &&
-                    user.config.minireelinator &&
-                    user.config.minireelinator.minireelDefaults) ?
-                    (user.config) : (org.config &&
-                    org.config.minireelinator &&
-                    org.config.minireelinator.minireelDefaults) ? {
-                        minireelinator: {
-                            minireelDefaults: {
-                                splash: org.config.minireelinator.minireelDefaults.splash
-                            }
-                        }
-                    } : {
-                        minireelinator: {
-                            minireelDefaults: {
-                                splash: {
-                                    ratio: '3-2',
-                                    theme: 'img-text-overlay'
-                                }
-                            }
-                        }
-                    };
-
-                return user;
-            }
 
             self.editUser = function(user){
                 $scope.message = null;
@@ -139,27 +160,27 @@ define(['account'],function(account) {
                 account.getUsers().then(updateUsers);
             };
 
-            self.deleteUser = function() {
-                $log.info('deleting user: ', data.user);
-
-                account.deleteUser(data.user)
-                    .then(function() {
-                        $scope.message = 'Successfully deleted user: ' + data.user.email;
-                        account.getOrgs().then(updateOrgs);
-                        account.getUsers().then(updateUsers);
-                        self.action = 'all';
-                    }, function(err) {
-                        $log.error(err);
-                        $scope.message = 'There was a problem deleting this user.';
-                    });
+            self.confirmDelete = function() {
+                ConfirmDialogService.display({
+                    prompt: 'Are you sure you want to delete this User?',
+                    affirm: 'Yes',
+                    cancel: 'Cancel',
+                    onAffirm: function() {
+                        ConfirmDialogService.close();
+                        deleteUser();
+                    },
+                    onCancel: function() {
+                        ConfirmDialogService.close();
+                    }
+                });
             };
 
             this.saveUser = function() {
                 function handleError(err) {
                     $log.error(err);
                     ConfirmDialogService.display({
-                        prompt: 'There was a problem saving the user.',
-                        affirm: 'OK',
+                        prompt: 'There was a problem saving the user. ' + err + '.',
+                        affirm: 'Close',
                         onAffirm: function() {
                             ConfirmDialogService.close();
                         }

@@ -141,6 +141,10 @@ define(['account','content'],function(account,content) {
             }
 
             $scope.$watch('data.org',function(newOrg) {
+                if ((self.action === 'orgs' || self.action === 'experiences') && newOrg) {
+                    self.getExperiences(newOrg);
+                }
+
                 if (self.action === 'copy' && newOrg) {
                     setOrgExperienceData(newOrg);
                     account.getUsers(newOrg)
