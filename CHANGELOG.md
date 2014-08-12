@@ -1,5 +1,7 @@
 # ProShop
 
+## v0.5.1 (August 12, 2014)
+
 * *[v0.5.1]*
     *[FIX]: Better error handling and alerts
     *[FIX]: Get rid of unnecessary table columns, replace with useful ones
@@ -10,6 +12,7 @@
     *[FEATURE]: Link to Show/Hide password
     *[FIX]: Warn user and ask for confirmation beofre changing a User's Org
     *[FIX]: A User's branding defaulkts to the Org's branding if the User's is not defined
+* *[/v0.5.1]*
 
 ## v0.5.0 (August 7, 2014)
 
