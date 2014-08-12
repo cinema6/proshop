@@ -1,5 +1,8 @@
 # ProShop
 
+* *[v0.5.2]*
+    *[FIX]: Stop Minireel section from initializing with previously viewed Org data
+
 ## v0.5.1 (August 12, 2014)
 
 * *[v0.5.1]*
