@@ -190,7 +190,7 @@ define(['account'],function(account) {
                 function handleError(err) {
                     $log.error(err);
                     ConfirmDialogService.display({
-                        prompt: 'There was a problem saving the org.',
+                        prompt: 'There was a problem saving the org. ' + err + '.',
                         affirm: 'OK',
                         onAffirm: function() {
                             ConfirmDialogService.close();

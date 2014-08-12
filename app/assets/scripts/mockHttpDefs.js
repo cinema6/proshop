@@ -100,7 +100,7 @@ define(['mockHttp'], function(mockHttp){
     });
 
     httpMocks.whenPUT('/api/account/org/o-113', function() {
-        this.respond(404, 'failed');
+        this.respond(404, 'The Org is not editable for some reason');
         // this.proxy('mocks/account/org/e2e-org.json');
     });
 
