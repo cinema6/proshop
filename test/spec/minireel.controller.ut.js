@@ -132,6 +132,7 @@
 
                 it('should set some defaults', function() {
                     expect(MinireelsCtrl.action).toBe('orgs');
+                    expect($scope.data.org).toBe(null);
                 });
 
                 it('should fetch all orgs', function() {

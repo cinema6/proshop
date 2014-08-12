@@ -7,6 +7,8 @@ define(['account','content'],function(account,content) {
             var self = this,
                 data = $scope.data;
 
+            data.org = null;
+
             function updateOrgs(orgs) {
                 data.appData.orgs = orgs;
                 data.orgs = orgs;
