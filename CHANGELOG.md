@@ -1,6 +1,9 @@
 # ProShop
 
-## v0.5.1 (August 12, 2014)
+* *[v0.5.3]*
+    *[FIX]: Minireel table properly displays branding
+
+## v0.5.2 (August 12, 2014)
 
 * *[v0.5.2]*
     *[FIX]: Stop Minireel section from initializing with previously viewed Org data
