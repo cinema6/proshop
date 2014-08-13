@@ -15,6 +15,13 @@
                 port: 443,
                 https: true,
                 changeOrigin: true
+            },
+            {
+                context: '/collateral',
+                host: 'staging.cinema6.com',
+                port: 443,
+                https: true,
+                changeOrigin: true
             }
         ],
         dev: {

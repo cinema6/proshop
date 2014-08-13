@@ -107,9 +107,9 @@
 
                         expect(exp.origExpId).toBe(mockExperiences[0].id);
                         expect(exp.origOrg).toBe(mockExperiences[0].org);
-                        expect(exp.origUser).toBe(mockExperiences[0].user);
+                        expect(exp.origUser).toBe(mockExperiences[0].user.id);
                         expect(exp.status).toBe('active');
-                        expect(exp.access).toBe('private');
+                        expect(exp.access).toBe('public');
                     });
                 });
             });

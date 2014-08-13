@@ -274,7 +274,6 @@
                         expect($scope.data.experience._data).toEqual({
                             org: mockOrgs[0].id,
                             branding: undefined,
-                            adConfig: undefined,
                             config: {
                                 minireelinator: {
                                     minireelDefaults: {
