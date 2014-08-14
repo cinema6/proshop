@@ -125,17 +125,11 @@ function( angular , c6ui ) {
                         }
                     };
 
-                    this.setSplash = function(blob, experience) {
-                        var promise;
-
-                        promise = FileService.uploadBlob('/api/collateral/files/' + experience.id + '?noCache=true', blob)
-                            .then(function(resp) {
-                                return resp;
-                            }, function() {
-
-                        });
-
-                        return promise;
+                    this.setSplash = function(file, experience) {
+                        return FileService.openBlob(file)
+                            .then(function(splash) {
+                                return FileService.uploadBlob('/api/collateral/files/' + experience.id + '?noCache=true', splash);
+                            });
                     };
 
                     this.generateCollage = function(options) {

@@ -195,4 +195,16 @@ define(['mockHttp'], function(mockHttp){
     httpMocks.whenGET('/api/account/users?org=e2e-org')
         .proxy('mocks/account/users/e2e-org-users.json');
 
+    /*
+     * Content Endpoints
+     */
+
+    httpMocks.whenPOST('/api/content/experience', function(rqs) {
+        if (rqs.data.branding === 'fail') {
+            this.respond(404,'failed');
+        } else {
+            this.proxy('mocks/content/mock-experience.json');
+        }
+    });
+
 });

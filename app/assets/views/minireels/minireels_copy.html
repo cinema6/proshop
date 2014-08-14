@@ -1,4 +1,4 @@
-<form name="theForm" id="copy_experience" ng-submit="MinireelsCtrl.saveCopy()">
+<form name="theForm" id="copy_experience">
     <a href="" ng-click="MinireelsCtrl.action = 'experiences'">&lsaquo; Back to Minireel list</a>
     <div class="form-group" style="padding-top:20px">
         <label for="org" class="control-label"> <h3>Choose an Org to copy to: </h3></label>
@@ -54,13 +54,13 @@
             </div>
         </div>
         <div style="padding-bottom:40px;">
-            <input type="button" value="Save" ng-click="confirmSave = true" ng-disabled="!theForm.$valid">
+            <input type="button" value="Save" ng-click="MinireelsCtrl.confirmCopy()" ng-disabled="!theForm.$valid">
             <span ng-show="!theForm.$valid" class="text-danger"> There are errors above. See highlighted fields. </span>
-            <div style="display:inline;padding-left:30px;" ng-show="confirmSave === true">
+            <!-- <div style="display:inline;padding-left:30px;" ng-show="confirmSave === true">
                 <span>Are you sure?</span>
                 <input type="submit" value="Yes">
                 <input type="button" value="Cancel" ng-click="confirmSave = false">
-            </div>
+            </div> -->
         </div>
     </div>
 </form>

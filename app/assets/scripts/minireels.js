@@ -1,104 +1,88 @@
 define(['account','content','splash'],function(account,content,splash) {
     'use strict';
 
+    var copy = angular.copy;
+
     return angular.module('c6.proshop.minireels',[account.name,content.name,splash.name])
-        .controller('MinireelsController', ['$scope','$log','account','content','CollateralService', 'FileService',
-        function                           ( $scope , $log , account , content , CollateralService ,  FileService ) {
+        .controller('MinireelsController', ['$scope','$log','account','content','CollateralService','ConfirmDialogService',
+        function                           ( $scope , $log , account , content , CollateralService , ConfirmDialogService ) {
             var self = this,
                 data = $scope.data;
 
             data.org = null;
+            self.action = 'orgs';
 
             function updateOrgs(orgs) {
                 data.appData.orgs = orgs;
                 data.orgs = orgs;
+                return orgs;
             }
 
-            function setUserExperienceData(user) {
-                data.experience._data.user = user;
+            function updateExperiences(exps) {
+                data.appData.experiences = exps;
+                data.experiences = exps;
+                return exps;
             }
 
-            $scope.tableHeaders = [
-                {label:'Choose an Org to view Minireels',value:'name'},
-                {label:'Status',value:'status'},
-                {label:'Tag',value:'tag'},
-                {label:'Min Ad Count',value:'minAdCount'}
-            ];
+            // called from startExperienceCopy()
+            function convertExpForCopying(exp) {
+                return content.convertExperienceForCopy(copy(exp));
+            }
 
-            $scope.experienceTableHeaders = [
-                {label:'Title',value:'title'},
-                {label:'Mode',value:'data.mode'},
-                {label:'Created By',value:'user.email'},
-                {label:'Branding',value:'branding'},
-                {label:'# of Cards',value:'data.deck.length'},
-                {label:'Status',value:'status'},
-                {label:'Last Updated',value:'lastUpdated'}
-            ];
+            // only called from loadExperiences, which is called
+            // when a new org is selected
+            function getExperiencesByOrg(org) {
+                return content.getExperiencesByOrg(org.id);
+            }
 
-            $scope.sort = {
-                column: 'title',
-                descending: false
-            };
+            // called from loadExperiences
+            function getUserById(id) {
+                return account.getUser(id);
+            }
 
-            $scope.doSort = function(column) {
-                var sort = $scope.sort;
-                if (sort.column === column) {
-                    sort.descending = !sort.descending;
-                } else {
-                    sort.column = column;
-                    sort.descending = false;
-                }
-            };
+            // called from startExperienceCopy()
+            function getAllOrgs() {
+                return copy(data.appData.orgs);
+            }
 
-            self.action = 'orgs';
-
-            self.defaultModes = [
-                {label:'Embedded',value:'light'},
-                {label:'Lightbox, with Companion',value:'lightbox-ads'},
-                {label:'Lightbox, without Companion',value:'lightbox'}
-            ];
-
-            self.filterOrgs = function() {
-                var query = data.query.toLowerCase();
-
-                data.orgs = data.appData.orgs.filter(function(org) {
-                    return org.name.toLowerCase().indexOf(query) >= 0;
-                });
-            };
-
-            self.filterExperiences = function() {
-                var query = data.query.toLowerCase();
-
-                data.experiences = data.appData.experiences.filter(function(exp) {
-                    return exp.title.toLowerCase().indexOf(query) >= 0;
-                });
-            };
-
-            self.getExperiences = function(org) {
-                content.getExperiencesByOrg(org.id)
-                    .then(function(experiences) {
-                        self.action = 'experiences';
-                        data.query = null;
-                        data.appData.experiences = experiences;
-                        data.experiences = experiences;
-
-                        experiences.forEach(function(exp) {
-                            account.getUser(exp.user)
+            // only gets called when action === 'orgs' || 'experiences'
+            // and the data.org changes (from dropdown)
+            function loadExperiences(org) {
+                getExperiencesByOrg(org)
+                    .then(updateExperiences)
+                    .then(function(exps) {
+                        exps.forEach(function(exp) {
+                            getUserById(exp.user)
                                 .then(function(user) {
                                     exp.user = user;
                                 });
                         });
+                    })
+                    .then(resetQuery)
+                    .finally(function() {
+                        self.action = 'experiences';
                     });
-            };
+            }
 
-            self.startExperienceCopy = function(exp) {
-                self.action = 'copy';
-                data.org = null;
-                data.user = null;
-                data.orgs = angular.copy(data.appData.orgs);
-                data.experience = content.convertExperienceForCopy(angular.copy(exp));
-            };
+            // only gets called action === 'copy'
+            // and user selects a target org
+            function loadUsers(org) {
+                return account.getUsers(org)
+                    .then(function(users) {
+                        data.users = users;
+                    });
+            }
 
+            // only gets called when action === 'copy'
+            // and the target user has been selected
+            function setUserExperienceData(user) {
+                data.experience._data.user = user;
+            }
+
+            // only gets called when action === 'copy'
+            // and the org changes, meaning the user has selected
+            // a target org for the copy, so we need to get the
+            // necessary data for adding to the experience
             function setOrgExperienceData(org) {
                 // TO DO: functional style like MRinator copy() conversions
 
@@ -141,75 +125,17 @@ define(['account','content','splash'],function(account,content,splash) {
                 };
             }
 
-            self.isGenerating = false;
-            self.splash = null;
-            self.currentUpload = null;
-
-            function generateSplash(minireel) {
-                $log.info('generating splash');
-                self.isGenerating = true;
-
-                return CollateralService.generateCollage({
-                    minireel: minireel,
-                    width: 600,
-                    name: 'splash',
-                    cache: false
-                }).then(function setSplashSrc(splash) {
-                    $log.info('generated splash: ', splash);
-
-                    minireel.data.collateral.splash = splash[minireel.data.splash.ratio];
-
-                    content.putExperience(minireel)
-                        .then(function(reel) {
-                            $log.info('re-saved experience with generated splash: ', reel);
-                        }, function(err) {
-                            $log.error('error putting the experience back: ', err);
-                        });
-
-                    return splash;
-                })
-                .finally(function setFlag() {
-                    self.isGenerating = false;
-                });
-            }
-
-            function getSpecifiedSplash(minireel) {
-                FileService.openBlob(data.experience.data.collateral.splash)
-                    .then(function(splash) {
-                        var upload;
-
-                        $log.info('Upload started: ', splash);
-
-                        self.currentUpload = upload =
-                            CollateralService.setSplash(splash, minireel);
-
-                        return upload
-                            .then(function(resp) {
-                                minireel.data.collateral.splash = '/' + resp.data[0].path;
-
-                                content.putExperience(minireel).then(function(mr) {
-                                    $log.info('re-saved experience with specified splash', mr);
-                                }, function() {
-                                    //error re-saving experience
-                                });
-                            })
-                            .finally(function cleanup() {
-                                $log.info('Uploaded completed!');
-                                self.currentUpload = null;
-                            });
-                    }, function(err) {
-                        $log.error('there was an error getting original splash image', err);
-                        // there was an error getting original splash image
-                    });
-            }
-
-            self.saveCopy = function() {
+            // only gets called when we're actually
+            // about to save the experience...
+            // this could move to a service
+            function convertFinalExperience() {
                 var _data = data.experience._data,
-                    exp = angular.copy(data.experience);
+                    exp = copy(data.experience);
 
                 exp.data.title = data.experience.title;
                 exp.data.branding = _data.branding;
                 exp.data.mode = _data.config.minireelinator.minireelDefaults.mode;
+                exp.data.autoplay = _data.config.minireelinator.minireelDefaults.autoplay;
                 exp.data.splash.ratio = _data.config.minireelinator.minireelDefaults.splash.ratio;
                 exp.data.splash.theme = _data.config.minireelinator.minireelDefaults.splash.theme;
                 exp.data.collateral.splash = null;
@@ -224,49 +150,217 @@ define(['account','content','splash'],function(account,content,splash) {
                 delete exp.adConfig;
                 delete exp._data; // should only delete _data if successful POST/PUT
 
-                // after POSTing experience take the exp.id and do splash/collateral stuff
-                content.postExperience(exp)
-                    .then(function(minireel) {
-                        $log.info('saved experience: ', minireel);
-                        switch (minireel.data.splash.source) {
-                        case 'generated':
-                            generateSplash(minireel);
-                            break;
-                        case 'specified':
-                            getSpecifiedSplash(minireel);
-                            break;
-                        }
-                    }, function(err) {
-                        $log.error('error posting experience', err);
-                        // use a ConfirmDialog here
+                return exp;
+            }
+
+            // only gets called after we've saved the copy
+            // gotten the splash image, stored the src
+            // and the final minireel is ready to be saved
+            function putExperience(exp) {
+                $log.info('re-saving experience with new splash: ', exp);
+
+                return content.putExperience(exp)
+                    .then(function(mr) {
+                        $log.info('re-saved experience with specified splash', mr);
                     });
+            }
+
+            // only called if copied minireel needs
+            // to generate a splash
+            function getGeneratedSplash(minireel) {
+                $log.info('generating splash for experience: ', minireel);
+
+                function setSplashSrc(splash) {
+                    var ratio = minireel.data.splash.ratio,
+                        src = splash[ratio];
+
+                    $log.info('setting splash source: ', src);
+
+                    minireel.data.collateral.splash = src;
+
+                    return minireel;
+                }
+
+                return CollateralService.generateCollage({
+                    minireel: minireel,
+                    width: 600,
+                    name: 'splash',
+                    cache: false
+                }).then(setSplashSrc);
+            }
+
+            // only called if copied minireel needs
+            // to copy a specified splash
+            function getSpecifiedSplash(minireel) {
+                var splashToCopy = data.experience.data.collateral.splash;
+
+                function setSplashSrc(response) {
+                    var path = '/' + response.data[0].path;
+
+                    $log.info('setting splash source: ', path);
+
+                    minireel.data.collateral.splash = path;
+
+                    return minireel;
+                }
+
+                $log.info('setting specified splash for experience: ', minireel);
+
+                return CollateralService.setSplash(splashToCopy, minireel)
+                    .then(setSplashSrc);
+            }
+
+            // only called once we've saved the copy
+            function getSplash(minireel) {
+                var source = minireel.data.splash.source;
+
+                $log.info('getting splash for experience: ', minireel);
+
+                if (source === 'generated') {
+                    return getGeneratedSplash(minireel);
+                }
+
+                if (source === 'specified') {
+                    return getSpecifiedSplash(minireel);
+                }
+            }
+
+            // only called from the 'copy' template when form is submitted
+            function saveCopy() {
+                var exp = convertFinalExperience();
 
                 $log.info('save copy:', exp);
+
+                return content.postExperience(exp)
+                    .then(getSplash)
+                    .then(putExperience)
+                    .catch(handleError);
+            }
+
+            // gets called at the end of the copy
+            // promise chain.
+            // TODO: make sure all errors get caught
+            // and that all errors are displayable
+            function handleError(err) {
+                $log.error(err);
+                // popup a dialog
+            }
+
+            function resetQuery() {
+                data.query = null;
+            }
+
+            $scope.tableHeaders = [
+                {label:'Choose an Org to view Minireels',value:'name'},
+                {label:'Status',value:'status'},
+                {label:'Tag',value:'tag'},
+                {label:'Min Ad Count',value:'minAdCount'}
+            ];
+
+            $scope.experienceTableHeaders = [
+                {label:'Title',value:'title'},
+                {label:'Mode',value:'data.mode'},
+                {label:'Created By',value:'user.email'},
+                {label:'Branding',value:'branding'},
+                {label:'# of Cards',value:'data.deck.length'},
+                {label:'Status',value:'status'},
+                {label:'Last Updated',value:'lastUpdated'}
+            ];
+
+            $scope.sort = {
+                column: 'title',
+                descending: false
+            };
+
+            $scope.doSort = function(column) {
+                var sort = $scope.sort;
+                if (sort.column === column) {
+                    sort.descending = !sort.descending;
+                } else {
+                    sort.column = column;
+                    sort.descending = false;
+                }
+            };
+
+            self.defaultModes = [
+                {label:'Embedded',value:'light'},
+                {label:'Lightbox, with Companion',value:'lightbox-ads'},
+                {label:'Lightbox, without Companion',value:'lightbox'}
+            ];
+
+            self.filterOrgs = function() {
+                var query = data.query.toLowerCase();
+
+                data.orgs = data.appData.orgs.filter(function(org) {
+                    return org.name.toLowerCase().indexOf(query) >= 0;
+                });
+            };
+
+            self.filterExperiences = function() {
+                var query = data.query.toLowerCase();
+
+                data.experiences = data.appData.experiences.filter(function(exp) {
+                    return exp.title.toLowerCase().indexOf(query) >= 0;
+                });
+            };
+
+            // only gets called from 'experience' template
+            // when user click 'Copy' in the table
+            self.startExperienceCopy = function(exp) {
+                self.action = 'copy';
+                data.org = null;
+                data.user = null;
+                data.orgs = getAllOrgs();
+                data.experience = convertExpForCopying(exp);
+            };
+
+            self.confirmCopy = function() {
+                ConfirmDialogService.display({
+                    prompt: 'Are you sure you want to finish copying?',
+                    affirm: 'Yes, copy this Minireel',
+                    cancel: 'No, I\'m not ready',
+                    onAffirm: function() {
+                        ConfirmDialogService.close();
+                        saveCopy().then(function() {
+                            self.action = 'orgs';
+                            $scope.message = 'Successfully copied.';
+                            data.org = null;
+                        });
+                    },
+                    onCancel: function() {
+                        ConfirmDialogService.close();
+                    }
+                });
             };
 
             $scope.$watch('data.org',function(newOrg) {
-                if ((self.action === 'orgs' || self.action === 'experiences') && newOrg) {
-                    self.getExperiences(newOrg);
+                if (!newOrg) { return; }
+
+                $scope.message = null;
+
+                // if we're looking choosing an org or looking at expereinces
+                // and the org changes, we need to get the experiences of the new org
+                if (self.action === 'orgs' || self.action === 'experiences') {
+                    loadExperiences(newOrg);
                 }
 
-                if (self.action === 'copy' && newOrg) {
+                // if we're copying a minireel and we select a target org
+                // to copy to, we need to add that org's data to the experience
+                // and get a list of users in the org so that the minireel
+                // can be assigned to someone
+                if (self.action === 'copy') {
                     setOrgExperienceData(newOrg);
-                    account.getUsers(newOrg)
-                        .then(function(users) {
-                            data.users = users;
-                        });
+                    loadUsers(newOrg);
                 }
             });
 
             $scope.$watch('data.user',function(newUser) {
-                if (self.action === 'copy' && newUser) {
+                if (!newUser) { return; }
+                // if we're copying a minireel and select a user
+                // to assign the new minireel to, we need to copy
+                // some of the user's data to the experience before copying
+                if (self.action === 'copy') {
                     setUserExperienceData(newUser);
-                }
-            });
-
-            $scope.$watch(function() { return self.action; }, function(newAction) {
-                if (newAction === 'orgs') {
-                    data.org = null;
                 }
             });
 
