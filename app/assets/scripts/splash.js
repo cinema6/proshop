@@ -125,8 +125,8 @@ function( angular , c6ui ) {
                         }
                     };
 
-                    this.setSplash = function(file, experience) {
-                        return FileService.openBlob(file)
+                    this.setSplash = function(url, experience) {
+                        return FileService.openBlob(url)
                             .then(function(splash) {
                                 return FileService.uploadBlob('/api/collateral/files/' + experience.id + '?noCache=true', splash);
                             });
@@ -155,23 +155,29 @@ function( angular , c6ui ) {
                         }
 
                         function generateCollage(thumbs) {
-                            return $http.post('/api/collateral/splash/' + minireel.id, {
-                                imageSpecs: [
-                                    {
-                                        name: name,
-                                        width: width,
-                                        height: width * (ratio[1] / ratio[0]),
-                                        ratio: ratio.join('-')
-                                    }
-                                ],
-                                thumbs: thumbs
-                            }, {
-                                params: cache ? null : {
-                                    noCache: true
+                            var deferred = $q.defer();
+
+                            $http({
+                                method: 'POST',
+                                url: '/api/collateral/splash/' + minireel.id + (cache ? '' : '?noCache=true'),
+                                data: {
+                                    imageSpecs: [
+                                        {
+                                            name: name,
+                                            width: width,
+                                            height: width * (ratio[1] / ratio[0]),
+                                            ratio: ratio.join('-')
+                                        }
+                                    ],
+                                    thumbs: thumbs
                                 }
-                            }).then(function returnResult(response) {
-                                return new CollageResult(response.data);
+                            }).success(function returnResult(response) {
+                                deferred.resolve(new CollageResult(response));
+                            }).error(function handleError(err) {
+                                deferred.reject('There was a problem generating splash image. ' + err);
                             });
+
+                            return deferred.promise;
                         }
 
                         return fetchThumbs(minireel)
@@ -208,7 +214,7 @@ function( angular , c6ui ) {
 
                 xhr.onerror = function(e) {
                     $rootScope.$apply(function() {
-                        deferred.reject('Error ' + e.target.status + ' occurred while receiving the document.');
+                        deferred.reject('Error ' + e.target.status + ' occurred while receiving the file.');
                     });
                 };
 
@@ -222,7 +228,7 @@ function( angular , c6ui ) {
                     data = new FormData(),
                     xhr = new XMLHttpRequest();
 
-                data.append('image1',blob,'splash');
+                data.append('image',blob,'splash');
 
                 xhr.open('POST', url, true);
 

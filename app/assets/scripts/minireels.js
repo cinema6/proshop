@@ -216,11 +216,10 @@ define(['account','content','splash'],function(account,content,splash) {
 
                 $log.info('getting splash for experience: ', minireel);
 
-                if (source === 'generated') {
+                switch (source) {
+                case 'generated':
                     return getGeneratedSplash(minireel);
-                }
-
-                if (source === 'specified') {
+                case 'specified':
                     return getSpecifiedSplash(minireel);
                 }
             }
@@ -233,8 +232,8 @@ define(['account','content','splash'],function(account,content,splash) {
 
                 return content.postExperience(exp)
                     .then(getSplash)
-                    .then(putExperience)
-                    .catch(handleError);
+                    .then(putExperience);
+                    // .catch(handleError);
             }
 
             // gets called at the end of the copy
@@ -243,7 +242,13 @@ define(['account','content','splash'],function(account,content,splash) {
             // and that all errors are displayable
             function handleError(err) {
                 $log.error(err);
-                // popup a dialog
+                ConfirmDialogService.display({
+                    prompt: 'Error: ' + err,
+                    affirm: 'Close',
+                    onAffirm: function() {
+                        ConfirmDialogService.close();
+                    }
+                });
             }
 
             function resetQuery() {
@@ -312,6 +317,10 @@ define(['account','content','splash'],function(account,content,splash) {
                 data.user = null;
                 data.orgs = getAllOrgs();
                 data.experience = convertExpForCopying(exp);
+                // convertExpForCopying(exp)
+                //     .then(function(experience) {
+                //         data.experience = experience;
+                //     });
             };
 
             self.confirmCopy = function() {
@@ -325,7 +334,7 @@ define(['account','content','splash'],function(account,content,splash) {
                             self.action = 'orgs';
                             $scope.message = 'Successfully copied.';
                             data.org = null;
-                        });
+                        }, handleError);
                     },
                     onCancel: function() {
                         ConfirmDialogService.close();
