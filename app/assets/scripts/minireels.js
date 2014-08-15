@@ -24,28 +24,23 @@ define(['account','content','splash'],function(account,content,splash) {
                 return exps;
             }
 
-            // called from startExperienceCopy()
             function convertExpForCopying(exp) {
                 return content.convertExperienceForCopy(copy(exp));
             }
 
-            // only called from loadExperiences, which is called
-            // when a new org is selected
             function getExperiencesByOrg(org) {
                 return content.getExperiencesByOrg(org.id);
             }
 
-            // called from loadExperiences
             function getUserById(id) {
                 return account.getUser(id);
             }
 
-            // called from startExperienceCopy()
             function getAllOrgs() {
                 return copy(data.appData.orgs);
             }
 
-            // only gets called when action === 'orgs' || 'experiences'
+            // called when action === 'orgs' || 'experiences'
             // and the data.org changes (from dropdown)
             function loadExperiences(org) {
                 getExperiencesByOrg(org)
@@ -64,7 +59,7 @@ define(['account','content','splash'],function(account,content,splash) {
                     });
             }
 
-            // only gets called action === 'copy'
+            // called when action === 'copy'
             // and user selects a target org
             function loadUsers(org) {
                 return account.getUsers(org)
@@ -73,19 +68,16 @@ define(['account','content','splash'],function(account,content,splash) {
                     });
             }
 
-            // only gets called when action === 'copy'
+            // called when action === 'copy'
             // and the target user has been selected
             function setUserExperienceData(user) {
                 data.experience._data.user = user;
             }
 
-            // only gets called when action === 'copy'
-            // and the org changes, meaning the user has selected
-            // a target org for the copy, so we need to get the
-            // necessary data for adding to the experience
+            // called when action === 'copy' and the org changes,
+            // meaning the user has selected a target org for the copy,
+            // so we need to add the necessary data to the experience
             function setOrgExperienceData(org) {
-                // TO DO: functional style like MRinator copy() conversions
-
                 function setMinireelDefaults() {
                     var mrDefaults = (org.config &&
                         org.config.minireelinator &&
@@ -125,7 +117,7 @@ define(['account','content','splash'],function(account,content,splash) {
                 };
             }
 
-            // only gets called when we're actually
+            // called when we're actually
             // about to save the experience...
             // this could move to a service
             function convertFinalExperience() {
@@ -148,12 +140,12 @@ define(['account','content','splash'],function(account,content,splash) {
                 delete exp.lastUpdated;
                 delete exp.versionId;
                 delete exp.adConfig;
-                delete exp._data; // should only delete _data if successful POST/PUT
+                delete exp._data;
 
                 return exp;
             }
 
-            // only gets called after we've saved the copy
+            // called after we've saved the copy
             // gotten the splash image, stored the src
             // and the final minireel is ready to be saved
             function putExperience(exp) {
@@ -165,8 +157,7 @@ define(['account','content','splash'],function(account,content,splash) {
                     });
             }
 
-            // only called if copied minireel needs
-            // to generate a splash
+            // called if minireel needs to generate a splash
             function getGeneratedSplash(minireel) {
                 $log.info('generating splash for experience: ', minireel);
 
@@ -189,8 +180,7 @@ define(['account','content','splash'],function(account,content,splash) {
                 }).then(setSplashSrc);
             }
 
-            // only called if copied minireel needs
-            // to copy a specified splash
+            // called if minireel needs to copy a specified splash
             function getSpecifiedSplash(minireel) {
                 var splashToCopy = data.experience.data.collateral.splash;
 
@@ -210,7 +200,7 @@ define(['account','content','splash'],function(account,content,splash) {
                     .then(setSplashSrc);
             }
 
-            // only called once we've saved the copy
+            // called once we've saved the copy
             function getSplash(minireel) {
                 var source = minireel.data.splash.source;
 
@@ -224,7 +214,7 @@ define(['account','content','splash'],function(account,content,splash) {
                 }
             }
 
-            // only called from the 'copy' template when form is submitted
+            // called from confirm dialog
             function saveCopy() {
                 var exp = convertFinalExperience();
 
@@ -236,10 +226,7 @@ define(['account','content','splash'],function(account,content,splash) {
                     // .catch(handleError);
             }
 
-            // gets called at the end of the copy
-            // promise chain.
-            // TODO: make sure all errors get caught
-            // and that all errors are displayable
+            // handles any error from the Save Copy chain
             function handleError(err) {
                 $log.error(err);
                 ConfirmDialogService.display({
@@ -309,7 +296,7 @@ define(['account','content','splash'],function(account,content,splash) {
                 });
             };
 
-            // only gets called from 'experience' template
+            // called from 'experience' template
             // when user click 'Copy' in the table
             self.startExperienceCopy = function(exp) {
                 self.action = 'copy';
@@ -317,10 +304,6 @@ define(['account','content','splash'],function(account,content,splash) {
                 data.user = null;
                 data.orgs = getAllOrgs();
                 data.experience = convertExpForCopying(exp);
-                // convertExpForCopying(exp)
-                //     .then(function(experience) {
-                //         data.experience = experience;
-                //     });
             };
 
             self.confirmCopy = function() {
@@ -347,7 +330,7 @@ define(['account','content','splash'],function(account,content,splash) {
 
                 $scope.message = null;
 
-                // if we're looking choosing an org or looking at expereinces
+                // if we're choosing an org or looking at experiences
                 // and the org changes, we need to get the experiences of the new org
                 if (self.action === 'orgs' || self.action === 'experiences') {
                     loadExperiences(newOrg);
@@ -365,6 +348,7 @@ define(['account','content','splash'],function(account,content,splash) {
 
             $scope.$watch('data.user',function(newUser) {
                 if (!newUser) { return; }
+
                 // if we're copying a minireel and select a user
                 // to assign the new minireel to, we need to copy
                 // some of the user's data to the experience before copying
