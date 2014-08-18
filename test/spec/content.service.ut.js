@@ -103,13 +103,18 @@
 
                 describe('convertExperienceForCopy()', function() {
                     it('should add properties', function() {
-                        var exp = content.convertExperienceForCopy(angular.copy(mockExperiences[0]));
+                        var exp = angular.copy(mockExperiences[0]);
+                        exp.user = {
+                            id: 'u-1',
+                            email: 'foo@bar.com'
+                        };
+                        exp = content.convertExperienceForCopy(exp);
 
-                        expect(exp.origExpId).toBe(mockExperiences[0].id);
-                        expect(exp.origOrg).toBe(mockExperiences[0].org);
-                        expect(exp.origUser).toBe(mockExperiences[0].user);
+                        expect(exp.origExpId).toBe('e-1');
+                        expect(exp.origOrg).toBe('o-1');
+                        expect(exp.origUser).toBe('u-1');
                         expect(exp.status).toBe('active');
-                        expect(exp.access).toBe('private');
+                        expect(exp.access).toBe('public');
                     });
                 });
             });

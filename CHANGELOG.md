@@ -2,6 +2,7 @@
 
 * *[v0.5.3]*
     *[FIX]: Minireel table properly displays branding
+    *[FEATURE]: Ability to copy a minireel from one Org to another
 
 ## v0.5.2 (August 12, 2014)
 

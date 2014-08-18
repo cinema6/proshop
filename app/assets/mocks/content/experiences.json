@@ -1,0 +1,684 @@
+[
+  {
+    "access": "public",
+    "appUri": "rumble",
+    "created": "2014-08-13T12:17:26.188Z",
+    "data": {
+      "title": "Inspirational animals that will touch your soul",
+      "mode": "light",
+      "branding": "c6ads",
+      "autoplay": true,
+      "displayAdSource": "cinema6",
+      "videoAdSource": "cinema6",
+      "videoAdSkip": 6,
+      "collateral": {
+        "splash": "/collateral/experiences/e-1/splash"
+      },
+      "splash": {
+        "source": "specified",
+        "ratio": "3-2",
+        "theme": "img-text-overlay"
+      },
+      "deck": [
+        {
+          "data": {
+            "modestbranding": 0,
+            "rel": 0,
+            "videoid": "DAIqHzVkVj0"
+          },
+          "id": "rc-68f9d0bc0c805f",
+          "type": "youtube",
+          "title": "Brown bear, brown bear what do you see?",
+          "note": "An enduring reminder of why these creatures bring such delight.",
+          "source": "YouTube",
+          "modules": [],
+          "displayAdSource": null
+        },
+        {
+          "data": {
+            "modestbranding": 0,
+            "rel": 0,
+            "videoid": "CtfIUf1UmE8"
+          },
+          "id": "rc-99e63491480983",
+          "type": "youtube",
+          "title": "Our primate cousins",
+          "note": "These endearing creatures will soften even the hardest heart.",
+          "source": "YouTube",
+          "modules": [],
+          "displayAdSource": null
+        },
+        {
+          "data": {
+            "modestbranding": 0,
+            "rel": 0,
+            "videoid": "NFsVfNXxQ94"
+          },
+          "id": "rc-96ca49e7090cc7",
+          "type": "youtube",
+          "title": "Must love cats!",
+          "note": "Who doesn't?",
+          "source": "YouTube",
+          "modules": [],
+          "displayAdSource": null
+        },
+        {
+          "data": {},
+          "id": "rc-35065c9fbbce3b",
+          "type": "recap",
+          "title": "Recap of Inspirational animals that will touch your soul",
+          "note": null,
+          "modules": [],
+          "displayAdSource": null
+        }
+      ]
+    },
+    "versionId": "0ca538af",
+    "title": "Inspirational animals that will touch your soul",
+    "id": "e-1",
+    "lastUpdated": "2014-08-14T14:20:29.850Z",
+    "org": "o-111",
+    "status": "active",
+    "type": "minireel",
+    "user": "e2e-12221"
+  },
+  {
+    "access": "public",
+    "appUri": "rumble",
+    "created": "2014-08-06T22:34:49.236Z",
+    "data": {
+      "title": "top beauty makeover tips",
+      "mode": "light",
+      "autoplay": true,
+      "displayAdSource": "cinema6",
+      "videoAdSource": "cinema6",
+      "videoAdSkip": 6,
+      "collateral": {
+        "splash": "/collateral/experiences/e-2/splash"
+      },
+      "splash": {
+        "source": "generated",
+        "ratio": "16-9",
+        "theme": "img-text-overlay"
+      },
+      "deck": [
+        {
+          "data": {
+            "modestbranding": 0,
+            "rel": 0,
+            "start": 91.2258064516129,
+            "end": 203.67741935483872,
+            "videoid": "5bmA5Fxnalo"
+          },
+          "id": "rc-c660938e410dcd",
+          "type": "youtube",
+          "title": "eye shadow",
+          "note": "this is a greatest eye shadow",
+          "source": "YouTube",
+          "modules": [],
+          "displayAdSource": null
+        },
+        {
+          "data": {
+            "videoid": "27837326"
+          },
+          "id": "rc-06241238058683",
+          "type": "vimeo",
+          "title": "mineral eye shaow",
+          "note": "afafafafaf",
+          "source": "Vimeo",
+          "modules": [],
+          "displayAdSource": null
+        },
+        {
+          "data": {
+            "modestbranding": 0,
+            "rel": 0,
+            "videoid": "qE_hIv-jMDY"
+          },
+          "id": "rc-09915eeca0b3e6",
+          "type": "youtube",
+          "title": "eye shadow 2",
+          "note": "Join Star of ABC's Nashville Hayden Panettiere and singer-songwriter Kate York as they spend the day filming the hit series. See which of Hayden's All Day Beauty Tools keep her flawless and fresh.",
+          "source": "YouTube",
+          "modules": [],
+          "displayAdSource": null
+        },
+        {
+          "data": {},
+          "id": "rc-3e9fb15ff61ac8",
+          "type": "recap",
+          "title": "Recap of top beauty makeover tips",
+          "note": null,
+          "modules": [],
+          "displayAdSource": null
+        }
+      ]
+    },
+    "versionId": "a81f762f",
+    "title": "top beauty makeover tips",
+    "id": "e-2",
+    "lastUpdated": "2014-08-14T14:20:29.849Z",
+    "org": "o-112",
+    "status": "active",
+    "type": "minireel",
+    "user": "e2e-12222"
+  },
+  {
+    "access": "public",
+    "appUri": "rumble",
+    "created": "2014-07-22T19:42:17.002Z",
+    "data": {
+      "title": "Bill Murrays Greatest Movie Moments",
+      "mode": "light",
+      "autoplay": true,
+      "displayAdSource": "cinema6",
+      "videoAdSource": "cinema6",
+      "videoAdSkip": 6,
+      "collateral": {
+        "splash": "/collateral/experiences/e-3/splash"
+      },
+      "splash": {
+        "source": "generated",
+        "ratio": "1-1",
+        "theme": "img-text-overlay"
+      },
+      "deck": [
+        {
+          "data": {
+            "modestbranding": 0,
+            "rel": 0,
+            "start": 54.62096774193548,
+            "end": 76.73865927419355,
+            "videoid": "X48G7Y0VWW4"
+          },
+          "id": "rc-e001d6ca466337",
+          "type": "youtube",
+          "title": "Caddyshack",
+          "note": "This was his first movie......",
+          "source": "YouTube",
+          "modules": [],
+          "displayAdSource": null
+        },
+        {
+          "data": {
+            "modestbranding": 0,
+            "rel": 0,
+            "videoid": "iTwIwfvNJLk"
+          },
+          "id": "rc-41550f81f1a1e6",
+          "type": "youtube",
+          "title": "Stripes",
+          "note": "His army....",
+          "source": "YouTube",
+          "modules": [],
+          "displayAdSource": null
+        },
+        {
+          "id": "rc-bc1c8cfaa2660d",
+          "type": "ad",
+          "ad": true,
+          "modules": [
+            "displayAd"
+          ],
+          "displayAdSource": "cinema6",
+          "data": {
+            "autoplay": true,
+            "source": "cinema6",
+            "skip": 6
+          }
+        },
+        {
+          "data": {},
+          "id": "rc-258f92dc857b42",
+          "type": "recap",
+          "title": "Recap of Bill Murrays Greatest Movie Moments",
+          "note": null,
+          "modules": [],
+          "displayAdSource": null
+        }
+      ]
+    },
+    "versionId": "1bb1705a",
+    "title": "Bill Murrays Greatest Movie Moments",
+    "id": "e-3",
+    "lastUpdated": "2014-08-14T14:20:29.846Z",
+    "org": "o-113",
+    "status": "active",
+    "type": "minireel",
+    "user": "e2e-12223"
+  },
+  {
+    "access": "public",
+    "appUri": "rumble",
+    "created": "2014-06-04T20:46:52.382Z",
+    "data": {
+      "title": "\"Studying\" Abroad",
+      "mode": "lightbox",
+      "branding": "elitedaily",
+      "election": "el-edfef057e958dc",
+      "displayAdSource": "cinema6",
+      "videoAdSource": "cinema6",
+      "videoAdSkip": 6,
+      "collateral": {
+        "splash": "/collateral/experiences/o-1/3fa.large64.jpg"
+      },
+      "splash": {
+        "ratio": "3-2",
+        "source": "generated",
+        "theme": "img-only"
+      },
+      "deck": [
+        {
+          "data": {
+            "modestbranding": 0,
+            "rel": 0,
+            "videoid": "lDWNzpnb7-Y"
+          },
+          "id": "rc-319aba392a685e",
+          "type": "youtube",
+          "title": "The Parent's Version",
+          "note": "What every parent hopes their child gains while studying abroad.",
+          "source": "YouTube",
+          "modules": [],
+          "displayAdSource": null
+        },
+        {
+          "data": {
+            "modestbranding": 0,
+            "rel": 0,
+            "videoid": "eikxZN5OZkc"
+          },
+          "id": "rc-71faa9fd589211",
+          "type": "youtube",
+          "title": "The Perks",
+          "note": "The notion that this is all you're doing..",
+          "source": "YouTube",
+          "modules": [
+            "ballot"
+          ],
+          "ballot": {
+            "prompt": "Studying abroad is...",
+            "choices": [
+              "For you",
+              "Not for you"
+            ]
+          },
+          "displayAdSource": null
+        },
+        {
+          "id": "rc-5fe5af78208fb8",
+          "type": "ad",
+          "ad": true,
+          "modules": [
+            "displayAd"
+          ],
+          "displayAdSource": "cinema6",
+          "data": {
+            "autoplay": true,
+            "source": "cinema6",
+            "skip": 6
+          }
+        },
+        {
+          "data": {
+            "modestbranding": 0,
+            "rel": 0,
+            "videoid": "KLLX2p916cQ"
+          },
+          "id": "rc-88546a19dd4168",
+          "type": "youtube",
+          "title": "What Every Parent Fears",
+          "note": "Study abroad = one big party",
+          "source": "YouTube",
+          "modules": [],
+          "displayAdSource": null
+        },
+        {
+          "data": {
+            "modestbranding": 0,
+            "rel": 0,
+            "videoid": "2E_-eExcYM8"
+          },
+          "id": "rc-e00af5e5ef04c1",
+          "type": "youtube",
+          "title": "The \"Educational\" Side",
+          "note": "No explanation needed.",
+          "source": "YouTube",
+          "modules": [],
+          "displayAdSource": null
+        },
+        {
+          "data": {
+            "modestbranding": 0,
+            "rel": 0,
+            "videoid": "YBr7oi0oz_0"
+          },
+          "id": "rc-771e1bcd175b3a",
+          "type": "youtube",
+          "title": "Study Abroad is not Meant for Everyone",
+          "note": "Some people just cant hang with the best of them.",
+          "source": "YouTube",
+          "modules": [],
+          "displayAdSource": null
+        },
+        {
+          "data": {
+            "modestbranding": 0,
+            "rel": 0,
+            "videoid": "qNLd5IFn22E"
+          },
+          "id": "rc-f81866e145facc",
+          "type": "youtube",
+          "title": "What ACTUALLY happens",
+          "note": "Study abroad wouldn't be complete without some epic stories to go home with.",
+          "source": "YouTube",
+          "modules": [],
+          "displayAdSource": null
+        },
+        {
+          "data": {
+            "modestbranding": 0,
+            "rel": 0,
+            "videoid": "EhMucFYi4Hw"
+          },
+          "id": "rc-4da4e81ac3ab87",
+          "type": "youtube",
+          "title": "The Outcome",
+          "note": "\"I just feel so cultured\". Anyone who has studied abroad must admit that they've sounded like this at one point or another (whether they meant to or not).",
+          "source": "YouTube",
+          "modules": [
+            "ballot"
+          ],
+          "ballot": {
+            "prompt": "You find this",
+            "choices": [
+              "annoying",
+              "what's wrong with it?"
+            ]
+          },
+          "displayAdSource": null
+        },
+        {
+          "data": {},
+          "id": "rc-ec2c2717fa97a1",
+          "type": "recap",
+          "title": "Recap of \"Studying\" Abroad",
+          "note": null,
+          "modules": [],
+          "displayAdSource": null
+        }
+      ]
+    },
+    "versionId": "628d137d",
+    "title": "\"Studying\" Abroad",
+    "id": "e-4",
+    "lastUpdated": "2014-08-14T14:20:29.846Z",
+    "org": "o-114",
+    "status": "active",
+    "type": "minireel",
+    "user": "e2e-12224"
+  },
+  {
+    "access": "public",
+    "appUri": "rumble",
+    "created": "2014-07-17T14:01:46.277Z",
+    "data": {
+      "title": "War, good god y'all.  Listen to me….it aint nothing but a heartbreak",
+      "mode": "lightbox",
+      "autoplay": true,
+      "displayAdSource": "cinema6",
+      "videoAdSource": "cinema6",
+      "videoAdSkip": 6,
+      "collateral": {
+        "splash": "/collateral/experiences/e-5/splash"
+      },
+      "splash": {
+        "source": "generated",
+        "ratio": "1-1",
+        "theme": "img-only"
+      },
+      "deck": [
+        {
+          "data": {
+            "modestbranding": 0,
+            "rel": 0,
+            "videoid": "01-2pNCZiNk"
+          },
+          "id": "rc-947872211cae9e",
+          "type": "youtube",
+          "title": "Edwin Starr Original Video.  Watch him get down in true 1960 fashion.",
+          "note": null,
+          "source": "YouTube",
+          "modules": [],
+          "displayAdSource": null
+        },
+        {
+          "data": {
+            "modestbranding": 0,
+            "rel": 0,
+            "videoid": "mn91L9goKfQ"
+          },
+          "id": "rc-ff6427dc90576f",
+          "type": "youtube",
+          "title": "Bruce Springstein, the boss tell's it like it is",
+          "note": null,
+          "source": "YouTube",
+          "modules": [],
+          "displayAdSource": null
+        },
+        {
+          "id": "rc-69d3eb48b094cc",
+          "type": "ad",
+          "ad": true,
+          "modules": [
+            "displayAd"
+          ],
+          "displayAdSource": "cinema6",
+          "data": {
+            "autoplay": true,
+            "source": "cinema6",
+            "skip": 6
+          }
+        },
+        {
+          "data": {
+            "modestbranding": 0,
+            "rel": 0,
+            "videoid": "41cJUliIuH0"
+          },
+          "id": "rc-886df94ed64f9b",
+          "type": "youtube",
+          "title": "Even Chris Tucker and Jackie Chan get in on the action",
+          "note": null,
+          "source": "YouTube",
+          "modules": [],
+          "displayAdSource": null
+        },
+        {
+          "data": {
+            "modestbranding": 0,
+            "rel": 0,
+            "videoid": "B-COQCvwgP8"
+          },
+          "id": "rc-1fbdb12610bc23",
+          "type": "youtube",
+          "title": "These kids certainly get it!",
+          "note": null,
+          "source": "YouTube",
+          "modules": [],
+          "displayAdSource": null
+        },
+        {
+          "data": {
+            "modestbranding": 0,
+            "rel": 0,
+            "videoid": "fgWFxFg7-GU"
+          },
+          "id": "rc-effb987875a105",
+          "type": "youtube",
+          "title": "And then this…. Just Amazing! All Around the World",
+          "note": null,
+          "source": "YouTube",
+          "modules": [],
+          "displayAdSource": null
+        },
+        {
+          "data": {},
+          "id": "rc-624e2989b78277",
+          "type": "recap",
+          "title": "Recap of War, good god y'all.  Listen to me….it aint nothing but a heartbreak",
+          "note": null,
+          "modules": [],
+          "displayAdSource": null
+        }
+      ]
+    },
+    "versionId": "e699ee15",
+    "title": "War, good god y'all.  Listen to me….it aint nothing but a heartbreak",
+    "id": "e-5",
+    "lastUpdated": "2014-08-14T14:20:29.846Z",
+    "org": "o-114",
+    "status": "active",
+    "type": "minireel",
+    "user": "e2e-12225"
+  },
+  {
+    "access": "public",
+    "appUri": "rumble",
+    "created": "2014-05-12T16:24:55.093Z",
+    "data": {
+      "title": "This Visual Effects Genius Turned His Kid Into a Real-Life Action Hero",
+      "mode": "lightbox",
+      "autoplay": true,
+      "election": "el-696ca7da3466fe",
+      "displayAdSource": "cinema6",
+      "videoAdSource": "cinema6",
+      "videoAdSkip": 6,
+      "collateral": {
+        "splash": "/collateral/orgs/o-a61/7a2f.SuperKidPhoto.jpg"
+      },
+      "splash": {
+        "ratio": "3-2",
+        "source": "generated",
+        "theme": "img-only"
+      },
+      "deck": [
+        {
+          "data": {
+            "modestbranding": 0,
+            "rel": 0,
+            "videoid": "M26RufAG1yw"
+          },
+          "id": "rc-7c7cfc2ed7dab4",
+          "type": "youtube",
+          "title": "Light Saber",
+          "note": "Every kid imagines the floor is lava, that Lego gun is really a Star Wars blaster, or they've really got Batman's grappling hook. But not every kid has a Dreamworks animator for a dad.",
+          "source": "YouTube",
+          "modules": [
+            "ballot"
+          ],
+          "ballot": {
+            "prompt": "How will this kid use the Force?",
+            "choices": [
+              "For good?",
+              "For Evil?"
+            ]
+          },
+          "displayAdSource": null
+        },
+        {
+          "data": {
+            "modestbranding": 0,
+            "rel": 0,
+            "videoid": "el5TwST_Hso"
+          },
+          "id": "rc-8e5cadbfc55468",
+          "type": "youtube",
+          "title": "Batman",
+          "note": "\"As a man, I’m flesh and blood; I can be ignored, I can be destroyed. But as a symbol… as a symbol I can be incorruptible. I can be everlasting.\"",
+          "source": "YouTube",
+          "modules": [
+            "ballot"
+          ],
+          "ballot": {
+            "prompt": "Who was a cooler Batman?",
+            "choices": [
+              "Bale",
+              "Keaton"
+            ]
+          },
+          "displayAdSource": null
+        },
+        {
+          "id": "rc-b718b45636d861",
+          "type": "ad",
+          "ad": true,
+          "modules": [
+            "displayAd"
+          ],
+          "displayAdSource": "cinema6",
+          "data": {
+            "autoplay": true,
+            "source": "cinema6",
+            "skip": 6
+          }
+        },
+        {
+          "data": {
+            "modestbranding": 0,
+            "rel": 0,
+            "videoid": "dB-0FOX_Lw0"
+          },
+          "id": "rc-a60b1ec8897ffd",
+          "type": "youtube",
+          "title": "Lego Gun",
+          "note": "You cannot run from the Lego Gun!",
+          "source": "YouTube",
+          "modules": [],
+          "displayAdSource": null
+        },
+        {
+          "data": {
+            "modestbranding": 0,
+            "rel": 0,
+            "videoid": "qwEojbo665U"
+          },
+          "id": "rc-38523f8fbaeb40",
+          "type": "youtube",
+          "title": "McDonalds playground rules",
+          "note": "You bring the kids, we’ll make the party. Super-fun for the kids, stress-free for you! We’ve got this party thing down to a science: Happy Meals, cake, decorations, party favors.",
+          "source": "YouTube",
+          "modules": [
+            "ballot"
+          ],
+          "ballot": {
+            "prompt": "Who wins in a fight?",
+            "choices": [
+              "Hamburglar",
+              "Grimace"
+            ]
+          },
+          "displayAdSource": null
+        },
+        {
+          "data": {},
+          "id": "rc-f927b9fc5ba8bd",
+          "type": "recap",
+          "title": "Recap of This Visual Effects Genius Turned His Kid Into a Real-Life Action Hero",
+          "note": null,
+          "modules": [],
+          "displayAdSource": null
+        }
+      ]
+    },
+    "versionId": "c6a732e0",
+    "title": "This Visual Effects Genius Turned His Kid Into a Real-Life Action Hero",
+    "id": "e-6",
+    "lastUpdated": "2014-08-14T14:20:29.846Z",
+    "org": "e2e-org",
+    "status": "active",
+    "type": "minireel",
+    "user": "e2e-light-user"
+  }
+]

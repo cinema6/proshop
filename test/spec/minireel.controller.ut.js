@@ -9,6 +9,8 @@
                 $log,
                 $q,
                 MinireelsCtrl,
+                ConfirmDialogService,
+                CollateralService,
                 account,
                 content,
                 appData,
@@ -52,12 +54,24 @@
                     {
                         id: 'e-1',
                         title: 'Great Minireel',
-                        user: 'u-1'
+                        user: 'u-1',
+                        data: {
+                            collateral: {
+                                splash: '/collateral/e-1/splash'
+                            },
+                            splash: {}
+                        }
                     },
                     {
                         id: 'e-2',
                         title: 'Awesome Minireel',
-                        user: 'u-2'
+                        user: 'u-2',
+                        data: {
+                            collateral: {
+                                splash: '/collateral/e-2/splash'
+                            },
+                            splash: {}
+                        }
                     }
                 ];
 
@@ -83,8 +97,13 @@
                     $q = $injector.get('$q');
                     $rootScope = $injector.get('$rootScope');
 
+                    CollateralService = $injector.get('CollateralService');
+                    ConfirmDialogService = $injector.get('ConfirmDialogService');
                     account = $injector.get('account');
                     content = $injector.get('content');
+
+                    spyOn(ConfirmDialogService, 'display');
+                    spyOn(ConfirmDialogService, 'close');
 
                     spyOn(account, 'getOrgs');
                     spyOn(account, 'getUser');
@@ -101,13 +120,18 @@
                     account.getUsers.and.returnValue(account.getUsers.deferred.promise);
 
                     spyOn(content, 'getExperiencesByOrg');
-                    spyOn(content, 'convertExperienceForCopy');
+                    spyOn(content, 'convertExperienceForCopy').and.callThrough();
+                    spyOn(content, 'postExperience');
+                    spyOn(content, 'putExperience');
 
                     content.getExperiencesByOrg.deferred = $q.defer();
                     content.getExperiencesByOrg.and.returnValue(content.getExperiencesByOrg.deferred.promise);
 
-                    content.convertExperienceForCopy.deferred = $q.defer();
-                    content.convertExperienceForCopy.and.returnValue(content.convertExperienceForCopy.deferred.promise);
+                    content.postExperience.deferred = $q.defer();
+                    content.postExperience.and.returnValue(content.postExperience.deferred.promise);
+
+                    content.putExperience.deferred = $q.defer();
+                    content.putExperience.and.returnValue(content.postExperience.deferred.promise);
 
                     $log.context = function(){ return $log; }
 
@@ -169,7 +193,11 @@
 
                 describe('filterExperiences()', function() {
                     it('should filter experiences by title', function() {
-                        MinireelsCtrl.getExperiences(mockOrgs[0]);
+                        $scope.$apply(function() {
+                            account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
+                        });
+
+                        $scope.data.org = $scope.data.orgs[0];
 
                         $scope.$apply(function() {
                             content.getExperiencesByOrg.deferred.resolve(angular.copy(mockExperiences));
@@ -195,54 +223,210 @@
                     });
                 });
 
-                describe('getExperiences()', function() {
-                    it('should call the content service', function() {
-                        MinireelsCtrl.getExperiences(mockOrgs[0]);
-
-                        expect(content.getExperiencesByOrg).toHaveBeenCalledWith(mockOrgs[0].id);
-                    });
-
-                    it('should make data available on the scope if experience call is successful', function() {
-                        MinireelsCtrl.getExperiences(mockOrgs[0]);
-
-                        $scope.$apply(function() {
-                            content.getExperiencesByOrg.deferred.resolve(angular.copy(mockExperiences));
-                        });
-
-                        expect(MinireelsCtrl.action).toBe('experiences');
-                        expect($scope.data.query).toBe(null);
-                        expect($scope.data.appData.experiences).toEqual(mockExperiences);
-                        expect($scope.data.experiences).toEqual(mockExperiences);
-                        expect(account.getUser).toHaveBeenCalledWith(mockExperiences[0].user);
-                        expect(account.getUser).toHaveBeenCalledWith(mockExperiences[1].user);
-                    });
-
-                    it('should replace the experience.user with the returned user object if successful', function() {
-                        MinireelsCtrl.getExperiences(mockOrgs[0]);
-
-                        $scope.$apply(function() {
-                            content.getExperiencesByOrg.deferred.resolve(angular.copy(mockExperiences));
-                            account.getUser.deferred.resolve(angular.copy(mockUser));
-                        });
-
-                        expect($scope.data.experiences[0].user).toEqual(mockUser);
-                        expect($scope.data.experiences[1].user).toEqual(mockUser);
-                    });
-                });
-
                 describe('startExperienceCopy()', function() {
                     it('should set the action to "copy", null out any org data on the scope, and convert the experience for copying', function() {
+                        $scope.$apply(function() {
+                            account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
+                        });
+
                         MinireelsCtrl.startExperienceCopy(mockExperiences[0]);
 
                         expect(MinireelsCtrl.action).toBe('copy');
                         expect($scope.data.org).toBe(null);
-                        expect(content.convertExperienceForCopy).toHaveBeenCalledWith(mockExperiences[0]);
+                        expect($scope.data.user).toBe(null);
+                        expect($scope.data.orgs).toEqual(mockOrgs);
+                        expect(content.convertExperienceForCopy).toHaveBeenCalled();
                     });
                 });
 
-                describe('saveCopy()', function() {
-                    it('should convert the experience and save it', function() {
+                describe('confirmCopy()', function() {
+                    var onAffirm, onCancel;
 
+                    beforeEach(function() {
+                        $scope.$apply(function() {
+                            // resolve initial Orgs load
+                            account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
+                        });
+
+                        // select an Org to see experiences
+                        $scope.data.org = $scope.data.orgs[0];
+
+                        $scope.$apply(function() {
+                            // resolve with Org's experiences
+                            content.getExperiencesByOrg.deferred.resolve(angular.copy(mockExperiences));
+                        });
+
+                        // select an experience to copy
+                        MinireelsCtrl.startExperienceCopy($scope.data.experiences[0]);
+
+                        // select a different Org to copy to
+                        $scope.data.org = $scope.data.orgs[1];
+
+                        $scope.$apply(function() {
+                            // resolve with Org's experiences
+                            account.getUsers.deferred.resolve(angular.copy(mockUsers));
+                        });
+
+                        $scope.data.user = $scope.data.users[0];
+
+                        $scope.$digest();
+
+                        MinireelsCtrl.confirmCopy();
+
+                        onAffirm = ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm;
+                        onCancel = ConfirmDialogService.display.calls.mostRecent().args[0].onCancel;
+                    });
+
+                    it('pop up a ConfirmDialog', function() {
+                        expect(ConfirmDialogService.display).toHaveBeenCalled();
+                    });
+
+                    describe('when affirmed', function() {
+                        beforeEach(function() {
+                            spyOn(CollateralService, 'generateCollage');
+                            spyOn(CollateralService, 'setSplash');
+
+                            CollateralService.generateCollage.deferred = $q.defer();
+                            CollateralService.generateCollage.and.returnValue(CollateralService.generateCollage.deferred.promise);
+
+                            CollateralService.setSplash.deferred = $q.defer();
+                            CollateralService.setSplash.and.returnValue(CollateralService.setSplash.deferred.promise);
+
+                            onAffirm();
+                        });
+
+                        it('should POST the experience without a splash src', function() {
+                            expect(content.postExperience).toHaveBeenCalled();
+                        });
+
+                        describe('if POST is successful', function() {
+                            describe('if splash needs to be generated', function() {
+                                var postedExperience;
+
+                                beforeEach(function() {
+                                    postedExperience = {
+                                        id: 'e-1',
+                                        data: {
+                                            collateral: {},
+                                            splash: {
+                                                source: 'generated',
+                                                ratio: '3-2'
+                                            }
+                                        }
+                                    };
+
+                                    $scope.$apply(function() {
+                                        content.postExperience.deferred.resolve(postedExperience);
+                                    });
+                                });
+
+                                it('should generate splash image if needed', function() {
+                                    expect(CollateralService.generateCollage).toHaveBeenCalledWith({
+                                        minireel: postedExperience,
+                                        width: 600,
+                                        name: 'splash',
+                                        cache: false
+                                    });
+
+                                    $scope.$apply(function() {
+                                        CollateralService.generateCollage.deferred.resolve({'3-2': '/collateral/newfile'});
+                                    });
+
+                                    expect(postedExperience.data.collateral.splash).toBe('/collateral/newfile');
+                                });
+
+                                it('should popup another ConfirmDialog if error', function() {
+                                    $scope.$apply(function() {
+                                        CollateralService.generateCollage.deferred.reject('Error generating splash');
+                                    });
+
+                                    expect(ConfirmDialogService.display).toHaveBeenCalled();
+                                    expect(ConfirmDialogService.display.calls.count()).toBe(2);
+                                });
+                            });
+
+                            describe('if splash is specified and needs to be copied', function() {
+                                var postedExperience;
+
+                                beforeEach(function() {
+                                    postedExperience = {
+                                        id: 'e-1',
+                                        data: {
+                                            collateral: {},
+                                            splash: {
+                                                source: 'specified'
+                                            }
+                                        }
+                                    };
+
+                                     $scope.$apply(function() {
+                                        content.postExperience.deferred.resolve(postedExperience);
+                                    });
+                                });
+
+                                it('should copy specified splash if needed', function() {
+                                    expect(CollateralService.setSplash).toHaveBeenCalledWith('/collateral/e-1/splash',postedExperience);
+
+                                    $scope.$apply(function() {
+                                        CollateralService.setSplash.deferred.resolve({
+                                            data: [{path: 'collateral/newfile'}]
+                                        });
+                                    });
+
+                                    expect(postedExperience.data.collateral.splash).toBe('/collateral/newfile');
+                                });
+
+                                it('should popup another ConfirmDialog if error', function() {
+                                    $scope.$apply(function() {
+                                        CollateralService.setSplash.deferred.reject('Error generating splash');
+                                    });
+
+                                    expect(ConfirmDialogService.display).toHaveBeenCalled();
+                                    expect(ConfirmDialogService.display.calls.count()).toBe(2);
+                                });
+                            });
+
+                            it('should PUT the experience back again after getting splash', function() {
+                                var postedExperience = {
+                                    id: 'e-1',
+                                    data: {
+                                        collateral: {},
+                                        splash: {
+                                            source: 'generated',
+                                            ratio: '3-2'
+                                        }
+                                    }
+                                };
+
+                                $scope.$apply(function() {
+                                    content.postExperience.deferred.resolve(postedExperience);
+                                });
+
+                                $scope.$apply(function() {
+                                    CollateralService.generateCollage.deferred.resolve({'3-2': '/collateral/newfile'});
+                                });
+
+                                expect(content.putExperience).toHaveBeenCalled();
+                            });
+                        });
+
+                        describe('if POST throws error', function() {
+                            it('should popup another ConfirmDialog if error', function() {
+                                $scope.$apply(function() {
+                                    content.postExperience.deferred.reject('Error POSTing experience');
+                                });
+
+                                expect(ConfirmDialogService.display).toHaveBeenCalled();
+                                expect(ConfirmDialogService.display.calls.count()).toBe(2);
+                            });
+                        });
+                    });
+
+                    describe('when canceled', function() {
+                        it('should close the dialog', function() {
+                            onCancel();
+                            expect(ConfirmDialogService.close).toHaveBeenCalled();
+                        });
                     });
                 });
             });
@@ -262,11 +446,44 @@
 
             describe('$watcher', function() {
                 describe('data.org', function() {
+                    beforeEach(function() {
+                        $scope.$apply(function() {
+                            account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
+                        });
+
+                        $scope.data.org = $scope.data.orgs[0];
+                        $scope.$digest();
+                    });
+
+                    it('should load experiences if in "orgs" or "experiences" view', function() {
+                        expect(content.getExperiencesByOrg).toHaveBeenCalledWith('o-1');
+
+                        $scope.$apply(function() {
+                            content.getExperiencesByOrg.deferred.resolve(angular.copy(mockExperiences));
+                        });
+
+                        expect(MinireelsCtrl.action).toBe('experiences');
+                        expect($scope.data.query).toBe(null);
+                        expect($scope.data.appData.experiences).toEqual(mockExperiences);
+                        expect($scope.data.experiences).toEqual(mockExperiences);
+                        expect(account.getUser).toHaveBeenCalledWith('u-1');
+                        expect(account.getUser).toHaveBeenCalledWith('u-2');
+                    });
+
+                    it('should replace the experience.user with the returned user object if successful', function() {
+                        $scope.$apply(function() {
+                            content.getExperiencesByOrg.deferred.resolve(angular.copy(mockExperiences));
+                            account.getUser.deferred.resolve(angular.copy(mockUser));
+                        });
+
+                        expect($scope.data.experiences[0].user).toEqual(mockUser);
+                        expect($scope.data.experiences[1].user).toEqual(mockUser);
+                    });
+
                     it('should add org data to experience for copying', function() {
                         MinireelsCtrl.startExperienceCopy(mockExperiences[0]);
 
                         $scope.$apply(function() {
-                            content.convertExperienceForCopy.deferred.resolve(angular.copy(mockExperiences[0]));
                             $scope.data.org = mockOrgs[0];
                         });
 
@@ -274,7 +491,6 @@
                         expect($scope.data.experience._data).toEqual({
                             org: mockOrgs[0].id,
                             branding: undefined,
-                            adConfig: undefined,
                             config: {
                                 minireelinator: {
                                     minireelDefaults: {
@@ -294,7 +510,6 @@
                         MinireelsCtrl.startExperienceCopy(mockExperiences[0]);
 
                         $scope.$apply(function() {
-                            content.convertExperienceForCopy.deferred.resolve(angular.copy(mockExperiences[0]));
                             account.getUsers.deferred.resolve(angular.copy(mockUsers));
                             $scope.data.org = mockOrgs[0];
                         });
@@ -308,28 +523,11 @@
                         MinireelsCtrl.startExperienceCopy(mockExperiences[0]);
 
                         $scope.$apply(function() {
-                            content.convertExperienceForCopy.deferred.resolve(angular.copy(mockExperiences[0]));
                             $scope.data.org = mockOrgs[0];
                             $scope.data.user = mockUsers[0];
                         });
 
                         expect($scope.data.experience._data.user).toEqual(mockUsers[0]);
-                    });
-                });
-
-                describe('self.action', function() {
-                    it('should reset the org whenever action is "orgs"', function() {
-                        MinireelsCtrl.action = 'orgs';
-                        $scope.data.org = mockOrgs[0];
-                        $scope.$digest();
-
-                        MinireelsCtrl.action = 'experiences';
-                        $scope.$digest();
-
-                        MinireelsCtrl.action = 'orgs';
-                        $scope.$digest();
-
-                        expect($scope.data.org).toBe(null);
                     });
                 });
             });

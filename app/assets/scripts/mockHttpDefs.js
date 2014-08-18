@@ -120,9 +120,33 @@ define(['mockHttp'], function(mockHttp){
      * User Endpoints
      */
 
+     //GET
+
+    httpMocks.whenGET('/api/account/user/e2e-12221')
+        .proxy('mocks/account/user/e2e-user.json');
+
+    httpMocks.whenGET('/api/account/user/e2e-12222')
+        .proxy('mocks/account/user/e2e-user.json');
+
+    httpMocks.whenGET('/api/account/user/e2e-12223')
+        .proxy('mocks/account/user/e2e-user.json');
+
+    httpMocks.whenGET('/api/account/user/e2e-12224')
+        .proxy('mocks/account/user/e2e-user.json');
+
+    httpMocks.whenGET('/api/account/user/e2e-12225')
+        .proxy('mocks/account/user/e2e-user.json');
+
+    httpMocks.whenGET('/api/account/user/e2e-light-user')
+        .proxy('mocks/account/user/e2e-user.json');
+
+    // POST
+
     httpMocks.whenPOST('/api/account/user', function() {
         this.proxy('mocks/account/user/e2e-user.json');
     });
+
+    // PUT
 
     httpMocks.whenPUT('/api/account/user/e2e-12221', function() {
         this.proxy('mocks/account/user/e2e-user.json');
@@ -148,6 +172,8 @@ define(['mockHttp'], function(mockHttp){
     httpMocks.whenPUT('/api/account/user/e2e-light-user', function() {
         this.proxy('mocks/account/user/e2e-user.json');
     });
+
+    // DELETE
 
     httpMocks.whenDELETE('/api/account/user/e2e-12221', function() {
         this.proxy('mocks/account/user/e2e-user.json');
@@ -194,5 +220,60 @@ define(['mockHttp'], function(mockHttp){
 
     httpMocks.whenGET('/api/account/users?org=e2e-org')
         .proxy('mocks/account/users/e2e-org-users.json');
+
+    /*
+     * Content Endpoints
+     */
+
+    httpMocks.whenPOST('/api/collateral/splash/e-1234?noCache=true', function() {
+        this.proxy('mocks/collateral/splash.json');
+    });
+
+    httpMocks.whenPOST('/api/collateral/splash/e-put-fail?noCache=true', function() {
+        this.proxy('mocks/collateral/splash.json');
+    });
+
+    httpMocks.whenPOST('/api/collateral/splash/e-generate-fail?noCache=true', function() {
+        this.respond(400, 'Failed to generate splash');
+    });
+
+    httpMocks.whenGET('/api/content/experiences?org=e2e-org')
+        .proxy('mocks/content/experiences.json');
+
+    httpMocks.whenGET('/api/content/experiences?org=o-111')
+        .proxy('mocks/content/experiences.json');
+
+    httpMocks.whenGET('/api/content/experiences?org=o-112')
+        .proxy('mocks/content/experiences.json');
+
+    httpMocks.whenGET('/api/content/experiences?org=o-113')
+        .proxy('mocks/content/experiences.json');
+
+    httpMocks.whenGET('/api/content/experiences?org=o-114')
+        .proxy('mocks/content/experiences.json');
+
+    httpMocks.whenPOST('/api/content/experience', function(rqs) {
+        switch (rqs.data.data.branding) {
+        case 'post_fail':
+            this.respond(404, 'Failed to post experience copy');
+            break;
+        case 'put_fail':
+            this.proxy('mocks/content/put-fail-experience.json');
+            break;
+        case 'generated_fail':
+            this.proxy('mocks/content/generated-fail-experience.json');
+            break;
+        default:
+            this.proxy('mocks/content/experience.json');
+        }
+    });
+
+    httpMocks.whenPUT('/api/content/experience/e-1234', function() {
+        this.respond(200, 'Successfully re-saved experience');
+    });
+
+    httpMocks.whenPUT('/api/content/experience/e-put-fail', function() {
+        this.respond(400, 'Failed to re-save experience');
+    });
 
 });

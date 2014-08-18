@@ -45,12 +45,33 @@ define(['angular','c6ui'],function(angular,c6ui) {
                 });
             };
 
+            this.putExperience = function(exp) {
+                var id = exp.id;
+                delete exp.id;
+                delete exp.org;
+                delete exp.created;
+
+                return httpWrapper({
+                    method: 'PUT',
+                    url: c6UrlMaker('content/experience/'+id, 'api'),
+                    data: exp
+                });
+            };
+
+            this.postExperience = function(exp) {
+                return httpWrapper({
+                    method: 'POST',
+                    url: c6UrlMaker('content/experience','api'),
+                    data: exp
+                });
+            };
+
             this.convertExperienceForCopy = function(exp) {
                 exp.origExpId = exp.id;
                 exp.origOrg = exp.org;
-                exp.origUser = exp.user;
+                exp.origUser = exp.user.id;
                 exp.status = 'active';
-                exp.access = 'private';
+                exp.access = 'public';
 
                 return exp;
             };
