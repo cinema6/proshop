@@ -456,7 +456,7 @@
                     });
 
                     it('should load experiences if in "orgs" or "experiences" view', function() {
-                        expect(content.getExperiencesByOrg).toHaveBeenCalledWith(mockOrgs[0].id);
+                        expect(content.getExperiencesByOrg).toHaveBeenCalledWith('o-1');
 
                         $scope.$apply(function() {
                             content.getExperiencesByOrg.deferred.resolve(angular.copy(mockExperiences));
@@ -466,8 +466,8 @@
                         expect($scope.data.query).toBe(null);
                         expect($scope.data.appData.experiences).toEqual(mockExperiences);
                         expect($scope.data.experiences).toEqual(mockExperiences);
-                        expect(account.getUser).toHaveBeenCalledWith(mockExperiences[0].user);
-                        expect(account.getUser).toHaveBeenCalledWith(mockExperiences[1].user);
+                        expect(account.getUser).toHaveBeenCalledWith('u-1');
+                        expect(account.getUser).toHaveBeenCalledWith('u-2');
                     });
 
                     it('should replace the experience.user with the returned user object if successful', function() {
