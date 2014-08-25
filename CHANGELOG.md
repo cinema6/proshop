@@ -1,8 +1,11 @@
 # ProShop
 
+## v0.5.3 (August 25, 2014)
+
 * *[v0.5.3]*
     *[FIX]: Minireel table properly displays branding
     *[FEATURE]: Ability to copy a minireel from one Org to another
+* *[/v0.5.3]*
 
 ## v0.5.2 (August 12, 2014)
 
