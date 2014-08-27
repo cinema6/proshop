@@ -139,7 +139,7 @@ define(['account','content','splash'],function(account,content,splash) {
                 delete exp.title;
                 delete exp.lastUpdated;
                 delete exp.versionId;
-                delete exp.adConfig;
+                delete exp.data.adConfig;
                 delete exp._data;
 
                 return exp;
