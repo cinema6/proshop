@@ -1,7 +1,10 @@
 # ProShop
 
+## v0.5.4 (August 25, 2014)
+
 * *[v0.5.4]*
     *[FIX]: Make sure minireel ad configuration isn't copied during copy process
+* *[/v0.5.4]*
 
 ## v0.5.3 (August 25, 2014)
 
