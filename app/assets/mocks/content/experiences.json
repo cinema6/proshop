@@ -19,6 +19,17 @@
         "ratio": "3-2",
         "theme": "img-text-overlay"
       },
+      "adConfig": {
+          "video": {
+              "firstPlacement": 1,
+              "frequency": 3,
+              "waterfall": "cinema6",
+              "skip": 6
+          },
+          "display": {
+              "waterfall": "cinema6"
+          }
+      },
       "deck": [
         {
           "data": {

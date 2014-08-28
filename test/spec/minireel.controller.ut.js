@@ -55,17 +55,20 @@
                         id: 'e-1',
                         title: 'Great Minireel',
                         user: 'u-1',
+                        org: 'o-1',
                         data: {
                             collateral: {
                                 splash: '/collateral/e-1/splash'
                             },
-                            splash: {}
+                            splash: {},
+                            adConfig: {}
                         }
                     },
                     {
                         id: 'e-2',
                         title: 'Awesome Minireel',
                         user: 'u-2',
+                        org: 'o-2',
                         data: {
                             collateral: {
                                 splash: '/collateral/e-2/splash'
@@ -254,6 +257,7 @@
                         $scope.$apply(function() {
                             // resolve with Org's experiences
                             content.getExperiencesByOrg.deferred.resolve(angular.copy(mockExperiences));
+                            account.getUser.deferred.resolve(angular.copy(mockUsers[0]));
                         });
 
                         // select an experience to copy
@@ -295,8 +299,29 @@
                             onAffirm();
                         });
 
-                        it('should POST the experience without a splash src', function() {
-                            expect(content.postExperience).toHaveBeenCalled();
+                        it('should POST the experience without a splash src or adConfig', function() {
+                            expect(content.postExperience).toHaveBeenCalledWith({
+                                user: 'u-1', // set to target user
+                                data: {
+                                    collateral: {
+                                        splash: null
+                                    },
+                                    splash: {
+                                        ratio: '3-2',
+                                        theme: 'img-text-overlay', // set by default from target org
+                                    },
+                                    title: 'Great Minireel', // copied from exp
+                                    branding: undefined,
+                                    mode: 'light', // set by default
+                                    autoplay: true, // set by default
+                                },
+                                origExpId: 'e-1',
+                                origOrg: 'o-1',
+                                origUser: 'u-1',
+                                status: 'active', // set by default in content service
+                                access: 'public', // set by default in content service
+                                org: 'o-2' // set to target org
+                            });
                         });
 
                         describe('if POST is successful', function() {
