@@ -85,6 +85,101 @@
                 float:right;
                 margin:10px;
             }
+
+            .btn, .btn:focus {
+                background: #eee;
+                color: #626262;
+                border: 1px solid #ddd;
+                border-radius: 0.1875em;
+                font-weight: 700;
+                line-height: 1;
+                padding: 0.5625em 1.375em;
+                margin: 0;
+                display: inline-block;
+                box-sizing: content-box;
+                vertical-align: middle;
+                height: 1em;
+                -webkit-transition: all 0.25s;
+                transition: all 0.25s;
+            }
+
+            .ui__clickDropMenu {
+                position: absolute;
+                z-index: 1;
+                background: #fff;
+                border: 2px solid #ddd;
+            }
+
+            .ui__clickDropBtn {
+                display: block;
+                border: 0;
+                margin: 0;
+                padding: 0.5rem 1rem;
+                font-size: 0.8125em;
+                background: none;
+                width: 10em;
+                text-align: left;
+            }
+
+            .ui__clickDropBtn--current {
+                background: #ddd;
+            }
+
+            .btnGroup {
+                display: inline-block;
+                vertical-align: middle;
+            }
+
+            .clearfix:before, .clearfix:after {
+                content: ' ';
+                display: table;
+            }
+
+            .btn:disabled {
+                opacity: 0.5;
+            }
+            .btnGroup .btn {
+                float: left;
+                border-radius: 0;
+            }
+            .btnGroup .btn:first-child {
+                border-radius: 0.1875em 0 0 0.1875em;
+            }
+            .pager__pageIndicator .forms__textField {
+                width: 2em;
+                margin: -0.25em 0 0 0;
+                text-align: center;
+                background: #fff;
+            }
+            .forms__textField {
+                border: 1px solid #ddd;
+                padding: 0 0.5em;
+                background: #eee;
+                -webkit-transition: all 0.25s;
+                transition: all 0.25s;
+                font-size: 0.875em;
+                font-weight: 300;
+            }
+            .btn__label {
+                font-size: 0.875em;
+                vertical-align: middle;
+            }
+            .btnGroup .btn:last-child {
+                border-radius: 0 0.1875em 0.1875rem 0;
+            }
+            .ir {
+                background-color: transparent;
+                border: 0;
+                width: 0;
+                height: 0;
+                overflow: hidden;
+                display: block;
+                position: absolute;
+            }
+            .pager__group {
+                float: right;
+                padding: 20px 0;
+            }
         </style>
         <!--C6INJECT-->
     </head>
