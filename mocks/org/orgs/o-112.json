@@ -1,0 +1,35 @@
+{
+  "name": "Test Org 2",
+  "minAdCount": 1,
+  "id": "o-112",
+  "created": "2014-06-13T19:28:39.408Z",
+  "lastUpdated": "2014-06-13T19:28:39.408Z",
+  "status": "active",
+  "tag": "foo",
+  "config":{},
+  "adConfig": {
+    "video" : {
+      "firstPlacement" : 1,
+      "frequency" : 3,
+      "waterfall" : "cinema6",
+      "skip": 6
+    },
+    "display" : {
+      "waterfall" : "cinema6"
+    }
+  },
+  "waterfalls": {
+    "video": [
+      "cinema6",
+      "cinema6-publisher",
+      "publisher",
+      "publisher-cinema6"
+    ],
+    "display": [
+      "cinema6",
+      "cinema6-publisher",
+      "publisher",
+      "publisher-cinema6"
+    ]
+  }
+}

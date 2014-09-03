@@ -28,6 +28,16 @@
             options: {
                 middleware: function(connect,options) {
                     return [
+                        require('http-mock')({
+                            '/api/auth': 'mocks/auth/main.js',
+                            '/api/account/user': 'mocks/user/main.js',
+                            '/api/account/users': 'mocks/user/main.js',
+                            '/api/account/org': 'mocks/org/main.js',
+                            '/api/account/orgs': 'mocks/org/main.js',
+                            '/api/content/experience': 'mocks/content/main.js',
+                            '/api/content/experiences': 'mocks/content/main.js',
+                            '/api/collateral/splash': 'mocks/collateral/main.js'
+                        }),
                         require('grunt-connect-proxy/lib/utils').proxyRequest,
                         require('connect-livereload')({
                             rules : [

@@ -1,0 +1,49 @@
+{
+    "name": "Example Org 3",
+    "minAdCount": 2,
+    "id": "o-113",
+    "created": "2014-06-13T19:28:39.408Z",
+    "lastUpdated": "2014-09-03T20:32:02.211Z",
+    "status": "active",
+    "tag": "baz",
+    "config": {
+        "minireelinator": {
+            "embedTypes": [
+                "script"
+            ],
+            "minireelDefaults": {
+                "mode": "light",
+                "autoplay": true,
+                "splash": {
+                    "ratio": "3-2",
+                    "theme": "img-text-overlay"
+                }
+            },
+            "embedDefaults": {
+                "size": null
+            }
+        }
+    },
+    "waterfalls": {
+        "video": [
+            "cinema6",
+            "cinema6-publisher"
+        ],
+        "display": [
+            "cinema6",
+            "cinema6-publisher"
+        ]
+    },
+    "adConfig": {
+        "video": {
+            "firstPlacement": 2,
+            "frequency": 0,
+            "waterfall": "cinema6",
+            "skip": 6
+        },
+        "display": {
+            "waterfall": "cinema6"
+        }
+    },
+    "branding": "sdfdf"
+}
