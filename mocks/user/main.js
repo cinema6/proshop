@@ -54,6 +54,7 @@ module.exports = function(http) {
             user = userCache.user,
             currentTime = (new Date()).toISOString(),
             newUser = extend(request.body, {
+                id: id,
                 created: currentTime,
                 lastUpdated: currentTime
             });
