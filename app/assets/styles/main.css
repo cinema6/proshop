@@ -1,0 +1,196 @@
+.ui__modal--confirmation {
+    width: 28em;
+    height: 10em;
+    margin: 0 0 0 -15.5em;
+    padding: 1.5em;
+}
+
+.ui__overlay {
+    background: rgb(0,0,0);
+    background: rgba(0,0,0,0.8);
+    position: fixed;
+    z-index: 10;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.ui__modal {
+    width: 40em;
+    height: 23.75em;
+    padding: 0 2.25em;
+    margin: 0 0 0 -20em;
+    position: absolute;
+    z-index: 11;
+    top: 5em;
+    left: 50%;
+    background: #fff;
+}
+
+.has-error .help-block, .has-error .control-label, .has-error .radio, .has-error .checkbox, .has-error .radio-inline, .has-error .checkbox-inline {
+    color: #d61212;
+}
+
+.text-danger {
+    color: #d61212;
+}
+
+.help-block {
+    display: inline-block;
+}
+
+input {
+    padding-right: 5px !important;
+    padding-left: 5px !important;
+    margin-right: 5px;
+}
+
+.modal__title {
+    line-height: 1.5em;
+}
+
+.modal__btnFooter {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #eee;
+    /*height: 3em;*/
+}
+.modal__btn--first {
+    float:left;
+    margin: 10px;
+}
+.modal__btn--last {
+    float:right;
+    margin:10px;
+}
+
+.btn, .btn:focus {
+    background: #eee;
+    color: #626262;
+    border: 1px solid #ddd;
+    border-radius: 0.1875em;
+    font-weight: 700;
+    line-height: 1;
+    padding: 0.5625em 1.375em;
+    margin: 0;
+    display: inline-block;
+    box-sizing: content-box;
+    vertical-align: middle;
+    height: 1em;
+    -webkit-transition: all 0.25s;
+    transition: all 0.25s;
+}
+
+.ui__clickDropMenu {
+    position: absolute;
+    z-index: 1;
+    background: #fff;
+    border: 2px solid #ddd;
+}
+
+.ui__clickDropBtn {
+    display: block;
+    border: 0;
+    margin: 0;
+    padding: 0.5rem 1rem;
+    font-size: 0.8125em;
+    background: none;
+    width: 10em;
+    text-align: left;
+}
+
+.ui__clickDropBtn--current {
+    background: #ddd;
+}
+
+.btnGroup {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.clearfix:before, .clearfix:after {
+    content: ' ';
+    display: table;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+}
+.btnGroup .btn {
+    float: left;
+    border-radius: 0;
+}
+.btnGroup .btn:first-child {
+    border-radius: 0.1875em 0 0 0.1875em;
+}
+.pager__pageIndicator .forms__textField {
+    width: 2em;
+    margin: -0.25em 0 0 0;
+    text-align: center;
+    background: #fff;
+}
+.forms__textField {
+    border: 1px solid #ddd;
+    padding: 0 0.5em;
+    background: #eee;
+    -webkit-transition: all 0.25s;
+    transition: all 0.25s;
+    font-size: 0.875em;
+    font-weight: 300;
+}
+.btn__label {
+    font-size: 0.875em;
+    vertical-align: middle;
+}
+.btnGroup .btn:last-child {
+    border-radius: 0 0.1875em 0.1875rem 0;
+}
+.ir {
+    background-color: transparent;
+    border: 0;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    display: block;
+    position: absolute;
+}
+.pager__group {
+    float: right;
+    padding: 20px 0;
+}
+
+.fa, .faa:after, .fab:before {
+    font-family: 'FontAwesome';
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    display: inline-block;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.fa-caret-down:after {
+    content: '\f0d7';
+}
+
+.fa-caret-down:before {
+    content: '';
+}
+
+.btn.ui__clickDrop {
+    padding: 0.5625em 1.375em 0.5625em 0.775em;
+}
+
+/*.glyphicon-chevron-down:before {
+    content: "";
+}
+
+.glyphicon-chevron-down:after {
+    content: "\e114";
+}
+.ui__clickDrop.glyphicon {
+
+}*/
