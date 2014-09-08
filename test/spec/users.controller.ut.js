@@ -512,6 +512,45 @@
                     });
                 });
             });
+
+            describe('properties', function() {
+                describe('total', function() {
+                    it('should be undefined by default', function() {
+                        expect(UsersCtrl.total).toBe(undefined);
+                    });
+
+                    it('should be 1 if all results fit within the limit', function() {
+                        UsersCtrl.limit = 5;
+                        $scope.data.users = [{},{},{}];
+
+                        expect(UsersCtrl.total).toBe(1);
+
+                        $scope.data.users = [{},{},{},{},{},{},{}];
+
+                        expect(UsersCtrl.total).toBe(2);
+
+                        UsersCtrl.limit = 10;
+                        expect(UsersCtrl.total).toBe(1);
+                    });
+                });
+            });
+
+            describe('$watchers', function() {
+                describe('page + limit', function() {
+                    it('should set page to 1 if limit changes', function() {
+                        UsersCtrl.limit = 50;
+                        UsersCtrl.page = 2;
+
+                        $scope.$digest();
+                        expect(UsersCtrl.page).toBe(2);
+
+                        UsersCtrl.limit = 10;
+                        $scope.$digest();
+
+                        expect(UsersCtrl.page).toBe(1);
+                    });
+                });
+            });
         });
     });
 }());

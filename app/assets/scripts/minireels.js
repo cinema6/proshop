@@ -10,7 +10,6 @@ define(['account','content','splash'],function(account,content,splash) {
                 data = $scope.data;
 
             data.org = null;
-            self.action = 'orgs';
 
             function updateOrgs(orgs) {
                 data.appData.orgs = orgs;
@@ -242,6 +241,18 @@ define(['account','content','splash'],function(account,content,splash) {
                 data.query = null;
             }
 
+            self.action = 'orgs';
+            self.page = 1;
+            self.limit = 10;
+            self.limits = [5,10,50,100];
+            Object.defineProperties(self, {
+                total: {
+                    get: function() {
+                        return data.experiences && Math.ceil(data.experiences.length / self.limit);
+                    }
+                }
+            });
+
             $scope.tableHeaders = [
                 {label:'Choose an Org to view Minireels',value:'name'},
                 {label:'Status',value:'status'},
@@ -354,6 +365,25 @@ define(['account','content','splash'],function(account,content,splash) {
                 // some of the user's data to the experience before copying
                 if (self.action === 'copy') {
                     setUserExperienceData(newUser);
+                }
+            });
+
+            $scope.$watch(function() {
+                return self.page + ':' + self.limit;
+            }, function(newVal, oldVal) {
+                var samePage;
+
+                if (newVal === oldVal) { return; }
+
+                newVal = newVal.split(':');
+                oldVal = oldVal.split(':');
+
+                samePage = newVal[0] === oldVal[0];
+
+                if (self.page !== 1 && samePage) {
+                    /* jshint boss:true */
+                    return self.page = 1;
+                    /* jshint boss:false */
                 }
             });
 
