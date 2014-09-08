@@ -1,7 +1,7 @@
 define( [   'angular','ngAnimate','ngRoute','c6ui','c6log', 'c6defines',
-            'auth', 'login','users', 'orgs', 'minireels', 'mockHttp','mockHttpDefs','templates'],
+            'auth', 'login','users', 'orgs', 'minireels', 'templates'],
 function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
-            auth, login, users, orgs, minireels, mockHttp, mockHttpDefs, templates ) {
+            auth , login , users , orgs , minireels , templates ) {
     /* jshint -W106 */
     'use strict';
 
@@ -20,11 +20,6 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
             templates.name
         ])
         .constant('c6Defines',c6Defines)
-        .config(['$provide', function($provide) {
-            if (mockHttp.httpDecorator){
-                $provide.decorator('$http', ['$delegate', mockHttp.httpDecorator]);
-            }
-        }])
         .config(['c6UrlMakerProvider', function( c6UrlMakerProvider ) {
             c6UrlMakerProvider.location(c6Defines.kApiUrl, 'api');
         }])
