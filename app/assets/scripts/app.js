@@ -398,7 +398,6 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
 
         .filter('paginatorlimits', function() {
             return function(input, params) {
-                // console.log(input);
                 return input && input.slice(params[0],params[1]);
             };
         })

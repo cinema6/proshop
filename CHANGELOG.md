@@ -1,5 +1,8 @@
 # ProShop
 
+* *[v0.6.0]*
+    *[FEATURE]: Add pagination on Users, Orgs and Minireels pages
+
 ## v0.5.4 (August 25, 2014)
 
 * *[v0.5.4]*
