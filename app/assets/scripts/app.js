@@ -5,7 +5,8 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
     /* jshint -W106 */
     'use strict';
 
-    var jqLite = angular.element;
+    var jqLite = angular.element,
+        isArray = angular.isArray;
 
     return angular.module('c6.proshop', [
             ngAnimate.name,
@@ -248,9 +249,10 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
             };
         }])
 
-        .controller('PaginatorControlsController', ['$scope',
-        function                                   ( $scope ) {
+        .controller('PaginatorControlsController', ['$scope','c6Computed',
+        function                                   ( $scope , c6Computed ) {
             var self = this,
+                c = c6Computed($scope),
                 state = {
                     page: $scope.page
                 };
@@ -275,6 +277,13 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
                     }
                 }
             });
+            c(this, 'limitsObject', function() {
+                return ($scope.limits || [])
+                    .reduce(function(object, limit) {
+                        object[limit + ' per page'] = limit;
+                        return object;
+                    }, {});
+            }, ['limits']);
 
             this.goTo = function(page) {
                 /* jshint boss:true */
@@ -309,11 +318,15 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
 
         .directive('c6ClickOutside', ['$document','$timeout',
         function                     ( $document , $timeout ) {
+            function isInElement(child, container) {
+                return !!child && (child === container || isInElement(child.parentNode, container));
+            }
+
             return {
                 restrict: 'A',
                 link: function(scope, $element, attrs) {
                     function handleClick(event) {
-                        if (event.target === $element[0] || event.target.parentElement === $element[0]) {
+                        if (isInElement(event.target, $element[0])) {
                             return;
                         }
 
@@ -330,6 +343,56 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
                         $document.off('click', handleClick);
                     });
                 }
+            };
+        }])
+
+        .directive('c6Dropdown', ['c6Computed','$compile',
+        function                 ( c6Computed , $compile ) {
+            function link(scope, $element, attrs, Controller, transclude) {
+                var c = c6Computed(scope),
+                    $transcludeTarget = $element.find('c6-transclude');
+
+                scope.showDropDown = false;
+                c(scope, 'list', function() {
+                    return this.options ? ((isArray(this.options) ?
+                        this.options.map(function(option) {
+                            return [option, option];
+                        }) :
+                        Object.keys(scope.options).map(function(label) {
+                            return [label, this[label]];
+                        }, scope.options))) : [];
+                }, ['options']);
+                Object.defineProperty(scope, 'label', {
+                    get: function() {
+                        var value = this.value;
+
+                        return this.list.reduce(function(label, option) {
+                            return option[1] === value ? option[0] : label;
+                        }, null);
+                    }
+                });
+
+                scope.setValue = function(value) {
+                    scope.value = value;
+                };
+
+                transclude(scope, function($clone) {
+                    var $label = $clone.text() ?
+                        $clone : $compile('<span>{{label}}</span>')(scope);
+
+                    $transcludeTarget.append($label);
+                });
+            }
+
+            return {
+                scope: {
+                    value: '=',
+                    options: '='
+                },
+                restrict: 'E',
+                templateUrl: 'views/directives/c6_dropdown.html',
+                link: link,
+                transclude: true
             };
         }])
 

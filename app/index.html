@@ -9,6 +9,7 @@
         <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
         <base href="/assets/"/>
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
         <style type="text/css"> .menu { padding-top:20px; } .menu li { font-size: 1.2em; padding-bottom:5px; }</style>
         <script type="text/javascript">
             (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -180,6 +181,39 @@
                 float: right;
                 padding: 20px 0;
             }
+
+            .fa, .faa:after, .fab:before {
+                font-family: 'FontAwesome';
+                font-style: normal;
+                font-weight: normal;
+                line-height: 1;
+                display: inline-block;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+
+            .fa-caret-down:after {
+                content: '\f0d7';
+            }
+
+            .fa-caret-down:before {
+                content: '';
+            }
+
+            .btn.ui__clickDrop {
+                padding: 0.5625em 1.375em 0.5625em 0.775em;
+            }
+
+            /*.glyphicon-chevron-down:before {
+                content: "";
+            }
+
+            .glyphicon-chevron-down:after {
+                content: "\e114";
+            }
+            .ui__clickDrop.glyphicon {
+
+            }*/
         </style>
         <!--C6INJECT-->
     </head>
