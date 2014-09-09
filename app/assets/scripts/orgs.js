@@ -50,6 +50,16 @@ define(['account'],function(account) {
             ];
 
             self.action = 'all';
+            self.page = 1;
+            self.limit = 10;
+            self.limits = [5,10,50,100];
+            Object.defineProperties(self, {
+                total: {
+                    get: function() {
+                        return data.orgs && Math.ceil(data.orgs.length / self.limit);
+                    }
+                }
+            });
 
             Object.defineProperties($scope, {
                 optionsMessage: {
@@ -221,6 +231,25 @@ define(['account'],function(account) {
             $scope.$watch(function() {return data.org && data.org.name;}, function(newName) {
                 if (newName && bindBrandToName && self.action === 'new') {
                     data.org.branding = convertNameToBrand(newName);
+                }
+            });
+
+            $scope.$watch(function() {
+                return self.page + ':' + self.limit;
+            }, function(newVal, oldVal) {
+                var samePage;
+
+                if (newVal === oldVal) { return; }
+
+                newVal = newVal.split(':');
+                oldVal = oldVal.split(':');
+
+                samePage = newVal[0] === oldVal[0];
+
+                if (self.page !== 1 && samePage) {
+                    /* jshint boss:true */
+                    return self.page = 1;
+                    /* jshint boss:false */
                 }
             });
 

@@ -152,6 +152,28 @@
                 });
             });
 
+            describe('properties', function() {
+                describe('total', function() {
+                    it('should be undefined by default', function() {
+                        expect(OrgsCtrl.total).toBe(undefined);
+                    });
+
+                    it('should be 1 if all results fit within the limit', function() {
+                        OrgsCtrl.limit = 5;
+                        $scope.data.orgs = [{},{},{}];
+
+                        expect(OrgsCtrl.total).toBe(1);
+
+                        $scope.data.orgs = [{},{},{},{},{},{},{}];
+
+                        expect(OrgsCtrl.total).toBe(2);
+
+                        OrgsCtrl.limit = 10;
+                        expect(OrgsCtrl.total).toBe(1);
+                    });
+                });
+            });
+
             describe('methods', function() {
                 describe('formIsValid()', function() {
                     beforeEach(function() {
@@ -403,6 +425,23 @@
 
                         expect(OrgsCtrl.action).toBe('edit');
                         expect(ConfirmDialogService.display.calls.count()).toBe(2);
+                    });
+                });
+            });
+
+            describe('$watchers', function() {
+                describe('page + limit', function() {
+                    it('should set page to 1 if limit changes', function() {
+                        OrgsCtrl.limit = 50;
+                        OrgsCtrl.page = 2;
+
+                        $scope.$digest();
+                        expect(OrgsCtrl.page).toBe(2);
+
+                        OrgsCtrl.limit = 10;
+                        $scope.$digest();
+
+                        expect(OrgsCtrl.page).toBe(1);
                     });
                 });
             });

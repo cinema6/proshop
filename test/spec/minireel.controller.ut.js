@@ -456,6 +456,28 @@
                 });
             });
 
+            describe('properties', function() {
+                describe('total', function() {
+                    it('should be undefined by default', function() {
+                        expect(MinireelsCtrl.total).toBe(undefined);
+                    });
+
+                    it('should be 1 if all results fit within the limit', function() {
+                        MinireelsCtrl.limit = 5;
+                        $scope.data.experiences = [{},{},{}];
+
+                        expect(MinireelsCtrl.total).toBe(1);
+
+                        $scope.data.experiences = [{},{},{},{},{},{},{}];
+
+                        expect(MinireelsCtrl.total).toBe(2);
+
+                        MinireelsCtrl.limit = 10;
+                        expect(MinireelsCtrl.total).toBe(1);
+                    });
+                });
+            });
+
             describe('$scope.doSort()', function() {
                 it('should sort org and/or experience headers', function() {
                     $scope.doSort('status');
@@ -553,6 +575,21 @@
                         });
 
                         expect($scope.data.experience._data.user).toEqual(mockUsers[0]);
+                    });
+                });
+
+                describe('page + limit', function() {
+                    it('should set page to 1 if limit changes', function() {
+                        MinireelsCtrl.limit = 50;
+                        MinireelsCtrl.page = 2;
+
+                        $scope.$digest();
+                        expect(MinireelsCtrl.page).toBe(2);
+
+                        MinireelsCtrl.limit = 10;
+                        $scope.$digest();
+
+                        expect(MinireelsCtrl.page).toBe(1);
                     });
                 });
             });

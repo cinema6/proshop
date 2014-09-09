@@ -104,6 +104,16 @@ define(['account'],function(account) {
             };
 
             self.action = 'all';
+            self.page = 1;
+            self.limit = 10;
+            self.limits = [5,10,50,100];
+            Object.defineProperties(self, {
+                total: {
+                    get: function() {
+                        return data.users && Math.ceil(data.users.length / self.limit);
+                    }
+                }
+            });
             self.showUserSettings = false;
             self.userPermissionOptions = angular.copy(account.userPermissionOptions);
 
@@ -262,6 +272,25 @@ define(['account'],function(account) {
                         data.user.branding = null;
                         data.user = convertUserForEditing(data.user, newOrg);
                     }
+                }
+            });
+
+            $scope.$watch(function() {
+                return self.page + ':' + self.limit;
+            }, function(newVal, oldVal) {
+                var samePage;
+
+                if (newVal === oldVal) { return; }
+
+                newVal = newVal.split(':');
+                oldVal = oldVal.split(':');
+
+                samePage = newVal[0] === oldVal[0];
+
+                if (self.page !== 1 && samePage) {
+                    /* jshint boss:true */
+                    return self.page = 1;
+                    /* jshint boss:false */
                 }
             });
 
