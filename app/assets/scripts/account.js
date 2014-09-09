@@ -478,12 +478,13 @@ define(['angular','c6ui'], function(angular,c6ui){
                 method: 'PUT',
                 url: c6UrlMaker('account/user/' + user.id,'api'),
                 data: {
-                    lastName:   user.lastName,
-                    firstName:  user.firstName,
-                    branding:   user.branding,
-                    config:     user.config,
-                    org:        user.org,
-                    type:       user.type
+                    lastName:    user.lastName,
+                    firstName:   user.firstName,
+                    branding:    user.branding,
+                    config:      user.config,
+                    org:         user.org,
+                    type:        user.type,
+                    permissions: user.permissions
                 }
             });
         };
@@ -492,16 +493,7 @@ define(['angular','c6ui'], function(angular,c6ui){
             return httpWrapper({
                 method: 'POST',
                 url: c6UrlMaker('account/user','api'),
-                data: {
-                    email:      user.email,
-                    password:   user.password,
-                    org:        user.org,
-                    lastName:   user.lastName,
-                    firstName:  user.firstName,
-                    branding:   user.branding,
-                    config:     user.config,
-                    type:       user.type
-                }
+                data: user
             });
         };
 
