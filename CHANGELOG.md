@@ -1,9 +1,11 @@
 # ProShop
 
-* *[v0.6.0]*
+## v0.6.1 (September 9, 2014)
+
+* *[v0.6.1]*
     *[FIX]: Fix paginator controls styles in Firefox
     *[FEATURE]: Add controls for User's ability to edit ad config settings
-* *[/v0.6.0]*
+* *[/v0.6.1]*
 
 ## v0.6.0 (September 9, 2014)
 
