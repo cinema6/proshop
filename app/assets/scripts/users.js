@@ -162,6 +162,8 @@ define(['account'],function(account) {
                         return org.name.toLowerCase().indexOf(query) >= 0;
                     });
 
+                self.page = 1;
+
                 data.users = data.appData.users.filter(function(user) {
                     var bool = false;
 
