@@ -226,7 +226,7 @@ define(['account'],function(account) {
                     data.user = user;
                 }
 
-                user.permissions = user.permissions || {};
+                user.permissions = data.user.permissions || {};
 
                 self.editAdConfigOptions.forEach(function(option) {
                     if (option.enabled) {

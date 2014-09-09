@@ -380,7 +380,10 @@
                                 branding: $scope.data.users[0].branding,
                                 config: $scope.data.users[0].config,
                                 type: $scope.data.users[0].type,
-                                permissions: {}
+                                permissions: {
+                                    orgs: {},
+                                    experiences: {}
+                                }
                             });
                         });
 
