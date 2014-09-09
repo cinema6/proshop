@@ -51,7 +51,11 @@
                         lastName: 'F',
                         org: 'o-1',
                         branding: 'theme1',
-                        type: 'Publisher'
+                        type: 'Publisher',
+                        permissions: {
+                            orgs: {},
+                            experiences: {}
+                        }
                     },
                     {
                         id: 'u-2',
@@ -60,7 +64,11 @@
                         lastName: 'D',
                         org: 'o-2',
                         branding: 'theme2',
-                        type: 'Publisher'
+                        type: 'Publisher',
+                        permissions: {
+                            orgs: {},
+                            experiences: {}
+                        }
                     }
                 ];
 
@@ -284,6 +292,21 @@
                         UsersCtrl.editUser(userWithNoType);
                         expect($scope.data.user.type).toBe('Publisher');
                     });
+
+                    it('should set the editAdConfigOptions if user permissions are set', function() {
+                        $scope.$apply(function() {
+                            account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
+                            account.getUsers.deferred.resolve(angular.copy(mockUsers));
+                        });
+
+                        $scope.data.users[0].permissions.orgs.editAdConfig = 'own';
+                        $scope.data.users[0].permissions.experiences.editAdConfig = 'orgs';
+
+                        UsersCtrl.editUser($scope.data.users[0]);
+
+                        expect(UsersCtrl.editAdConfigOptions[0].enabled).toBe(true);
+                        expect(UsersCtrl.editAdConfigOptions[1].enabled).toBe(true);
+                    });
                 });
 
                 describe('addNewUser()', function() {
@@ -356,7 +379,36 @@
                                 org: $scope.data.users[0].org.id,
                                 branding: $scope.data.users[0].branding,
                                 config: $scope.data.users[0].config,
-                                type: $scope.data.users[0].type
+                                type: $scope.data.users[0].type,
+                                permissions: {
+                                    orgs: {},
+                                    experiences: {}
+                                }
+                            });
+                        });
+
+                        it('should PUT the user permissions if set', function() {
+                            UsersCtrl.editAdConfigOptions[0].enabled = true;
+                            UsersCtrl.editAdConfigOptions[1].enabled = true;
+
+                            UsersCtrl.saveUser();
+
+                            expect(account.putUser).toHaveBeenCalledWith({
+                                id: $scope.data.users[0].id,
+                                firstName: $scope.data.users[0].firstName,
+                                lastName: $scope.data.users[0].lastName,
+                                org: $scope.data.users[0].org.id,
+                                branding: $scope.data.users[0].branding,
+                                config: $scope.data.users[0].config,
+                                type: $scope.data.users[0].type,
+                                permissions: {
+                                    orgs: {
+                                        editAdConfig: 'own'
+                                    },
+                                    experiences: {
+                                        editAdConfig: 'org'
+                                    }
+                                }
                             });
                         });
 
@@ -418,7 +470,34 @@
                                 org: $scope.data.org.id,
                                 branding: $scope.data.user.branding,
                                 config: $scope.data.user.config,
-                                type: $scope.data.users[0].type
+                                type: $scope.data.users[0].type,
+                                permissions: {}
+                            });
+                        });
+
+                        it('should POST the user permissions if set', function() {
+                            UsersCtrl.editAdConfigOptions[0].enabled = true;
+                            UsersCtrl.editAdConfigOptions[1].enabled = true;
+
+                            UsersCtrl.saveUser();
+
+                            expect(account.postUser).toHaveBeenCalledWith({
+                                email: $scope.data.user.email,
+                                password: $scope.data.user.password,
+                                firstName: $scope.data.user.firstName,
+                                lastName: $scope.data.user.lastName,
+                                org: $scope.data.org.id,
+                                branding: $scope.data.user.branding,
+                                config: $scope.data.user.config,
+                                type: $scope.data.users[0].type,
+                                permissions: {
+                                    orgs: {
+                                        editAdConfig: 'own'
+                                    },
+                                    experiences: {
+                                        editAdConfig: 'org'
+                                    }
+                                }
                             });
                         });
 
@@ -548,6 +627,20 @@
                         $scope.$digest();
 
                         expect(UsersCtrl.page).toBe(1);
+                    });
+                });
+
+                describe('action', function() {
+                    it('should reset the editAdConfigOptions when making a new user', function() {
+                        UsersCtrl.editAdConfigOptions[0].enabled = true;
+                        UsersCtrl.editAdConfigOptions[1].enabled = true;
+
+                        $scope.$apply(function() {
+                            UsersCtrl.action = 'new';
+                        });
+
+                        expect(UsersCtrl.editAdConfigOptions[0].enabled).toBe(false);
+                        expect(UsersCtrl.editAdConfigOptions[1].enabled).toBe(false);
                     });
                 });
             });

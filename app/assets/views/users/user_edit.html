@@ -68,6 +68,23 @@
             </span>
         </div>
     </div>
+
+
+    <div class="form-group">
+        <div>
+            <input type="checkbox" name="can_edit_org_ad_settings" ng-model="UsersCtrl.editAdConfigOptions[0].enabled">
+            <label for="can_edit_org_ad_settings" class="control-label"> Can manage Organization's Ad default settings </label>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div>
+            <input type="checkbox" name="can_edit_experience_ad_settings" ng-model="UsersCtrl.editAdConfigOptions[1].enabled">
+            <label for="can_edit_experience_ad_settings" class="control-label"> Can manage MiniReel Ad settings </label>
+        </div>
+    </div>
+
+
     <div ng-if="data.org">
         <div class="form-group" ng-class="{'has-error': theForm.branding.$error.required}">
             <label for="branding" class="control-label"> Branding: </label>

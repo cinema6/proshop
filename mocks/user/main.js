@@ -53,11 +53,48 @@ module.exports = function(http) {
             userCache = require('../auth/user_cache'),
             user = userCache.user,
             currentTime = (new Date()).toISOString(),
+            data = request.body,
             newUser = extend(request.body, {
                 id: id,
                 created: currentTime,
-                lastUpdated: currentTime
+                lastUpdated: currentTime,
+                permissions: {
+                    elections: {
+                        read: 'org',
+                        create: 'org',
+                        edit: 'org',
+                        delete: 'org'
+                    },
+                    experiences: {
+                        read: 'org',
+                        create: 'org',
+                        edit: 'org',
+                        delete: 'org'
+                    },
+                    orgs: {
+                        read: 'org',
+                        create: 'org',
+                        edit: 'org',
+                        delete: 'org'
+                    },
+                    users: {
+                        read: 'org',
+                        create: 'org',
+                        edit: 'org',
+                        delete: 'org'
+                    }
+                }
             });
+
+        if (data.permissions) {
+            if (data.permissions.orgs && data.permissions.orgs.editAdConfig) {
+                newUser.permissions.orgs.editAdConfig = 'own';
+            }
+
+            if (data.permissions.experiences && data.permissions.experiences.editAdConfig) {
+                newUser.permissions.experiences.editAdConfig = 'org';
+            }
+        }
 
         grunt.file.write(filePath, JSON.stringify(newUser, null, '    '));
 

@@ -1,6 +1,8 @@
 define(['account'],function(account) {
     'use strict';
 
+    var extend = angular.extend;
+
     return angular.module('c6.proshop.users',[account.name])
         .controller('UsersController', ['$scope', '$log', 'account', 'ConfirmDialogService',
         function                       ( $scope ,  $log,   account ,  ConfirmDialogService ) {
@@ -50,6 +52,10 @@ define(['account'],function(account) {
             function convertUserForEditing(user, org) {
                 user.branding = user.branding || org.branding;
                 user.type = user.type || 'Publisher';
+                if (user.permissions) {
+                    self.editAdConfigOptions[0].enabled = !!user.permissions.orgs.editAdConfig;
+                    self.editAdConfigOptions[1].enabled = !!user.permissions.experiences.editAdConfig;
+                }
                 user.config = (user.config &&
                     user.config.minireelinator &&
                     user.config.minireelinator.minireelDefaults) ?
@@ -116,6 +122,18 @@ define(['account'],function(account) {
             });
             self.showUserSettings = false;
             self.userPermissionOptions = angular.copy(account.userPermissionOptions);
+            self.editAdConfigOptions = [
+                {
+                    name: 'orgs',
+                    enabled: false,
+                    value: 'own'
+                },
+                {
+                    name: 'experiences',
+                    enabled: false,
+                    value: 'org'
+                }
+            ];
 
             self.userTypes = [
                 {label:'Publisher',value:'Publisher'},
@@ -186,6 +204,8 @@ define(['account'],function(account) {
             };
 
             this.saveUser = function() {
+                var user = {};
+
                 function handleError(err) {
                     $log.error(err);
                     ConfirmDialogService.display({
@@ -206,22 +226,37 @@ define(['account'],function(account) {
                     data.user = user;
                 }
 
+                user.permissions = data.user.permissions || {};
+
+                self.editAdConfigOptions.forEach(function(option) {
+                    if (option.enabled) {
+                        user.permissions[option.name] = user.permissions[option.name] || {};
+                        user.permissions[option.name].editAdConfig = option.value;
+                    } else {
+                        if (user.permissions[option.name] && user.permissions[option.name].editAdConfig) {
+                            delete user.permissions[option.name].editAdConfig;
+                        }
+                    }
+                });
+
                 if (data.user.id) {
                     $log.info('PUT', data.user.id, data.user.email, data.user.firstName, data.user.lastName, data.org.id, data.user.branding);
 
-                    account.putUser({
+                    user = extend(user, {
                         id: data.user.id,
                         firstName: data.user.firstName,
                         lastName: data.user.lastName,
                         org: data.org.id,
                         branding: data.user.branding,
                         config: data.user.config,
-                        type: data.user.type
-                    }).then(handleSuccess, handleError);
+                        type: data.user.type,
+                    });
+
+                    account.putUser(user).then(handleSuccess, handleError);
                 } else {
                     $log.info('POST', data.user.email, data.user.firstName, data.user.lastName, data.org.id, data.user.branding);
 
-                    account.postUser({
+                    user = extend(user, {
                         email: data.user.email,
                         password: data.user.password,
                         firstName: data.user.firstName,
@@ -230,7 +265,10 @@ define(['account'],function(account) {
                         branding: data.user.branding,
                         config: data.user.config,
                         type: data.user.type
-                    }).then(handleSuccess, handleError);
+                    });
+
+                    account.postUser(user)
+                        .then(handleSuccess, handleError);
                 }
             };
 
@@ -272,6 +310,16 @@ define(['account'],function(account) {
                         data.user.branding = null;
                         data.user = convertUserForEditing(data.user, newOrg);
                     }
+                }
+            });
+
+            $scope.$watch(function() {
+                return self.action;
+            }, function(action) {
+                if (action === 'new') {
+                    self.editAdConfigOptions.forEach(function(option) {
+                        option.enabled = false;
+                    });
                 }
             });
 
