@@ -226,11 +226,16 @@ define(['account'],function(account) {
                     data.user = user;
                 }
 
+                user.permissions = user.permissions || {};
+
                 self.editAdConfigOptions.forEach(function(option) {
                     if (option.enabled) {
-                        user.permissions = user.permissions || {};
                         user.permissions[option.name] = user.permissions[option.name] || {};
                         user.permissions[option.name].editAdConfig = option.value;
+                    } else {
+                        if (user.permissions[option.name] && user.permissions[option.name].editAdConfig) {
+                            delete user.permissions[option.name].editAdConfig;
+                        }
                     }
                 });
 
@@ -244,7 +249,7 @@ define(['account'],function(account) {
                         org: data.org.id,
                         branding: data.user.branding,
                         config: data.user.config,
-                        type: data.user.type
+                        type: data.user.type,
                     });
 
                     account.putUser(user).then(handleSuccess, handleError);
@@ -311,7 +316,7 @@ define(['account'],function(account) {
             $scope.$watch(function() {
                 return self.action;
             }, function(action) {
-                if (self.action === 'new') {
+                if (action === 'new') {
                     self.editAdConfigOptions.forEach(function(option) {
                         option.enabled = false;
                     });
