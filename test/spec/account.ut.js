@@ -187,7 +187,7 @@
                             },
                             adConfig: {
                                 video: {
-                                    firstPlacement: 2,
+                                    firstPlacement: -1,
                                     frequency: 0,
                                     skip: 6,
                                     waterfall: 'cinema6'
@@ -214,7 +214,7 @@
                         expect(org._data.videoWaterfalls).toEqual(account.waterfallData.options);
                         expect(org._data.displayWaterfalls).toEqual(account.waterfallData.options);
                         expect(org._data.adConfig).toEqual({
-                            firstPlacement: {label: 2, value: 2},
+                            firstPlacement: {label: 'No ads', value: -1},
                             frequency: {label:'Only show first ad', value: 0},
                             skip: { label:'After 6 sec.', value:6}
                         });
@@ -263,7 +263,7 @@
                         var org = newOrgDefaults;
                         org.adConfig = {
                             video: {
-                                firstPlacement: -1,
+                                firstPlacement: 3,
                                 frequency: 3,
                                 skip: false,
                                 waterfall: 'publisher'
@@ -274,7 +274,7 @@
                         };
                         org = account.convertOrgForEditing(org);
 
-                        expect(org._data.adConfig.firstPlacement).toEqual({label:'No ads',value:-1});
+                        expect(org._data.adConfig.firstPlacement).toEqual({label:3,value:3});
                         expect(org._data.adConfig.frequency).toEqual({label:3,value:3});
                         expect(org._data.adConfig.skip).toEqual({label:'No skipping allowed',value:false});
                         expect(org._data.adConfig.waterfall).toBe(undefined);
@@ -516,7 +516,7 @@
                             status: 'active',
                             adConfig: {
                                 video: {
-                                    firstPlacement: 2,
+                                    firstPlacement: -1,
                                     frequency: 0,
                                     skip: 6,
                                     waterfall: 'cinema6'
@@ -574,7 +574,7 @@
                         mockOrg._data.displayWaterfalls[2].enabled = true;
                         mockOrg._data.displayWaterfalls[3].enabled = true;
                         mockOrg._data.adConfig.frequency.value = 3;
-                        mockOrg._data.adConfig.firstPlacement.value = -1;
+                        mockOrg._data.adConfig.firstPlacement.value = 3;
                         mockOrg._data.adConfig.skip.value = 60;
                         mockOrg._data.config.minireelinator.embedTypes[0].enabled = false;
                         mockOrg._data.config.minireelinator.embedTypes[1].enabled = true;
@@ -583,7 +583,7 @@
                         expectedOrg.status = 'pending';
                         expectedOrg.adConfig = {
                             video: {
-                                firstPlacement: -1,
+                                firstPlacement: 3,
                                 frequency: 3,
                                 skip: 60,
                                 waterfall: 'publisher'
