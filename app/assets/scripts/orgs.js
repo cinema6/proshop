@@ -51,7 +51,7 @@ define(['account'],function(account) {
 
             self.action = 'all';
             self.page = 1;
-            self.limit = 10;
+            self.limit = 50;
             self.limits = [5,10,50,100];
             Object.defineProperties(self, {
                 total: {

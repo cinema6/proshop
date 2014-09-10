@@ -538,7 +538,7 @@ define(['angular','c6ui'], function(angular,c6ui){
                     },
                     adConfig: {
                         video: {
-                            firstPlacement: 2,
+                            firstPlacement: -1,
                             frequency: 0,
                             waterfall: 'cinema6',
                             skip: 6
@@ -557,7 +557,7 @@ define(['angular','c6ui'], function(angular,c6ui){
             // so if there's no adConfig then set the defaults
             org.adConfig = org.adConfig || {
                 video: {
-                    firstPlacement: 2,
+                    firstPlacement: -1,
                     frequency: 0,
                     waterfall: 'cinema6',
                     skip: 6
