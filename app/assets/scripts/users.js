@@ -49,13 +49,25 @@ define(['account'],function(account) {
                     });
             }
 
+            function isAdmin(user) {
+                return !!user.permissions && Object.keys(user.permissions).every(function(type) {
+                    return Object.keys(user.permissions[type]).every(function(verb) {
+                        return user.permissions[type][verb] === 'all';
+                    });
+                });
+            }
+
             function convertUserForEditing(user, org) {
                 user.branding = user.branding || org.branding;
                 user.type = user.type || 'Publisher';
+
+                self.isAdmin = isAdmin(user);
+
                 if (user.permissions) {
                     self.editAdConfigOptions[0].enabled = !!user.permissions.orgs.editAdConfig;
                     self.editAdConfigOptions[1].enabled = !!user.permissions.experiences.editAdConfig;
                 }
+
                 user.config = (user.config &&
                     user.config.minireelinator &&
                     user.config.minireelinator.minireelDefaults) ?
@@ -152,6 +164,7 @@ define(['account'],function(account) {
             self.addNewUser = function() {
                 $scope.message = null;
                 self.action = 'new';
+                self.isAdmin = false;
                 data.user = {};
                 data.org = null;
             };
@@ -205,8 +218,76 @@ define(['account'],function(account) {
                 });
             };
 
+            function setPermissions() {
+                var permissions = self.isAdmin ?
+                    {
+                        elections: {
+                            read    : 'all',
+                            create  : 'all',
+                            edit    : 'all',
+                            delete  : 'all'
+                        },
+                        experiences: {
+                            read    : 'all',
+                            create  : 'all',
+                            edit    : 'all',
+                            delete  : 'all',
+                        },
+                        users: {
+                            read    : 'all',
+                            create  : 'all',
+                            edit    : 'all',
+                            delete  : 'all'
+                        },
+                        orgs: {
+                            read    : 'all',
+                            create  : 'all',
+                            edit    : 'all',
+                            delete  : 'all',
+                        }
+                    } :
+                    {
+                        elections: {
+                            read    : 'org',
+                            create  : 'org',
+                            edit    : 'org',
+                            delete  : 'org'
+                        },
+                        experiences: {
+                            read    : 'org',
+                            create  : 'org',
+                            edit    : 'org',
+                            delete  : 'org'
+                        },
+                        users: {
+                            read    : 'org',
+                            edit    : 'own'
+                        },
+                        orgs: {
+                            read    : 'own',
+                            edit    : 'own'
+                        }
+                    };
+
+                self.editAdConfigOptions.forEach(function(option) {
+                    if (option.enabled) {
+                        permissions[option.name].editAdConfig = self.isAdmin ? 'all' : option.value;
+                    }
+                });
+
+                return permissions;
+            }
+
             this.saveUser = function() {
-                var user = {};
+                var user = {
+                    firstName: data.user.firstName,
+                    lastName: data.user.lastName,
+                    org: data.org.id,
+                    branding: data.user.branding,
+                    config: data.user.config,
+                    type: data.user.type,
+                    permissions: setPermissions()
+                };
 
                 function handleError(err) {
                     $log.error(err);
@@ -228,45 +309,22 @@ define(['account'],function(account) {
                     data.user = user;
                 }
 
-                user.permissions = data.user.permissions || {};
-
-                self.editAdConfigOptions.forEach(function(option) {
-                    if (option.enabled) {
-                        user.permissions[option.name] = user.permissions[option.name] || {};
-                        user.permissions[option.name].editAdConfig = option.value;
-                    } else {
-                        if (user.permissions[option.name] && user.permissions[option.name].editAdConfig) {
-                            delete user.permissions[option.name].editAdConfig;
-                        }
-                    }
-                });
-
                 if (data.user.id) {
                     $log.info('PUT', data.user.id, data.user.email, data.user.firstName, data.user.lastName, data.org.id, data.user.branding);
 
                     user = extend(user, {
                         id: data.user.id,
-                        firstName: data.user.firstName,
-                        lastName: data.user.lastName,
-                        org: data.org.id,
-                        branding: data.user.branding,
-                        config: data.user.config,
-                        type: data.user.type,
                     });
 
-                    account.putUser(user).then(handleSuccess, handleError);
+                    account.putUser(user)
+                        .then(handleSuccess, handleError);
+
                 } else {
                     $log.info('POST', data.user.email, data.user.firstName, data.user.lastName, data.org.id, data.user.branding);
 
                     user = extend(user, {
                         email: data.user.email,
                         password: data.user.password,
-                        firstName: data.user.firstName,
-                        lastName: data.user.lastName,
-                        org: data.org.id,
-                        branding: data.user.branding,
-                        config: data.user.config,
-                        type: data.user.type
                     });
 
                     account.postUser(user)
@@ -321,6 +379,16 @@ define(['account'],function(account) {
                 if (action === 'new') {
                     self.editAdConfigOptions.forEach(function(option) {
                         option.enabled = false;
+                    });
+                }
+            });
+
+            $scope.$watch(function() {
+                return self.isAdmin;
+            }, function(isAdmin) {
+                if (isAdmin) {
+                    self.editAdConfigOptions.forEach(function(option) {
+                        option.enabled = true;
                     });
                 }
             });
