@@ -50,7 +50,7 @@ define(['account'],function(account) {
             }
 
             function isAdmin(user) {
-                return user.permissions && Object.keys(user.permissions).every(function(type) {
+                return !!user.permissions && Object.keys(user.permissions).every(function(type) {
                     return Object.keys(user.permissions[type]).every(function(verb) {
                         return user.permissions[type][verb] === 'all';
                     });
@@ -218,7 +218,7 @@ define(['account'],function(account) {
                 });
             };
 
-            function setPermissions(user) {
+            function setPermissions() {
                 var permissions = self.isAdmin ?
                     {
                         elections: {
@@ -267,7 +267,7 @@ define(['account'],function(account) {
                             read    : 'own',
                             edit    : 'own'
                         }
-                    }
+                    };
 
                 self.editAdConfigOptions.forEach(function(option) {
                     if (option.enabled) {
@@ -286,7 +286,7 @@ define(['account'],function(account) {
                     branding: data.user.branding,
                     config: data.user.config,
                     type: data.user.type,
-                    permissions: setPermissions(data.user)
+                    permissions: setPermissions()
                 };
 
                 function handleError(err) {

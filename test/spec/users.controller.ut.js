@@ -52,10 +52,6 @@
                         org: 'o-1',
                         branding: 'theme1',
                         type: 'Publisher',
-                        permissions: {
-                            orgs: {},
-                            experiences: {}
-                        }
                     },
                     {
                         id: 'u-2',
@@ -65,10 +61,6 @@
                         org: 'o-2',
                         branding: 'theme2',
                         type: 'Publisher',
-                        permissions: {
-                            orgs: {},
-                            experiences: {}
-                        }
                     }
                 ];
 
@@ -299,8 +291,14 @@
                             account.getUsers.deferred.resolve(angular.copy(mockUsers));
                         });
 
-                        $scope.data.users[0].permissions.orgs.editAdConfig = 'own';
-                        $scope.data.users[0].permissions.experiences.editAdConfig = 'orgs';
+                        $scope.data.users[0].permissions = {
+                            orgs: {
+                                editAdConfig: 'own'
+                            },
+                            experiences: {
+                                editAdConfig: 'org'
+                            }
+                        };
 
                         UsersCtrl.editUser($scope.data.users[0]);
 
@@ -381,8 +379,26 @@
                                 config: $scope.data.users[0].config,
                                 type: $scope.data.users[0].type,
                                 permissions: {
-                                    orgs: {},
-                                    experiences: {}
+                                    elections: {
+                                        read    : 'org',
+                                        create  : 'org',
+                                        edit    : 'org',
+                                        delete  : 'org'
+                                    },
+                                    experiences: {
+                                        read    : 'org',
+                                        create  : 'org',
+                                        edit    : 'org',
+                                        delete  : 'org'
+                                    },
+                                    users: {
+                                        read    : 'org',
+                                        edit    : 'own'
+                                    },
+                                    orgs: {
+                                        read    : 'own',
+                                        edit    : 'own'
+                                    }
                                 }
                             });
                         });
@@ -402,11 +418,27 @@
                                 config: $scope.data.users[0].config,
                                 type: $scope.data.users[0].type,
                                 permissions: {
-                                    orgs: {
-                                        editAdConfig: 'own'
+                                    elections: {
+                                        read    : 'org',
+                                        create  : 'org',
+                                        edit    : 'org',
+                                        delete  : 'org'
                                     },
                                     experiences: {
+                                        read    : 'org',
+                                        create  : 'org',
+                                        edit    : 'org',
+                                        delete  : 'org',
                                         editAdConfig: 'org'
+                                    },
+                                    users: {
+                                        read    : 'org',
+                                        edit    : 'own'
+                                    },
+                                    orgs: {
+                                        read    : 'own',
+                                        edit    : 'own',
+                                        editAdConfig: 'own'
                                     }
                                 }
                             });
@@ -471,34 +503,90 @@
                                 branding: $scope.data.user.branding,
                                 config: $scope.data.user.config,
                                 type: $scope.data.users[0].type,
-                                permissions: {}
+                                permissions: {
+                                    elections: {
+                                        read    : 'org',
+                                        create  : 'org',
+                                        edit    : 'org',
+                                        delete  : 'org'
+                                    },
+                                    experiences: {
+                                        read    : 'org',
+                                        create  : 'org',
+                                        edit    : 'org',
+                                        delete  : 'org'
+                                    },
+                                    users: {
+                                        read    : 'org',
+                                        edit    : 'own'
+                                    },
+                                    orgs: {
+                                        read    : 'own',
+                                        edit    : 'own'
+                                    }
+                                }
                             });
                         });
 
-                        it('should POST the user permissions if set', function() {
+                        it('should POST the editAdConfig settings if set', function() {
                             UsersCtrl.editAdConfigOptions[0].enabled = true;
                             UsersCtrl.editAdConfigOptions[1].enabled = true;
 
                             UsersCtrl.saveUser();
 
-                            expect(account.postUser).toHaveBeenCalledWith({
-                                email: $scope.data.user.email,
-                                password: $scope.data.user.password,
-                                firstName: $scope.data.user.firstName,
-                                lastName: $scope.data.user.lastName,
-                                org: $scope.data.org.id,
-                                branding: $scope.data.user.branding,
-                                config: $scope.data.user.config,
-                                type: $scope.data.users[0].type,
-                                permissions: {
-                                    orgs: {
-                                        editAdConfig: 'own'
-                                    },
-                                    experiences: {
-                                        editAdConfig: 'org'
-                                    }
+                            expect(account.postUser.calls.mostRecent().args[0].permissions.experiences.editAdConfig).toEqual('org');
+                            expect(account.postUser.calls.mostRecent().args[0].permissions.orgs.editAdConfig).toEqual('own');
+                        });
+
+                        it('should POST admin user permissions if isAdmin is true', function() {
+                            UsersCtrl.isAdmin = true;
+
+                            $scope.$digest();
+
+                            UsersCtrl.saveUser();
+
+                            expect(account.postUser.calls.mostRecent().args[0].permissions).toEqual({
+                                elections: {
+                                    read    : 'all',
+                                    create  : 'all',
+                                    edit    : 'all',
+                                    delete  : 'all'
+                                },
+                                experiences: {
+                                    read    : 'all',
+                                    create  : 'all',
+                                    edit    : 'all',
+                                    delete  : 'all',
+                                    editAdConfig: 'all'
+                                },
+                                users: {
+                                    read    : 'all',
+                                    create  : 'all',
+                                    edit    : 'all',
+                                    delete  : 'all'
+                                },
+                                orgs: {
+                                    read    : 'all',
+                                    create  : 'all',
+                                    edit    : 'all',
+                                    delete  : 'all',
+                                    editAdConfig: 'all'
                                 }
                             });
+                        });
+
+                        it('should not POST editAdConfig settings for admin user if unchecked', function() {
+                            UsersCtrl.isAdmin = true;
+
+                            $scope.$digest();
+
+                            UsersCtrl.editAdConfigOptions[0].enabled = false;
+                            UsersCtrl.editAdConfigOptions[1].enabled = false;
+
+                            UsersCtrl.saveUser();
+
+                            expect(account.postUser.calls.mostRecent().args[0].permissions.orgs.editAdConfig).toBeUndefined();
+                            expect(account.postUser.calls.mostRecent().args[0].permissions.experiences.editAdConfig).toBeUndefined();
                         });
 
                         it('on success should put a message on the scope, set the action, and reload org and user data', function() {
@@ -610,6 +698,85 @@
 
                         UsersCtrl.limit = 10;
                         expect(UsersCtrl.total).toBe(1);
+                    });
+                });
+
+                describe('isAdmin', function() {
+                    it('when creating a new user should be false by default', function() {
+                        UsersCtrl.addNewUser();
+                        expect(UsersCtrl.isAdmin).toBe(false);
+                    });
+
+                    it('when editing a use should be determined by user\'s permissions', function() {
+                        $scope.$apply(function() {
+                            account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
+                            account.getUsers.deferred.resolve(angular.copy(mockUsers));
+                        });
+
+                        UsersCtrl.editUser($scope.data.users[0]);
+
+                        expect(UsersCtrl.isAdmin).toBe(false);
+
+                        $scope.data.users[0].permissions = {
+                            elections: {
+                                read    : 'all',
+                                create  : 'all',
+                                edit    : 'all',
+                                delete  : 'all'
+                            },
+                            experiences: {
+                                read    : 'all',
+                                create  : 'all',
+                                edit    : 'all',
+                                delete  : 'all',
+                                editAdConfig: 'all'
+                            },
+                            users: {
+                                read    : 'all',
+                                create  : 'all',
+                                edit    : 'all',
+                                delete  : 'all'
+                            },
+                            orgs: {
+                                read    : 'all',
+                                create  : 'all',
+                                edit    : 'all',
+                                delete  : 'all',
+                                editAdConfig: 'all'
+                            }
+                        };
+
+                        UsersCtrl.editUser($scope.data.users[0]);
+
+                        expect(UsersCtrl.isAdmin).toBe(true);
+
+                        $scope.data.users[0].permissions = {
+                            elections: {
+                                read    : 'org',
+                                create  : 'org',
+                                edit    : 'org',
+                                delete  : 'org'
+                            },
+                            experiences: {
+                                read    : 'org',
+                                create  : 'org',
+                                edit    : 'org',
+                                delete  : 'org'
+                            },
+                            users: {
+                                read    : 'org',
+                                edit    : 'own'
+                            },
+                            orgs: {
+                                read    : 'own',
+                                edit    : 'own'
+                            }
+                        };
+
+                        UsersCtrl.editUser($scope.data.users[0]);
+
+                        expect(UsersCtrl.isAdmin).toBe(false);
+
                     });
                 });
             });
