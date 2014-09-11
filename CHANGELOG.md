@@ -1,7 +1,10 @@
 # ProShop
 
+## v0.6.2 (September 11, 2014)
+
 * *[v0.6.2]*
     *[FEATURE]: Add ability to create System Admin Users
+* *[/v0.6.2]*
 
 ## v0.6.1 (September 9, 2014)
 
