@@ -61,7 +61,7 @@
         <label for="org" class="control-label"> Org: </label>
         <div>
             <select ng-model="data.org" name="org" ng-options="org.name for org in data.orgs | orderBy:'name'" required>
-                <option value="">-- choose org --</option>
+                <option value="">-- Choose Org --</option>
             </select>
             <span class="help-block">
                 <span ng-show="theForm.org.$error.required"> Required. </span>
@@ -69,24 +69,42 @@
         </div>
     </div>
 
-    <div class="form-group">
+
+    <div class="form-group" ng-class="{'has-error': theForm.user_role.$error.required}">
+        <label for="user_role" class="control-label"> Role: </label>
+        <div>
+            <select ng-model="UsersCtrl.role" name="user_role" required>
+                <option value="">-- Choose Role --</option>
+                <option value="publisher">Publisher</option>
+                <option value="contentProvider">Content Provider</option>
+                <option value="admin">System Admin</option>
+            </select>
+            <span class="help-block">
+                <span ng-show="theForm.user_role.$error.required"> Required. </span>
+            </span>
+        </div>
+    </div>
+
+
+    <!-- <div class="form-group">
         <div>
             <input type="checkbox" name="system_admin" ng-model="UsersCtrl.isAdmin">
             <label for="system_admin" class="control-label"> System Admin </label>
         </div>
-    </div>
-
-    <div class="form-group">
-        <div>
-            <input type="checkbox" name="can_edit_org_ad_settings" ng-model="UsersCtrl.editAdConfigOptions[0].enabled">
-            <label for="can_edit_org_ad_settings" class="control-label"> Can manage Organization's Ad default settings </label>
+    </div> -->
+    <div ng-show="UsersCtrl.role === 'publisher'">
+        <div class="form-group">
+            <div>
+                <input type="checkbox" name="can_edit_org_ad_settings" ng-model="UsersCtrl.editAdConfigOptions[0].enabled">
+                <label for="can_edit_org_ad_settings" class="control-label"> Can manage Organization's Ad default settings </label>
+            </div>
         </div>
-    </div>
 
-    <div class="form-group">
-        <div>
-            <input type="checkbox" name="can_edit_experience_ad_settings" ng-model="UsersCtrl.editAdConfigOptions[1].enabled">
-            <label for="can_edit_experience_ad_settings" class="control-label"> Can manage MiniReel Ad settings </label>
+        <div class="form-group">
+            <div>
+                <input type="checkbox" name="can_edit_experience_ad_settings" ng-model="UsersCtrl.editAdConfigOptions[1].enabled">
+                <label for="can_edit_experience_ad_settings" class="control-label"> Can manage MiniReel Ad settings </label>
+            </div>
         </div>
     </div>
 
