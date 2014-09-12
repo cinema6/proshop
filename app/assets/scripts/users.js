@@ -61,7 +61,7 @@ define(['account'],function(account) {
                 user.branding = user.branding || org.branding;
                 user.type = user.type || 'Publisher';
 
-                self.isAdmin = isAdmin(user);
+                self.role = isAdmin(user) ? 'Admin' : user.type;
 
                 if (user.permissions) {
                     self.editAdConfigOptions[0].enabled = !!user.permissions.orgs.editAdConfig;
@@ -147,11 +147,6 @@ define(['account'],function(account) {
                 }
             ];
 
-            self.userTypes = [
-                {label:'Publisher',value:'Publisher'},
-                {label:'Content Provider',value:'ContentProvider'}
-            ];
-
             self.editUser = function(user){
                 $scope.message = null;
                 self.action = 'edit';
@@ -164,7 +159,7 @@ define(['account'],function(account) {
             self.addNewUser = function() {
                 $scope.message = null;
                 self.action = 'new';
-                self.isAdmin = false;
+                self.role = null;
                 data.user = {};
                 data.org = null;
             };
@@ -219,7 +214,7 @@ define(['account'],function(account) {
             };
 
             function setPermissions() {
-                var permissions = self.isAdmin ?
+                var permissions = self.role === 'Admin' ?
                     {
                         elections: {
                             read    : 'all',
@@ -232,6 +227,7 @@ define(['account'],function(account) {
                             create  : 'all',
                             edit    : 'all',
                             delete  : 'all',
+                            editAdConfig: 'all'
                         },
                         users: {
                             read    : 'all',
@@ -244,6 +240,7 @@ define(['account'],function(account) {
                             create  : 'all',
                             edit    : 'all',
                             delete  : 'all',
+                            editAdConfig: 'all'
                         }
                     } :
                     {
@@ -269,11 +266,13 @@ define(['account'],function(account) {
                         }
                     };
 
-                self.editAdConfigOptions.forEach(function(option) {
-                    if (option.enabled) {
-                        permissions[option.name].editAdConfig = self.isAdmin ? 'all' : option.value;
-                    }
-                });
+                if (self.role === 'Publisher') {
+                    self.editAdConfigOptions.forEach(function(option) {
+                        if (option.enabled) {
+                            permissions[option.name].editAdConfig = option.value;
+                        }
+                    });
+                }
 
                 return permissions;
             }
@@ -285,7 +284,7 @@ define(['account'],function(account) {
                     org: data.org.id,
                     branding: data.user.branding,
                     config: data.user.config,
-                    type: data.user.type,
+                    type: (self.role === 'Admin' ? 'Publisher' : self.role),
                     permissions: setPermissions()
                 };
 
@@ -379,16 +378,6 @@ define(['account'],function(account) {
                 if (action === 'new') {
                     self.editAdConfigOptions.forEach(function(option) {
                         option.enabled = false;
-                    });
-                }
-            });
-
-            $scope.$watch(function() {
-                return self.isAdmin;
-            }, function(isAdmin) {
-                if (isAdmin) {
-                    self.editAdConfigOptions.forEach(function(option) {
-                        option.enabled = true;
                     });
                 }
             });

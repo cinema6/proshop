@@ -75,9 +75,9 @@
         <div>
             <select ng-model="UsersCtrl.role" name="user_role" required>
                 <option value="">-- Choose Role --</option>
-                <option value="publisher">Publisher</option>
-                <option value="contentProvider">Content Provider</option>
-                <option value="admin">System Admin</option>
+                <option value="Publisher">Publisher</option>
+                <option value="CntentProvider">Content Provider</option>
+                <option value="Admin">System Admin</option>
             </select>
             <span class="help-block">
                 <span ng-show="theForm.user_role.$error.required"> Required. </span>
@@ -85,14 +85,7 @@
         </div>
     </div>
 
-
-    <!-- <div class="form-group">
-        <div>
-            <input type="checkbox" name="system_admin" ng-model="UsersCtrl.isAdmin">
-            <label for="system_admin" class="control-label"> System Admin </label>
-        </div>
-    </div> -->
-    <div ng-show="UsersCtrl.role === 'publisher'">
+    <div ng-show="UsersCtrl.role === 'Publisher'">
         <div class="form-group">
             <div>
                 <input type="checkbox" name="can_edit_org_ad_settings" ng-model="UsersCtrl.editAdConfigOptions[0].enabled">
@@ -120,13 +113,6 @@
                     <span ng-show="theForm.branding.$error.maxlength"> Too long. </span>
                     <span ng-show="theForm.branding.$error.pattern"> Invalid characters. </span>
                 </span>
-            </div>
-        </div>
-        <div class="form-group" ng-class="{'has-error': theForm.user_type.$error.required}">
-            <label for="user_type" class="control-label"> Type: </label>
-            <div ng-repeat="setting in UsersCtrl.userTypes">
-                <input type="radio" name="user_type" ng-model="data.user.type" value="{{setting.value}}" required>
-                <span>{{setting.label}}</span>
             </div>
         </div>
         <div class="form-group">
