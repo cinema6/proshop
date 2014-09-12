@@ -123,7 +123,6 @@ define(['account'],function(account) {
 
             function convertUserForEditing(user, org) {
                 user.branding = user.branding || org.branding;
-                user.type = user.type || 'Publisher';
 
                 self.role = isAdmin(user) ? 'Admin' : user.type;
 

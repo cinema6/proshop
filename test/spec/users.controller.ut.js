@@ -196,8 +196,6 @@
                             userWithConfig = angular.copy($scope.data.users[0]),
                             userWithNoBranding = angular.copy($scope.data.users[0]),
                             userWithBranding = angular.copy($scope.data.users[0]),
-                            userWithType = angular.copy($scope.data.users[0]),
-                            userWithNoType = angular.copy($scope.data.users[0]),
                             defaultConfig = {
                                 minireelinator: {
                                     minireelDefaults: {
@@ -274,15 +272,6 @@
                         $scope.data.org.branding = 'some_org_brand';
                         UsersCtrl.editUser(userWithBranding);
                         expect($scope.data.user.branding).toBe('different_brand');
-
-                        // user with type
-                        userWithType.type = 'ContentPublisher';
-                        UsersCtrl.editUser(userWithType);
-                        expect($scope.data.user.type).toBe('ContentPublisher');
-
-                        delete userWithNoType.type;
-                        UsersCtrl.editUser(userWithNoType);
-                        expect($scope.data.user.type).toBe('Publisher');
                     });
 
                     it('should set the editAdConfigOptions if user permissions are set', function() {
@@ -520,26 +509,39 @@
 
                             UsersCtrl.addNewUser();
 
+                            $scope.data.org = $scope.data.orgs[0];
+                            $scope.$digest();
+
                             $scope.data.user.email = 'foo@bar.com';
                             $scope.data.user.password = 'secret';
                             $scope.data.user.firstName = 'Test';
                             $scope.data.user.lastName = 'Name';
-                            $scope.data.org = $scope.data.orgs[0];
-                            $scope.$digest();
+                            $scope.data.user.branding = 'brand';
+
+                            UsersCtrl.role = 'Publisher';
                         });
 
                         it('should POST the user', function() {
                             UsersCtrl.saveUser();
 
                             expect(account.postUser).toHaveBeenCalledWith({
-                                email: $scope.data.user.email,
-                                password: $scope.data.user.password,
-                                firstName: $scope.data.user.firstName,
-                                lastName: $scope.data.user.lastName,
-                                org: $scope.data.org.id,
-                                branding: $scope.data.user.branding,
-                                config: $scope.data.user.config,
-                                type: $scope.data.users[0].type,
+                                email: 'foo@bar.com',
+                                password: 'secret',
+                                firstName: 'Test',
+                                lastName: 'Name',
+                                org: 'o-1',
+                                branding: 'brand',
+                                config: {
+                                    minireelinator: {
+                                        minireelDefaults: {
+                                            splash: {
+                                                ratio: '3-2',
+                                                theme: 'img-text-overlay'
+                                            }
+                                        }
+                                    }
+                                },
+                                type: 'Publisher',
                                 permissions: {
                                     elections: {
                                         read    : 'org',
