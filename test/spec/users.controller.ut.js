@@ -312,6 +312,7 @@
                         UsersCtrl.addNewUser();
 
                         expect(UsersCtrl.action).toBe('new');
+                        expect(UsersCtrl.role).toBe(null);
                         expect($scope.data.user).toEqual({});
                         expect($scope.data.org).toBe(null);
                     });
@@ -403,44 +404,80 @@
                             });
                         });
 
-                        it('should PUT the user permissions if set', function() {
-                            UsersCtrl.editAdConfigOptions[0].enabled = true;
-                            UsersCtrl.editAdConfigOptions[1].enabled = true;
+                        describe('when role is Admin', function() {
+                            it('should POST permissions with scope of "all" and enable the editaAdConfig settings', function() {
+                                UsersCtrl.role = 'Admin';
 
-                            UsersCtrl.saveUser();
+                                UsersCtrl.saveUser();
 
-                            expect(account.putUser).toHaveBeenCalledWith({
-                                id: $scope.data.users[0].id,
-                                firstName: $scope.data.users[0].firstName,
-                                lastName: $scope.data.users[0].lastName,
-                                org: $scope.data.users[0].org.id,
-                                branding: $scope.data.users[0].branding,
-                                config: $scope.data.users[0].config,
-                                type: $scope.data.users[0].type,
-                                permissions: {
+                                expect(account.putUser.calls.mostRecent().args[0].type).toEqual('Publisher');
+                                expect(account.putUser.calls.mostRecent().args[0].permissions).toEqual({
                                     elections: {
-                                        read    : 'org',
-                                        create  : 'org',
-                                        edit    : 'org',
-                                        delete  : 'org'
+                                        read    : 'all',
+                                        create  : 'all',
+                                        edit    : 'all',
+                                        delete  : 'all'
                                     },
                                     experiences: {
-                                        read    : 'org',
-                                        create  : 'org',
-                                        edit    : 'org',
-                                        delete  : 'org',
-                                        editAdConfig: 'org'
+                                        read    : 'all',
+                                        create  : 'all',
+                                        edit    : 'all',
+                                        delete  : 'all',
+                                        editAdConfig: 'all'
                                     },
                                     users: {
-                                        read    : 'org',
-                                        edit    : 'own'
+                                        read    : 'all',
+                                        create  : 'all',
+                                        edit    : 'all',
+                                        delete  : 'all'
                                     },
                                     orgs: {
-                                        read    : 'own',
-                                        edit    : 'own',
-                                        editAdConfig: 'own'
+                                        read    : 'all',
+                                        create  : 'all',
+                                        edit    : 'all',
+                                        delete  : 'all',
+                                        editAdConfig: 'all'
                                     }
-                                }
+                                });
+                            });
+                        });
+
+                        describe('when role is Publisher', function() {
+                            it('should POST the editAdConfig settings if set', function() {
+                                UsersCtrl.role = 'Publisher';
+
+                                UsersCtrl.editAdConfigOptions[0].enabled = true;
+                                UsersCtrl.editAdConfigOptions[1].enabled = true;
+
+                                UsersCtrl.saveUser();
+
+                                expect(account.putUser.calls.mostRecent().args[0].permissions.experiences.editAdConfig).toEqual('org');
+                                expect(account.putUser.calls.mostRecent().args[0].permissions.orgs.editAdConfig).toEqual('own');
+                                expect(account.putUser.calls.mostRecent().args[0].type).toEqual('Publisher');
+
+                                UsersCtrl.editAdConfigOptions[0].enabled = false;
+                                UsersCtrl.editAdConfigOptions[1].enabled = false;
+
+                                UsersCtrl.saveUser();
+
+                                expect(account.putUser.calls.mostRecent().args[0].permissions.experiences.editAdConfig).toBeUndefined();
+                                expect(account.putUser.calls.mostRecent().args[0].permissions.orgs.editAdConfig).toBeUndefined();
+                                expect(account.putUser.calls.mostRecent().args[0].type).toEqual('Publisher');
+                            });
+                        });
+
+                        describe('when role is ContentProvider', function() {
+                            it('should POST default user permissions and disable editAdConfig settings', function() {
+                                UsersCtrl.role = 'ContentProvider';
+
+                                UsersCtrl.editAdConfigOptions[0].enabled = true;
+                                UsersCtrl.editAdConfigOptions[1].enabled = true;
+
+                                UsersCtrl.saveUser();
+
+                                expect(account.putUser.calls.mostRecent().args[0].permissions.experiences.editAdConfig).toBeUndefined();
+                                expect(account.putUser.calls.mostRecent().args[0].permissions.orgs.editAdConfig).toBeUndefined();
+                                expect(account.putUser.calls.mostRecent().args[0].type).toEqual('ContentProvider');
                             });
                         });
 
@@ -528,65 +565,81 @@
                             });
                         });
 
-                        it('should POST the editAdConfig settings if set', function() {
-                            UsersCtrl.editAdConfigOptions[0].enabled = true;
-                            UsersCtrl.editAdConfigOptions[1].enabled = true;
+                        describe('when role is Admin', function() {
+                            it('should POST permissions with scope of "all" and enable the editaAdConfig settings', function() {
+                                UsersCtrl.role = 'Admin';
 
-                            UsersCtrl.saveUser();
+                                UsersCtrl.saveUser();
 
-                            expect(account.postUser.calls.mostRecent().args[0].permissions.experiences.editAdConfig).toEqual('org');
-                            expect(account.postUser.calls.mostRecent().args[0].permissions.orgs.editAdConfig).toEqual('own');
-                        });
-
-                        it('should POST admin user permissions if isAdmin is true', function() {
-                            UsersCtrl.isAdmin = true;
-
-                            $scope.$digest();
-
-                            UsersCtrl.saveUser();
-
-                            expect(account.postUser.calls.mostRecent().args[0].permissions).toEqual({
-                                elections: {
-                                    read    : 'all',
-                                    create  : 'all',
-                                    edit    : 'all',
-                                    delete  : 'all'
-                                },
-                                experiences: {
-                                    read    : 'all',
-                                    create  : 'all',
-                                    edit    : 'all',
-                                    delete  : 'all',
-                                    editAdConfig: 'all'
-                                },
-                                users: {
-                                    read    : 'all',
-                                    create  : 'all',
-                                    edit    : 'all',
-                                    delete  : 'all'
-                                },
-                                orgs: {
-                                    read    : 'all',
-                                    create  : 'all',
-                                    edit    : 'all',
-                                    delete  : 'all',
-                                    editAdConfig: 'all'
-                                }
+                                expect(account.postUser.calls.mostRecent().args[0].type).toEqual('Publisher');
+                                expect(account.postUser.calls.mostRecent().args[0].permissions).toEqual({
+                                    elections: {
+                                        read    : 'all',
+                                        create  : 'all',
+                                        edit    : 'all',
+                                        delete  : 'all'
+                                    },
+                                    experiences: {
+                                        read    : 'all',
+                                        create  : 'all',
+                                        edit    : 'all',
+                                        delete  : 'all',
+                                        editAdConfig: 'all'
+                                    },
+                                    users: {
+                                        read    : 'all',
+                                        create  : 'all',
+                                        edit    : 'all',
+                                        delete  : 'all'
+                                    },
+                                    orgs: {
+                                        read    : 'all',
+                                        create  : 'all',
+                                        edit    : 'all',
+                                        delete  : 'all',
+                                        editAdConfig: 'all'
+                                    }
+                                });
                             });
                         });
 
-                        it('should not POST editAdConfig settings for admin user if unchecked', function() {
-                            UsersCtrl.isAdmin = true;
+                        describe('when role is Publisher', function() {
+                            it('should POST the editAdConfig settings if set', function() {
+                                UsersCtrl.role = 'Publisher';
 
-                            $scope.$digest();
+                                UsersCtrl.editAdConfigOptions[0].enabled = true;
+                                UsersCtrl.editAdConfigOptions[1].enabled = true;
 
-                            UsersCtrl.editAdConfigOptions[0].enabled = false;
-                            UsersCtrl.editAdConfigOptions[1].enabled = false;
+                                UsersCtrl.saveUser();
 
-                            UsersCtrl.saveUser();
+                                expect(account.postUser.calls.mostRecent().args[0].permissions.experiences.editAdConfig).toEqual('org');
+                                expect(account.postUser.calls.mostRecent().args[0].permissions.orgs.editAdConfig).toEqual('own');
+                                expect(account.postUser.calls.mostRecent().args[0].type).toEqual('Publisher');
 
-                            expect(account.postUser.calls.mostRecent().args[0].permissions.orgs.editAdConfig).toBeUndefined();
-                            expect(account.postUser.calls.mostRecent().args[0].permissions.experiences.editAdConfig).toBeUndefined();
+                                UsersCtrl.editAdConfigOptions[0].enabled = false;
+                                UsersCtrl.editAdConfigOptions[1].enabled = false;
+
+                                UsersCtrl.saveUser();
+
+                                expect(account.postUser.calls.mostRecent().args[0].permissions.experiences.editAdConfig).toBeUndefined();
+                                expect(account.postUser.calls.mostRecent().args[0].permissions.orgs.editAdConfig).toBeUndefined();
+                                expect(account.postUser.calls.mostRecent().args[0].type).toEqual('Publisher');
+                            });
+                        });
+
+                        describe('when role is ContentProvider', function() {
+                            it('should POST default user permissions and disable editAdConfig settings', function() {
+                                UsersCtrl.role = 'ContentProvider';
+
+                                UsersCtrl.editAdConfigOptions[0].enabled = true;
+                                UsersCtrl.editAdConfigOptions[1].enabled = true;
+
+                                UsersCtrl.saveUser();
+
+                                expect(account.postUser.calls.mostRecent().args[0].permissions.experiences.editAdConfig).toBeUndefined();
+                                expect(account.postUser.calls.mostRecent().args[0].permissions.orgs.editAdConfig).toBeUndefined();
+                                expect(account.postUser.calls.mostRecent().args[0].type).toEqual('ContentProvider');
+                            });
                         });
 
                         it('on success should put a message on the scope, set the action, and reload org and user data', function() {
@@ -701,82 +754,66 @@
                     });
                 });
 
-                describe('isAdmin', function() {
-                    it('when creating a new user should be false by default', function() {
-                        UsersCtrl.addNewUser();
-                        expect(UsersCtrl.isAdmin).toBe(false);
-                    });
+                describe('role', function() {
+                    describe('when editing a user', function() {
+                        it('should be set to user type unless all permissions are set to "all"', function() {
+                            $scope.$apply(function() {
+                                account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
+                                account.getUsers.deferred.resolve(angular.copy(mockUsers));
+                            });
 
-                    it('when editing a use should be determined by user\'s permissions', function() {
-                        $scope.$apply(function() {
-                            account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
-                            account.getUsers.deferred.resolve(angular.copy(mockUsers));
+                            $scope.data.users[0].type = 'ContentProvider';
+
+                            UsersCtrl.editUser($scope.data.users[0]);
+
+                            expect(UsersCtrl.role).toBe('ContentProvider');
+
+                            $scope.data.users[0].type = 'Publisher';
+
+                            UsersCtrl.editUser($scope.data.users[0]);
+
+                            expect(UsersCtrl.role).toBe('Publisher');
+
+                            $scope.data.users[0].permissions = {
+                                elections: {
+                                    read    : 'all',
+                                    create  : 'all',
+                                    edit    : 'all',
+                                    delete  : 'all'
+                                },
+                                experiences: {
+                                    read    : 'all',
+                                    create  : 'all',
+                                    edit    : 'all',
+                                    delete  : 'all',
+                                    editAdConfig: 'all'
+                                },
+                                users: {
+                                    read    : 'all',
+                                    create  : 'all',
+                                    edit    : 'all',
+                                    delete  : 'all'
+                                },
+                                orgs: {
+                                    read    : 'all',
+                                    create  : 'all',
+                                    edit    : 'all',
+                                    delete  : 'all',
+                                    editAdConfig: 'all'
+                                }
+                            };
+
+                            UsersCtrl.editUser($scope.data.users[0]);
+
+                            expect(UsersCtrl.role).toBe('Admin');
                         });
+                    });
+                    describe('when creating a user', function() {
+                        it('should be initialized to null', function() {
+                            UsersCtrl.addNewUser();
 
-                        UsersCtrl.editUser($scope.data.users[0]);
-
-                        expect(UsersCtrl.isAdmin).toBe(false);
-
-                        $scope.data.users[0].permissions = {
-                            elections: {
-                                read    : 'all',
-                                create  : 'all',
-                                edit    : 'all',
-                                delete  : 'all'
-                            },
-                            experiences: {
-                                read    : 'all',
-                                create  : 'all',
-                                edit    : 'all',
-                                delete  : 'all',
-                                editAdConfig: 'all'
-                            },
-                            users: {
-                                read    : 'all',
-                                create  : 'all',
-                                edit    : 'all',
-                                delete  : 'all'
-                            },
-                            orgs: {
-                                read    : 'all',
-                                create  : 'all',
-                                edit    : 'all',
-                                delete  : 'all',
-                                editAdConfig: 'all'
-                            }
-                        };
-
-                        UsersCtrl.editUser($scope.data.users[0]);
-
-                        expect(UsersCtrl.isAdmin).toBe(true);
-
-                        $scope.data.users[0].permissions = {
-                            elections: {
-                                read    : 'org',
-                                create  : 'org',
-                                edit    : 'org',
-                                delete  : 'org'
-                            },
-                            experiences: {
-                                read    : 'org',
-                                create  : 'org',
-                                edit    : 'org',
-                                delete  : 'org'
-                            },
-                            users: {
-                                read    : 'org',
-                                edit    : 'own'
-                            },
-                            orgs: {
-                                read    : 'own',
-                                edit    : 'own'
-                            }
-                        };
-
-                        UsersCtrl.editUser($scope.data.users[0]);
-
-                        expect(UsersCtrl.isAdmin).toBe(false);
-
+                            expect(UsersCtrl.role).toBe(null);
+                        });
                     });
                 });
             });
