@@ -49,6 +49,70 @@ define(['account'],function(account) {
                     });
             }
 
+            function setPermissions() {
+                var permissions = self.role === 'Admin' ?
+                    {
+                        elections: {
+                            read    : 'all',
+                            create  : 'all',
+                            edit    : 'all',
+                            delete  : 'all'
+                        },
+                        experiences: {
+                            read    : 'all',
+                            create  : 'all',
+                            edit    : 'all',
+                            delete  : 'all',
+                            editAdConfig: 'all'
+                        },
+                        users: {
+                            read    : 'all',
+                            create  : 'all',
+                            edit    : 'all',
+                            delete  : 'all'
+                        },
+                        orgs: {
+                            read    : 'all',
+                            create  : 'all',
+                            edit    : 'all',
+                            delete  : 'all',
+                            editAdConfig: 'all'
+                        }
+                    } :
+                    {
+                        elections: {
+                            read    : 'org',
+                            create  : 'org',
+                            edit    : 'org',
+                            delete  : 'org'
+                        },
+                        experiences: {
+                            read    : 'org',
+                            create  : 'org',
+                            edit    : 'org',
+                            delete  : 'org'
+                        },
+                        users: {
+                            read    : 'org',
+                            edit    : 'own'
+                        },
+                        orgs: {
+                            read    : 'own',
+                            edit    : 'own'
+                        }
+                    };
+
+                if (self.role === 'Publisher') {
+                    self.editAdConfigOptions.forEach(function(option) {
+                        if (option.enabled) {
+                            permissions[option.name].editAdConfig = option.value;
+                        }
+                    });
+                }
+
+                return permissions;
+            }
+
             function isAdmin(user) {
                 return !!user.permissions && Object.keys(user.permissions).every(function(type) {
                     return Object.keys(user.permissions[type]).every(function(verb) {
@@ -58,15 +122,15 @@ define(['account'],function(account) {
             }
 
             function convertUserForEditing(user, org) {
-                user.branding = user.branding || org.branding;
-                user.type = user.type || 'Publisher';
-
-                self.isAdmin = isAdmin(user);
-
                 if (user.permissions) {
                     self.editAdConfigOptions[0].enabled = !!user.permissions.orgs.editAdConfig;
                     self.editAdConfigOptions[1].enabled = !!user.permissions.experiences.editAdConfig;
+                    user.type = user.type || 'Publisher';
                 }
+
+                user.branding = user.branding || org.branding;
+
+                self.role = isAdmin(user) ? 'Admin' : user.type;
 
                 user.config = (user.config &&
                     user.config.minireelinator &&
@@ -147,11 +211,6 @@ define(['account'],function(account) {
                 }
             ];
 
-            self.userTypes = [
-                {label:'Publisher',value:'Publisher'},
-                {label:'Content Provider',value:'ContentProvider'}
-            ];
-
             self.editUser = function(user){
                 $scope.message = null;
                 self.action = 'edit';
@@ -164,7 +223,7 @@ define(['account'],function(account) {
             self.addNewUser = function() {
                 $scope.message = null;
                 self.action = 'new';
-                self.isAdmin = false;
+                self.role = null;
                 data.user = {};
                 data.org = null;
             };
@@ -192,7 +251,7 @@ define(['account'],function(account) {
                 });
             };
 
-            this.sortUsers = function(/*field*/) {
+            self.sortUsers = function(/*field*/) {
                 // I imagine there will be something in the UI to allow sorting the list
                 // return account.getOrgs(field).then(updateOrgs);
             };
@@ -218,74 +277,14 @@ define(['account'],function(account) {
                 });
             };
 
-            function setPermissions() {
-                var permissions = self.isAdmin ?
-                    {
-                        elections: {
-                            read    : 'all',
-                            create  : 'all',
-                            edit    : 'all',
-                            delete  : 'all'
-                        },
-                        experiences: {
-                            read    : 'all',
-                            create  : 'all',
-                            edit    : 'all',
-                            delete  : 'all',
-                        },
-                        users: {
-                            read    : 'all',
-                            create  : 'all',
-                            edit    : 'all',
-                            delete  : 'all'
-                        },
-                        orgs: {
-                            read    : 'all',
-                            create  : 'all',
-                            edit    : 'all',
-                            delete  : 'all',
-                        }
-                    } :
-                    {
-                        elections: {
-                            read    : 'org',
-                            create  : 'org',
-                            edit    : 'org',
-                            delete  : 'org'
-                        },
-                        experiences: {
-                            read    : 'org',
-                            create  : 'org',
-                            edit    : 'org',
-                            delete  : 'org'
-                        },
-                        users: {
-                            read    : 'org',
-                            edit    : 'own'
-                        },
-                        orgs: {
-                            read    : 'own',
-                            edit    : 'own'
-                        }
-                    };
-
-                self.editAdConfigOptions.forEach(function(option) {
-                    if (option.enabled) {
-                        permissions[option.name].editAdConfig = self.isAdmin ? 'all' : option.value;
-                    }
-                });
-
-                return permissions;
-            }
-
-            this.saveUser = function() {
+            self.saveUser = function() {
                 var user = {
                     firstName: data.user.firstName,
                     lastName: data.user.lastName,
                     org: data.org.id,
                     branding: data.user.branding,
                     config: data.user.config,
-                    type: data.user.type,
+                    type: (self.role === 'Admin' ? 'Publisher' : self.role),
                     permissions: setPermissions()
                 };
 
@@ -379,16 +378,6 @@ define(['account'],function(account) {
                 if (action === 'new') {
                     self.editAdConfigOptions.forEach(function(option) {
                         option.enabled = false;
-                    });
-                }
-            });
-
-            $scope.$watch(function() {
-                return self.isAdmin;
-            }, function(isAdmin) {
-                if (isAdmin) {
-                    self.editAdConfigOptions.forEach(function(option) {
-                        option.enabled = true;
                     });
                 }
             });
