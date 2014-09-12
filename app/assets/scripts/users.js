@@ -122,14 +122,15 @@ define(['account'],function(account) {
             }
 
             function convertUserForEditing(user, org) {
-                user.branding = user.branding || org.branding;
-
-                self.role = isAdmin(user) ? 'Admin' : user.type;
-
                 if (user.permissions) {
                     self.editAdConfigOptions[0].enabled = !!user.permissions.orgs.editAdConfig;
                     self.editAdConfigOptions[1].enabled = !!user.permissions.experiences.editAdConfig;
+                    user.type = user.type || 'Publisher';
                 }
+
+                user.branding = user.branding || org.branding;
+
+                self.role = isAdmin(user) ? 'Admin' : user.type;
 
                 user.config = (user.config &&
                     user.config.minireelinator &&
