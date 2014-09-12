@@ -1,7 +1,10 @@
 # ProShop
 
+## v0.6.3 (September 12, 2014)
+
 * *[v0.6.3]*
     *[FEATURE]: Add User roles: Admin, Publisher, Content Provider
+* *[/v0.6.3]*
 
 ## v0.6.2 (September 11, 2014)
 
