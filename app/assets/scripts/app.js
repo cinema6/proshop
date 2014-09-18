@@ -1,7 +1,7 @@
 define( [   'angular','ngAnimate','ngRoute','c6ui','c6log', 'c6defines',
-            'auth', 'login','users', 'orgs', 'minireels', 'templates'],
+            'auth', 'login','users', 'orgs', 'minireels', 'sites', 'templates'],
 function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
-            auth , login , users , orgs , minireels , templates ) {
+            auth , login , users , orgs , minireels , sites , templates ) {
     /* jshint -W106 */
     'use strict';
 
@@ -18,6 +18,7 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
             users.name,
             orgs.name,
             minireels.name,
+            sites.name,
             templates.name
         ])
         .constant('c6Defines',c6Defines)
@@ -51,6 +52,11 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
                     controller: 'MinireelsController',
                     controllerAs: 'MinireelsCtrl',
                     templateUrl: 'views/minireels/minireels.html'
+                })
+                .when('/sites', {
+                    controller: 'SitesController',
+                    controllerAs: 'SitesCtrl',
+                    templateUrl: 'views/sites/sites.html'
                 })
                 .otherwise({redirectTo: '/users'});
         }])
