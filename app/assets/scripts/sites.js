@@ -29,6 +29,7 @@ define(['account'], function(account) {
 
                 account.getOrgs().then(function(orgs) {
                     self.orgs = orgs;
+                    _data.orgs = orgs;
                 });
             }
 
@@ -49,17 +50,25 @@ define(['account'], function(account) {
                 bindBrandToName = false;
             };
 
-            self.convertNameToBrand = function(name) {
-                $scope.site.branding = name.toLowerCase().split(',')[0].replace(/ /g, '_');
-            };
-
-            self.filterData = function() {
-                var query = self.query.toLowerCase();
+            self.filterData = function(query) {
+                var _query = query.toLowerCase(),
+                    orgs = _data.orgs.filter(function(org) {
+                        return org.name.toLowerCase().indexOf(_query) >= 0;
+                    });
 
                 self.sites = _data.sites.filter(function(site) {
-                        return site.name.toLowerCase().indexOf(query) >= 0 ||
-                            site.host.toLowerCase().indexOf(query) >= 0;
+                    var bool = false;
+
+                    orgs.forEach(function(org) {
+                        bool = (site.org.id.indexOf(org.id) >= 0) || bool;
                     });
+
+                    [site.name, site.host].forEach(function(field) {
+                        bool = (field && field.toLowerCase().indexOf(_query) >= 0) || bool;
+                    });
+
+                    return bool;
+                });
 
                 self.page = 1;
             };
