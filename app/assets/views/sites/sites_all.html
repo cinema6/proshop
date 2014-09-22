@@ -1,6 +1,6 @@
 <div class="clearfix">
     <button ng-click="SitesCtrl.addNewSite()">Add New Site</button>
-    <input style="float:right;width:250px;" type="text" ng-model="data.query" ng-change="SitesCtrl.filterData()" placeholder="Search Sites by Name or Domain">
+    <input style="float:right;width:250px;" type="text" ng-model="SitesCtrl.query" ng-change="SitesCtrl.filterData()" placeholder="Search Sites by Name or Domain">
 </div>
 
 <paginator-controls page="SitesCtrl.page" limit="SitesCtrl.limit" limits="SitesCtrl.limits" total="SitesCtrl.total"></paginator-controls>

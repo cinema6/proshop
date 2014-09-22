@@ -1,4 +1,4 @@
-<form name="theForm" ng-submit="SitesCtrl.saveSite(site)">
+<form name="theForm" ng-submit="SitesCtrl.saveSite(SitesCtrl.site)">
     <a href="" ng-click="SitesCtrl.action = 'all'">&lsaquo; Back to list</a>
 
     <div class="form-group" style="padding-top:20px" ng-class="{'has-error': theForm.name.$error.required}">

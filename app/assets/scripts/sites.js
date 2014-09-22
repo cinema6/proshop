@@ -5,7 +5,7 @@ define(['account'], function(account) {
         .controller('SitesController', ['$scope','$log','SitesService','account','ConfirmDialogService',
         function                       ( $scope , $log , SitesService , account , ConfirmDialogService ) {
             var self = this,
-                data,
+                _data = {},
                 bindBrandToName = true;
 
             $log = $log.context('SitesCtrl');
@@ -24,6 +24,7 @@ define(['account'], function(account) {
                     });
 
                     self.sites = sites;
+                    _data.sites = sites;
                 });
 
                 account.getOrgs().then(function(orgs) {
@@ -32,6 +33,7 @@ define(['account'], function(account) {
             }
 
             self.action = 'all';
+            self.query = null;
             self.page = 1;
             self.limit = 50;
             self.limits = [5,10,50,100];
@@ -51,7 +53,19 @@ define(['account'], function(account) {
                 $scope.site.branding = name.toLowerCase().split(',')[0].replace(/ /g, '_');
             };
 
+            self.filterData = function() {
+                var query = self.query.toLowerCase();
+
+                self.sites = _data.sites.filter(function(site) {
+                        return site.name.toLowerCase().indexOf(query) >= 0 ||
+                            site.host.toLowerCase().indexOf(query) >= 0;
+                    });
+
+                self.page = 1;
+            };
+
             self.editSite = function(site) {
+                $scope.message = null;
                 self.site = site;
                 self.org = self.orgs.filter(function(org) {
                     return self.site.org.id === org.id;
@@ -60,14 +74,47 @@ define(['account'], function(account) {
             };
 
             self.addNewSite = function() {
-                self.site = {};
+                $scope.message = null;
+                self.site = {
+                    status: 'active'
+                };
                 self.org = null;
                 self.action = 'new';
-                console.log($scope);
             };
 
             self.saveSite = function(site) {
-                console.log(site);
+                var s = {};
+                s.org = self.org.id;
+
+                function handleError(err) {
+                    $log.error(err);
+                    ConfirmDialogService.display({
+                        prompt: 'There was a problem saving the Site. ' + err + '.',
+                        affirm: 'Close',
+                        onAffirm: function() {
+                            ConfirmDialogService.close();
+                        }
+                    });
+                }
+
+                function handleSuccess(site) {
+                    $log.info('saved user: ', site);
+                    $scope.message = 'Successfully saved Site: ' + site.name;
+                    initView();
+                    self.action = 'all';
+                }
+
+                ['name','branding','host','status','placementId'].forEach(function(prop) {
+                    s[prop] = site[prop];
+                });
+
+                if (site.id) {
+                    SitesService.putSite(site.id, s)
+                        .then(handleSuccess, handleError);
+                } else {
+                    SitesService.postSite(s)
+                        .then(handleSuccess, handleError);
+                }
             };
 
             self.confirmDelete = function() {
@@ -77,10 +124,11 @@ define(['account'], function(account) {
                     cancel: 'Cancel',
                     onAffirm: function() {
                         ConfirmDialogService.close();
-                        SitesService.deleteSite(self.site)
+                        SitesService.deleteSite(self.site.id)
                             .then(function() {
-                                $scope.message = 'Successfully deleted user: ' + self.site.name;
+                                $scope.message = 'Successfully deleted Site: ' + self.site.name;
                                 initView();
+                                self.action = 'all';
                             }, function(err) {
                                 $log.error(err);
                                 ConfirmDialogService.display({
@@ -204,6 +252,29 @@ define(['account'], function(account) {
                 return httpWrapper({
                     method: 'GET',
                     url: c6UrlMaker('sites' + (field ? '?sort=' + field : ''), 'api')
+                });
+            };
+
+            this.postSite = function(site) {
+                return httpWrapper({
+                    method: 'POST',
+                    url: c6UrlMaker('site', 'api'),
+                    data: site
+                });
+            };
+
+            this.putSite = function(id, site) {
+                return httpWrapper({
+                    method: 'PUT',
+                    url: c6UrlMaker('site/' + id, 'api'),
+                    data: site
+                });
+            };
+
+            this.deleteSite = function(id) {
+                return httpWrapper({
+                    method: 'DELETE',
+                    url: c6UrlMaker('site/' + id, 'api')
                 });
             };
         }]);
