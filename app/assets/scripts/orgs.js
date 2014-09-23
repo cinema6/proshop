@@ -14,6 +14,8 @@ define(['account'],function(account) {
             function initView() {
                 var viewPromise = $q.defer();
 
+                self.loading = true;
+
                 account.getOrgs()
                     .then(function(orgs) {
                         data.appData.orgs = orgs;

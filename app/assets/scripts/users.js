@@ -16,6 +16,8 @@ define(['account'],function(account) {
                 // view is disabled until getOrgs() + getUsers() + getOrg() for each user
                 var viewPromise = $q.defer();
 
+                self.loading = true;
+
                 $q.all([account.getOrgs(), account.getUsers()])
                     .then(function(promises) {
                         var orgs = promises[0],

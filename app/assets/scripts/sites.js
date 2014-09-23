@@ -18,6 +18,8 @@ define(['account'], function(account) {
             function initView() {
                 var viewPromise = $q.defer();
 
+                self.loading = true;
+
                 $q.all([SitesService.getSites(), account.getOrgs()])
                     .then(function(promises) {
                         var sites = promises[0],
