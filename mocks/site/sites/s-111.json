@@ -1,0 +1,11 @@
+{
+    "id": "s-111",
+    "status": "active",
+    "created": "2014-06-13T19:28:39.408Z",
+    "lastUpdated": "2014-06-13T19:28:39.408Z",
+    "org": "o-112",
+    "branding": "site1_branding",
+    "placementId": "111111",
+    "name": "Best Website Ever",
+    "host": "bestever.com"
+}

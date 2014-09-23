@@ -36,6 +36,8 @@
                             '/api/account/orgs': 'mocks/org/main.js',
                             '/api/content/experience': 'mocks/content/main.js',
                             '/api/content/experiences': 'mocks/content/main.js',
+                            '/api/site': 'mocks/site/main.js',
+                            '/api/sites': 'mocks/site/main.js',
                             '/api/collateral/splash': 'mocks/collateral/main.js'
                         }),
                         require('grunt-connect-proxy/lib/utils').proxyRequest,
