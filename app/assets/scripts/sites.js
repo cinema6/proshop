@@ -253,14 +253,14 @@ define(['account'], function(account) {
             this.getSite = function(id) {
                 return httpWrapper({
                     method: 'GET',
-                    url: c6UrlMaker('site' + id, 'api')
+                    url: c6UrlMaker('site/' + id, 'api')
                 });
             };
 
-            this.getSites = function(field) {
+            this.getSites = function(param, value) {
                 return httpWrapper({
                     method: 'GET',
-                    url: c6UrlMaker('sites' + (field ? '?sort=' + field : ''), 'api')
+                    url: c6UrlMaker('sites' + (param && value ? '?' + param + '=' + value : ''), 'api')
                 });
             };
 
