@@ -345,6 +345,7 @@ define(['account','content','splash'],function(account,content,splash) {
                 // and the org changes, we need to get the experiences of the new org
                 if (self.action === 'orgs' || self.action === 'experiences') {
                     loadExperiences(newOrg);
+                    self.page = 1;
                 }
 
                 // if we're copying a minireel and we select a target org

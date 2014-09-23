@@ -563,6 +563,16 @@
 
                         expect($scope.data.users).toEqual(mockUsers);
                     });
+
+                    it('should go to first page of results', function() {
+                        MinireelsCtrl.page = 2;
+
+                        $scope.$apply(function() {
+                            $scope.data.org = mockOrgs[0];
+                        });
+
+                        expect(MinireelsCtrl.page).toBe(1);
+                    });
                 });
 
                 describe('data.user', function() {
