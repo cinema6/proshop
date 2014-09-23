@@ -433,6 +433,23 @@
                 });
             });
 
+            describe('properties', function() {
+                describe('loading', function() {
+                    it('should be true on initialization', function() {
+                        expect(SitesCtrl.loading).toBe(true);
+                    });
+
+                    it('should be false after all data promises resolve', function() {
+                        $scope.$apply(function() {
+                            SitesService.getSites.deferred.resolve(angular.copy(mockSites));
+                            account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
+                        });
+
+                        expect(SitesCtrl.loading).toBe(false);
+                    });
+                });
+            });
+
             describe('$scope.doSort()', function() {
                 it('should sort', function() {
                     $scope.doSort('domain');

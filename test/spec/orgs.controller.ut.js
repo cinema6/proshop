@@ -172,6 +172,20 @@
                         expect(OrgsCtrl.total).toBe(1);
                     });
                 });
+
+                describe('loading', function() {
+                    it('should be true on initialization', function() {
+                        expect(OrgsCtrl.loading).toBe(true);
+                    });
+
+                    it('should be false after all data promises resolve', function() {
+                        $scope.$apply(function() {
+                            account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
+                        });
+
+                        expect(OrgsCtrl.loading).toBe(false);
+                    });
+                });
             });
 
             describe('methods', function() {

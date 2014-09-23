@@ -2,8 +2,8 @@ define(['account'],function(account) {
     'use strict';
 
     return angular.module('c6.proshop.orgs',[account.name])
-        .controller('OrgsController', ['$scope', '$log', 'account', 'ConfirmDialogService',
-        function                      ( $scope ,  $log,   account ,  ConfirmDialogService ) {
+        .controller('OrgsController', ['$scope', '$log', 'account', 'ConfirmDialogService', '$q',
+        function                      ( $scope ,  $log,   account ,  ConfirmDialogService ,  $q ) {
             var self = this,
                 data = $scope.data,
                 bindBrandToName = true;
@@ -11,9 +11,22 @@ define(['account'],function(account) {
             $log = $log.context('OrgsCtrl');
             $log.info('instantiated');
 
-            function updateOrgs(orgs) {
-                data.appData.orgs = orgs;
-                data.orgs = orgs;
+            function initView() {
+                var viewPromise = $q.defer();
+
+                account.getOrgs()
+                    .then(function(orgs) {
+                        data.appData.orgs = orgs;
+                        data.orgs = orgs;
+
+                        viewPromise.resolve();
+                    });
+
+                return viewPromise.promise;
+            }
+
+            function hideLoader() {
+                self.loading = false;
             }
 
             function convertNameToBrand(name) {
@@ -50,6 +63,7 @@ define(['account'],function(account) {
             ];
 
             self.action = 'all';
+            self.loading = true;
             self.page = 1;
             self.limit = 50;
             self.limits = [5,10,50,100];
@@ -140,7 +154,7 @@ define(['account'],function(account) {
                 account.deleteOrg(data.org)
                     .then(function() {
                         $scope.message = 'Successfully deleted org: ' + data.org.name;
-                        account.getOrgs().then(updateOrgs);
+                        initView().then(hideLoader);
                         self.action = 'all';
                     }, function(err) {
                         $log.error(err);
@@ -211,7 +225,7 @@ define(['account'],function(account) {
                 function handleSuccess(org) {
                     $log.info('saved org: ', org);
                     $scope.message = 'Successfully saved org: ' + org.name;
-                    account.getOrgs().then(updateOrgs);
+                    initView().then(hideLoader);
                     self.action = 'all';
                 }
 
@@ -253,7 +267,8 @@ define(['account'],function(account) {
                 }
             });
 
-            account.getOrgs().then(updateOrgs);
+            initView().then(hideLoader);
+            
 
         }])
 

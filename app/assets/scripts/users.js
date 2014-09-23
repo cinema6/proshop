@@ -19,19 +19,24 @@ define(['account'],function(account) {
                 $q.all([account.getOrgs(), account.getUsers()])
                     .then(function(promises) {
                         var orgs = promises[0],
-                            users = promises[1];
+                            users = promises[1],
+                            userOrgPromiseArray = [];
 
                         data.appData.orgs = orgs;
                         data.orgs = orgs;
 
                         users.forEach(function(user) {
-                            account.getOrg(user.org)
+                            userOrgPromiseArray.push(account.getOrg(user.org)
                                 .then(function(org) {
                                     user.org = org;
-
-                                    viewPromise.resolve();
-                                });
+                                }));
                         });
+
+                        $q.all(userOrgPromiseArray)
+                            .then(function() {
+                                viewPromise.resolve();
+                            });
+
                         data.appData.users = users;
                         data.users = users;
                     });

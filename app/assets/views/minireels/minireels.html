@@ -1,6 +1,6 @@
 <h1>Minireels</h1>
 <br>
-<section ng-switch="MinireelsCtrl.action">
+<section loading-mask loading="MinireelsCtrl.loading" ng-switch="MinireelsCtrl.action" class="view">
     <div style="padding-bottom:20px">{{message}}</div>
     <minireels-orgs ng-switch-when="orgs"></minireels-orgs>
     <minireels-experiences ng-switch-when="experiences"></minireels-experiences>

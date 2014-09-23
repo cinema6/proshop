@@ -1,6 +1,6 @@
 <h1>Sites</h1>
 <br>
-<section ng-switch="SitesCtrl.action">
+<section loading-mask loading="SitesCtrl.loading" ng-switch="SitesCtrl.action" class="view">
     <div style="padding-bottom:20px">{{message}}</div>
     <sites-all ng-switch-when="all"></sites-all>
     <sites-new ng-switch-when="new"></sites-new>

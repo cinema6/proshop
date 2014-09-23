@@ -411,6 +411,8 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
                 scope.$watch('loading', function(loading) {
                     if (!loading) {
                         mask.hide();
+                    } else {
+                        mask.show();
                     }
                 });
 
