@@ -402,6 +402,41 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
             };
         }])
 
+        .directive('loadingMask', [function() {
+            function link(scope, $element) {
+                var mask = angular.element('<div class="mask"></div>');
+
+                $element.append(mask);
+
+                scope.$watch('loading', function(loading) {
+                    if (!loading) {
+                        mask.hide();
+                    }
+                });
+
+                scope.$watch(function() {
+                    return $element[0].clientHeight + ':' + $element[0].clientWidth;
+                }, function(dimension) {
+                    var d = dimension.split(':'),
+                        height = d[0],
+                        width = d[1];
+
+                    if (width && height) {
+                        mask.css('height',height);
+                        mask.css('width',width);
+                    }
+                });
+            }
+
+            return {
+                restrict: 'A',
+                link: link,
+                scope: {
+                    loading: '='
+                }
+            };
+        }])
+
         .filter('paginatorlimits', function() {
             return function(input, params) {
                 return input && input.slice(params[0],params[1]);

@@ -4,28 +4,43 @@ define(['account'],function(account) {
     var extend = angular.extend;
 
     return angular.module('c6.proshop.users',[account.name])
-        .controller('UsersController', ['$scope', '$log', 'account', 'ConfirmDialogService',
-        function                       ( $scope ,  $log,   account ,  ConfirmDialogService ) {
+        .controller('UsersController', ['$scope', '$log', 'account', 'ConfirmDialogService', '$q',
+        function                       ( $scope ,  $log,   account ,  ConfirmDialogService ,  $q ) {
             var self = this,
                 data = $scope.data;
 
             $log = $log.context('UsersCtrl');
             $log.info('instantiated');
 
-            function updateOrgs(orgs) {
-                data.appData.orgs = orgs;
-                data.orgs = orgs;
+            function initView() {
+                // view is disabled until getOrgs() + getUsers() + getOrg() for each user
+                var viewPromise = $q.defer();
+
+                $q.all([account.getOrgs(), account.getUsers()])
+                    .then(function(promises) {
+                        var orgs = promises[0],
+                            users = promises[1];
+
+                        data.appData.orgs = orgs;
+                        data.orgs = orgs;
+
+                        users.forEach(function(user) {
+                            account.getOrg(user.org)
+                                .then(function(org) {
+                                    user.org = org;
+
+                                    viewPromise.resolve();
+                                });
+                        });
+                        data.appData.users = users;
+                        data.users = users;
+                    });
+
+                return viewPromise.promise;
             }
 
-            function updateUsers(users) {
-                users.forEach(function(user) {
-                    account.getOrg(user.org)
-                        .then(function(org) {
-                            user.org = org;
-                        });
-                });
-                data.appData.users = users;
-                data.users = users;
+            function hideLoader() {
+                self.loading = false;
             }
 
             function deleteUser() {
@@ -34,8 +49,7 @@ define(['account'],function(account) {
                 account.deleteUser(data.user)
                     .then(function() {
                         $scope.message = 'Successfully deleted user: ' + data.user.email;
-                        account.getOrgs().then(updateOrgs);
-                        account.getUsers().then(updateUsers);
+                        initView().then(hideLoader);
                         self.action = 'all';
                     }, function(err) {
                         $log.error(err);
@@ -186,6 +200,7 @@ define(['account'],function(account) {
             };
 
             self.action = 'all';
+            self.loading = true;
             self.page = 1;
             self.limit = 50;
             self.limits = [5,10,50,100];
@@ -258,8 +273,7 @@ define(['account'],function(account) {
 
             self.backToList = function() {
                 self.action = 'all';
-                account.getOrgs().then(updateOrgs);
-                account.getUsers().then(updateUsers);
+                initView().then(hideLoader);
             };
 
             self.confirmDelete = function() {
@@ -302,8 +316,7 @@ define(['account'],function(account) {
                 function handleSuccess(user) {
                     $log.info('saved user: ', user);
                     $scope.message = 'Successfully saved user: ' + data.user.email;
-                    account.getOrgs().then(updateOrgs);
-                    account.getUsers().then(updateUsers);
+                    initView().then(hideLoader);
                     self.action = 'all';
                     data.user = user;
                 }
@@ -401,8 +414,8 @@ define(['account'],function(account) {
                 }
             });
 
-            account.getOrgs().then(updateOrgs);
-            account.getUsers().then(updateUsers);
+            initView().then(hideLoader);
+
         }])
 
         .directive('newUser', [ function ( ) {
