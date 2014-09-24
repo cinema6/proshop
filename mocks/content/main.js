@@ -14,7 +14,7 @@ module.exports = function(http) {
     }
 
     function genId() {
-        return 'o-' + Math.floor(Math.random() * 10000) + 1;
+        return 'e-' + Math.floor(Math.random() * 10000) + 1;
     }
 
     http.whenGET('/api/content/experiences', function(request) {
@@ -29,14 +29,14 @@ module.exports = function(http) {
     });
 
     http.whenPOST('/api/content/experience', function(request) {
-        // var id = genId(),
-        //     currentTime = (new Date()).toISOString(),
-        //     org = extend(request.body, {
-        //         created: currentTime,
-        //         lastUpdated: currentTime
-        //     });
+        var id = genId(),
+            currentTime = (new Date()).toISOString(),
+            exp = extend(request.body, {
+                id: id,
+                created: currentTime,
+                lastUpdated: currentTime
+            });
 
-        // grunt.file.write(orgPath(id), JSON.stringify(org, null, '    '));
 
         switch (request.body.data.branding) {
         case 'post_fail':
@@ -49,10 +49,10 @@ module.exports = function(http) {
             this.respond(200, grunt.file.readJSON(path.resolve(__dirname, './experiences/generated-fail-experience.json')));
             break;
         default:
-            this.respond(200, grunt.file.readJSON(path.resolve(__dirname, './experiences/e-1234.json')));
-        }
+            grunt.file.write(experiencePath(id), JSON.stringify(exp, null, '    '));
 
-        // this.respond(201, extend(org, { id: id }));
+            this.respond(201, exp);
+        }
     });
 
     http.whenPUT('/api/content/experience/**', function(request) {

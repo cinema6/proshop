@@ -9,6 +9,14 @@ module.exports = function(http) {
         idFromPath = db.idFromPath,
         extend = fn.extend;
 
+    http.whenGET('/collateral/experiences/**/**', function(request) {
+        this.respond(200, grunt.file.read(path.resolve(__dirname, './specified_splash.jpeg')));
+    });
+
+    http.whenPOST('/api/collateral/files/**', function(request) {
+        this.respond(200, [ { path:'collateral/experiences/' + idFromPath(request.pathname) + '/splash' } ]);
+    });
+
     http.whenPOST('/api/collateral/splash/**', function(request) {
         var id = idFromPath(request.pathname);
         // var id = genId(),
