@@ -146,7 +146,7 @@ define(['account','content','splash'],function(account,content,splash) {
                 //     exp.data.branding = exp.data.branding;
                 //     break;
                 case 'custom':
-                    exp.branding = _data.branding.custom;
+                    exp.data.branding = _data.branding.custom;
                     break;
                 }
 
@@ -213,7 +213,7 @@ define(['account','content','splash'],function(account,content,splash) {
                 function setSplashSrc(response) {
                     var path = '/' + response.data[0].path;
 
-                    $log.info('setting splash source: ', response, path);
+                    $log.info('setting splash source: ', path);
 
                     minireel.data.collateral.splash = path;
 
@@ -383,6 +383,7 @@ define(['account','content','splash'],function(account,content,splash) {
                 if (self.action === 'copy') {
                     setOrgExperienceData(newOrg);
                     loadUsers(newOrg);
+                    self.brandingSource = 'none';
                 }
             });
 
