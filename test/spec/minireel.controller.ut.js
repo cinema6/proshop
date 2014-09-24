@@ -311,7 +311,6 @@
                                         theme: 'img-text-overlay', // set by default from target org
                                     },
                                     title: 'Great Minireel', // copied from exp
-                                    branding: undefined,
                                     mode: 'light', // set by default
                                     autoplay: true, // set by default
                                 },
@@ -505,6 +504,62 @@
                         expect(MinireelsCtrl.loading).toBe(false);
                     });
                 });
+
+                describe('brandingSource', function() {
+                    it('should be none by default', function() {
+                        expect(MinireelsCtrl.brandingSource).toBe('none');
+                    });
+
+                    it('should save branding from different models depending on setting', function() {
+                        var onAffirm, onCancel;
+
+                        $scope.$apply(function() {
+                            // resolve initial Orgs load
+                            account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
+                        });
+                        // select an Org to see experiences
+                        $scope.data.org = $scope.data.orgs[0];
+                        $scope.$apply(function() {
+                            // resolve with Org's experiences
+                            content.getExperiencesByOrg.deferred.resolve(angular.copy(mockExperiences));
+                            account.getUser.deferred.resolve(angular.copy(mockUsers[0]));
+                        });
+                        // select an experience to copy
+                        MinireelsCtrl.startExperienceCopy($scope.data.experiences[0]);
+                        // select a different Org to copy to
+                        $scope.data.org = $scope.data.orgs[1];
+                        $scope.$apply(function() {
+                            // resolve with Org's users
+                            account.getUsers.deferred.resolve(angular.copy(mockUsers));
+                        });
+                        $scope.data.user = $scope.data.users[0];
+                        $scope.$digest();
+                        MinireelsCtrl.confirmCopy();
+                        onAffirm = ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm;
+                        onCancel = ConfirmDialogService.display.calls.mostRecent().args[0].onCancel;
+
+                        onAffirm();
+                        expect(content.postExperience.calls.mostRecent().args[0].data.branding).toBe(undefined);
+
+                        MinireelsCtrl.brandingSource = 'custom';
+                        $scope.data.experience._data.branding.custom = 'custom_branding';
+
+                        onAffirm();
+                        expect(content.postExperience.calls.mostRecent().args[0].data.branding).toBe('custom_branding');
+
+                        MinireelsCtrl.brandingSource = 'publisher';
+                        $scope.data.experience._data.branding.publisher = 'publisher_branding';
+
+                        onAffirm();
+                        expect(content.postExperience.calls.mostRecent().args[0].data.branding).toBe('publisher_branding');
+
+                        MinireelsCtrl.brandingSource = 'current';
+                        $scope.data.experience.data.branding = 'current_branding';
+
+                        onAffirm();
+                        expect(content.postExperience.calls.mostRecent().args[0].data.branding).toBe('current_branding');
+                    });
+                });
             });
 
             describe('$scope.doSort()', function() {
@@ -566,7 +621,10 @@
                         expect(account.getUsers).toHaveBeenCalled();
                         expect($scope.data.experience._data).toEqual({
                             org: mockOrgs[0].id,
-                            branding: undefined,
+                            branding: {
+                                publisher: undefined,
+                                custom: null
+                            },
                             config: {
                                 minireelinator: {
                                     minireelDefaults: {
@@ -591,6 +649,17 @@
                         });
 
                         expect($scope.data.users).toEqual(mockUsers);
+                    });
+
+                    it('should set brandingSource to none', function() {
+                        MinireelsCtrl.startExperienceCopy(mockExperiences[0]);
+
+                        $scope.$apply(function() {
+                            account.getUsers.deferred.resolve(angular.copy(mockUsers));
+                            $scope.data.org = mockOrgs[0];
+                        });
+
+                        expect(MinireelsCtrl.brandingSource).toBe('none');
                     });
 
                     it('should go to first page of results', function() {
