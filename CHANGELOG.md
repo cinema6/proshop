@@ -1,5 +1,15 @@
 # ProShop
 
+## v0.6.4 (September 24, 2014)
+
+* *[v0.6.4]*
+    *[FEATURE]: Enable choice of MiniReel branding when copying
+    *[FIX]: Remove User branding settings
+    *[FEATURE]: Disable table results until data has completely loaded
+    *[FIX]: Ensure that paginated results reset when search results are changes
+    *[FEATURE]: Expose Sites settings UI
+* *[/v0.6.4]*
+
 ## v0.6.3 (September 12, 2014)
 
 * *[v0.6.3]*
