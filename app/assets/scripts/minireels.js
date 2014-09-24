@@ -118,7 +118,7 @@ define(['account','content','splash'],function(account,content,splash) {
                     org: org.id,
                     branding: {
                         publisher: org.branding,
-                        custom: ''
+                        custom: null
                     },
                     config: {
                         minireelinator: {
@@ -142,16 +142,12 @@ define(['account','content','splash'],function(account,content,splash) {
                 case 'publisher':
                     exp.data.branding = _data.branding.publisher;
                     break;
-                // case 'current':
-                //     exp.data.branding = exp.data.branding;
-                //     break;
                 case 'custom':
                     exp.data.branding = _data.branding.custom;
                     break;
                 }
 
                 exp.data.title = data.experience.title;
-                // exp.data.branding = _data.branding;
                 exp.data.mode = _data.config.minireelinator.minireelDefaults.mode;
                 exp.data.autoplay = _data.config.minireelinator.minireelDefaults.autoplay;
                 exp.data.splash.ratio = _data.config.minireelinator.minireelDefaults.splash.ratio;
