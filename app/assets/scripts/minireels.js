@@ -4,8 +4,8 @@ define(['account','content','splash'],function(account,content,splash) {
     var copy = angular.copy;
 
     return angular.module('c6.proshop.minireels',[account.name,content.name,splash.name])
-        .controller('MinireelsController', ['$scope','$log','account','content','CollateralService','ConfirmDialogService',
-        function                           ( $scope , $log , account , content , CollateralService , ConfirmDialogService ) {
+        .controller('MinireelsController', ['$scope','$log','account','content','CollateralService','ConfirmDialogService','$q',
+        function                           ( $scope , $log , account , content , CollateralService , ConfirmDialogService , $q ) {
             var self = this,
                 data = $scope.data;
 
@@ -42,15 +42,24 @@ define(['account','content','splash'],function(account,content,splash) {
             // called when action === 'orgs' || 'experiences'
             // and the data.org changes (from dropdown)
             function loadExperiences(org) {
+                self.loading = true;
+
                 getExperiencesByOrg(org)
                     .then(updateExperiences)
                     .then(function(exps) {
+                        var expUserPromiseArray = [];
+
                         exps.forEach(function(exp) {
-                            getUserById(exp.user)
+                            expUserPromiseArray.push(getUserById(exp.user)
                                 .then(function(user) {
                                     exp.user = user;
-                                });
+                                }));
                         });
+
+                        $q.all(expUserPromiseArray)
+                            .then(function() {
+                                self.loading = false;
+                            });
                     })
                     .then(resetQuery)
                     .finally(function() {

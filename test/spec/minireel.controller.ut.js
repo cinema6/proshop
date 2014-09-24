@@ -476,6 +476,35 @@
                         expect(MinireelsCtrl.total).toBe(1);
                     });
                 });
+
+                describe('loading', function() {
+                    it('should be true when Org is chosen', function() {
+                        $scope.$apply(function() {
+                            account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
+                        });
+
+                        $scope.data.org = $scope.data.orgs[0];
+
+                        $scope.$digest();
+
+                        expect(MinireelsCtrl.loading).toBe(true);
+                    });
+
+                    it('should be false when data has loaded', function() {
+                        $scope.$apply(function() {
+                            account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
+                        });
+
+                        $scope.data.org = $scope.data.orgs[0];
+
+                        $scope.$apply(function() {
+                            content.getExperiencesByOrg.deferred.resolve(angular.copy(mockExperiences));
+                            account.getUser.deferred.resolve(angular.copy(mockUser));
+                        });
+
+                        expect(MinireelsCtrl.loading).toBe(false);
+                    });
+                });
             });
 
             describe('$scope.doSort()', function() {

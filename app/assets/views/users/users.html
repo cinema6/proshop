@@ -1,9 +1,10 @@
 <h1>Users</h1>
 <br>
-<section ng-switch="UsersCtrl.action">
+<section ng-switch="UsersCtrl.action" class="view">
     <div style="padding-bottom:20px">{{message}}</div>
     <all-users ng-switch-when="all"></all-users>
     <new-user ng-switch-when="new"></new-user>
     <edit-user ng-switch-when="edit"></edit-user>
+    <div class="mask" ng-show="UsersCtrl.loading"></div>
 </section>
 

@@ -2,8 +2,8 @@ define(['account'], function(account) {
     'use strict';
 
     return angular.module('c6.proshop.sites', [account.name])
-        .controller('SitesController', ['$scope','$log','SitesService','account','ConfirmDialogService',
-        function                       ( $scope , $log , SitesService , account , ConfirmDialogService ) {
+        .controller('SitesController', ['$scope','$log','SitesService','account','ConfirmDialogService','$q',
+        function                       ( $scope , $log , SitesService , account , ConfirmDialogService , $q ) {
             var self = this,
                 _data = {},
                 bindBrandToName = true;
@@ -16,24 +16,44 @@ define(['account'], function(account) {
             }
 
             function initView() {
-                SitesService.getSites().then(function(sites) {
-                    sites.forEach(function(site) {
-                        account.getOrg(site.org).then(function(org) {
-                            site.org = org;
+                var viewPromise = $q.defer();
+
+                self.loading = true;
+
+                $q.all([SitesService.getSites(), account.getOrgs()])
+                    .then(function(promises) {
+                        var sites = promises[0],
+                            orgs = promises[1],
+                            siteOrgPromiseArray = [];
+
+                        self.orgs = orgs;
+                        _data.orgs = orgs;
+
+                        sites.forEach(function(site) {
+                            siteOrgPromiseArray.push(account.getOrg(site.org)
+                                .then(function(org) {
+                                    site.org = org;
+                                }));
                         });
+
+                        $q.all(siteOrgPromiseArray)
+                            .then(function() {
+                                viewPromise.resolve();
+                            });
+
+                        self.sites = sites;
+                        _data.sites = sites;
                     });
 
-                    self.sites = sites;
-                    _data.sites = sites;
-                });
+                return viewPromise.promise;
+            }
 
-                account.getOrgs().then(function(orgs) {
-                    self.orgs = orgs;
-                    _data.orgs = orgs;
-                });
+            function hideLoader() {
+                self.loading = false;
             }
 
             self.action = 'all';
+            self.loading = true;
             self.query = null;
             self.page = 1;
             self.limit = 50;
@@ -109,7 +129,7 @@ define(['account'], function(account) {
                 function handleSuccess(site) {
                     $log.info('saved user: ', site);
                     $scope.message = 'Successfully saved Site: ' + site.name;
-                    initView();
+                    initView().then(hideLoader);
                     self.action = 'all';
                 }
 
@@ -136,7 +156,7 @@ define(['account'], function(account) {
                         SitesService.deleteSite(self.site.id)
                             .then(function() {
                                 $scope.message = 'Successfully deleted Site: ' + self.site.name;
-                                initView();
+                                initView().then(hideLoader);
                                 self.action = 'all';
                             }, function(err) {
                                 $log.error(err);
@@ -186,7 +206,7 @@ define(['account'], function(account) {
                 }
             });
 
-            initView();
+            initView().then(hideLoader);
 
         }])
 

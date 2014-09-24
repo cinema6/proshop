@@ -184,6 +184,19 @@ input {
     padding: 0.5625em 1.375em 0.5625em 0.775em;
 }
 
+.mask {
+    background-color: #ffffff;
+    opacity: .5;
+    position:absolute;
+    top:0;
+    width:100%;
+    height:100%;
+}
+
+section.view {
+    position: relative;
+}
+
 /*.glyphicon-chevron-down:before {
     content: "";
 }

@@ -1,9 +1,10 @@
 <h1>Organizations</h1>
 <br>
-<section ng-switch="OrgsCtrl.action">
+<section ng-switch="OrgsCtrl.action" class="view">
     <div style="padding-bottom:20px">{{message}}</div>
     <all-orgs ng-switch-when="all"></all-orgs>
     <new-org ng-switch-when="new"></new-org>
     <edit-org ng-switch-when="edit"></edit-org>
+    <div class="mask" ng-show="OrgsCtrl.loading"></div>
 </section>
 
