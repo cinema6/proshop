@@ -128,8 +128,6 @@ define(['account'],function(account) {
                     user.type = user.type || 'Publisher';
                 }
 
-                user.branding = user.branding || org.branding;
-
                 self.role = isAdmin(user) ? 'Admin' : user.type;
 
                 user.config = (user.config &&
@@ -282,7 +280,6 @@ define(['account'],function(account) {
                     firstName: data.user.firstName,
                     lastName: data.user.lastName,
                     org: data.org.id,
-                    branding: data.user.branding,
                     config: data.user.config,
                     type: (self.role === 'Admin' ? 'Publisher' : self.role),
                     permissions: setPermissions()
@@ -309,7 +306,7 @@ define(['account'],function(account) {
                 }
 
                 if (data.user.id) {
-                    $log.info('PUT', data.user.id, data.user.email, data.user.firstName, data.user.lastName, data.org.id, data.user.branding);
+                    $log.info('PUT', data.user.id, data.user.email, data.user.firstName, data.user.lastName, data.org.id);
 
                     user = extend(user, {
                         id: data.user.id,
@@ -319,7 +316,7 @@ define(['account'],function(account) {
                         .then(handleSuccess, handleError);
 
                 } else {
-                    $log.info('POST', data.user.email, data.user.firstName, data.user.lastName, data.org.id, data.user.branding);
+                    $log.info('POST', data.user.email, data.user.firstName, data.user.lastName, data.org.id);
 
                     user = extend(user, {
                         email: data.user.email,
@@ -341,7 +338,6 @@ define(['account'],function(account) {
             self.confirmOrgChange = function() {
                 $scope.changingOrgWarning = false;
                 data.user.config = null;
-                data.user.branding = null;
                 data.user = convertUserForEditing(data.user, data.org);
             };
 
