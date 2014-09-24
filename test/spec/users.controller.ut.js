@@ -795,6 +795,21 @@
                         });
                     });
                 });
+
+                describe('loading', function() {
+                    it('should be true on initialization', function() {
+                        expect(UsersCtrl.loading).toBe(true);
+                    });
+
+                    it('should be false after all data promises resolve', function() {
+                        $scope.$apply(function() {
+                            account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
+                            account.getUsers.deferred.resolve(angular.copy(mockUsers));
+                        });
+
+                        expect(UsersCtrl.loading).toBe(false);
+                    });
+                });
             });
 
             describe('$watchers', function() {
