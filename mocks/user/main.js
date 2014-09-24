@@ -75,6 +75,8 @@ module.exports = function(http) {
         var id = idFromPath(request.pathname),
             filePath = userPath(id);
 
+        return this.respond(404, 'not found');
+
         try {
             this.respond(200, extend(grunt.file.readJSON(filePath), { id: id }));
         } catch(e) {

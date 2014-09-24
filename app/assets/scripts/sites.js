@@ -16,8 +16,6 @@ define(['account'], function(account) {
             }
 
             function initView() {
-                var viewPromise = $q.defer();
-
                 self.loading = true;
 
                 $q.all([SitesService.getSites(), account.getOrgs()])
@@ -38,22 +36,17 @@ define(['account'], function(account) {
 
                         $q.all(siteOrgPromiseArray)
                             .then(function() {
-                                viewPromise.resolve();
+                                self.loading = false;
                             });
 
                         self.sites = sites;
                         _data.sites = sites;
+                    }, function() {
+                        self.loading = false;
                     });
-
-                return viewPromise.promise;
-            }
-
-            function hideLoader() {
-                self.loading = false;
             }
 
             self.action = 'all';
-            self.loading = true;
             self.query = null;
             self.page = 1;
             self.limit = 50;
@@ -129,7 +122,7 @@ define(['account'], function(account) {
                 function handleSuccess(site) {
                     $log.info('saved user: ', site);
                     $scope.message = 'Successfully saved Site: ' + site.name;
-                    initView().then(hideLoader);
+                    initView();
                     self.action = 'all';
                 }
 
@@ -156,7 +149,7 @@ define(['account'], function(account) {
                         SitesService.deleteSite(self.site.id)
                             .then(function() {
                                 $scope.message = 'Successfully deleted Site: ' + self.site.name;
-                                initView().then(hideLoader);
+                                initView();
                                 self.action = 'all';
                             }, function(err) {
                                 $log.error(err);
@@ -206,7 +199,7 @@ define(['account'], function(account) {
                 }
             });
 
-            initView().then(hideLoader);
+            initView();
 
         }])
 

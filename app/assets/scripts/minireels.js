@@ -56,13 +56,14 @@ define(['account','content','splash'],function(account,content,splash) {
                                 }));
                         });
 
-                        $q.all(expUserPromiseArray)
+                        return $q.all(expUserPromiseArray)
                             .then(function() {
                                 self.loading = false;
                             });
                     })
                     .then(resetQuery)
                     .finally(function() {
+                        self.loading = false; // this works but it should be better!
                         self.action = 'experiences';
                     });
             }
