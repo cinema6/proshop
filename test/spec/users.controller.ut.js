@@ -50,7 +50,6 @@
                         firstName: 'J',
                         lastName: 'F',
                         org: 'o-1',
-                        branding: 'theme1',
                         type: 'Publisher',
                     },
                     {
@@ -59,7 +58,6 @@
                         firstName: 'B',
                         lastName: 'D',
                         org: 'o-2',
-                        branding: 'theme2',
                         type: 'Publisher',
                     }
                 ];
@@ -194,8 +192,6 @@
 
                         var userWithNoConfig = angular.copy($scope.data.users[0]),
                             userWithConfig = angular.copy($scope.data.users[0]),
-                            userWithNoBranding = angular.copy($scope.data.users[0]),
-                            userWithBranding = angular.copy($scope.data.users[0]),
                             defaultConfig = {
                                 minireelinator: {
                                     minireelDefaults: {
@@ -256,22 +252,6 @@
                                 }
                             }
                         });
-
-                        // userWithNoBranding
-                        delete userWithNoBranding.branding;
-                        delete $scope.data.org.branding;
-                        UsersCtrl.editUser(userWithNoBranding);
-                        expect($scope.data.user.branding).toBe(undefined);
-
-                        $scope.data.org.branding = 'test_brand';
-                        UsersCtrl.editUser(userWithNoBranding);
-                        expect($scope.data.user.branding).toBe('test_brand');
-
-                        // user with branding (from mockUser above)
-                        userWithBranding.branding = 'different_brand';
-                        $scope.data.org.branding = 'some_org_brand';
-                        UsersCtrl.editUser(userWithBranding);
-                        expect($scope.data.user.branding).toBe('different_brand');
                     });
 
                     it('should set the editAdConfigOptions if user permissions are set', function() {
@@ -365,7 +345,6 @@
                                 firstName: $scope.data.users[0].firstName,
                                 lastName: $scope.data.users[0].lastName,
                                 org: $scope.data.users[0].org.id,
-                                branding: $scope.data.users[0].branding,
                                 config: $scope.data.users[0].config,
                                 type: $scope.data.users[0].type,
                                 permissions: {
@@ -516,7 +495,6 @@
                             $scope.data.user.password = 'secret';
                             $scope.data.user.firstName = 'Test';
                             $scope.data.user.lastName = 'Name';
-                            $scope.data.user.branding = 'brand';
 
                             UsersCtrl.role = 'Publisher';
                         });
@@ -530,7 +508,6 @@
                                 firstName: 'Test',
                                 lastName: 'Name',
                                 org: 'o-1',
-                                branding: 'brand',
                                 config: {
                                     minireelinator: {
                                         minireelDefaults: {
