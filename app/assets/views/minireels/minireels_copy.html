@@ -20,12 +20,23 @@
                 </span>
             </div>
         </div>
-        <div class="form-group" ng-class="{'has-error': theForm.branding.$error.required || theForm.branding.$error.pattern}">
-            <label for="branding" class="control-label"> <h3>Branding: </h3></label>
+        <div class="form-group" ng-class="{'has-error': theForm.branding.$invalid}">
+            <label for="branding" class="control-label"> <h3>Branding </h3></label>
             <div>
-                <input class="col-md-3" class="form-control" id="branding" type="text" name="branding" ng-model="data.experience._data.branding" autocomplete="off" ng-trim="false" ng-minlength="3" ng-maxlength="128" ng-pattern="/^[\w]*[a-zA-Z]+[\w]*$/" required ignore-spaces>
+                <div>
+                    <input type="radio" name="brandingSource" ng-model="MinireelsCtrl.brandingSource" value="none"><span> No branding</span>
+                </div>
+                <div ng-show="data.org.branding">
+                    <input type="radio" name="brandingSource" ng-model="MinireelsCtrl.brandingSource" value="publisher" ><span> Use target Publisher's branding: <b>{{data.experience._data.branding.publisher}}</b></span>
+                </div>
+                <div ng-show="data.experience.data.branding">
+                    <input type="radio" name="brandingSource" ng-model="MinireelsCtrl.brandingSource" value="current"><span> Use current MiniReel's branding: <b>{{data.experience.data.branding}}</b></span>
+                </div>
+                <div>
+                    <input type="radio" name="brandingSource" ng-model="MinireelsCtrl.brandingSource" value="custom"><span> Use custom branding</span>
+                </div>
+                <input class="col-md-3" class="form-control" id="branding" type="text" name="branding" ng-model="data.experience._data.branding.custom" autocomplete="off" ng-trim="false" ng-minlength="3" ng-maxlength="128" ng-pattern="/^[\w]*[a-zA-Z]+[\w]*$/" ignore-spaces style="margin-left: 14px !important;">
                 <span class="help-block">
-                    <span ng-show="theForm.branding.$error.required"> Required. </span>
                     <span ng-show="theForm.branding.$error.minlength"> Too short. </span>
                     <span ng-show="theForm.branding.$error.maxlength"> Too long. </span>
                     <span ng-show="theForm.branding.$error.pattern"> Invalid characters. </span>

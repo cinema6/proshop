@@ -116,7 +116,10 @@ define(['account','content','splash'],function(account,content,splash) {
 
                 data.experience._data = {
                     org: org.id,
-                    branding: org.branding,
+                    branding: {
+                        publisher: org.branding,
+                        custom: ''
+                    },
                     config: {
                         minireelinator: {
                             minireelDefaults: setMinireelDefaults()
@@ -132,8 +135,23 @@ define(['account','content','splash'],function(account,content,splash) {
                 var _data = data.experience._data,
                     exp = copy(data.experience);
 
+                switch (self.brandingSource) {
+                case 'none':
+                    delete exp.data.branding;
+                    break;
+                case 'publisher':
+                    exp.data.branding = _data.branding.publisher;
+                    break;
+                // case 'current':
+                //     exp.data.branding = exp.data.branding;
+                //     break;
+                case 'custom':
+                    exp.branding = _data.branding.custom;
+                    break;
+                }
+
                 exp.data.title = data.experience.title;
-                exp.data.branding = _data.branding;
+                // exp.data.branding = _data.branding;
                 exp.data.mode = _data.config.minireelinator.minireelDefaults.mode;
                 exp.data.autoplay = _data.config.minireelinator.minireelDefaults.autoplay;
                 exp.data.splash.ratio = _data.config.minireelinator.minireelDefaults.splash.ratio;
@@ -195,7 +213,7 @@ define(['account','content','splash'],function(account,content,splash) {
                 function setSplashSrc(response) {
                     var path = '/' + response.data[0].path;
 
-                    $log.info('setting splash source: ', path);
+                    $log.info('setting splash source: ', response, path);
 
                     minireel.data.collateral.splash = path;
 
@@ -261,6 +279,7 @@ define(['account','content','splash'],function(account,content,splash) {
                     }
                 }
             });
+            self.brandingSource = 'none'; // or 'publisher', 'custom', 'current'
 
             $scope.tableHeaders = [
                 {label:'Choose an Org to view Minireels',value:'name'},
