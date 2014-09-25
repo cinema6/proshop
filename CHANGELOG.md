@@ -1,5 +1,12 @@
 # ProShop
 
+## v0.6.5 (September 25, 2014)
+
+* *[v0.6.5]*
+    *[FIX]: Table results are no longer disabled if there are errors fetching data
+    *[FIX]: Creating and editing a Site no longer requires an Org
+* *[/v0.6.5]*
+
 ## v0.6.4 (September 24, 2014)
 
 * *[v0.6.4]*
