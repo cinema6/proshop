@@ -218,7 +218,7 @@
 
                         SitesCtrl.editSite(SitesCtrl.sites[0]);
 
-                        expect(SitesCtrl.site.org).toBe(undefined);
+                        expect(SitesCtrl.org).toBe(null);
                     });
                 });
 
