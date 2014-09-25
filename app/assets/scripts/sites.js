@@ -89,11 +89,9 @@ define(['account'], function(account) {
             self.editSite = function(site) {
                 $scope.message = null;
                 self.site = site;
-                if (site.org) {
-                    self.org = self.orgs.filter(function(org) {
-                        return self.site.org.id === org.id;
-                    })[0];
-                }
+                self.org = !site.org ? null : self.orgs.filter(function(org) {
+                    return site.org.id === org.id;
+                })[0];
                 self.action = 'edit';
             };
 
