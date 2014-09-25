@@ -16,8 +16,6 @@ define(['account'], function(account) {
             }
 
             function initView() {
-                var viewPromise = $q.defer();
-
                 self.loading = true;
 
                 $q.all([SitesService.getSites(), account.getOrgs()])
@@ -29,31 +27,26 @@ define(['account'], function(account) {
                         self.orgs = orgs;
                         _data.orgs = orgs;
 
-                        sites.forEach(function(site) {
-                            siteOrgPromiseArray.push(account.getOrg(site.org)
-                                .then(function(org) {
-                                    site.org = org;
-                                }));
-                        });
-
-                        $q.all(siteOrgPromiseArray)
-                            .then(function() {
-                                viewPromise.resolve();
-                            });
-
                         self.sites = sites;
                         _data.sites = sites;
+
+                        sites.forEach(function(site) {
+                            if (site.org) {
+                                siteOrgPromiseArray.push(account.getOrg(site.org)
+                                    .then(function(org) {
+                                        site.org = org;
+                                    }));
+                            }
+                        });
+
+                        return $q.all(siteOrgPromiseArray);
+                    })
+                    .finally(function() {
+                        self.loading = false;
                     });
-
-                return viewPromise.promise;
-            }
-
-            function hideLoader() {
-                self.loading = false;
             }
 
             self.action = 'all';
-            self.loading = true;
             self.query = null;
             self.page = 1;
             self.limit = 50;
@@ -80,7 +73,7 @@ define(['account'], function(account) {
                     var bool = false;
 
                     orgs.forEach(function(org) {
-                        bool = (site.org.id.indexOf(org.id) >= 0) || bool;
+                        bool = (site.org && (site.org.id.indexOf(org.id) >= 0)) || bool;
                     });
 
                     [site.name, site.host].forEach(function(field) {
@@ -96,9 +89,11 @@ define(['account'], function(account) {
             self.editSite = function(site) {
                 $scope.message = null;
                 self.site = site;
-                self.org = self.orgs.filter(function(org) {
-                    return self.site.org.id === org.id;
-                })[0];
+                if (site.org) {
+                    self.org = self.orgs.filter(function(org) {
+                        return self.site.org.id === org.id;
+                    })[0];
+                }
                 self.action = 'edit';
             };
 
@@ -113,7 +108,6 @@ define(['account'], function(account) {
 
             self.saveSite = function(site) {
                 var s = {};
-                s.org = self.org.id;
 
                 function handleError(err) {
                     $log.error(err);
@@ -129,8 +123,12 @@ define(['account'], function(account) {
                 function handleSuccess(site) {
                     $log.info('saved user: ', site);
                     $scope.message = 'Successfully saved Site: ' + site.name;
-                    initView().then(hideLoader);
+                    initView();
                     self.action = 'all';
+                }
+
+                if (self.org) {
+                    s.org = self.org.id;
                 }
 
                 ['name','branding','host','status','placementId'].forEach(function(prop) {
@@ -156,7 +154,7 @@ define(['account'], function(account) {
                         SitesService.deleteSite(self.site.id)
                             .then(function() {
                                 $scope.message = 'Successfully deleted Site: ' + self.site.name;
-                                initView().then(hideLoader);
+                                initView();
                                 self.action = 'all';
                             }, function(err) {
                                 $log.error(err);
@@ -206,7 +204,7 @@ define(['account'], function(account) {
                 }
             });
 
-            initView().then(hideLoader);
+            initView();
 
         }])
 

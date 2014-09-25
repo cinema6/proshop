@@ -13,9 +13,6 @@ define(['account'],function(account) {
             $log.info('instantiated');
 
             function initView() {
-                // view is disabled until getOrgs() + getUsers() + getOrg() for each user
-                var viewPromise = $q.defer();
-
                 self.loading = true;
 
                 $q.all([account.getOrgs(), account.getUsers()])
@@ -27,6 +24,9 @@ define(['account'],function(account) {
                         data.appData.orgs = orgs;
                         data.orgs = orgs;
 
+                        data.appData.users = users;
+                        data.users = users;
+
                         users.forEach(function(user) {
                             userOrgPromiseArray.push(account.getOrg(user.org)
                                 .then(function(org) {
@@ -34,20 +34,11 @@ define(['account'],function(account) {
                                 }));
                         });
 
-                        $q.all(userOrgPromiseArray)
-                            .then(function() {
-                                viewPromise.resolve();
-                            });
-
-                        data.appData.users = users;
-                        data.users = users;
+                        return $q.all(userOrgPromiseArray);
+                    })
+                    .finally(function() {
+                        self.loading = false;
                     });
-
-                return viewPromise.promise;
-            }
-
-            function hideLoader() {
-                self.loading = false;
             }
 
             function deleteUser() {
@@ -56,7 +47,7 @@ define(['account'],function(account) {
                 account.deleteUser(data.user)
                     .then(function() {
                         $scope.message = 'Successfully deleted user: ' + data.user.email;
-                        initView().then(hideLoader);
+                        initView();
                         self.action = 'all';
                     }, function(err) {
                         $log.error(err);
@@ -205,7 +196,6 @@ define(['account'],function(account) {
             };
 
             self.action = 'all';
-            self.loading = true;
             self.page = 1;
             self.limit = 50;
             self.limits = [5,10,50,100];
@@ -278,7 +268,7 @@ define(['account'],function(account) {
 
             self.backToList = function() {
                 self.action = 'all';
-                initView().then(hideLoader);
+                initView();
             };
 
             self.confirmDelete = function() {
@@ -320,7 +310,7 @@ define(['account'],function(account) {
                 function handleSuccess(user) {
                     $log.info('saved user: ', user);
                     $scope.message = 'Successfully saved user: ' + data.user.email;
-                    initView().then(hideLoader);
+                    initView();
                     self.action = 'all';
                     data.user = user;
                 }
@@ -417,7 +407,7 @@ define(['account'],function(account) {
                 }
             });
 
-            initView().then(hideLoader);
+            initView();
 
         }])
 

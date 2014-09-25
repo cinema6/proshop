@@ -591,9 +591,11 @@
 
                         $scope.$apply(function() {
                             content.getExperiencesByOrg.deferred.resolve(angular.copy(mockExperiences));
+                            account.getUser.deferred.reject();
                         });
 
                         expect(MinireelsCtrl.action).toBe('experiences');
+                        expect(MinireelsCtrl.loading).toBe(false);
                         expect($scope.data.query).toBe(null);
                         expect($scope.data.appData.experiences).toEqual(mockExperiences);
                         expect($scope.data.experiences).toEqual(mockExperiences);
@@ -609,6 +611,17 @@
 
                         expect($scope.data.experiences[0].user).toEqual(mockUser);
                         expect($scope.data.experiences[1].user).toEqual(mockUser);
+                    });
+
+                    it('should not disable the view even if there are errors loading data', function() {
+                        expect(MinireelsCtrl.loading).toBe(true);
+
+                        $scope.$apply(function() {
+                            content.getExperiencesByOrg.deferred.reject();
+                            account.getUser.deferred.reject();
+                        });
+
+                        expect(MinireelsCtrl.loading).toBe(false);
                     });
 
                     it('should add org data to experience for copying', function() {

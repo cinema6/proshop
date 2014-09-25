@@ -809,6 +809,15 @@
 
                         expect(UsersCtrl.loading).toBe(false);
                     });
+
+                    it('should be false even if there are errors loading data', function() {
+                        $scope.$apply(function() {
+                            account.getOrgs.deferred.reject();
+                            account.getUsers.deferred.reject();
+                        });
+
+                        expect(UsersCtrl.loading).toBe(false);
+                    });
                 });
             });
 
