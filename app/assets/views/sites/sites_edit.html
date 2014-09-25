@@ -40,15 +40,12 @@
         </div>
     </div>
 
-    <div class="form-group" ng-class="{'has-error': theForm.org.$error.required}">
+    <div class="form-group">
         <label for="org" class="control-label"> Org: </label>
         <div>
-            <select ng-model="SitesCtrl.org" name="org" ng-options="org.name for org in SitesCtrl.orgs | orderBy:'name'" required>
+            <select ng-model="SitesCtrl.org" name="org" ng-options="org.name for org in SitesCtrl.orgs | orderBy:'name'">
                 <option value="">-- Choose Org --</option>
             </select>
-            <span class="help-block">
-                <span ng-show="theForm.org.$error.required"> Required. </span>
-            </span>
         </div>
     </div>
 

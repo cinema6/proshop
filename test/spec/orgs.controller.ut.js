@@ -185,6 +185,14 @@
 
                         expect(OrgsCtrl.loading).toBe(false);
                     });
+
+                    it('should be false even if there are errors loading data', function() {
+                        $scope.$apply(function() {
+                            account.getOrgs.deferred.reject();
+                        });
+
+                        expect(OrgsCtrl.loading).toBe(false);
+                    });
                 });
             });
 

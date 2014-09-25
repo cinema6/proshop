@@ -17,70 +17,35 @@ define(['account','content','splash'],function(account,content,splash) {
                 return orgs;
             }
 
-            function updateExperiences(exps) {
-                data.appData.experiences = exps;
-                data.experiences = exps;
-                return exps;
-            }
-
-            function convertExpForCopying(exp) {
-                return content.convertExperienceForCopy(copy(exp));
-            }
-
-            function getExperiencesByOrg(org) {
-                return content.getExperiencesByOrg(org.id);
-            }
-
-            function getUserById(id) {
-                return account.getUser(id);
-            }
-
-            function getAllOrgs() {
-                return copy(data.appData.orgs);
-            }
-
             // called when action === 'orgs' || 'experiences'
             // and the data.org changes (from dropdown)
             function loadExperiences(org) {
                 self.loading = true;
 
-                getExperiencesByOrg(org)
-                    .then(updateExperiences)
+                content.getExperiencesByOrg(org.id)
                     .then(function(exps) {
                         var expUserPromiseArray = [];
 
+                        data.appData.experiences = exps;
+                        data.experiences = exps;
+
                         exps.forEach(function(exp) {
-                            expUserPromiseArray.push(getUserById(exp.user)
+                            expUserPromiseArray.push(account.getUser(exp.user)
                                 .then(function(user) {
                                     exp.user = user;
                                 }));
                         });
 
-                        return $q.all(expUserPromiseArray)
-                            .then(function() {
-                                self.loading = false;
-                            });
+                        return $q.all(expUserPromiseArray);
                     })
-                    .then(resetQuery)
+                    .then(null, function(err) {
+                        $scope.message = 'There was problem loading MiniReels. ' + err;
+                    })
                     .finally(function() {
-                        self.loading = false; // this works but it should be better!
+                        data.query = null;
+                        self.loading = false;
                         self.action = 'experiences';
                     });
-            }
-
-            // called when action === 'copy'
-            // and user selects a target org
-            function loadUsers(org) {
-                return account.getUsers(org)
-                    .then(function(users) {
-                        data.users = users;
-                    });
-            }
-
-            // called when action === 'copy'
-            // and the target user has been selected
-            function setUserExperienceData(user) {
-                data.experience._data.user = user;
             }
 
             // called when action === 'copy' and the org changes,
@@ -261,10 +226,6 @@ define(['account','content','splash'],function(account,content,splash) {
                 });
             }
 
-            function resetQuery() {
-                data.query = null;
-            }
-
             self.action = 'orgs';
             self.page = 1;
             self.limit = 10;
@@ -338,8 +299,8 @@ define(['account','content','splash'],function(account,content,splash) {
                 self.action = 'copy';
                 data.org = null;
                 data.user = null;
-                data.orgs = getAllOrgs();
-                data.experience = convertExpForCopying(exp);
+                data.orgs = copy(data.appData.orgs);
+                data.experience = content.convertExperienceForCopy(copy(exp));
             };
 
             self.confirmCopy = function() {
@@ -379,7 +340,12 @@ define(['account','content','splash'],function(account,content,splash) {
                 // can be assigned to someone
                 if (self.action === 'copy') {
                     setOrgExperienceData(newOrg);
-                    loadUsers(newOrg);
+
+                    account.getUsers(newOrg)
+                        .then(function(users) {
+                            data.users = users;
+                        });
+
                     self.brandingSource = 'none';
                 }
             });
@@ -391,7 +357,7 @@ define(['account','content','splash'],function(account,content,splash) {
                 // to assign the new minireel to, we need to copy
                 // some of the user's data to the experience before copying
                 if (self.action === 'copy') {
-                    setUserExperienceData(newUser);
+                    data.experience._data.user = newUser;
                 }
             });
 

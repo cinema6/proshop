@@ -28,10 +28,12 @@ define(['account'], function(account) {
                         _data.orgs = orgs;
 
                         sites.forEach(function(site) {
-                            siteOrgPromiseArray.push(account.getOrg(site.org)
-                                .then(function(org) {
-                                    site.org = org;
-                                }));
+                            if (site.org) {
+                                siteOrgPromiseArray.push(account.getOrg(site.org)
+                                    .then(function(org) {
+                                        site.org = org;
+                                    }));
+                            }
                         });
 
                         $q.all(siteOrgPromiseArray)
@@ -73,7 +75,7 @@ define(['account'], function(account) {
                     var bool = false;
 
                     orgs.forEach(function(org) {
-                        bool = (site.org.id.indexOf(org.id) >= 0) || bool;
+                        bool = (site.org && (site.org.id.indexOf(org.id) >= 0)) || bool;
                     });
 
                     [site.name, site.host].forEach(function(field) {
@@ -89,9 +91,11 @@ define(['account'], function(account) {
             self.editSite = function(site) {
                 $scope.message = null;
                 self.site = site;
-                self.org = self.orgs.filter(function(org) {
-                    return self.site.org.id === org.id;
-                })[0];
+                if (site.org) {
+                    self.org = self.orgs.filter(function(org) {
+                        return self.site.org.id === org.id;
+                    })[0];
+                }
                 self.action = 'edit';
             };
 
@@ -106,7 +110,6 @@ define(['account'], function(account) {
 
             self.saveSite = function(site) {
                 var s = {};
-                s.org = self.org.id;
 
                 function handleError(err) {
                     $log.error(err);
@@ -124,6 +127,10 @@ define(['account'], function(account) {
                     $scope.message = 'Successfully saved Site: ' + site.name;
                     initView();
                     self.action = 'all';
+                }
+
+                if (self.org) {
+                    s.org = self.org.id;
                 }
 
                 ['name','branding','host','status','placementId'].forEach(function(prop) {

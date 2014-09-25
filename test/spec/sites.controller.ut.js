@@ -145,7 +145,7 @@
                     expect(SitesCtrl).toBeDefined();
                 });
 
-                it('should load Sites form service', function() {
+                it('should load Sites from service', function() {
                     expect(SitesService.getSites).toHaveBeenCalled();
                     expect(account.getOrgs).toHaveBeenCalled();
                 });
@@ -211,6 +211,14 @@
                             name: 'Best Website Ever',
                             host: 'bestever.com'
                         });
+                    });
+
+                    it('should handle absence of Org', function() {
+                        delete SitesCtrl.sites[0].org;
+
+                        SitesCtrl.editSite(SitesCtrl.sites[0]);
+
+                        expect(SitesCtrl.site.org).toBe(undefined);
                     });
                 });
 
@@ -443,6 +451,15 @@
                         $scope.$apply(function() {
                             SitesService.getSites.deferred.resolve(angular.copy(mockSites));
                             account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
+                        });
+
+                        expect(SitesCtrl.loading).toBe(false);
+                    });
+
+                    it('should be false even if there are errors loading data', function() {
+                        $scope.$apply(function() {
+                            SitesService.getSites.deferred.reject();
+                            account.getOrgs.deferred.reject();
                         });
 
                         expect(SitesCtrl.loading).toBe(false);
