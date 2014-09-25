@@ -1,5 +1,11 @@
 # ProShop
 
+## v0.6.6 (September 25, 2014)
+
+* *[v0.6.6]*
+    *[FIX]: Ensure that Org dropdown is reset when editing Sites with no Org
+* *[/v0.6.6]*
+
 ## v0.6.5 (September 25, 2014)
 
 * *[v0.6.5]*
