@@ -89,6 +89,12 @@ define(['account'],function(account) {
                             edit    : 'all',
                             delete  : 'all',
                             editAdConfig: 'all'
+                        },
+                        sites: {
+                            read    : 'all',
+                            create  : 'all',
+                            edit    : 'all',
+                            delete  : 'all',
                         }
                     } :
                     {
@@ -111,6 +117,9 @@ define(['account'],function(account) {
                         orgs: {
                             read    : 'own',
                             edit    : 'own'
+                        },
+                        sites: {
+                            read    : 'org'
                         }
                     };
 

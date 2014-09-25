@@ -367,6 +367,9 @@
                                     orgs: {
                                         read    : 'own',
                                         edit    : 'own'
+                                    },
+                                    sites: {
+                                        read    : 'org'
                                     }
                                 }
                             });
@@ -405,6 +408,12 @@
                                         edit    : 'all',
                                         delete  : 'all',
                                         editAdConfig: 'all'
+                                    },
+                                    sites: {
+                                        read    : 'all',
+                                        create  : 'all',
+                                        edit    : 'all',
+                                        delete  : 'all',
                                     }
                                 });
                             });
@@ -539,6 +548,9 @@
                                     orgs: {
                                         read    : 'own',
                                         edit    : 'own'
+                                    },
+                                    sites: {
+                                        read    : 'org'
                                     }
                                 }
                             });
@@ -577,6 +589,12 @@
                                         edit    : 'all',
                                         delete  : 'all',
                                         editAdConfig: 'all'
+                                    },
+                                    sites: {
+                                        read    : 'all',
+                                        create  : 'all',
+                                        edit    : 'all',
+                                        delete  : 'all',
                                     }
                                 });
                             });
@@ -779,6 +797,12 @@
                                     edit    : 'all',
                                     delete  : 'all',
                                     editAdConfig: 'all'
+                                },
+                                sites: {
+                                    read    : 'all',
+                                    create  : 'all',
+                                    edit    : 'all',
+                                    delete  : 'all',
                                 }
                             };
 
