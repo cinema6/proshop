@@ -27,6 +27,9 @@ define(['account'], function(account) {
                         self.orgs = orgs;
                         _data.orgs = orgs;
 
+                        self.sites = sites;
+                        _data.sites = sites;
+
                         sites.forEach(function(site) {
                             if (site.org) {
                                 siteOrgPromiseArray.push(account.getOrg(site.org)
@@ -36,14 +39,9 @@ define(['account'], function(account) {
                             }
                         });
 
-                        $q.all(siteOrgPromiseArray)
-                            .then(function() {
-                                self.loading = false;
-                            });
-
-                        self.sites = sites;
-                        _data.sites = sites;
-                    }, function() {
+                        return $q.all(siteOrgPromiseArray);
+                    })
+                    .finally(function() {
                         self.loading = false;
                     });
             }

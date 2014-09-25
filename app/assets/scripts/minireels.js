@@ -38,9 +38,6 @@ define(['account','content','splash'],function(account,content,splash) {
 
                         return $q.all(expUserPromiseArray);
                     })
-                    .then(null, function(err) {
-                        $scope.message = 'There was problem loading MiniReels. ' + err;
-                    })
                     .finally(function() {
                         data.query = null;
                         self.loading = false;

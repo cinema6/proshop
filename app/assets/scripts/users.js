@@ -24,6 +24,9 @@ define(['account'],function(account) {
                         data.appData.orgs = orgs;
                         data.orgs = orgs;
 
+                        data.appData.users = users;
+                        data.users = users;
+
                         users.forEach(function(user) {
                             userOrgPromiseArray.push(account.getOrg(user.org)
                                 .then(function(org) {
@@ -31,14 +34,9 @@ define(['account'],function(account) {
                                 }));
                         });
 
-                        $q.all(userOrgPromiseArray)
-                            .then(function() {
-                                self.loading = false;
-                            });
-
-                        data.appData.users = users;
-                        data.users = users;
-                    }, function() {
+                        return $q.all(userOrgPromiseArray);
+                    })
+                    .finally(function() {
                         self.loading = false;
                     });
             }

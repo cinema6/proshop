@@ -18,9 +18,8 @@ define(['account'],function(account) {
                     .then(function(orgs) {
                         data.appData.orgs = orgs;
                         data.orgs = orgs;
-
-                        self.loading = false;
-                    }, function() {
+                    })
+                    .finally(function() {
                         self.loading = false;
                     });
             }
