@@ -1,5 +1,8 @@
 # ProShop
 
+* *[v0.6.8]*
+    *[FIX]: Allow unsetting of a Site's org property
+
 ## v0.6.7 (September 26, 2014)
 
 * *[v0.6.7]*
