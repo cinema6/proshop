@@ -1,5 +1,11 @@
 # ProShop
 
+## v0.6.7 (September 26, 2014)
+
+* *[v0.6.7]*
+    *[FIX]: Ensure Users have correct access to Site data
+* *[/v0.6.7]*
+
 ## v0.6.6 (September 25, 2014)
 
 * *[v0.6.6]*
