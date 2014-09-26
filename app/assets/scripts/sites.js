@@ -125,9 +125,7 @@ define(['account'], function(account) {
                     self.action = 'all';
                 }
 
-                if (self.org) {
-                    s.org = self.org.id;
-                }
+                s.org = self.org ? self.org.id : null;
 
                 ['name','branding','host','status','placementId'].forEach(function(prop) {
                     s[prop] = site[prop];

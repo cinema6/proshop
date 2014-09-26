@@ -284,6 +284,20 @@
                             });
                         });
 
+                        it('should handle the absence of an Org', function() {
+                            SitesCtrl.org = null;
+                            SitesCtrl.saveSite(SitesCtrl.site);
+
+                            expect(SitesService.putSite).toHaveBeenCalledWith('s-1', {
+                                status: 'active',
+                                org: null,
+                                branding: 'site1_branding',
+                                placementId: '111111',
+                                name: 'Best Website Ever',
+                                host: 'bestever.com'
+                            });
+                        });
+
                         it('should return to All Sites view on successful save', function() {
                             SitesCtrl.saveSite(SitesCtrl.site);
 
@@ -329,6 +343,20 @@
                             expect(SitesService.postSite).toHaveBeenCalledWith({
                                 status: 'active',
                                 org: 'o-1',
+                                branding: 'new_site',
+                                placementId: undefined,
+                                name: 'New Site',
+                                host: 'newsite.com'
+                            });
+                        });
+
+                        it('should handle the absence of an Org', function() {
+                            SitesCtrl.org = null;
+                            SitesCtrl.saveSite(SitesCtrl.site);
+
+                            expect(SitesService.postSite).toHaveBeenCalledWith({
+                                status: 'active',
+                                org: null,
                                 branding: 'new_site',
                                 placementId: undefined,
                                 name: 'New Site',
