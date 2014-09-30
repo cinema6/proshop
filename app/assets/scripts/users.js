@@ -327,11 +327,7 @@ define(['account'],function(account) {
                 if (data.user.id) {
                     $log.info('PUT', data.user.id, data.user.email, data.user.firstName, data.user.lastName, data.org.id);
 
-                    user = extend(user, {
-                        id: data.user.id,
-                    });
-
-                    account.putUser(user)
+                    account.putUser(data.user.id, user)
                         .then(handleSuccess, handleError);
 
                 } else {
@@ -358,6 +354,41 @@ define(['account'],function(account) {
                 $scope.changingOrgWarning = false;
                 data.user.config = null;
                 data.user = convertUserForEditing(data.user, data.org);
+            };
+
+            self.confirmFreeze = function() {
+                ConfirmDialogService.display({
+                    prompt: 'Freezing a User will log them out and make them inactive, ' +
+                        'Are you sure you want to freeze this User?',
+                    affirm: 'Yes',
+                    cancel: 'Cancel',
+                    onAffirm: function() {
+                        $log.info('freezing user: ', data.user);
+                        ConfirmDialogService.close();
+
+                        $q.all([
+                            account.putUser(data.user.id, { status: 'inactive' }),
+                            account.logoutUser(data.user.id)
+                        ])
+                        .then(function() {
+                            $scope.message = 'Successfully froze user: ' + data.user.email + '.';
+                            initView();
+                            self.action = 'all';
+                        }, function(err) {
+                            $log.error(err);
+                            ConfirmDialogService.display({
+                                prompt: 'There was a problem freezing the user. ' + err + '.',
+                                affirm: 'Close',
+                                onAffirm: function() {
+                                    ConfirmDialogService.close();
+                                }
+                            });
+                        });
+                    },
+                    onCancel: function() {
+                        ConfirmDialogService.close();
+                    }
+                });
             };
 
             $scope.$watch('data.org', function(newOrg) {
