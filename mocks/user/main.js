@@ -65,11 +65,22 @@ module.exports = function(http) {
         this.respond(201, extend(newUser, { id: id }));
     });
 
+    http.whenPOST('/api/account/user/logout/**', function(request) {
+        var id = idFromPath(request.pathname),
+            filePath = userPath(id);
+
+        try {
+            this.respond(200, extend(grunt.file.readJSON(filePath), { id: id }));
+        } catch(e) {
+            this.respond(401, 'Not Authorized');
+        }
+    });
+
     http.whenDELETE('/api/account/user/**', function(request) {
         grunt.file.delete(userPath(idFromPath(request.pathname)));
 
         this.respond(204, '');
-    })
+    });
 
     http.whenGET('/api/account/user/**', function(request) {
         var id = idFromPath(request.pathname),

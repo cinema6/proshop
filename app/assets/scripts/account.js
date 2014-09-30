@@ -472,20 +472,12 @@ define(['angular','c6ui'], function(angular,c6ui){
             });
         };
 
-        this.putUser = function(user) {
+        this.putUser = function(id, user) {
             // id,email,password,org,lastName,firstName
             return httpWrapper({
                 method: 'PUT',
-                url: c6UrlMaker('account/user/' + user.id,'api'),
-                data: {
-                    lastName:    user.lastName,
-                    firstName:   user.firstName,
-                    branding:    user.branding,
-                    config:      user.config,
-                    org:         user.org,
-                    type:        user.type,
-                    permissions: user.permissions
-                }
+                url: c6UrlMaker('account/user/' + id,'api'),
+                data: user
             });
         };
 
@@ -501,6 +493,13 @@ define(['angular','c6ui'], function(angular,c6ui){
             return httpWrapper({
                 method: 'DELETE',
                 url: c6UrlMaker('account/user/' + user.id,'api')
+            });
+        };
+
+        this.logoutUser = function(id) {
+            return httpWrapper({
+                method: 'POST',
+                url: c6UrlMaker('account/user/logout/' + id, 'api')
             });
         };
 

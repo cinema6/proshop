@@ -115,6 +115,7 @@
         <div style="padding-bottom:40px;">
             <input type="submit" value="Save" ng-disabled="!theForm.$valid">
             <input type="button" value="Delete" ng-show="data.user.id" ng-click="UsersCtrl.confirmDelete()">
+            <input type="button" value="Freeze" ng-show="data.user.id" ng-click="UsersCtrl.confirmFreeze()">
             <span ng-show="!theForm.$valid" class="text-danger"> There are errors above. See highlighted fields. </span>
         </div>
     </div>
