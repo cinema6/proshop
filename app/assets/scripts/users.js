@@ -359,7 +359,7 @@ define(['account'],function(account) {
             self.confirmFreeze = function() {
                 ConfirmDialogService.display({
                     prompt: 'Freezing a User will log them out and make them inactive, ' +
-                        'Are you sure you want to freeze this User?',
+                        'are you sure you want to proceed?',
                     affirm: 'Yes',
                     cancel: 'Cancel',
                     onAffirm: function() {
