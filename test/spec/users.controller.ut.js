@@ -29,7 +29,8 @@
                     getUsers: jasmine.createSpy('account.getUsers'),
                     putUser: jasmine.createSpy('account.putUser'),
                     postUser: jasmine.createSpy('account.postUser'),
-                    deleteUser: jasmine.createSpy('account.deleteUser')
+                    deleteUser: jasmine.createSpy('account.deleteUser'),
+                    logoutUser: jasmine.createSpy('account.logoutUser')
                 };
 
                 mockOrgs = [
@@ -97,6 +98,8 @@
                     account.deleteUser.deferred = $q.defer();
                     account.deleteUser.and.returnValue(account.deleteUser.deferred.promise);
 
+                    account.logoutUser.deferred = $q.defer();
+                    account.logoutUser.and.returnValue(account.logoutUser.deferred.promise);
 
                     $log.context = function(){ return $log; }
 
@@ -340,8 +343,7 @@
                         it('should PUT the user', function() {
                             UsersCtrl.saveUser();
 
-                            expect(account.putUser).toHaveBeenCalledWith({
-                                id: $scope.data.users[0].id,
+                            expect(account.putUser).toHaveBeenCalledWith($scope.data.users[0].id, {
                                 firstName: $scope.data.users[0].firstName,
                                 lastName: $scope.data.users[0].lastName,
                                 org: $scope.data.users[0].org.id,
@@ -381,8 +383,8 @@
 
                                 UsersCtrl.saveUser();
 
-                                expect(account.putUser.calls.mostRecent().args[0].type).toEqual('Publisher');
-                                expect(account.putUser.calls.mostRecent().args[0].permissions).toEqual({
+                                expect(account.putUser.calls.mostRecent().args[1].type).toEqual('Publisher');
+                                expect(account.putUser.calls.mostRecent().args[1].permissions).toEqual({
                                     elections: {
                                         read    : 'all',
                                         create  : 'all',
@@ -428,18 +430,18 @@
 
                                 UsersCtrl.saveUser();
 
-                                expect(account.putUser.calls.mostRecent().args[0].permissions.experiences.editAdConfig).toEqual('org');
-                                expect(account.putUser.calls.mostRecent().args[0].permissions.orgs.editAdConfig).toEqual('own');
-                                expect(account.putUser.calls.mostRecent().args[0].type).toEqual('Publisher');
+                                expect(account.putUser.calls.mostRecent().args[1].permissions.experiences.editAdConfig).toEqual('org');
+                                expect(account.putUser.calls.mostRecent().args[1].permissions.orgs.editAdConfig).toEqual('own');
+                                expect(account.putUser.calls.mostRecent().args[1].type).toEqual('Publisher');
 
                                 UsersCtrl.editAdConfigOptions[0].enabled = false;
                                 UsersCtrl.editAdConfigOptions[1].enabled = false;
 
                                 UsersCtrl.saveUser();
 
-                                expect(account.putUser.calls.mostRecent().args[0].permissions.experiences.editAdConfig).toBeUndefined();
-                                expect(account.putUser.calls.mostRecent().args[0].permissions.orgs.editAdConfig).toBeUndefined();
-                                expect(account.putUser.calls.mostRecent().args[0].type).toEqual('Publisher');
+                                expect(account.putUser.calls.mostRecent().args[1].permissions.experiences.editAdConfig).toBeUndefined();
+                                expect(account.putUser.calls.mostRecent().args[1].permissions.orgs.editAdConfig).toBeUndefined();
+                                expect(account.putUser.calls.mostRecent().args[1].type).toEqual('Publisher');
                             });
                         });
 
@@ -452,9 +454,9 @@
 
                                 UsersCtrl.saveUser();
 
-                                expect(account.putUser.calls.mostRecent().args[0].permissions.experiences.editAdConfig).toBeUndefined();
-                                expect(account.putUser.calls.mostRecent().args[0].permissions.orgs.editAdConfig).toBeUndefined();
-                                expect(account.putUser.calls.mostRecent().args[0].type).toEqual('ContentProvider');
+                                expect(account.putUser.calls.mostRecent().args[1].permissions.experiences.editAdConfig).toBeUndefined();
+                                expect(account.putUser.calls.mostRecent().args[1].permissions.orgs.editAdConfig).toBeUndefined();
+                                expect(account.putUser.calls.mostRecent().args[1].type).toEqual('ContentProvider');
                             });
                         });
 
@@ -722,6 +724,68 @@
 
                         $scope.$apply(function() {
                             account.deleteUser.deferred.reject();
+                        });
+
+                        expect(UsersCtrl.action).toBe('edit');
+                        expect(ConfirmDialogService.display.calls.count()).toBe(2);
+                    });
+                });
+
+                describe('confirmFreeze()', function() {
+                    beforeEach(function() {
+                        $scope.$apply(function() {
+                            account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
+                            account.getUsers.deferred.resolve(angular.copy(mockUsers));
+                        });
+
+                        UsersCtrl.editUser($scope.data.users[0]);
+                    });
+
+                    it('should Freeze the user when confirmed', function() {
+                        UsersCtrl.confirmFreeze();
+
+                        ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm();
+
+                        expect(account.putUser).toHaveBeenCalledWith($scope.data.users[0].id, {status:'inactive'});
+                        expect(account.logoutUser).toHaveBeenCalledWith($scope.data.users[0].id);
+                    });
+
+                    it('should not Freeze the user if canceled', function() {
+                        UsersCtrl.confirmFreeze();
+
+                        ConfirmDialogService.display.calls.mostRecent().args[0].onCancel();
+
+                        expect(account.putUser).not.toHaveBeenCalled();
+                        expect(account.logoutUser).not.toHaveBeenCalled();
+                    });
+
+                    it('on success should', function() {
+                        UsersCtrl.confirmFreeze();
+
+                        ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm();
+
+                        expect($scope.message).toBe(null);
+                        expect(account.getOrgs.calls.count()).toBe(1);
+                        expect(account.getUsers.calls.count()).toBe(1);
+
+                        $scope.$apply(function() {
+                            account.putUser.deferred.resolve();
+                            account.logoutUser.deferred.resolve();
+                        });
+
+                        expect($scope.message).toBe('Successfully froze user: ' + $scope.data.user.email + '.');
+                        expect(account.getOrgs.calls.count()).toBe(2);
+                        expect(account.getUsers.calls.count()).toBe(2);
+                        expect(UsersCtrl.action).toBe('all');
+                    });
+
+                    it('on error', function() {
+                        UsersCtrl.confirmFreeze();
+
+                        ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm();
+
+                        $scope.$apply(function() {
+                            account.putUser.deferred.reject();
                         });
 
                         expect(UsersCtrl.action).toBe('edit');

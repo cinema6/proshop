@@ -773,21 +773,10 @@
                         spyOn($timeout,'cancel');
                     });
 
-                    it('should put the correct data fields', function() {
-                        var user = angular.copy(mockUser);
-                        delete user.id;
-                        delete user.email;
-
-                        $httpBackend.expectPUT('/api/account/user/u-1', user)
-                            .respond(200);
-                        account.putUser(mockUser);
-                        $httpBackend.flush();
-                    });
-
                     it('will resolve promise if successfull',function(){
                         $httpBackend.expectPUT('/api/account/user/u-1')
                             .respond(200,mockUser);
-                        account.putUser(mockUser).then(successSpy,failureSpy);
+                        account.putUser(mockUser.id,mockUser).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).toHaveBeenCalledWith(mockUser);
                         expect(failureSpy).not.toHaveBeenCalled();
@@ -797,7 +786,7 @@
                     it('will reject promise if not successful',function(){
                         $httpBackend.expectPUT('/api/account/user/u-1')
                             .respond(404,'Unable to update user.');
-                        account.putUser(mockUser).then(successSpy,failureSpy);
+                        account.putUser(mockUser.id,mockUser).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).not.toHaveBeenCalled();
                         expect(failureSpy).toHaveBeenCalledWith('Unable to update user.');
@@ -807,7 +796,7 @@
                     it('will reject promise if times out',function(){
                         $httpBackend.expectPUT('/api/account/user/u-1')
                             .respond(200,'');
-                        account.putUser(mockUser).then(successSpy,failureSpy);
+                        account.putUser(mockUser.id,mockUser).then(successSpy,failureSpy);
                         $timeout.flush(60000);
                         expect(successSpy).not.toHaveBeenCalled();
                         expect(failureSpy).toHaveBeenCalledWith('Request timed out.');
@@ -845,6 +834,43 @@
                         $httpBackend.expectPOST('/api/account/user')
                             .respond(200,'');
                         account.postUser(mockUser).then(successSpy,failureSpy);
+                        $timeout.flush(60000);
+                        expect(successSpy).not.toHaveBeenCalled();
+                        expect(failureSpy).toHaveBeenCalledWith('Request timed out.');
+                    });
+                });
+
+                describe('logoutUser()', function() {
+                    beforeEach(function(){
+                        successSpy = jasmine.createSpy('logoutUser.success');
+                        failureSpy = jasmine.createSpy('logoutUser.failure');
+                        spyOn($timeout,'cancel');
+                    });
+
+                    it('will resolve promise if successfull',function(){
+                        $httpBackend.expectPOST('/api/account/user/logout/u-1')
+                            .respond(204);
+                        account.logoutUser(mockUser.id,mockUser).then(successSpy,failureSpy);
+                        $httpBackend.flush();
+                        expect(successSpy).toHaveBeenCalled();
+                        expect(failureSpy).not.toHaveBeenCalled();
+                        expect($timeout.cancel).toHaveBeenCalled();
+                    });
+
+                    it('will reject promise if not successful',function(){
+                        $httpBackend.expectPOST('/api/account/user/logout/u-1')
+                            .respond(401,'Unable to update user.');
+                        account.logoutUser(mockUser.id).then(successSpy,failureSpy);
+                        $httpBackend.flush();
+                        expect(successSpy).not.toHaveBeenCalled();
+                        expect(failureSpy).toHaveBeenCalledWith('Unable to update user.');
+                        expect($timeout.cancel).toHaveBeenCalled();
+                    });
+
+                    it('will reject promise if times out',function(){
+                        $httpBackend.expectPOST('/api/account/user/logout/u-1')
+                            .respond(204);
+                        account.logoutUser(mockUser.id).then(successSpy,failureSpy);
                         $timeout.flush(60000);
                         expect(successSpy).not.toHaveBeenCalled();
                         expect(failureSpy).toHaveBeenCalledWith('Request timed out.');
