@@ -17,7 +17,7 @@
         <label for="host" class="control-label"> Domain:</label>
         <p style="font-size:80%;color:#888"><em>(without "http://" or "www", ex: mydomain.com)</em></p>
         <div>
-            <input class="col-md-3" class="form-control" type="text" name="host" ng-model="SitesCtrl.site.host" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" ng-pattern="/^[a-zA-Z0-9]+[a-zA-Z0-9-]+\.[a-z]{2,4}(\.[a-z]{2})?$/" required ignore-spaces>
+            <input class="col-md-3" class="form-control" type="text" name="host" ng-model="SitesCtrl.site.host" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" ng-pattern="/^([\w-]+\.)+[\w-]+$/" required ignore-spaces>
             <span class="help-block">
                 <span ng-show="theForm.host.$error.required"> Required. </span>
                 <span ng-show="theForm.host.$error.minlength"> Too short. </span>

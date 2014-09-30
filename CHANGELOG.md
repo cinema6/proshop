@@ -1,5 +1,8 @@
 # ProShop
 
+* *[v0.6.9]*
+    *[FIX]: Allow use of subdomains when creating/editing Sites.
+
 ## v0.6.8 (September 26, 2014)
 
 * *[v0.6.8]*
