@@ -1,7 +1,10 @@
 # ProShop
 
+## v0.6.10 (October 3, 2014)
+
 * *[v0.6.10]*
     *[FEATURE]: Add user Freeze button to log out and deactivate User
+* *[/v0.6.10]*
 
 ## v0.6.9 (September 30, 2014)
 
