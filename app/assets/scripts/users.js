@@ -243,7 +243,9 @@ define(['account'],function(account) {
                 $scope.message = null;
                 self.action = 'new';
                 self.role = null;
-                data.user = {};
+                data.user = {
+                    status: 'active'
+                };
                 data.org = null;
             };
 
@@ -302,6 +304,7 @@ define(['account'],function(account) {
                     org: data.org.id,
                     config: data.user.config,
                     type: (self.role === 'Admin' ? 'Publisher' : self.role),
+                    status: data.user.status,
                     permissions: setPermissions()
                 };
 
