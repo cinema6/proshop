@@ -52,6 +52,7 @@
                         lastName: 'F',
                         org: 'o-1',
                         type: 'Publisher',
+                        status: 'active'
                     },
                     {
                         id: 'u-2',
@@ -60,6 +61,7 @@
                         lastName: 'D',
                         org: 'o-2',
                         type: 'Publisher',
+                        status: 'active'
                     }
                 ];
 
@@ -285,7 +287,7 @@
 
                         expect(UsersCtrl.action).toBe('new');
                         expect(UsersCtrl.role).toBe(null);
-                        expect($scope.data.user).toEqual({});
+                        expect($scope.data.user).toEqual({ status: 'active'});
                         expect($scope.data.org).toBe(null);
                     });
                 });
@@ -349,6 +351,7 @@
                                 org: $scope.data.users[0].org.id,
                                 config: $scope.data.users[0].config,
                                 type: $scope.data.users[0].type,
+                                status: 'active',
                                 permissions: {
                                     elections: {
                                         read    : 'org',
@@ -530,6 +533,7 @@
                                     }
                                 },
                                 type: 'Publisher',
+                                status: 'active',
                                 permissions: {
                                     elections: {
                                         read    : 'org',

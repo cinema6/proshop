@@ -1,5 +1,8 @@
 # ProShop
 
+* *[v0.6.11]*
+    *[FEATURE]: Add user status settings
+
 ## v0.6.10 (October 3, 2014)
 
 * *[v0.6.10]*
