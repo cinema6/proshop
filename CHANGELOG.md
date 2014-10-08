@@ -1,7 +1,11 @@
 # ProShop
 
+## v0.6.11 (October 8, 2014)
+
 * *[v0.6.11]*
     *[FEATURE]: Add user status settings
+    *[FIX]: Loosen valid email restrictions
+* *[/v0.6.11]*
 
 ## v0.6.10 (October 3, 2014)
 
