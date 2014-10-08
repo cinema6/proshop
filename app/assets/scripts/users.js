@@ -208,6 +208,7 @@ define(['account'],function(account) {
             self.page = 1;
             self.limit = 50;
             self.limits = [5,10,50,100];
+            self.emailPattern = /^\w+.*\w@\w.*\.\w{2,}$/;
             Object.defineProperties(self, {
                 total: {
                     get: function() {

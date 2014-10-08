@@ -33,7 +33,7 @@
         <div class="form-group" ng-class="{'has-error': theForm.email.$error.required || theForm.email.$error.pattern}">
             <label for="email" class="control-label"> Email: </label>
             <div>
-                <input class="col-md-3" class="form-control" type="text" name="email" ng-model="data.user.email" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" ng-pattern="/^\w+.*\.\w\w\w?$/" required ignore-spaces>
+                <input class="col-md-3" class="form-control" type="text" name="email" ng-model="data.user.email" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" ng-pattern="UsersCtrl.emailPattern" required ignore-spaces>
                 <span class="help-block">
                     <span ng-show="theForm.email.$error.required"> Required. </span>
                     <span ng-show="theForm.email.$error.minlength"> Too short. </span>

@@ -799,6 +799,20 @@
             });
 
             describe('properties', function() {
+                describe('emailPattern', function() {
+                    it('should return true when valid', function() {
+                        expect('josh@cinema6.com').toMatch(UsersCtrl.emailPattern);
+                        expect('josh.o\'minzner@minzner.exposed').toMatch(UsersCtrl.emailPattern);
+                        expect('123@blah.co').toMatch(UsersCtrl.emailPattern);
+                    });
+
+                    it('should return false when not valid', function() {
+                        expect(' josh@blah.com').not.toMatch(UsersCtrl.emailPattern);
+                        expect('hello').not.toMatch(UsersCtrl.emailPattern);
+                        expect('josh@cinema6.c').not.toMatch(UsersCtrl.emailPattern);
+                    });
+                });
+
                 describe('total', function() {
                     it('should be undefined by default', function() {
                         expect(UsersCtrl.total).toBe(undefined);
