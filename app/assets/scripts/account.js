@@ -38,7 +38,7 @@ define(['angular','c6ui'], function(angular,c6ui){
                 scope.password      = '';
                 scope.lastStatus    = null;
                 scope.lastCode      = 0;
-                scope.emailPattern  = /^\w+.*\.\w\w\w?$/;
+                scope.emailPattern  = /^\w+.*\w@\w.*\.\w{2,}$/;
 
                 attrs.$observe('email',function(newVal){
                     scope.origEmail = newVal;

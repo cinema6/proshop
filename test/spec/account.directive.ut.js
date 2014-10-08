@@ -74,6 +74,11 @@
                         $isolate.password = 'abcdefghijkl';
                         $isolate.$digest();
                         expect($isolate.theForm.$valid).toEqual(true);
+
+                        $isolate.email = 'test-howard.the.king@somewhere.anywhere';
+                        $isolate.password = 'abcdefghijkl';
+                        $isolate.$digest();
+                        expect($isolate.theForm.$valid).toEqual(true);
                     });
 
                     it('is false if email = ""',function(){
