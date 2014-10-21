@@ -1,5 +1,11 @@
 # ProShop
 
+## v0.6.12 (October 21, 2014)
+
+* *[v0.6.12]*
+    *[FEATURE]: Add sponsorship settings
+* *[/v0.6.12]*
+
 ## v0.6.11 (October 8, 2014)
 
 * *[v0.6.11]*
