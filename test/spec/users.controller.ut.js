@@ -399,7 +399,8 @@
                                         create  : 'all',
                                         edit    : 'all',
                                         delete  : 'all',
-                                        editAdConfig: 'all'
+                                        editAdConfig: 'all',
+                                        editSponsorships: 'all'
                                     },
                                     users: {
                                         read    : 'all',
@@ -581,7 +582,8 @@
                                         create  : 'all',
                                         edit    : 'all',
                                         delete  : 'all',
-                                        editAdConfig: 'all'
+                                        editAdConfig: 'all',
+                                        editSponsorships: 'all'
                                     },
                                     users: {
                                         read    : 'all',
@@ -865,7 +867,8 @@
                                     create  : 'all',
                                     edit    : 'all',
                                     delete  : 'all',
-                                    editAdConfig: 'all'
+                                    editAdConfig: 'all',
+                                    editSponsorships: 'all'
                                 },
                                 users: {
                                     read    : 'all',
