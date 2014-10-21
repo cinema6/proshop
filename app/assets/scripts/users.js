@@ -75,7 +75,8 @@ define(['account'],function(account) {
                             create  : 'all',
                             edit    : 'all',
                             delete  : 'all',
-                            editAdConfig: 'all'
+                            editAdConfig: 'all',
+                            editSponsorships: 'all'
                         },
                         users: {
                             read    : 'all',
