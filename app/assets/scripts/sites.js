@@ -174,6 +174,7 @@ define(['account'], function(account) {
                 {label:'Domain',value:'host'},
                 {label:'Org',value:'org.name'},
                 {label:'AdTech ID',value:'placementId'},
+                {label:'Wild Card ID',value:'wildCardPlacement'},
                 {label:'Branding',value:'branding'},
                 {label:'Status',value:'status'},
                 {label:'Last Updated',value:'lastUpdated'}
