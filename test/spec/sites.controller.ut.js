@@ -47,6 +47,7 @@
                         "org": "o-112",
                         "branding": "site1_branding",
                         "placementId": "111111",
+                        "wildCardPlacement": "121212",
                         "name": "Best Website Ever",
                         "host": "bestever.com"
                     },
@@ -208,6 +209,7 @@
                             },
                             branding: 'site1_branding',
                             placementId: '111111',
+                            wildCardPlacement: '121212',
                             name: 'Best Website Ever',
                             host: 'bestever.com'
                         });
@@ -259,6 +261,7 @@
                                 org: 'o-112',
                                 branding: 'site1_branding',
                                 placementId: '111111',
+                                wildCardPlacement: '121212',
                                 name: 'Best Website Ever',
                                 host: 'bestever.com'
                             });
@@ -266,6 +269,7 @@
                             SitesCtrl.site.branding = 'test_branding';
                             SitesCtrl.site.name = 'Test Name';
                             SitesCtrl.site.placementId = '';
+                            SitesCtrl.site.wildCardPlacement = '';
                             SitesCtrl.site.host = 'test.com';
                             SitesCtrl.site.status = 'inactive';
                             SitesCtrl.org = { id: 'o-999', name: 'New Org' };
@@ -279,6 +283,7 @@
                                 org: 'o-999',
                                 branding: 'test_branding',
                                 placementId: '',
+                                wildCardPlacement: '',
                                 name: 'Test Name',
                                 host: 'test.com'
                             });
@@ -293,6 +298,7 @@
                                 org: null,
                                 branding: 'site1_branding',
                                 placementId: '111111',
+                                wildCardPlacement: '121212',
                                 name: 'Best Website Ever',
                                 host: 'bestever.com'
                             });
@@ -345,6 +351,7 @@
                                 org: 'o-1',
                                 branding: 'new_site',
                                 placementId: undefined,
+                                wildCardPlacement: undefined,
                                 name: 'New Site',
                                 host: 'newsite.com'
                             });
@@ -359,6 +366,7 @@
                                 org: null,
                                 branding: 'new_site',
                                 placementId: undefined,
+                                wildCardPlacement: undefined,
                                 name: 'New Site',
                                 host: 'newsite.com'
                             });
