@@ -56,6 +56,13 @@
         </div>
     </div>
 
+    <div class="form-group">
+        <label for="wildCardPlacementId" class="control-label"> Wild Card Placement ID: </label>
+        <div class="clearfix">
+            <input class="col-md-3" class="form-control" type="text" name="wildCardPlacementId" ng-model="SitesCtrl.site.wildCardPlacement" autocomplete="off" ng-minlength="3" ng-maxlength="128"  ignore-spaces>
+        </div>
+    </div>
+
         <div class="form-group" ng-class="{'has-error': theForm.status.$error.required}">
             <label for="status" class="control-label"> Status: </label>
             <div>

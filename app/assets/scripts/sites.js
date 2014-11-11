@@ -127,7 +127,7 @@ define(['account'], function(account) {
 
                 s.org = self.org ? self.org.id : null;
 
-                ['name','branding','host','status','placementId'].forEach(function(prop) {
+                ['name','branding','host','status','placementId','wildCardPlacement'].forEach(function(prop) {
                     s[prop] = site[prop];
                 });
 
@@ -174,6 +174,7 @@ define(['account'], function(account) {
                 {label:'Domain',value:'host'},
                 {label:'Org',value:'org.name'},
                 {label:'AdTech ID',value:'placementId'},
+                {label:'Wild Card ID',value:'wildCardPlacement'},
                 {label:'Branding',value:'branding'},
                 {label:'Status',value:'status'},
                 {label:'Last Updated',value:'lastUpdated'}
