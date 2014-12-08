@@ -257,6 +257,11 @@
                             value: 'shortcode',
                             enabled: true
                         });
+                        expect(org._data.config.minireelinator.embedTypes[2]).toEqual({
+                            title: 'IFrame',
+                            value: 'iframe',
+                            enabled: false
+                        });
                     });
 
                     it('should add adConfig options based on org', function(){

@@ -645,6 +645,11 @@ define(['angular','c6ui'], function(angular,c6ui){
                     title: 'Wordpress Shortcode',
                     value: 'shortcode',
                     enabled: false
+                },
+                {
+                    title: 'IFrame',
+                    value: 'iframe',
+                    enabled: false
                 }
             ];
 
