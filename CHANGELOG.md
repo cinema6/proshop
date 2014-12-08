@@ -1,5 +1,8 @@
 # ProShop
 
+* *[v0.6.13]*
+  * [FEATURE]: Added ability to enable the IFrame embed type for an Org
+
 ## v0.6.12 (October 21, 2014)
 
 * *[v0.6.12]*
