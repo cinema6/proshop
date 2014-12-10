@@ -419,7 +419,13 @@
                                         read    : 'all',
                                         create  : 'all',
                                         edit    : 'all',
-                                        delete  : 'all',
+                                        delete  : 'all'
+                                    },
+                                    campaigns: {
+                                        read    : 'all',
+                                        create  : 'all',
+                                        edit    : 'all',
+                                        delete  : 'all'
                                     }
                                 });
                             });
@@ -602,7 +608,13 @@
                                         read    : 'all',
                                         create  : 'all',
                                         edit    : 'all',
-                                        delete  : 'all',
+                                        delete  : 'all'
+                                    },
+                                    campaigns: {
+                                        read    : 'all',
+                                        create  : 'all',
+                                        edit    : 'all',
+                                        delete  : 'all'
                                     }
                                 });
                             });
