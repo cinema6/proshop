@@ -95,7 +95,13 @@ define(['account'],function(account) {
                             read    : 'all',
                             create  : 'all',
                             edit    : 'all',
-                            delete  : 'all',
+                            delete  : 'all'
+                        },
+                        campaigns: {
+                            read    : 'all',
+                            create  : 'all',
+                            edit    : 'all',
+                            delete  : 'all'
                         }
                     } :
                     {
