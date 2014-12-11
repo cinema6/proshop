@@ -1,7 +1,12 @@
 # ProShop
 
+## v0.6.13 (December 11, 2014)
+
 * *[v0.6.13]*
   * [FEATURE]: Added ability to enable the IFrame embed type for an Org
+  * [FEATURE]: Added Wild Card placements to Sites
+  * [FEATURE]: Added Campaign permissions for Sys Admin users
+* *[/v0.6.13]*
 
 ## v0.6.12 (October 21, 2014)
 
