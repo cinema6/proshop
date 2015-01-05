@@ -1,0 +1,114 @@
+<h1>Sites</h1>
+<br>
+<section class="view">
+    <div style="padding-bottom:20px">{{message}}</div>
+
+    <form name="theForm" ng-submit="SiteCtrl.saveSite(SiteCtrl.site)">
+        <a href="/#/sites">&lsaquo; Back to list</a>
+
+        <div class="form-group" style="padding-top:20px" ng-class="{'has-error': theForm.name.$error.required}">
+            <label for="name" class="control-label"> Name: </label>
+            <div>
+                <input class="col-md-3" class="form-control" type="text" name="name" ng-model="SiteCtrl.site.name" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" required ignore-spaces>
+                <span class="help-block">
+                    <span ng-show="theForm.name.$error.required"> Required. </span>
+                    <span ng-show="theForm.name.$error.minlength"> Too short. </span>
+                    <span ng-show="theForm.name.$error.maxlength"> Too long. </span>
+                </span>
+            </div>
+        </div>
+
+        <div class="form-group" ng-class="{'has-error': theForm.host.$invalid}">
+            <label for="host" class="control-label"> Domain:</label>
+            <p style="font-size:80%;color:#888"><em>(without "http://" or "www", ex: mydomain.com)</em></p>
+            <div>
+                <input class="col-md-3" class="form-control" type="text" name="host" ng-model="SiteCtrl.site.host" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" ng-pattern="/^([\w-]+\.)+[\w-]+$/" required ignore-spaces>
+                <span class="help-block">
+                    <span ng-show="theForm.host.$error.required"> Required. </span>
+                    <span ng-show="theForm.host.$error.minlength"> Too short. </span>
+                    <span ng-show="theForm.host.$error.maxlength"> Too long. </span>
+                    <span ng-show="theForm.host.$error.pattern"> Invalid domain. </span>
+                </span>
+            </div>
+        </div>
+
+        <div class="form-group" ng-class="{'has-error': theForm.branding.$error.required}">
+            <label for="branding" class="control-label"> Branding: </label>
+            <div>
+                <input class="col-md-3" ng-focus="SiteCtrl.disableBrandBinding()" class="form-control" type="text" name="branding" ng-model="SiteCtrl.site.branding" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" ng-pattern="/^[\w]*[a-zA-Z]+[\w]*$/" required ignore-spaces>
+                <span class="help-block">
+                    <span ng-show="theForm.branding.$error.required"> Required. </span>
+                    <span ng-show="theForm.branding.$error.minlength"> Too short. </span>
+                    <span ng-show="theForm.branding.$error.maxlength"> Too long. </span>
+                    <span ng-show="theForm.branding.$error.pattern"> Invalid characters. </span>
+                </span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="org" class="control-label"> Org: </label>
+            <div>
+                <select ng-model="SiteCtrl.org" name="org" ng-options="org.name for org in SiteCtrl.orgs | orderBy:'name'">
+                    <option value="">-- No Org --</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="placementId" class="control-label"> AdTech Placement ID: </label>
+            <div class="clearfix">
+                <input class="col-md-3" class="form-control" type="text" name="placementId" ng-model="SiteCtrl.site.placementId" autocomplete="off" ng-minlength="3" ng-maxlength="128"  ignore-spaces>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="wildCardPlacementId" class="control-label"> Wild Card Placement ID: </label>
+            <div class="clearfix">
+                <input class="col-md-3" class="form-control" type="text" name="wildCardPlacementId" ng-model="SiteCtrl.site.wildCardPlacement" autocomplete="off" ng-minlength="3" ng-maxlength="128"  ignore-spaces>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="containers" class="control-label"> Containers: </label>
+            <div ng-repeat="container in SiteCtrl.containers">
+                <span ng-if="container.enabled">
+                    <span class="glyphicon glyphicon-remove" ng-click="container.enabled = false"></span><strong> {{container.name}} </strong>
+                    <small ng-if="container.displayPlacementId && container.contentPlacementId">DisplayID: {{container.displayPlacementId}}, ContentID: {{container.contentPlacementId}}</small>
+            </span>
+            </div>
+            <div class="clearfix">
+                <select name="containers" ng-model="container" ng-options="container.name for container in SiteCtrl.containers | filter:enabled:false | orderBy:'name'">
+                    <option value=""> Choose a type </option>
+                </select>
+                <input ng-show="container.name === 'Other'" type="text" ng-model="container.type" autocomplete="off" ng-minlength="3" ng-maxlength="128" ignore-spaces>
+                <span ng-click="SiteCtrl.addContainerItem(container)">Add</span>
+            </div>
+        </div>
+
+            <div class="form-group" ng-class="{'has-error': theForm.status.$error.required}">
+                <label for="status" class="control-label"> Status: </label>
+                <div>
+                    <input type="radio" name="status" ng-model="SiteCtrl.site.status" value="active" required>
+                    <label for="new_org_status"> Active</label>
+                    <br>
+                    <input type="radio" name="status" ng-model="SiteCtrl.site.status" value="inactive" required>
+                    <label for="new_org_status"> Inactive</label>
+                    <br>
+                    <input type="radio" name="status" ng-model="SiteCtrl.site.status" value="pending" required>
+                    <label for="new_org_status"> Pending</label>
+                    <br>
+                    <span class="help-block">
+                        <span ng-show="theForm.status.$error.required"> Required. </span>
+                    </span>
+                </div>
+            </div>
+        <div style="padding:20px 0 40px 0;">
+            <input type="submit" value="Save" ng-disabled="!theForm.$valid">
+            <input type="button" value="Delete" ng-show="SiteCtrl.site.id" ng-click="SiteCtrl.confirmDelete()">
+            <span ng-show="!theForm.$valid" class="text-danger"> There are errors above. See highlighted fields. </span>
+        </div>
+    </form>
+
+    <div class="mask" ng-show="SiteCtrl.loading"></div>
+
+</section>
