@@ -34,15 +34,20 @@ module.exports = function(http) {
     });
 
     http.whenPOST('/api/site', function(request) {
-        var id = 'u-' + Math.floor(Math.random() * 10000) + 1,
+        var id = 's-' + Math.floor(Math.random() * 10000) + 1,
             filePath = sitePath(id),
             currentTime = (new Date()).toISOString(),
             data = request.body,
-            newSite = extend(request.body, {
+            newSite = extend(data, {
                 id: id,
                 created: currentTime,
                 lastUpdated: currentTime
             });
+
+        newSite.containers.forEach(function(container) {
+            container.displayPlacementId = Math.floor(Math.random() * 10000) + 1;
+            container.contentPlacementId = Math.floor(Math.random() * 10000) + 1;
+        });
 
         grunt.file.write(filePath, JSON.stringify(newSite, null, '    '));
 
@@ -56,6 +61,13 @@ module.exports = function(http) {
             newSite = extend(currentSite, request.body, {
                 lastUpdated: (new Date()).toISOString()
             });
+
+        newSite.containers.forEach(function(container) {
+            if (!container.displayPlacementId && !container.contentPlacementId) {
+                container.displayPlacementId = Math.floor(Math.random() * 10000) + 1;
+                container.contentPlacementId = Math.floor(Math.random() * 10000) + 1;
+            }
+        });
 
         if (id === 's-113') {
             this.respond(401, 'Not Authorized');
