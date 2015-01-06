@@ -5,21 +5,10 @@ define(['account'], function(account) {
         .controller('SitesController', ['$scope','$location','$log','SitesService','account','ConfirmDialogService','$q',
         function                       ( $scope , $location , $log , SitesService , account , ConfirmDialogService , $q ) {
             var self = this,
-                _data = {},
-                bindBrandToName = true;
+                _data = {};
 
             $log = $log.context('SitesCtrl');
             $log.info('instantiated');
-
-            function convertNameToBrand(name) {
-                return name.toLowerCase().split(',')[0].replace(/ /g, '_');
-            }
-
-            function toTitleCase(str) {
-                return str.replace(/\w\S*/g, function(txt) {
-                    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-                });
-            }
 
             function initView() {
                 self.loading = true;
@@ -86,16 +75,6 @@ define(['account'], function(account) {
                 });
 
                 self.page = 1;
-            };
-
-            self.editSite = function(site) {
-                $scope.message = null;
-                self.site = site;
-                self.org = !site.org ? null : self.orgs.filter(function(org) {
-                    return site.org.id === org.id;
-                })[0];
-                enableActiveContainers(site.containers);
-                self.action = 'edit';
             };
 
             self.addNewSite = function() {
