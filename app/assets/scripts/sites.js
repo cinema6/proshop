@@ -2,8 +2,8 @@ define(['account'], function(account) {
     'use strict';
 
     return angular.module('c6.proshop.sites', [account.name])
-        .controller('SitesController', ['$scope','$location','$log','SitesService','account','ConfirmDialogService','$q',
-        function                       ( $scope , $location , $log , SitesService , account , ConfirmDialogService , $q ) {
+        .controller('SitesController', ['$scope','$location','$log','SitesService','account','$q',
+        function                       ( $scope , $location , $log , SitesService , account , $q ) {
             var self = this,
                 _data = {};
 
@@ -153,19 +153,11 @@ define(['account'], function(account) {
                         })[0];
 
                         enableActiveContainers(site.containers);
-
+                    })
+                    .finally(function() {
                         self.loading = false;
                     });
             }
-
-            self.containers = [
-                {type: 'embed', name: 'Embed', enabled: false},
-                {type: 'mr2', name: 'MR2 Widget', enabled: false},
-                {type: 'taboola', name: 'Taboola', enabled: false},
-                {type: 'outbrain', name: 'Outbrain', enabled: false},
-                {type: 'veeseo', name: 'Veeseo', enabled: false},
-                {type: '', name: 'Other', enabled: false}
-            ];
 
             function enableActiveContainers(containers) {
                 if (!containers) { return; }
@@ -212,6 +204,15 @@ define(['account'], function(account) {
 
                 return _containers;
             }
+
+            self.containers = [
+                {type: 'embed', name: 'Embed', enabled: false},
+                {type: 'mr2', name: 'MR2 Widget', enabled: false},
+                {type: 'taboola', name: 'Taboola', enabled: false},
+                {type: 'outbrain', name: 'Outbrain', enabled: false},
+                {type: 'veeseo', name: 'Veeseo', enabled: false},
+                {type: '', name: 'Other', enabled: false}
+            ];
 
             self.addContainerItem = function(container) {
                 if (container.name === 'Other') {
