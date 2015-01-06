@@ -7,5 +7,6 @@
     "branding": "site2_branding",
     "placementId": "111112",
     "name": "News Site",
-    "host": "thenews.com"
+    "host": "thenews.com",
+    "containers": []
 }
