@@ -317,7 +317,7 @@ define(['account'], function(account) {
             };
 
             $scope.$watch(function() {return self.site && self.site.name;}, function(newName) {
-                if (newName && bindBrandToName) {
+                if (newName && bindBrandToName && !self.site.branding) {
                     self.site.branding = convertNameToBrand(newName);
                 }
             });
