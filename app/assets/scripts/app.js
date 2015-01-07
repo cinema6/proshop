@@ -58,6 +58,16 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
                     controllerAs: 'SitesCtrl',
                     templateUrl: 'views/sites/sites.html'
                 })
+                .when('/sites/new', {
+                    controller: 'SiteController',
+                    controllerAs: 'SiteCtrl',
+                    templateUrl: 'views/sites/site.html'
+                })
+                .when('/sites/:id', {
+                    controller: 'SiteController',
+                    controllerAs: 'SiteCtrl',
+                    templateUrl: 'views/sites/site.html'
+                })
                 .otherwise({redirectTo: '/users'});
         }])
         .value('appData', {appUser: null, user: null, users: null, org: null, orgs: null})

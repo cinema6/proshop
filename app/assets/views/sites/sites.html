@@ -1,12 +1,40 @@
 <h1>Sites</h1>
 <br>
-<section ng-switch="SitesCtrl.action" class="view">
+<section class="view">
     <div style="padding-bottom:20px">{{message}}</div>
-    <sites-all ng-switch-when="all"></sites-all>
-    <sites-new ng-switch-when="new"></sites-new>
-    <sites-edit ng-switch-when="edit"></sites-edit>
+
+    <div class="clearfix">
+        <button ng-click="SitesCtrl.addNewSite()">Add New Site</button>
+        <input style="float:right;width:250px;" type="text" ng-model="query" ng-change="SitesCtrl.filterData(query)" placeholder="Search Sites by Name or Domain">
+    </div>
+
+    <paginator-controls page="SitesCtrl.page" limit="SitesCtrl.limit" limits="SitesCtrl.limits" total="SitesCtrl.total"></paginator-controls>
+
+    <div class="clearfix"></div>
+
+    <table class="table table-striped table-hover table-bordered">
+        <tbody>
+            <tr>
+                <th ng-repeat="th in tableHeaders" ng-click="doSort(th.value)" style="cursor:pointer;">
+                    {{th.label}} <span style="padding-left:5px;opacity:0.5;float:right;" ng-style="{visibility: sort.column === th.value ? 'visible' : 'hidden'}" ng-class="{'glyphicon-chevron-up': !sort.descending, 'glyphicon-chevron-down': sort.descending }" class="glyphicon "></span></th>
+            </tr>
+            <tr ng-repeat="site in SitesCtrl.sites | orderBy:sort.column:sort.descending | paginatorlimits:[(SitesCtrl.page - 1) * SitesCtrl.limit, (SitesCtrl.page * SitesCtrl.limit)]">
+                <td><a href="/#/sites/{{site.id}}">{{site.name}}</a></td>
+                <td>{{site.host}}</td>
+                <td>{{site.org.name}}</td>
+                <td>{{site.placementId}}</td>
+                <td>{{site.wildCardPlacement}}</td>
+                <td>{{site.branding}}</td>
+                <td>{{site.status}}</td>
+                <td>{{site.lastUpdated | date}}</td>
+            </tr>
+        </tbody>
+    </table>
+
     <div class="mask" ng-show="SitesCtrl.loading"></div>
+
 </section>
+
 
 
 
