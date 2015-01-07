@@ -2,8 +2,8 @@ define([], function() {
     'use strict';
 
     return angular.module('c6.proshop.categories',[])
-        .controller('CategoriesController', ['$scope','$log','ConfirmDialogService','$q',
-        function                            ( $scope , $log , ConfirmDialogService , $q ) {
+        .controller('CategoriesController', ['$scope','$log','ConfirmDialogService','$q','$location',
+        function                            ( $scope , $log , ConfirmDialogService , $q , $location ) {
             var self = this,
                 _data = {};
 
@@ -25,6 +25,10 @@ define([], function() {
                     }
                 }
             });
+
+            self.addNew = function() {
+                $location.path('/categories/new');
+            };
 
             self.filterData = function(query) {
                 var _query = query.toLowerCase(),
