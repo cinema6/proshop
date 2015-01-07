@@ -59,12 +59,27 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
                     controllerAs: 'SitesCtrl',
                     templateUrl: 'views/sites/sites.html'
                 })
+                .when('/sites/new', {
+                    controller: 'SiteController',
+                    controllerAs: 'SiteCtrl',
+                    templateUrl: 'views/sites/site.html'
+                })
+                .when('/sites/:id', {
+                    controller: 'SiteController',
+                    controllerAs: 'SiteCtrl',
+                    templateUrl: 'views/sites/site.html'
+                })
                 .when('/categories', {
                     controller: 'CategoriesController',
                     controllerAs: 'CategoriesCtrl',
                     templateUrl: 'views/categories/categories.html'
                 })
                 .when('/categories/new', {
+                    controller: 'CategoryController',
+                    controllerAs: 'CategoryCtrl',
+                    templateUrl: 'views/categories/category.html'
+                })
+                .when('/categories/:id', {
                     controller: 'CategoryController',
                     controllerAs: 'CategoryCtrl',
                     templateUrl: 'views/categories/category.html'

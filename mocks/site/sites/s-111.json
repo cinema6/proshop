@@ -7,5 +7,17 @@
     "branding": "site1_branding",
     "placementId": "111111",
     "name": "Best Website Ever",
-    "host": "bestever.com"
+    "host": "bestever.com",
+    "containers": [
+        {
+            "type": "veeseo",
+            "displayPlacementId": "1212121",
+            "contentPlacementId": "232443"
+        },
+        {
+            "type": "mr2",
+            "displayPlacementId": "34343",
+            "contentPlacementId": "4544556"
+        }
+    ]
 }

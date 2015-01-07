@@ -7,5 +7,6 @@
     "branding": "site3_branding",
     "placementId": "111113",
     "name": "Sports Are Fun",
-    "host": "sportsarefun.com"
+    "host": "sportsarefun.com",
+    "containers": []
 }
