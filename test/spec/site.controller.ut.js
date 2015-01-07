@@ -15,7 +15,7 @@
                 SitesService,
                 account,
                 ConfirmDialogService,
-                mockSites,
+                mockSite,
                 mockOrgs;
 
             beforeEach(function() {
@@ -41,47 +41,21 @@
                     deleteSite: jasmine.createSpy('SitesService.deleteSite')
                 };
 
-                mockSites = [
-                    /* jshint quotmark:false */
-                    {
-                        "id": "s-1",
-                        "status": "active",
-                        "created": "2014-06-13T19:28:39.408Z",
-                        "lastUpdated": "2014-06-13T19:28:39.408Z",
-                        "org": "o-112",
-                        "branding": "site1_branding",
-                        "placementId": "111111",
-                        "wildCardPlacement": "121212",
-                        "name": "Best Website Ever",
-                        "host": "bestever.com",
-                        "containers": []
-                    },
-                    {
-                        "id": "s-2",
-                        "status": "pending",
-                        "created": "2014-05-13T19:28:39.408Z",
-                        "lastUpdated": "2014-07-13T19:28:39.408Z",
-                        "org": "o-111",
-                        "branding": "site2_branding",
-                        "placementId": "111112",
-                        "name": "News Site",
-                        "host": "thenews.com",
-                        "containers": []
-                    },
-                    {
-                        "id": "s-3",
-                        "status": "inactive",
-                        "created": "2014-06-17T19:28:39.408Z",
-                        "lastUpdated": "2014-06-20T19:28:39.408Z",
-                        "org": "o-114",
-                        "branding": "site3_branding",
-                        "placementId": "111113",
-                        "name": "Sports Are Fun",
-                        "host": "sportsarefun.com",
-                        "containers": []
-                    }
-                    /* jshint quotmark:single */
-                ];
+                /* jshint quotmark:false */
+                mockSite = {
+                    "id": "s-1",
+                    "status": "active",
+                    "created": "2014-06-13T19:28:39.408Z",
+                    "lastUpdated": "2014-06-13T19:28:39.408Z",
+                    "org": "o-112",
+                    "branding": "site1_branding",
+                    "placementId": "111111",
+                    "wildCardPlacement": "121212",
+                    "name": "Best Website Ever",
+                    "host": "bestever.com",
+                    "containers": []
+                };
+                /* jshint quotmark:single */
 
                 mockOrgs = [
                     {
@@ -142,22 +116,86 @@
                     expect(SiteCtrl).toBeDefined();
                 });
 
-                it('should load Sites from service', function() {
+                it('should load the Site from service', function() {
                     expect(SitesService.getSite).toHaveBeenCalledWith('s-1');
                     expect(account.getOrgs).toHaveBeenCalled();
+                });
+
+                it('should not load the Site if no id is in the route', function() {
+                    SitesService.getSite.calls.reset();
+
+                    $routeParams = {};
+
+                    SiteCtrl = $controller('SiteController', {
+                        $log: $log,
+                        $scope: $scope,
+                        $routeParams: $routeParams,
+                        account: account,
+                        SitesService: SitesService,
+                        ConfirmDialogService: ConfirmDialogService
+                    });
+
+                    expect(SitesService.getSite).not.toHaveBeenCalled();
                 });
             });
 
             describe('methods', function() {
                 describe('addContainerItem()', function() {
+                    describe('adding an existing container type', function() {
+                        it('should enable it', function() {
+                            expect(SiteCtrl.containers[2].enabled).toBe(false);
 
+                            SiteCtrl.addContainerItem(SiteCtrl.containers[2]);
+
+                            expect(SiteCtrl.containers[2].enabled).toBe(true);
+                        });
+                    });
+
+                    describe('adding a custom container', function() {
+                        var standardContainerCount,
+                            customContainer;
+
+                        beforeEach(function() {
+                            standardContainerCount = SiteCtrl.containers.length;
+
+                            customContainer = SiteCtrl.containers.filter(function(container) {
+                                return container.name === 'Other';
+                            })[0];
+                        });
+
+                        it('should do nothing if type is not defined', function() {
+                            customContainer.type = '';
+
+                            SiteCtrl.addContainerItem(customContainer);
+
+                            expect(SiteCtrl.containers.length).toEqual(standardContainerCount);
+                        });
+
+                        it('should do add a container to the list and enable it', function() {
+                            var newContainer;
+
+                            customContainer.type = 'Some Custom Container';
+
+                            SiteCtrl.addContainerItem(customContainer);
+
+                            expect(SiteCtrl.containers.length).toEqual(standardContainerCount + 1);
+
+                            newContainer = SiteCtrl.containers.filter(function(container) {
+                                return container.name === 'Some Custom Container';
+                            })[0];
+
+                            expect(newContainer.enabled).toBe(true);
+                            expect(newContainer.name).toBe('Some Custom Container');
+                            expect(newContainer.type).toBe('some_custom_container');
+                        });
+                    });
                 });
 
                 describe('saveSite(site)', function() {
                     describe('when editing existing site', function() {
                         beforeEach(function() {
                             $scope.$apply(function() {
-                                SitesService.getSite.deferred.resolve(angular.copy(mockSites[0]));
+                                SitesService.getSite.deferred.resolve(angular.copy(mockSite));
                                 account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
                             });
                         });
@@ -330,7 +368,7 @@
 
                     beforeEach(function() {
                         $scope.$apply(function() {
-                            SitesService.getSite.deferred.resolve(angular.copy(mockSites[0]));
+                            SitesService.getSite.deferred.resolve(angular.copy(mockSite));
                             account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
                         });
 
@@ -399,7 +437,7 @@
 
                     it('should be false after all data promises resolve', function() {
                         $scope.$apply(function() {
-                            SitesService.getSite.deferred.resolve(angular.copy(mockSites[0]));
+                            SitesService.getSite.deferred.resolve(angular.copy(mockSite));
                             account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
                         });
 
@@ -413,6 +451,54 @@
                         });
 
                         expect(SiteCtrl.loading).toBe(false);
+                    });
+                });
+            });
+
+            describe('$scope.watch', function() {
+                describe('site.name', function() {
+                    describe('binding to branding when creating new site', function() {
+                        beforeEach(function() {
+                            $routeParams = {};
+
+                            SiteCtrl = $controller('SiteController', {
+                                $log: $log,
+                                $scope: $scope,
+                                $routeParams: $routeParams,
+                                account: account,
+                                SitesService: SitesService,
+                                ConfirmDialogService: ConfirmDialogService
+                            });
+
+                            $scope.$apply(function() {
+                                account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
+                            });
+                        });
+
+                        it('should happen until user clicks into the branding field', function() {
+                            expect(SiteCtrl.site.name).toBe(undefined);
+                            expect(SiteCtrl.site.branding).toBe(undefined);
+
+                            $scope.$apply(function() {
+                                SiteCtrl.site.name = 'Some New Site';
+                            });
+
+                            expect(SiteCtrl.site.branding).toBe('some_new_site');
+
+                            $scope.$apply(function() {
+                                SiteCtrl.site.name = 'Some New Site Name';
+                            });
+
+                            expect(SiteCtrl.site.branding).toBe('some_new_site_name');
+
+                            SiteCtrl.disableBrandBinding();
+
+                            $scope.$apply(function() {
+                                SiteCtrl.site.name = 'Some';
+                            });
+
+                            expect(SiteCtrl.site.branding).toBe('some_new_site_name');
+                        });
                     });
                 });
             });

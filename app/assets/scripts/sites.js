@@ -41,7 +41,6 @@ define(['account'], function(account) {
                     });
             }
 
-            self.action = 'all';
             self.query = null;
             self.page = 1;
             self.limit = 50;
@@ -114,7 +113,7 @@ define(['account'], function(account) {
         .controller('SiteController', ['$scope','$routeParams','$location','$log','$q','SitesService','account','ConfirmDialogService',
         function                      ( $scope , $routeParams , $location , $log , $q , SitesService , account , ConfirmDialogService ) {
             var self = this,
-                bindBrandToName = true;
+                bindBrandToName = !$routeParams.id;
 
             $log = $log.context('SiteCtrl');
             $log.info('instantiated');
@@ -215,6 +214,8 @@ define(['account'], function(account) {
             ];
 
             self.addContainerItem = function(container) {
+                if (!container.type) { return; }
+
                 if (container.name === 'Other') {
                     self.containers.push({
                         type: container.type.replace(/ /g, '_').toLowerCase(),
@@ -297,7 +298,7 @@ define(['account'], function(account) {
             };
 
             $scope.$watch(function() {return self.site && self.site.name;}, function(newName) {
-                if (newName && bindBrandToName && !self.site.branding) {
+                if (newName && bindBrandToName) {
                     self.site.branding = convertNameToBrand(newName);
                 }
             });

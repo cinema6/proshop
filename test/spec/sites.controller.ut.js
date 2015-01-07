@@ -126,6 +126,19 @@
                     expect(SitesService.getSites).toHaveBeenCalled();
                     expect(account.getOrgs).toHaveBeenCalled();
                 });
+
+                it('should load Site\'s org if defined', function() {
+                    $scope.$apply(function() {
+                        SitesService.getSites.deferred.resolve(angular.copy(mockSites));
+                        account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
+                    });
+
+                    mockSites.forEach(function(site) {
+                        if (site.org) {
+                            expect(account.getOrg).toHaveBeenCalledWith(site.org);
+                        }
+                    });
+                });
             });
 
             describe('methods', function() {
