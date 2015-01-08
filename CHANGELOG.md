@@ -1,5 +1,9 @@
 # ProShop
 
+* *[v0.6.14]*
+  * [FEATURE]: Added Category manager
+  * [FEATURE]: Added Site container manager
+
 ## v0.6.13 (December 11, 2014)
 
 * *[v0.6.13]*
