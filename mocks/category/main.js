@@ -1,4 +1,4 @@
-module.export = function(http) {
+module.exports = function(http) {
     'use strict';
 
     var path = require('path'),
