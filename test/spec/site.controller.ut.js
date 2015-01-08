@@ -1,6 +1,6 @@
 (function() {
 
-    'user strict';
+    'use strict';
 
     define(['app'], function() {
         describe('SiteController', function() {
