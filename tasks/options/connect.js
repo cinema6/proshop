@@ -38,6 +38,8 @@
                             '/api/content/experiences': 'mocks/content/main.js',
                             '/api/site': 'mocks/site/main.js',
                             '/api/sites': 'mocks/site/main.js',
+                            '/api/category': 'mocks/category/main.js',
+                            '/api/categories': 'mocks/category/main.js',
                             '/api/collateral': 'mocks/collateral/main.js',
                             '/collateral/experiences': 'mocks/collateral/main.js'
                         }),
