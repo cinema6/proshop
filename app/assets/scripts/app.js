@@ -74,12 +74,12 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
                     controllerAs: 'CategoriesCtrl',
                     templateUrl: 'views/categories/categories.html'
                 })
-                .when('/categories/new', {
+                .when('/category/new', {
                     controller: 'CategoryController',
                     controllerAs: 'CategoryCtrl',
                     templateUrl: 'views/categories/category.html'
                 })
-                .when('/categories/:id', {
+                .when('/category/:id', {
                     controller: 'CategoryController',
                     controllerAs: 'CategoryCtrl',
                     templateUrl: 'views/categories/category.html'

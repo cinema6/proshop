@@ -16,6 +16,7 @@ define([], function() {
                 CategoriesService.getCategories()
                     .then(function(categories) {
                         self.categories = categories;
+                        _data.categories = categories;
                     })
                     .finally(function() {
                         self.loading = false;
@@ -29,33 +30,21 @@ define([], function() {
             Object.defineProperties(self, {
                 total: {
                     get: function() {
-                        return self.sites && Math.ceil(self.sites.length / self.limit);
+                        return self.categories && Math.ceil(self.categories.length / self.limit);
                     }
                 }
             });
 
             self.addNew = function() {
-                $location.path('/categories/new');
+                $location.path('/category/new');
             };
 
             self.filterData = function(query) {
-                var _query = query.toLowerCase(),
-                    orgs = _data.orgs.filter(function(org) {
-                        return org.name.toLowerCase().indexOf(_query) >= 0;
-                    });
+                var _query = query.toLowerCase();
 
-                self.sites = _data.sites.filter(function(site) {
-                    var bool = false;
-
-                    orgs.forEach(function(org) {
-                        bool = (site.org && (site.org.id.indexOf(org.id) >= 0)) || bool;
-                    });
-
-                    [site.name, site.host].forEach(function(field) {
-                        bool = (field && field.toLowerCase().indexOf(_query) >= 0) || bool;
-                    });
-
-                    return bool;
+                self.categories = _data.categories.filter(function(category) {
+                    return category.name.toLowerCase().indexOf(_query) >= 0 ||
+                        category.label.toLowerCase().indexOf(_query) >= 0;
                 });
 
                 self.page = 1;
@@ -90,10 +79,9 @@ define([], function() {
             var self = this;
 
             function initView() {
+                self.loading = true;
 
                 if ($routeParams.id) {
-                    self.loading = true;
-
                     CategoriesService.getCategory($routeParams.id)
                         .then(function(category) {
                             self.category = category;
@@ -102,6 +90,7 @@ define([], function() {
                             self.loading = false;
                         });
                 } else {
+                    self.loading = false;
                     self.category = {
                         status: 'active'
                     };
@@ -201,10 +190,10 @@ define([], function() {
                 return deferred.promise;
             }
 
-            this.getCategories = function(param, value) {
+            this.getCategories = function() {
                 return httpWrapper({
                     method: 'GET',
-                    url: c6UrlMaker('categories' + (param && value ? '?' + param + '=' + value : ''), 'api')
+                    url: c6UrlMaker('categories', 'api')
                 });
             };
 
