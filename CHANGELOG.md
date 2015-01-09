@@ -1,6 +1,10 @@
 # ProShop
 
 * *[v0.6.14]*
+  * [FIX]: Temporarily disable User Campaign permissions.
+    Note: Because the Category and Site Container backend service is not ready
+    the other features in this release (Category Manager and Site Container Manager)
+    are being temporarily commented out and disabled
   * [FEATURE]: Added Category manager
   * [FEATURE]: Added Site container manager
 
