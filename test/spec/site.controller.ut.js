@@ -52,8 +52,8 @@
                     "placementId": "111111",
                     "wildCardPlacement": "121212",
                     "name": "Best Website Ever",
-                    "host": "bestever.com"/*,
-                    "containers": []*/
+                    "host": "bestever.com",
+                    "containers": []
                 };
                 /* jshint quotmark:single */
 
@@ -140,7 +140,7 @@
             });
 
             describe('methods', function() {
-                xdescribe('addContainerItem()', function() {
+                describe('addContainerItem()', function() {
                     describe('adding an existing container type', function() {
                         it('should enable it', function() {
                             expect(SiteCtrl.containers[2].enabled).toBe(false);
@@ -210,8 +210,8 @@
                                 placementId: '111111',
                                 wildCardPlacement: '121212',
                                 name: 'Best Website Ever',
-                                host: 'bestever.com'/*,
-                                containers: []*/
+                                host: 'bestever.com',
+                                containers: []
                             });
 
                             SiteCtrl.site.branding = 'test_branding';
@@ -220,12 +220,12 @@
                             SiteCtrl.site.wildCardPlacement = '';
                             SiteCtrl.site.host = 'test.com';
                             SiteCtrl.site.status = 'inactive';
-                            // SiteCtrl.containers = [
-                            //     {
-                            //         type: 'veeseo',
-                            //         enabled: true
-                            //     }
-                            // ];
+                            SiteCtrl.containers = [
+                                {
+                                    type: 'veeseo',
+                                    enabled: true
+                                }
+                            ];
                             SiteCtrl.org = { id: 'o-999', name: 'New Org' };
 
                             SitesService.putSite.calls.reset();
@@ -239,12 +239,12 @@
                                 placementId: '',
                                 wildCardPlacement: '',
                                 name: 'Test Name',
-                                host: 'test.com'/*,
+                                host: 'test.com',
                                 containers: [
                                     {
                                         type: 'veeseo'
                                     }
-                                ]*/
+                                ]
                             });
                         });
 
@@ -259,8 +259,8 @@
                                 placementId: '111111',
                                 wildCardPlacement: '121212',
                                 name: 'Best Website Ever',
-                                host: 'bestever.com'/*,
-                                containers: []*/
+                                host: 'bestever.com',
+                                containers: []
                             });
                         });
 
@@ -319,8 +319,8 @@
                                 placementId: undefined,
                                 wildCardPlacement: undefined,
                                 name: 'New Site',
-                                host: 'newsite.com'/*,
-                                containers: []*/
+                                host: 'newsite.com',
+                                containers: []
                             });
                         });
 
@@ -335,8 +335,8 @@
                                 placementId: undefined,
                                 wildCardPlacement: undefined,
                                 name: 'New Site',
-                                host: 'newsite.com'/*,
-                                containers: []*/
+                                host: 'newsite.com',
+                                containers: []
                             });
                         });
 
