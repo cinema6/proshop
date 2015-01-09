@@ -1,5 +1,11 @@
 # ProShop
 
+## v0.6.15 (January 9, 2015)
+
+* *[v0.6.15]*
+  * [FIX]: Fix an issue where Angular is not passed into the Categories module
+* *[/v0.6.15]*
+
 ## v0.6.14 (January 9, 2015)
 
 * *[v0.6.14]*
