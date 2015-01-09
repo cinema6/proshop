@@ -68,7 +68,7 @@
             </div>
         </div>
 
-        <div class="form-group">
+        <!-- <div class="form-group">
             <label for="containers" class="control-label"> Containers: </label>
             <div ng-repeat="container in SiteCtrl.containers">
                 <span ng-if="container.enabled">
@@ -83,7 +83,7 @@
                 <input ng-show="container.name === 'Other'" type="text" ng-model="container.type" autocomplete="off" ng-minlength="3" ng-maxlength="128" ignore-spaces>
                 <span ng-click="SiteCtrl.addContainerItem(container)">Add</span>
             </div>
-        </div>
+        </div> -->
 
             <div class="form-group" ng-class="{'has-error': theForm.status.$error.required}">
                 <label for="status" class="control-label"> Status: </label>

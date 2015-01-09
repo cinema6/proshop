@@ -44,10 +44,10 @@ module.exports = function(http) {
                 lastUpdated: currentTime
             });
 
-        newSite.containers.forEach(function(container) {
-            container.displayPlacementId = Math.floor(Math.random() * 10000) + 1;
-            container.contentPlacementId = Math.floor(Math.random() * 10000) + 1;
-        });
+        // newSite.containers.forEach(function(container) {
+        //     container.displayPlacementId = Math.floor(Math.random() * 10000) + 1;
+        //     container.contentPlacementId = Math.floor(Math.random() * 10000) + 1;
+        // });
 
         grunt.file.write(filePath, JSON.stringify(newSite, null, '    '));
 
@@ -62,12 +62,12 @@ module.exports = function(http) {
                 lastUpdated: (new Date()).toISOString()
             });
 
-        newSite.containers.forEach(function(container) {
-            if (!container.displayPlacementId && !container.contentPlacementId) {
-                container.displayPlacementId = Math.floor(Math.random() * 10000) + 1;
-                container.contentPlacementId = Math.floor(Math.random() * 10000) + 1;
-            }
-        });
+        // newSite.containers.forEach(function(container) {
+        //     if (!container.displayPlacementId && !container.contentPlacementId) {
+        //         container.displayPlacementId = Math.floor(Math.random() * 10000) + 1;
+        //         container.contentPlacementId = Math.floor(Math.random() * 10000) + 1;
+        //     }
+        // });
 
         if (id === 's-113') {
             this.respond(401, 'Not Authorized');
