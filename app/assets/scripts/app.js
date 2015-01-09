@@ -1,7 +1,7 @@
 define( [   'angular','ngAnimate','ngRoute','c6ui','c6log', 'c6defines',
-            'auth', 'login','users', 'orgs', 'minireels', 'sites', 'templates'],
+            'auth', 'login','users', 'orgs', 'minireels', 'sites', 'categories', 'templates'],
 function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
-            auth , login , users , orgs , minireels , sites , templates ) {
+            auth  ,  login , users ,  orgs ,  minireels ,  sites ,  categories ,  templates ) {
     /* jshint -W106 */
     'use strict';
 
@@ -19,6 +19,7 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
             orgs.name,
             minireels.name,
             sites.name,
+            categories.name,
             templates.name
         ])
         .constant('c6Defines',c6Defines)
@@ -67,6 +68,21 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
                     controller: 'SiteController',
                     controllerAs: 'SiteCtrl',
                     templateUrl: 'views/sites/site.html'
+                })
+                .when('/categories', {
+                    controller: 'CategoriesController',
+                    controllerAs: 'CategoriesCtrl',
+                    templateUrl: 'views/categories/categories.html'
+                })
+                .when('/category/new', {
+                    controller: 'CategoryController',
+                    controllerAs: 'CategoryCtrl',
+                    templateUrl: 'views/categories/category.html'
+                })
+                .when('/category/:id', {
+                    controller: 'CategoryController',
+                    controllerAs: 'CategoryCtrl',
+                    templateUrl: 'views/categories/category.html'
                 })
                 .otherwise({redirectTo: '/users'});
         }])
