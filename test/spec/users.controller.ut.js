@@ -420,13 +420,13 @@
                                         create  : 'all',
                                         edit    : 'all',
                                         delete  : 'all'
-                                    }/*,
+                                    },
                                     campaigns: {
                                         read    : 'all',
                                         create  : 'all',
                                         edit    : 'all',
                                         delete  : 'all'
-                                    }*/
+                                    }
                                 });
                             });
                         });
@@ -609,13 +609,13 @@
                                         create  : 'all',
                                         edit    : 'all',
                                         delete  : 'all'
-                                    }/*,
+                                    },
                                     campaigns: {
                                         read    : 'all',
                                         create  : 'all',
                                         edit    : 'all',
                                         delete  : 'all'
-                                    }*/
+                                    }
                                 });
                             });
                         });
