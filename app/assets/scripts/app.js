@@ -1,7 +1,7 @@
 define( [   'angular','ngAnimate','ngRoute','c6ui','c6log', 'c6defines',
-            'auth', 'login','users', 'orgs', 'minireels', 'sites', 'categories', 'templates'],
+            'auth', 'login','users', 'orgs', 'minireels', 'sites', 'advertisers', 'categories', 'templates'],
 function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
-            auth  ,  login , users ,  orgs ,  minireels ,  sites ,  categories ,  templates ) {
+            auth  ,  login , users ,  orgs ,  minireels ,  sites ,  advertisers ,  categories ,  templates ) {
     /* jshint -W106 */
     'use strict';
 
@@ -19,6 +19,7 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
             orgs.name,
             minireels.name,
             sites.name,
+            advertisers.name,
             categories.name,
             templates.name
         ])
@@ -68,6 +69,21 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
                     controller: 'SiteController',
                     controllerAs: 'SiteCtrl',
                     templateUrl: 'views/sites/site.html'
+                })
+                .when('/advertisers', {
+                    controller: 'AdvertisersController',
+                    controllerAs: 'AdvertisersCtrl',
+                    templateUrl: 'views/advertisers/advertisers.html'
+                })
+                .when('/advertiser/new', {
+                    controller: 'AdvertiserController',
+                    controllerAs: 'AdvertiserCtrl',
+                    templateUrl: 'views/advertisers/advertiser.html'
+                })
+                .when('/advertiser/:id', {
+                    controller: 'AdvertiserController',
+                    controllerAs: 'AdvertiserCtrl',
+                    templateUrl: 'views/advertisers/advertiser.html'
                 })
                 .when('/categories', {
                     controller: 'CategoriesController',
