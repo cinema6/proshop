@@ -122,11 +122,11 @@ define(['account'], function(account) {
                 return name.toLowerCase().split(',')[0].replace(/ /g, '_');
             }
 
-            // function toTitleCase(str) {
-            //     return str.replace(/\w\S*/g, function(txt) {
-            //         return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-            //     });
-            // }
+            function toTitleCase(str) {
+                return str.replace(/\w\S*/g, function(txt) {
+                    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+                });
+            }
 
             function initView() {
                 var promiseArray = [account.getOrgs()];
@@ -151,58 +151,58 @@ define(['account'], function(account) {
                             return site.org === org.id;
                         })[0];
 
-                        // enableActiveContainers(site.containers);
+                        enableActiveContainers(site.containers);
                     })
                     .finally(function() {
                         self.loading = false;
                     });
             }
 
-            // function enableActiveContainers(containers) {
-            //     if (!containers) { return; }
+            function enableActiveContainers(containers) {
+                if (!containers) { return; }
 
-            //     var types = self.containers.reduce(function(result, container) {
-            //         return result.concat(container.type);
-            //     },[]);
+                var types = self.containers.reduce(function(result, container) {
+                    return result.concat(container.type);
+                },[]);
 
-            //     containers.forEach(function(siteContainer) {
-            //         if (types.indexOf(siteContainer.type) > -1) {
-            //             self.containers.forEach(function(ctrlContainer) {
-            //                 if (siteContainer.type === ctrlContainer.type) {
-            //                     ctrlContainer.enabled = true;
-            //                     angular.extend(ctrlContainer, siteContainer);
-            //                 }
-            //             });
-            //         } else {
-            //             self.containers.push(angular.extend({
-            //                 name: toTitleCase(siteContainer.type.replace(/_/g, ' ')),
-            //                 enabled: true
-            //             }, siteContainer));
-            //         }
-            //     });
-            // }
+                containers.forEach(function(siteContainer) {
+                    if (types.indexOf(siteContainer.type) > -1) {
+                        self.containers.forEach(function(ctrlContainer) {
+                            if (siteContainer.type === ctrlContainer.type) {
+                                ctrlContainer.enabled = true;
+                                angular.extend(ctrlContainer, siteContainer);
+                            }
+                        });
+                    } else {
+                        self.containers.push(angular.extend({
+                            name: toTitleCase(siteContainer.type.replace(/_/g, ' ')),
+                            enabled: true
+                        }, siteContainer));
+                    }
+                });
+            }
 
-            // function convertContainersForSaving(containers) {
-            //     var _containers = [],
-            //         types = self.containers.reduce(function(result, container) {
-            //             return container.enabled && result.indexOf(container.type) < 0 ? result.concat(container.type) : result;
-            //         }, []);
+            function convertContainersForSaving(containers) {
+                var _containers = [],
+                    types = self.containers.reduce(function(result, container) {
+                        return container.enabled && result.indexOf(container.type) < 0 ? result.concat(container.type) : result;
+                    }, []);
 
-            //     containers.forEach(function(container) {
-            //         var index = types.indexOf(container.type);
+                containers.forEach(function(container) {
+                    var index = types.indexOf(container.type);
 
-            //         if (index > -1) {
-            //             types.splice(index, 1);
-            //             _containers.push(container);
-            //         }
-            //     });
+                    if (index > -1) {
+                        types.splice(index, 1);
+                        _containers.push(container);
+                    }
+                });
 
-            //     types.forEach(function(type) {
-            //         _containers.push({ type: type });
-            //     });
+                types.forEach(function(type) {
+                    _containers.push({ type: type });
+                });
 
-            //     return _containers;
-            // }
+                return _containers;
+            }
 
             self.containers = [
                 {type: 'embed', name: 'Embed', enabled: false},
@@ -213,20 +213,20 @@ define(['account'], function(account) {
                 {type: '', name: 'Other', enabled: false}
             ];
 
-            // self.addContainerItem = function(container) {
-            //     if (!container.type) { return; }
+            self.addContainerItem = function(container) {
+                if (!container.type) { return; }
 
-            //     if (container.name === 'Other') {
-            //         self.containers.push({
-            //             type: container.type.replace(/ /g, '_').toLowerCase(),
-            //             name: toTitleCase(container.type),
-            //             enabled: true
-            //         });
-            //         container.type = '';
-            //     } else {
-            //         container.enabled = true;
-            //     }
-            // };
+                if (container.name === 'Other') {
+                    self.containers.push({
+                        type: container.type.replace(/ /g, '_').toLowerCase(),
+                        name: toTitleCase(container.type),
+                        enabled: true
+                    });
+                    container.type = '';
+                } else {
+                    container.enabled = true;
+                }
+            };
 
             self.disableBrandBinding = function() {
                 bindBrandToName = false;
@@ -258,7 +258,7 @@ define(['account'], function(account) {
                     s[prop] = site[prop];
                 });
 
-                // s.containers = convertContainersForSaving(site.containers);
+                s.containers = convertContainersForSaving(site.containers);
 
                 if (site.id) {
                     SitesService.putSite(site.id, s)
