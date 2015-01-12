@@ -76,15 +76,117 @@ define(['angular'], function(angular) {
         }])
         .controller('AdvertiserController', ['$scope','$log','ConfirmDialogService','$location','AdvertisersService','$routeParams',
         function                            ( $scope , $log , ConfirmDialogService , $location , AdvertisersService , $routeParams ) {
-            var self = this,
-                _data = {};
+            var self = this;
 
             $log = $log.context('AdvertiserCtrl');
             $log.info('instantiated');
 
             function initView() {
+                self.loading = true;
 
+                if ($routeParams.id) {
+                    AdvertisersService.getAdvertiser($routeParams.id)
+                        .then(function(advertiser) {
+                            self.advertiser = advertiser;
+                            enableActiveLinks(self.advertiser.defaultLinks);
+                            enableActiveLogos(self.advertiser.defaultLogos);
+                        })
+                        .finally(function() {
+                            self.loading = false;
+                        });
+                } else {
+                    self.loading = false;
+                    self.advertiser = {
+                        status: 'active',
+                        defaultLinks: {},
+                        defaultLogos: {}
+                    };
+                    enableActiveLinks(self.advertiser.defaultLinks);
+                    enableActiveLogos(self.advertiser.defaultLogos);
+                }
             }
+
+            function Link() {
+                this.name = 'Untitled';
+                this.href = null;
+            }
+
+            function enableActiveLinks(links) {
+                self.links = ['Website', 'Facebook', 'Twitter', 'Pinterest', 'Youtube']
+                    .concat(Object.keys(links))
+                    .filter(function(name, index, names) {
+                        return names.indexOf(name) === index;
+                    })
+                    .map(function(name) {
+                        var href = links[name] || null;
+
+                        return {
+                            name: name,
+                            href: href
+                        };
+                    });
+            }
+
+            function enableActiveLogos(logos) {
+                self.logos = Object.keys(logos || {})
+                    .map(function(name) {
+                        return {
+                            name: name,
+                            href: logos[name]
+                        };
+                    });
+            }
+
+            function convertLinksForSaving() {
+                return self.links.reduce(function(links, link) {
+                    if (link.href) {
+                        links[link.name] = link.href;
+                    }
+
+                    return links;
+                }, {});
+            }
+
+            function convertLogosForSaving() {
+                return self.logos.reduce(function(logos, logo) {
+                    if (logo.href) {
+                        logos[logo.name] = logo.href;
+                    }
+
+                    return logos;
+                }, {});
+            }
+
+            self.newLink = new Link();
+            self.newLogo = new Link();
+
+            self.addLink = function() {
+                self.links = self.links.concat([self.newLink]);
+
+                /* jshint boss:true */
+                return (self.newLink = new Link());
+            };
+
+            self.addLogo = function() {
+                self.logos = self.logos.concat([self.newLogo]);
+
+                /* jshint boss:true */
+                return (self.newLogo = new Link());
+            };
+
+            self.removeLogo = function(logo) {
+                /* jshint boss:true */
+                return (this.logos = this.logos.filter(function(item) {
+                    return item !== logo;
+                }));
+            };
+
+            self.removeLink = function(link) {
+                /* jshint boss:true */
+                return (this.links = this.links.filter(function(item) {
+                    return item !== link;
+                }));
+            };
 
             self.save = function(advertiser) {
                 var a = {};
@@ -109,6 +211,9 @@ define(['angular'], function(angular) {
                 ['name','status'].forEach(function(prop) {
                     a[prop] = advertiser[prop];
                 });
+
+                a.defaultLinks = convertLinksForSaving();
+                a.defaultLogos = convertLogosForSaving();
 
                 if (advertiser.id) {
                     AdvertisersService.putAdvertiser(advertiser.id, a)

@@ -18,6 +18,58 @@
             </div>
         </div>
 
+        <div class="form-group clearfix" style="padding-top:20px">
+            <label class="control-label"> Default Links: </label>
+            <div class="clearfix" ng-repeat="link in AdvertiserCtrl.links">
+                <label for="{{link.name}}" class="col-md-2 control-label"> {{link.name}}: </label>
+                <div>
+                    <input class="col-md-3" class="form-control" type="text" name="{{link.name}}" ng-model="link.href" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" ignore-spaces>
+                </div>
+                <span class="glyphicon glyphicon-remove" ng-click="AdvertiserCtrl.removeLink(link)" style="padding-top:5px;"></span>
+            </div>
+            <div class="clearfix" style="margin-top:10px;">
+                <div style="float:left;padding-left:15px;">
+                    <label for="newlink"> Name: </label>
+                    <div>
+                        <input type="text" name="newlink" ng-model="AdvertiserCtrl.newLink.name" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" ignore-spaces>
+                    </div>
+                </div>
+                <div>
+                    <label for="newlink"> Link: </label>
+                    <div>
+                        <input type="text" name="newlink" ng-model="AdvertiserCtrl.newLink.href" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" ignore-spaces>
+                    </div>
+                </div>
+                <input type="button" value="Add" ng-click="AdvertiserCtrl.addLink()" style="margin: 5px 0 0 15px;">
+            </div>
+        </div>
+
+        <div class="form-group clearfix" style="padding-top:20px;">
+            <label class="control-label"> Default Logos: </label>
+            <div class="clearfix" ng-repeat="logo in AdvertiserCtrl.logos">
+                <label for="{{logo.name}}" class="col-md-2 control-label"> {{logo.name}}: </label>
+                <div>
+                    <input class="col-md-3" class="form-control" type="text" name="{{logo.name}}" ng-model="logo.href" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" ignore-spaces>
+                </div>
+                <span class="glyphicon glyphicon-remove" ng-click="AdvertiserCtrl.removeLogo(link)" style="padding-top:5px;"></span>
+            </div>
+            <div class="clearfix" style="margin-top:10px;">
+                <div style="float:left;padding-left:15px;">
+                    <label for="newlogo"> Name: </label>
+                    <div>
+                        <input type="text" name="newlink" ng-model="AdvertiserCtrl.newLogo.name" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" ignore-spaces>
+                    </div>
+                </div>
+                <div>
+                    <label for="newlogo"> Link: </label>
+                    <div>
+                        <input type="text" name="newlink" ng-model="AdvertiserCtrl.newLogo.href" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" ignore-spaces>
+                    </div>
+                </div>
+                <input type="button" value="Add" ng-click="AdvertiserCtrl.addLogo()" style="margin: 5px 0 0 15px;">
+            </div>
+        </div>
+
         <div class="form-group" ng-class="{'has-error': theForm.status.$error.required}">
             <label for="status" class="control-label"> Status: </label>
             <div>
