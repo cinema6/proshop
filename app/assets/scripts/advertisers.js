@@ -287,37 +287,37 @@ define(['angular'], function(angular) {
             this.getAdvertisers = function() {
                 return httpWrapper({
                     method: 'GET',
-                    url: c6UrlMaker('advertisers', 'api')
+                    url: c6UrlMaker('account/advertisers', 'api')
                 });
             };
 
             this.getAdvertiser = function(id) {
                 return httpWrapper({
                     method: 'GET',
-                    url: c6UrlMaker('advertiser/' + id, 'api')
+                    url: c6UrlMaker('account/advertiser/' + id, 'api')
                 });
             };
 
-            this.putAdvertiser = function(id, cat) {
+            this.putAdvertiser = function(id, advertiser) {
                 return httpWrapper({
                     method: 'PUT',
-                    url: c6UrlMaker('advertiser/' + id, 'api'),
-                    data: cat
+                    url: c6UrlMaker('account/advertiser/' + id, 'api'),
+                    data: advertiser
                 });
             };
 
-            this.postAdvertiser = function(cat) {
+            this.postAdvertiser = function(advertiser) {
                 return httpWrapper({
                     method: 'POST',
-                    url: c6UrlMaker('advertiser', 'api'),
-                    data: cat
+                    url: c6UrlMaker('account/advertiser', 'api'),
+                    data: advertiser
                 });
             };
 
             this.deleteAdvertiser = function(id) {
                 return httpWrapper({
                     method: 'DELETE',
-                    url: c6UrlMaker('advertiser/' + id, 'api')
+                    url: c6UrlMaker('account/advertiser/' + id, 'api')
                 });
             };
         }]);

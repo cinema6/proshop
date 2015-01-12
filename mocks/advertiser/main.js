@@ -13,7 +13,7 @@ module.exports = function(http) {
         return path.resolve(__dirname, './advertisers/' + id + '.json');
     }
 
-    http.whenGET('/api/advertisers', function(request) {
+    http.whenGET('/api/account/advertisers', function(request) {
         var allAdvertisers = grunt.file.expand(path.resolve(__dirname, './advertisers/*.json'))
             .map(function(path) {
                 return grunt.file.readJSON(path);
@@ -22,7 +22,7 @@ module.exports = function(http) {
         this.respond(200, allAdvertisers);
     });
 
-    http.whenGET('/api/advertiser/**', function(request) {
+    http.whenGET('/api/account/advertiser/**', function(request) {
         var id = idFromPath(request.pathname),
             filePath = advertiserPath(id);
 
@@ -33,7 +33,7 @@ module.exports = function(http) {
         }
     });
 
-    http.whenPOST('/api/advertiser', function(request) {
+    http.whenPOST('/api/account/advertiser', function(request) {
         var id = 'a-' + Math.floor(Math.random() * 10000) + 1,
             filePath = advertiserPath(id),
             currentTime = (new Date()).toISOString(),
@@ -49,7 +49,7 @@ module.exports = function(http) {
         this.respond(201, newAdvertiser);
     });
 
-    http.whenPUT('/api/advertiser/**', function(request) {
+    http.whenPUT('/api/account/advertiser/**', function(request) {
         var id = idFromPath(request.pathname),
             filePath = advertiserPath(id),
             currentAdvertiser = grunt.file.readJSON(filePath),
@@ -66,7 +66,7 @@ module.exports = function(http) {
         }
     });
 
-    http.whenDELETE('/api/advertiser/**', function(request) {
+    http.whenDELETE('/api/account/advertiser/**', function(request) {
         grunt.file.delete(advertiserPath(idFromPath(request.pathname)));
 
         this.respond(204, '');
