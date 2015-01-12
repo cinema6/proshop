@@ -112,7 +112,7 @@
                     });
 
                     it('will resolve promise if successfull',function(){
-                        $httpBackend.expectGET('/api/advertisers')
+                        $httpBackend.expectGET('/api/account/advertisers')
                             .respond(200,mockAdvertisers);
                         AdvertisersService.getAdvertisers().then(successSpy,failureSpy);
                         $httpBackend.flush();
@@ -122,7 +122,7 @@
                     });
 
                     it('will reject promise if not successful',function(){
-                        $httpBackend.expectGET('/api/advertisers')
+                        $httpBackend.expectGET('/api/account/advertisers')
                             .respond(404,'Unable to find advertisers.');
                         AdvertisersService.getAdvertisers().then(successSpy,failureSpy);
                         $httpBackend.flush();
@@ -132,7 +132,7 @@
                     });
 
                     it('will reject promise if times out',function(){
-                        $httpBackend.expectGET('/api/advertisers')
+                        $httpBackend.expectGET('/api/account/advertisers')
                             .respond(200,'');
                         AdvertisersService.getAdvertisers().then(successSpy,failureSpy);
                         $timeout.flush(60000);
@@ -149,7 +149,7 @@
                     });
 
                     it('will resolve promise if successfull',function(){
-                        $httpBackend.expectGET('/api/advertiser/a-111')
+                        $httpBackend.expectGET('/api/account/advertiser/a-111')
                             .respond(200,mockAdvertiser);
                         AdvertisersService.getAdvertiser(mockAdvertiser.id).then(successSpy,failureSpy);
                         $httpBackend.flush();
@@ -159,7 +159,7 @@
                     });
 
                     it('will reject promise if not successful',function(){
-                        $httpBackend.expectGET('/api/advertiser/a-111')
+                        $httpBackend.expectGET('/api/account/advertiser/a-111')
                             .respond(404,'Unable to find advertiser.');
                         AdvertisersService.getAdvertiser(mockAdvertiser.id).then(successSpy,failureSpy);
                         $httpBackend.flush();
@@ -169,7 +169,7 @@
                     });
 
                     it('will reject promise if times out',function(){
-                        $httpBackend.expectGET('/api/advertiser/a-111')
+                        $httpBackend.expectGET('/api/account/advertiser/a-111')
                             .respond(200,'');
                         AdvertisersService.getAdvertiser(mockAdvertiser.id).then(successSpy,failureSpy);
                         $timeout.flush(60000);
@@ -193,7 +193,7 @@
                     });
 
                     it('will resolve promise if successfull',function(){
-                        $httpBackend.expectPUT('/api/advertiser/a-111')
+                        $httpBackend.expectPUT('/api/account/advertiser/a-111')
                             .respond(200,mockAdvertiser);
                         AdvertisersService.putAdvertiser(mockAdvertiser.id, editedAdvertiser).then(successSpy,failureSpy);
                         $httpBackend.flush();
@@ -203,7 +203,7 @@
                     });
 
                     it('will reject promise if not successful',function(){
-                        $httpBackend.expectPUT('/api/advertiser/a-111')
+                        $httpBackend.expectPUT('/api/account/advertiser/a-111')
                             .respond(404,'Unable to update advertiser.');
                         AdvertisersService.putAdvertiser(mockAdvertiser.id, editedAdvertiser).then(successSpy,failureSpy);
                         $httpBackend.flush();
@@ -213,7 +213,7 @@
                     });
 
                     it('will reject promise if times out',function(){
-                        $httpBackend.expectPUT('/api/advertiser/a-111')
+                        $httpBackend.expectPUT('/api/account/advertiser/a-111')
                             .respond(200,'');
                         AdvertisersService.putAdvertiser(mockAdvertiser.id, editedAdvertiser).then(successSpy,failureSpy);
                         $timeout.flush(60000);
@@ -237,7 +237,7 @@
                     });
 
                     it('will resolve promise if successfull',function(){
-                        $httpBackend.expectPOST('/api/advertiser')
+                        $httpBackend.expectPOST('/api/account/advertiser')
                             .respond(200,mockAdvertiser);
                         AdvertisersService.postAdvertiser(newAdvertiser).then(successSpy,failureSpy);
                         $httpBackend.flush();
@@ -247,7 +247,7 @@
                     });
 
                     it('will reject promise if not successful',function(){
-                        $httpBackend.expectPOST('/api/advertiser')
+                        $httpBackend.expectPOST('/api/account/advertiser')
                             .respond(404,'Unable to create advertiser.');
                         AdvertisersService.postAdvertiser(newAdvertiser).then(successSpy,failureSpy);
                         $httpBackend.flush();
@@ -257,7 +257,7 @@
                     });
 
                     it('will reject promise if times out',function(){
-                        $httpBackend.expectPOST('/api/advertiser')
+                        $httpBackend.expectPOST('/api/account/advertiser')
                             .respond(200,'');
                         AdvertisersService.postAdvertiser(newAdvertiser).then(successSpy,failureSpy);
                         $timeout.flush(60000);
@@ -274,7 +274,7 @@
                     });
 
                     it('will resolve promise if successfull',function(){
-                        $httpBackend.expectDELETE('/api/advertiser/a-111')
+                        $httpBackend.expectDELETE('/api/account/advertiser/a-111')
                             .respond(204,'');
                         AdvertisersService.deleteAdvertiser(mockAdvertiser.id).then(successSpy,failureSpy);
                         $httpBackend.flush();
@@ -284,7 +284,7 @@
                     });
 
                     it('will reject promise if not successful',function(){
-                        $httpBackend.expectDELETE('/api/advertiser/a-111')
+                        $httpBackend.expectDELETE('/api/account/advertiser/a-111')
                             .respond(401,'Unauthorized.');
                         AdvertisersService.deleteAdvertiser(mockAdvertiser.id).then(successSpy,failureSpy);
                         $httpBackend.flush();
@@ -294,7 +294,7 @@
                     });
 
                     it('will reject promise if times out',function(){
-                        $httpBackend.expectDELETE('/api/advertiser/a-111')
+                        $httpBackend.expectDELETE('/api/account/advertiser/a-111')
                             .respond(200,'');
                         AdvertisersService.deleteAdvertiser(mockAdvertiser.id).then(successSpy,failureSpy);
                         $timeout.flush(60000);
