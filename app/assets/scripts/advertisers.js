@@ -44,7 +44,7 @@ define(['angular'], function(angular) {
 
                 self.advertisers = _data.advertisers.filter(function(advertiser) {
                     return advertiser.name.toLowerCase().indexOf(_query) >= 0 ||
-                        advertiser.label.toLowerCase().indexOf(_query) >= 0;
+                        advertiser.adtechId.indexOf(_query) >= 0;
                 });
 
                 self.page = 1;
@@ -58,7 +58,7 @@ define(['angular'], function(angular) {
             ];
 
             $scope.sort = {
-                column: 'label',
+                column: 'name',
                 descending: false
             };
 
