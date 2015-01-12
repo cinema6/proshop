@@ -60,9 +60,9 @@ module.exports = function(http) {
         if (id === 'a-113') {
             this.respond(401, 'Not Authorized');
         } else {
-            grunt.file.write(filePath, JSON.stringify(updatedCat, null, '   '));
+            grunt.file.write(filePath, JSON.stringify(updatedAdvertiser, null, '   '));
 
-            this.respond(200, updatedCat);
+            this.respond(200, updatedAdvertiser);
         }
     });
 
