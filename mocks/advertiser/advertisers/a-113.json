@@ -1,0 +1,15 @@
+{
+    "id": "a-113",
+    "adtechId": "12121233",
+    "name": "Adap.tv",
+    "created": "2014-06-13T19:28:39.408Z",
+    "lastUpdated": "2014-06-13T19:28:39.408Z",
+    "defaultLinks": {
+        "Facebook": "http://facebook.com",
+        "Twitter": "http://twitter.com"
+    },
+    "defaultLogos": {
+        "logo1": "http://example.com/logo.jpg"
+    },
+    "status": "active"
+}
