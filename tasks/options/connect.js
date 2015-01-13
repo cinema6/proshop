@@ -40,10 +40,10 @@
                             '/api/account/customers': 'mocks/customer/main.js',
                             '/api/content/experience': 'mocks/content/main.js',
                             '/api/content/experiences': 'mocks/content/main.js',
+                            '/api/content/category': 'mocks/category/main.js',
+                            '/api/content/categories': 'mocks/category/main.js',
                             '/api/site': 'mocks/site/main.js',
                             '/api/sites': 'mocks/site/main.js',
-                            '/api/category': 'mocks/category/main.js',
-                            '/api/categories': 'mocks/category/main.js',
                             '/api/collateral': 'mocks/collateral/main.js',
                             '/collateral/experiences': 'mocks/collateral/main.js'
                         }),
