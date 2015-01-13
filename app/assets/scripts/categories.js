@@ -193,21 +193,21 @@ define(['angular'], function(angular) {
             this.getCategories = function() {
                 return httpWrapper({
                     method: 'GET',
-                    url: c6UrlMaker('categories', 'api')
+                    url: c6UrlMaker('content/categories', 'api')
                 });
             };
 
             this.getCategory = function(id) {
                 return httpWrapper({
                     method: 'GET',
-                    url: c6UrlMaker('category/' + id, 'api')
+                    url: c6UrlMaker('content/category/' + id, 'api')
                 });
             };
 
             this.putCategory = function(id, cat) {
                 return httpWrapper({
                     method: 'PUT',
-                    url: c6UrlMaker('category/' + id, 'api'),
+                    url: c6UrlMaker('content/category/' + id, 'api'),
                     data: cat
                 });
             };
@@ -215,7 +215,7 @@ define(['angular'], function(angular) {
             this.postCategory = function(cat) {
                 return httpWrapper({
                     method: 'POST',
-                    url: c6UrlMaker('category', 'api'),
+                    url: c6UrlMaker('content/category', 'api'),
                     data: cat
                 });
             };
@@ -223,7 +223,7 @@ define(['angular'], function(angular) {
             this.deleteCategory = function(id) {
                 return httpWrapper({
                     method: 'DELETE',
-                    url: c6UrlMaker('category/' + id, 'api')
+                    url: c6UrlMaker('content/category/' + id, 'api')
                 });
             };
         }]);

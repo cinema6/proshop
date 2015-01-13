@@ -84,7 +84,7 @@
                     });
 
                     it('will resolve promise if successfull',function(){
-                        $httpBackend.expectGET('/api/categories')
+                        $httpBackend.expectGET('/api/content/categories')
                             .respond(200,mockCategories);
                         CategoriesService.getCategories().then(successSpy,failureSpy);
                         $httpBackend.flush();
@@ -94,7 +94,7 @@
                     });
 
                     it('will reject promise if not successful',function(){
-                        $httpBackend.expectGET('/api/categories')
+                        $httpBackend.expectGET('/api/content/categories')
                             .respond(404,'Unable to find categories.');
                         CategoriesService.getCategories().then(successSpy,failureSpy);
                         $httpBackend.flush();
@@ -104,7 +104,7 @@
                     });
 
                     it('will reject promise if times out',function(){
-                        $httpBackend.expectGET('/api/categories')
+                        $httpBackend.expectGET('/api/content/categories')
                             .respond(200,'');
                         CategoriesService.getCategories().then(successSpy,failureSpy);
                         $timeout.flush(60000);
@@ -121,7 +121,7 @@
                     });
 
                     it('will resolve promise if successfull',function(){
-                        $httpBackend.expectGET('/api/category/c-111')
+                        $httpBackend.expectGET('/api/content/category/c-111')
                             .respond(200,mockCategory);
                         CategoriesService.getCategory(mockCategory.id).then(successSpy,failureSpy);
                         $httpBackend.flush();
@@ -131,7 +131,7 @@
                     });
 
                     it('will reject promise if not successful',function(){
-                        $httpBackend.expectGET('/api/category/c-111')
+                        $httpBackend.expectGET('/api/content/category/c-111')
                             .respond(404,'Unable to find category.');
                         CategoriesService.getCategory(mockCategory.id).then(successSpy,failureSpy);
                         $httpBackend.flush();
@@ -141,7 +141,7 @@
                     });
 
                     it('will reject promise if times out',function(){
-                        $httpBackend.expectGET('/api/category/c-111')
+                        $httpBackend.expectGET('/api/content/category/c-111')
                             .respond(200,'');
                         CategoriesService.getCategory(mockCategory.id).then(successSpy,failureSpy);
                         $timeout.flush(60000);
@@ -165,7 +165,7 @@
                     });
 
                     it('will resolve promise if successfull',function(){
-                        $httpBackend.expectPUT('/api/category/c-111')
+                        $httpBackend.expectPUT('/api/content/category/c-111')
                             .respond(200,mockCategory);
                         CategoriesService.putCategory(mockCategory.id, editedCategory).then(successSpy,failureSpy);
                         $httpBackend.flush();
@@ -175,7 +175,7 @@
                     });
 
                     it('will reject promise if not successful',function(){
-                        $httpBackend.expectPUT('/api/category/c-111')
+                        $httpBackend.expectPUT('/api/content/category/c-111')
                             .respond(404,'Unable to update category.');
                         CategoriesService.putCategory(mockCategory.id, editedCategory).then(successSpy,failureSpy);
                         $httpBackend.flush();
@@ -185,7 +185,7 @@
                     });
 
                     it('will reject promise if times out',function(){
-                        $httpBackend.expectPUT('/api/category/c-111')
+                        $httpBackend.expectPUT('/api/content/category/c-111')
                             .respond(200,'');
                         CategoriesService.putCategory(mockCategory.id, editedCategory).then(successSpy,failureSpy);
                         $timeout.flush(60000);
@@ -209,7 +209,7 @@
                     });
 
                     it('will resolve promise if successfull',function(){
-                        $httpBackend.expectPOST('/api/category')
+                        $httpBackend.expectPOST('/api/content/category')
                             .respond(200,mockCategory);
                         CategoriesService.postCategory(newCategory).then(successSpy,failureSpy);
                         $httpBackend.flush();
@@ -219,7 +219,7 @@
                     });
 
                     it('will reject promise if not successful',function(){
-                        $httpBackend.expectPOST('/api/category')
+                        $httpBackend.expectPOST('/api/content/category')
                             .respond(404,'Unable to create category.');
                         CategoriesService.postCategory(newCategory).then(successSpy,failureSpy);
                         $httpBackend.flush();
@@ -229,7 +229,7 @@
                     });
 
                     it('will reject promise if times out',function(){
-                        $httpBackend.expectPOST('/api/category')
+                        $httpBackend.expectPOST('/api/content/category')
                             .respond(200,'');
                         CategoriesService.postCategory(newCategory).then(successSpy,failureSpy);
                         $timeout.flush(60000);
@@ -246,7 +246,7 @@
                     });
 
                     it('will resolve promise if successfull',function(){
-                        $httpBackend.expectDELETE('/api/category/c-111')
+                        $httpBackend.expectDELETE('/api/content/category/c-111')
                             .respond(204,'');
                         CategoriesService.deleteCategory(mockCategory.id).then(successSpy,failureSpy);
                         $httpBackend.flush();
@@ -256,7 +256,7 @@
                     });
 
                     it('will reject promise if not successful',function(){
-                        $httpBackend.expectDELETE('/api/category/c-111')
+                        $httpBackend.expectDELETE('/api/content/category/c-111')
                             .respond(401,'Unauthorized.');
                         CategoriesService.deleteCategory(mockCategory.id).then(successSpy,failureSpy);
                         $httpBackend.flush();
@@ -266,7 +266,7 @@
                     });
 
                     it('will reject promise if times out',function(){
-                        $httpBackend.expectDELETE('/api/category/c-111')
+                        $httpBackend.expectDELETE('/api/content/category/c-111')
                             .respond(200,'');
                         CategoriesService.deleteCategory(mockCategory.id).then(successSpy,failureSpy);
                         $timeout.flush(60000);
