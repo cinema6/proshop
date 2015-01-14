@@ -1,0 +1,12 @@
+{
+    "id": "cus-112",
+    "name": "Carat USA",
+    "adtechId": "28746456",
+    "created": "2014-06-13T19:28:39.408Z",
+    "lastUpdated": "2014-06-13T19:28:39.408Z",
+    "status": "active",
+    "advertisers": [
+        "a-112",
+        "a-113"
+    ]
+}
