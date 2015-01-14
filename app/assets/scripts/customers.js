@@ -74,31 +74,55 @@ define(['angular'], function(angular) {
 
             initView();
         }])
-        .controller('CustomerController', ['$scope','$log','ConfirmDialogService','$location','CustomersService','$routeParams',
-        function                          ( $scope , $log , ConfirmDialogService , $location , CustomersService , $routeParams ) {
+        .controller('CustomerController', ['$scope','$log','ConfirmDialogService','$location','CustomersService','$routeParams','AdvertisersService','$q',
+        function                          ( $scope , $log , ConfirmDialogService , $location , CustomersService , $routeParams , AdvertisersService , $q ) {
             var self = this;
 
             $log = $log.context('CustomerCtrl');
             $log.info('instantiated');
 
             function initView() {
+                var promiseArray = [AdvertisersService.getAdvertisers()];
+
                 self.loading = true;
 
                 if ($routeParams.id) {
-                    CustomersService.getCustomer($routeParams.id)
-                        .then(function(customer) {
-                            self.customer = customer;
-                        })
-                        .finally(function() {
-                            self.loading = false;
-                        });
-                } else {
-                    self.loading = false;
-                    self.customer = {
-                        status: 'active',
-                    };
+                    promiseArray.push(CustomersService.getCustomer($routeParams.id));
                 }
+
+                $q.all(promiseArray)
+                    .then(function(promises) {
+                        var advertisers = promises[0],
+                            customer = promises[1] || {
+                                advertisers: [],
+                                status: 'active'
+                            };
+
+                        self.advertisers = advertisers;
+                        self.customer = customer;
+
+                        if (customer.advertisers.length) {
+                            customer.advertisers = advertisers.filter(function(advertiser) {
+                                return customer.advertisers.indexOf(advertiser.id) > -1;
+                            });
+                        }
+                    })
+                    .finally(function() {
+                        self.loading = false;
+                    });
             }
+
+            self.addAdvertiser = function(advertiser) {
+                var advertisers = self.customer.advertisers;
+
+                if (advertisers.indexOf(advertiser) === -1) {
+                    advertisers.push(advertiser);
+                }
+            };
+
+            self.removeAdvertiser = function(index) {
+                self.customer.advertisers.splice(index, 1);
+            };
 
             self.save = function(customer) {
                 var cus = {};
@@ -122,6 +146,10 @@ define(['angular'], function(angular) {
 
                 ['name','status'].forEach(function(prop) {
                     cus[prop] = customer[prop];
+                });
+
+                cus.advertisers = customer.advertisers.map(function(advertiser) {
+                    return advertiser.id;
                 });
 
                 if (customer.id) {

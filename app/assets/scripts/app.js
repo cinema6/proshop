@@ -1,7 +1,9 @@
-define( [   'angular','ngAnimate','ngRoute','c6ui','c6log', 'c6defines',
-            'auth', 'login','users', 'orgs', 'minireels', 'sites', 'advertisers', 'categories', 'templates'],
-function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
-            auth  ,  login , users ,  orgs ,  minireels ,  sites ,  advertisers ,  categories ,  templates ) {
+define(['angular','ngAnimate','ngRoute','c6ui','c6log','c6defines',
+        'auth','login','users','orgs','minireels','sites','advertisers',
+        'categories','customers','templates'],
+function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines ,
+         auth  , login , users , orgs , minireels , sites , advertisers ,
+         categories , customers , templates ) {
     /* jshint -W106 */
     'use strict';
 
@@ -21,6 +23,7 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
             sites.name,
             advertisers.name,
             categories.name,
+            customers.name,
             templates.name
         ])
         .constant('c6Defines',c6Defines)
@@ -84,6 +87,21 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
                     controller: 'AdvertiserController',
                     controllerAs: 'AdvertiserCtrl',
                     templateUrl: 'views/advertisers/advertiser.html'
+                })
+                .when('/customers', {
+                    controller: 'CustomersController',
+                    controllerAs: 'CustomersCtrl',
+                    templateUrl: 'views/customers/customers.html'
+                })
+                .when('/customer/new', {
+                    controller: 'CustomerController',
+                    controllerAs: 'CustomerCtrl',
+                    templateUrl: 'views/customers/customer.html'
+                })
+                .when('/customer/:id', {
+                    controller: 'CustomerController',
+                    controllerAs: 'CustomerCtrl',
+                    templateUrl: 'views/customers/customer.html'
                 })
                 .when('/categories', {
                     controller: 'CategoriesController',
