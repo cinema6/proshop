@@ -18,7 +18,7 @@
             </div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group" style="padding-top:20px">
             <label for="org" class="control-label"> Advertisers: </label>
             <div ng-repeat="advertiser in CustomerCtrl.customer.advertisers">
                 <span class="glyphicon glyphicon-remove" ng-click="CustomerCtrl.removeAdvertiser($index)"></span><strong> {{advertiser.name}} </strong>

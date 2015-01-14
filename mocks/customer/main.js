@@ -34,7 +34,7 @@ module.exports = function(http) {
     });
 
     http.whenPOST('/api/account/customer', function(request) {
-        var id = 'a-' + Math.floor(Math.random() * 10000) + 1,
+        var id = 'cus-' + Math.floor(Math.random() * 10000) + 1,
             filePath = customerPath(id),
             currentTime = (new Date()).toISOString(),
             data = request.body,

@@ -74,8 +74,10 @@ define(['angular'], function(angular) {
 
             initView();
         }])
-        .controller('CustomerController', ['$scope','$log','ConfirmDialogService','$location','CustomersService','$routeParams','AdvertisersService','$q',
-        function                          ( $scope , $log , ConfirmDialogService , $location , CustomersService , $routeParams , AdvertisersService , $q ) {
+        .controller('CustomerController', ['$scope','$log','ConfirmDialogService','$location','CustomersService',
+                                           '$routeParams','AdvertisersService','$q',
+        function                          ( $scope , $log , ConfirmDialogService , $location , CustomersService ,
+                                            $routeParams , AdvertisersService , $q ) {
             var self = this;
 
             $log = $log.context('CustomerCtrl');
