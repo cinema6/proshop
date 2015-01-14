@@ -57,7 +57,7 @@ module.exports = function(http) {
                 lastUpdated: (new Date()).toISOString()
             });
 
-        if (id === 'a-113') {
+        if (id === 'cus-113') {
             this.respond(401, 'Not Authorized');
         } else {
             grunt.file.write(filePath, JSON.stringify(updatedCustomer, null, '   '));

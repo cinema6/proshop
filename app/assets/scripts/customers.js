@@ -156,7 +156,7 @@ define(['angular'], function(angular) {
                     CustomersService.putCustomer(customer.id, cus)
                         .then(handleSuccess, handleError);
                 } else {
-                    CustomersService.postCustomer(a)
+                    CustomersService.postCustomer(cus)
                         .then(handleSuccess, handleError);
                 }
             };
