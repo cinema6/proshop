@@ -198,6 +198,14 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
 
                     return;
                 }
+
+                if (!isLogin && oldUrl === newUrl) {
+                    // this only happens when the page is refreshed
+                    // at which point the auth check will handle the location change
+                    // so prevent this one from instantiating a route controller twice
+                    evt.preventDefault();
+                    return;
+                }
             });
 
             $scope.$on('loginSuccess',function(evt, user) {
