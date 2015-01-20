@@ -38,6 +38,13 @@ define(['angular','c6ui'],function(angular,c6ui) {
             ********************
             */
 
+            this.getExperience = function(id) {
+                return httpWrapper({
+                    method: 'GET',
+                    url: c6UrlMaker('content/experience/'+id, 'api')
+                });
+            };
+
             this.getExperiencesByOrg = function(orgId) {
                 return httpWrapper({
                     method: 'GET',
