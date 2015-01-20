@@ -28,6 +28,17 @@ module.exports = function(http) {
         this.respond(200, exp);
     });
 
+    http.whenGET('/api/content/experience/**', function(request) {
+        var id = idFromPath(request.pathname),
+            filePath = experiencePath(id);
+
+        try {
+            this.respond(200, extend(grunt.file.readJSON(filePath), { id: id }));
+        } catch(e) {
+            this.respond(401, 'Not Authorized');
+        }
+    });
+
     http.whenPOST('/api/content/experience', function(request) {
         var id = genId(),
             currentTime = (new Date()).toISOString(),
