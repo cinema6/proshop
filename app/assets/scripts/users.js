@@ -1,7 +1,8 @@
 define(['account'],function(account) {
     'use strict';
 
-    var extend = angular.extend;
+    var extend = angular.extend,
+        copy = angular.copy;
 
     return angular.module('c6.proshop.users',[account.name])
         .controller('UsersController', ['$scope','$log','account','$q','$location',
@@ -128,10 +129,11 @@ define(['account'],function(account) {
             initView();
 
         }])
+
         .controller('UserController', ['$scope','$log','account','ConfirmDialogService','$q','appData','$routeParams','$location',
         function                      ( $scope , $log,  account , ConfirmDialogService , $q , appData , $routeParams , $location ) {
             var self = this,
-                userRoles = angular.copy(appData.proshop.data.userRoles);
+                userRoles = copy(appData.proshop.data.userRoles);
 
             $log = $log.context('UserCtrl');
             $log.info('instantiated');
@@ -249,8 +251,6 @@ define(['account'],function(account) {
 
             self.appData = appData;
             self.emailPattern = /^\w+.*\w@\w.*\.\w{2,}$/;
-            self.showUserSettings = false;
-            self.userPermissionOptions = angular.copy(account.userPermissionOptions);
             self.editAdConfigOptions = [
                 {
                     name: 'orgs',

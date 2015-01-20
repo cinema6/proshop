@@ -140,23 +140,6 @@
                 <span ng-show="!theForm.$valid" class="text-danger"> There are errors above. See highlighted fields. </span>
             </div>
         </div>
-        <!-- Below are pieces that will be enabled later -->
-        <div ng-if="UserCtrl.showUserSettings">
-            <div ng-repeat="permission in UserCtrl.userPermissionOptions">
-                {{permission.name}} Permissions:
-                <div ng-repeat="action in permission.actions">
-                    {{action.name}}:
-                    <span ng-repeat="option in action.options">
-                        <input type="radio" id="new_user_{{permission.name}}_{{action.name}}_{{option}}" name="new_user_{{permission.name}}_{{action.name}}" value="{{option}}" required>
-                        <label for="new_user_{{permission.name}}_{{action.name}}_{{option}}"> {{option}}</label>
-                    </span>
-                </div>
-                <div>
-                    <span ng-show="theForm.status.$error.required"> Required. </span>
-                </div>
-                <br>
-            </div>
-        </div>
     </form>
 
     <div class="mask" ng-show="UserCtrl.loading"></div>
