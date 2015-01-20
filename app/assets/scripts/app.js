@@ -49,6 +49,16 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
                     controllerAs: 'UsersCtrl',
                     templateUrl: 'views/users/users.html'
                 })
+                .when('/user/new', {
+                    controller: 'UserController',
+                    controllerAs: 'UserCtrl',
+                    templateUrl: 'views/users/user.html'
+                })
+                .when('/user/:id', {
+                    controller: 'UserController',
+                    controllerAs: 'UserCtrl',
+                    templateUrl: 'views/users/user.html'
+                })
                 .when('/minireels', {
                     controller: 'MinireelsController',
                     controllerAs: 'MinireelsCtrl',
