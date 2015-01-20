@@ -89,11 +89,24 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
         .value('appData', {appUser: null, user: null, users: null, org: null, orgs: null})
         .controller('AppController', ['$scope', '$log', '$location', '$timeout', '$q', '$route',
                                       'c6Defines','c6LocalStorage', 'auth', 'appData', 'account',
+                                      'content',
             function(                  $scope ,  $log ,  $location ,  $timeout ,  $q , $route,
-                                       c6Defines , c6LocalStorage ,  auth ,  appData ,  account ) {
+                                       c6Defines , c6LocalStorage ,  auth ,  appData ,  account ,
+                                       content ) {
 
             var self = this,
                 _user;
+
+            function fetchApplications(applications) {
+                return $q.all(applications.map(function(app) {
+                        return content.getExperience(app);
+                    }))
+                    .then(function(promises) {
+                        promises.forEach(function(promise) {
+                            appData[promise.appUri] = promise;
+                        });
+                    });
+            }
 
             $scope.data = {
                 appData: appData
@@ -127,6 +140,7 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
                     if (!skipStore) {
                         c6LocalStorage.set('user', record);
                     }
+                    fetchApplications(record.applications || []);
                 } else {
                     c6LocalStorage.remove('user');
                 }

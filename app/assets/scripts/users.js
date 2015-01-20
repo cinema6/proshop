@@ -4,8 +4,8 @@ define(['account'],function(account) {
     var extend = angular.extend;
 
     return angular.module('c6.proshop.users',[account.name])
-        .controller('UsersController', ['$scope', '$log', 'account', 'ConfirmDialogService', '$q',
-        function                       ( $scope ,  $log,   account ,  ConfirmDialogService ,  $q ) {
+        .controller('UsersController', ['$scope','$log','account','ConfirmDialogService','$q','appData',
+        function                       ( $scope , $log,  account , ConfirmDialogService , $q , appData ) {
             var self = this,
                 data = $scope.data;
 
