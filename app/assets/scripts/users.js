@@ -131,7 +131,7 @@ define(['account'],function(account) {
         .controller('UserController', ['$scope','$log','account','ConfirmDialogService','$q','appData','$routeParams','$location',
         function                      ( $scope , $log,  account , ConfirmDialogService , $q , appData , $routeParams , $location ) {
             var self = this,
-                userRoles = appData.proshop.data.userRoles;
+                userRoles = angular.copy(appData.proshop.data.userRoles);
 
             $log = $log.context('UserCtrl');
             $log.info('instantiated');
@@ -157,7 +157,7 @@ define(['account'],function(account) {
                         self.org = orgs.filter(function(org) {
                             return user.org === org.id;
                         })[0];
-                        self.user = convertUserForEditing(user, self.org);
+                        self.user = convertUserForEditing(user, self.org || {});
                     })
                     .finally(function() {
                         self.loading = false;
