@@ -70,15 +70,15 @@ define(['account'],function(account) {
             Object.defineProperties(self, {
                 total: {
                     get: function() {
-                        return _data.users && Math.ceil(_data.users.length / self.limit);
+                        return self.users && Math.ceil(self.users.length / self.limit);
                     }
                 }
             });
 
             self.filterData = function(query) {
-                var query = query.toLowerCase(),
+                var _query = query.toLowerCase(),
                     orgs = _data.orgs.filter(function(org) {
-                        return org.name.toLowerCase().indexOf(query) >= 0;
+                        return org.name.toLowerCase().indexOf(_query) >= 0;
                     });
 
                 self.page = 1;
@@ -91,7 +91,7 @@ define(['account'],function(account) {
                     });
 
                     [user.email, user.firstName, user.lastName].forEach(function(field) {
-                        bool = (field && field.toLowerCase().indexOf(query) >= 0) || bool;
+                        bool = (field && field.toLowerCase().indexOf(_query) >= 0) || bool;
                     });
 
                     return bool;
@@ -185,7 +185,7 @@ define(['account'],function(account) {
                     });
             }
 
-            function setPermissions() {
+            function getPermissions() {
                 var permissions = self.role === 'Admin' ?
                     userRoles.admin :
                     userRoles.publisher;
@@ -287,7 +287,7 @@ define(['account'],function(account) {
                     config: self.user.config,
                     type: (self.role === 'Admin' ? 'Publisher' : self.role),
                     status: self.user.status,
-                    permissions: setPermissions()
+                    permissions: getPermissions()
                 };
 
                 function handleError(err) {

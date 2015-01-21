@@ -13,6 +13,7 @@
                 appData,
                 auth,
                 account,
+                content,
                 c6Defines,
                 localStorage,
                 createAppCtrl,
@@ -32,7 +33,11 @@
 
                 account = {
                     getOrg: jasmine.createSpy('account.getOrg')
-                }
+                };
+
+                content = {
+                    getExperience: jasmine.createSpy('content.getExperience')
+                };
 
                 c6Defines = {
                     kTracker: {
@@ -62,6 +67,9 @@
                     account.getOrg.deferred = $q.defer();
                     account.getOrg.and.returnValue(account.getOrg.deferred.promise);
 
+                    content.getExperience.deferred = $q.defer();
+                    content.getExperience.and.returnValue(content.getExperience.deferred.promise);
+
                     auth.checkStatus.deferred = $q.defer();
                     auth.checkStatus.and.returnValue(auth.checkStatus.deferred.promise);
 
@@ -88,7 +96,8 @@
                             auth: auth,
                             c6Defines: c6Defines,
                             c6LocalStorage: localStorage,
-                            account: account
+                            account: account,
+                            content: content
                         });
                     };
                 });
@@ -243,6 +252,10 @@
                         expect(appData.appUser).toBe(mockUser);
                     });
 
+                    it('should load all the application experiences', function() {
+                        AppCtrl.updateUser(mockUser);
+                        expect(content.getExperience).toHaveBeenCalledWith('e1');
+                    });
                 });
             });
 
