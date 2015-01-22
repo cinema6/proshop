@@ -351,6 +351,14 @@
                     expect(mockEvent.preventDefault).not.toHaveBeenCalled();
                 });
 
+                it('refreshing page when url === /users and user is set', function() {
+                    AppCtrl.user = mockUser;
+
+                    $locationChangeStart(mockEvent, '/users', '/users');
+
+                    expect(mockEvent.preventDefault).toHaveBeenCalled();
+                });
+
             });
 
             describe('$scope.$on(loginSuccess)',function(){
