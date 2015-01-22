@@ -2,7 +2,7 @@
 
 * *[v0.6.16]*
   * Moved User permissions configuration into a Proshop experience
-  * User management area is not route based
+  * User management area is now route based
   * User application array is now set based on role
   * [FEATURE]: Deny access to Proshop if User does not have Proshop or MiniReelinator
     applications
