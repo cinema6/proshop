@@ -133,7 +133,7 @@ define(['account'],function(account) {
         .controller('UserController', ['$scope','$log','account','ConfirmDialogService','$q','appData','$routeParams','$location',
         function                      ( $scope , $log,  account , ConfirmDialogService , $q , appData , $routeParams , $location ) {
             var self = this,
-                userRoles = copy(appData.proshop.data.userRoles);
+                userRoles = appData.proshop.data.userRoles;
 
             $log = $log.context('UserCtrl');
             $log.info('instantiated');
@@ -187,8 +187,8 @@ define(['account'],function(account) {
 
             function getPermissions() {
                 var permissions = self.role === 'Admin' ?
-                    userRoles.admin :
-                    userRoles.publisher;
+                    copy(userRoles.admin) :
+                    copy(userRoles.publisher);
 
                 if (self.role === 'Publisher') {
                     self.editAdConfigOptions.forEach(function(option) {
@@ -242,12 +242,6 @@ define(['account'],function(account) {
 
                 return user;
             }
-
-            Object.defineProperty($scope, 'passwordMessage', {
-                get: function() {
-                    return this.showPassword ? 'Hide Password' : 'Show Password';
-                }
-            });
 
             self.appData = appData;
             self.emailPattern = /^\w+.*\w@\w.*\.\w{2,}$/;
@@ -327,14 +321,12 @@ define(['account'],function(account) {
             };
 
             self.cancelOrgChange = function() {
-                $scope.changingOrgWarning = false;
                 self.org = self.orgs.filter(function(org) {
                     return org.id === self.user.org;
                 })[0];
             };
 
             self.confirmOrgChange = function() {
-                $scope.changingOrgWarning = false;
                 self.user.org = self.org.id;
                 self.user.config = null;
                 self.user = convertUserForEditing(self.user, self.org);
@@ -373,10 +365,16 @@ define(['account'],function(account) {
                 });
             };
 
+            $scope.message = null;
+            Object.defineProperty($scope, 'passwordMessage', {
+                get: function() {
+                    return this.showPassword ? 'Hide Password' : 'Show Password';
+                }
+            });
+
             $scope.$watch(function() { return self.org; }, function(newOrg) {
                 if (newOrg) {
                     if (self.user.id && self.user.org !== self.org.id) {
-                        $scope.changingOrgWarning = true;
                         ConfirmDialogService.display({
                             prompt: 'Warning: All of this User\'s Minireels will remain with the original Org.',
                             affirm: 'OK, move User without Minireels',
