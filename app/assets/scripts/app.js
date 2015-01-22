@@ -107,15 +107,28 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
             var self = this,
                 _user;
 
-            function fetchApplications(applications) {
-                return $q.all(applications.map(function(app) {
-                        return content.getExperience(app);
-                    }))
-                    .then(function(promises) {
-                        promises.forEach(function(promise) {
-                            appData[promise.appUri] = promise;
-                        });
+            function checkApplications(applications) {
+                var deferred = $q.defer();
+
+                $q.all(applications.map(function(app) {
+                    return content.getExperience(app);
+                }))
+                .then(function(promises) {
+                    promises.forEach(function(promise) {
+                        appData[promise.appUri] = promise;
                     });
+
+                    if (appData.proshop && appData['mini-reel-maker']) {
+                        deferred.resolve();
+                    } else {
+                        deferred.reject('Unable to find required experiences');
+                    }
+                })
+                .catch(function(err) {
+                    deferred.reject(err);
+                });
+
+                return deferred.promise;
             }
 
             $scope.data = {
@@ -150,7 +163,6 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
                     if (!skipStore) {
                         c6LocalStorage.set('user', record);
                     }
-                    fetchApplications(record.applications || []);
                 } else {
                     c6LocalStorage.remove('user');
                 }
@@ -187,6 +199,9 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
                     .then(function(org){
                         $log.info('found user org: ',org);
                         _user.org = org;
+                        return checkApplications(_user.applications || []);
+                    })
+                    .then(function() {
                         self.updateUser(_user);
                         self.ready = true;
                         self.goTo(self.entryPath || '/');
@@ -235,8 +250,16 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
             $scope.$on('loginSuccess',function(evt, user) {
                 $log.info('Login succeeded, new user:', user);
 
-                self.updateUser(user);
-                self.goTo('/');
+                checkApplications(user.applications || [])
+                    .then(function() {
+                        self.updateUser(user);
+                        self.goTo('/');
+                    })
+                    .catch(function(err) {
+                        $log.info('application check failed: ', err);
+                        self.updateUser(null);
+                        self.goTo('/login');
+                    });
             });
 
         }])

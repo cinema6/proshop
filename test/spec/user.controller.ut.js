@@ -35,7 +35,11 @@
                 module('c6.proshop');
 
                 appData = {
+                    'mini-reel-maker': {
+                        id: 'e-MRinator'
+                    },
                     proshop: {
+                        id: 'e-Proshop',
                         data: {
                             userRoles: {
                                 admin: {
@@ -380,6 +384,7 @@
                                 config: UserCtrl.user.config,
                                 type: UserCtrl.user.type,
                                 status: 'active',
+                                applications: ['e-MRinator'],
                                 permissions: {
                                     elections: {
                                         read    : 'org',
@@ -415,6 +420,7 @@
                                 UserCtrl.saveUser();
 
                                 expect(account.putUser.calls.mostRecent().args[1].type).toEqual('Publisher');
+                                expect(account.putUser.calls.mostRecent().args[1].applications).toEqual(['e-Proshop','e-MRinator']);
                                 expect(account.putUser.calls.mostRecent().args[1].permissions).toEqual({
                                     elections: {
                                         read    : 'all',
@@ -563,6 +569,7 @@
                                 },
                                 type: 'Publisher',
                                 status: 'active',
+                                applications: ['e-MRinator'],
                                 permissions: {
                                     elections: {
                                         read    : 'org',
@@ -598,6 +605,7 @@
                                 UserCtrl.saveUser();
 
                                 expect(account.postUser.calls.mostRecent().args[0].type).toEqual('Publisher');
+                                expect(account.postUser.calls.mostRecent().args[0].applications).toEqual(['e-Proshop','e-MRinator']);
                                 expect(account.postUser.calls.mostRecent().args[0].permissions).toEqual({
                                     elections: {
                                         read    : 'all',

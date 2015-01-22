@@ -201,6 +201,12 @@ define(['account'],function(account) {
                 return permissions;
             }
 
+            function getApplications() {
+                return self.role === 'Admin' ?
+                    [appData.proshop.id, appData['mini-reel-maker'].id] :
+                    [appData['mini-reel-maker'].id];
+            }
+
             function isAdmin(user) {
                 return !!user.permissions && Object.keys(user.permissions).every(function(type) {
                     return Object.keys(user.permissions[type]).every(function(verb) {
@@ -281,7 +287,8 @@ define(['account'],function(account) {
                     config: self.user.config,
                     type: (self.role === 'Admin' ? 'Publisher' : self.role),
                     status: self.user.status,
-                    permissions: getPermissions()
+                    permissions: getPermissions(),
+                    applications: getApplications()
                 };
 
                 function handleError(err) {
