@@ -15,7 +15,8 @@
         }
     },
     "applications": [
-        "e-51ae37625cb57f"
+        "e-51ae37625cb57f",
+        "e-adda13c4777cda"
     ],
     "permissions": {
         "experiences": {

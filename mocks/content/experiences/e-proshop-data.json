@@ -1,0 +1,200 @@
+{
+    "access": "private",
+    "appUri": "proshop",
+    "org": "o-e4e8b0f244bafc",
+    "status": "inactive",
+    "title": "Proshop",
+    "uri": "proshop",
+    "user": "u-a78b667f18fdac",
+    "data": {
+        "waterfalls": {
+            "settings": [
+                {
+                    "title": "Video Waterfall Options",
+                    "description": "Options available to the publisher for ad cards in MiniReels",
+                    "category": "video",
+                    "type": "options"
+                },
+                {
+                    "title": "Video Waterfall Default",
+                    "description": "Default waterfall for MiniReels that do not explicitly set a waterfall option",
+                    "category": "video",
+                    "type": "default"
+                },
+                {
+                    "title": "Display Waterfall Options",
+                    "description": "Options available to the publisher for the display ad module in Companion Ad MiniReels",
+                    "category": "display",
+                    "type": "options"
+                },
+                {
+                    "title": "Display Waterfall Default",
+                    "description": "Default waterfall for Companion Ad MiniReels that do not explicitly set a waterfall option",
+                    "category": "display",
+                    "type": "default"
+                }
+            ],
+            "options": [
+                {
+                    "name": "Cinema6",
+                    "value": "cinema6",
+                    "enabled": true
+                },
+                {
+                    "name": "Cinema6 - Publisher",
+                    "value": "cinema6-publisher",
+                    "enabled": false
+                },
+                {
+                    "name": "Publisher",
+                    "value": "publisher",
+                    "enabled": false
+                },
+                {
+                    "name": "Publisher - Cinema6",
+                    "value": "publisher-cinema6",
+                    "enabled": false
+                }
+            ]
+        },
+        "adConfig": {
+            "types": [
+                {
+                    "title": "First Placement",
+                    "description": "Number of videos before the first ad is shown",
+                    "label": "firstPlacement",
+                    "options": [
+                        {
+                            "label":"No ads",
+                            "value": -1
+                        },
+                        {
+                            "label": "Before 1st Video",
+                            "value": 0
+                        },
+                        {
+                            "label": "After 1st Video",
+                            "value": 1
+                        },
+                        {
+                            "label": "After 2nd Video",
+                            "value": 2
+                        },
+                        {
+                            "label": "After 3rd Video",
+                            "value": 3
+                        },
+                        {
+                            "label": "After 4th Video",
+                            "value": 4
+                        },
+                        {
+                            "label": "After 5th Video",
+                            "value": 5
+                        },
+                        {
+                            "label": "After 6th Video",
+                            "value": 6
+                        },
+                        {
+                            "label": "After 7th Video",
+                            "value": 7
+                        },
+                        {
+                            "label": "After 8th Video",
+                            "value": 8
+                        },
+                        {
+                            "label": "After 9th Video",
+                            "value": 9
+                        },
+                        {
+                            "label": "After 10th Video",
+                            "value": 10
+                        }
+                    ]
+                },
+                {
+                    "title": "Ad Frequency",
+                    "description": "Number of videos between ads",
+                    "label": "frequency",
+                    "options": [
+                        {
+                            "label": "Only show first ad",
+                            "value": 0
+                        },
+                        {
+                            "label": "After every video",
+                            "value": 1
+                        },
+                        {
+                            "label": "After every 2nd video",
+                            "value": 2
+                        },
+                        {
+                            "label": "After every 3rd video",
+                            "value": 3
+                        },
+                        {
+                            "label": "After every 4th video",
+                            "value": 4
+                        },
+                        {
+                            "label": "After every 5th video",
+                            "value": 5
+                        },
+                        {
+                            "label": "After every 6th video",
+                            "value": 6
+                        },
+                        {
+                            "label": "After every 7th video",
+                            "value": 7
+                        },
+                        {
+                            "label": "After every 8th video",
+                            "value": 8
+                        },
+                        {
+                            "label": "After every 9th video",
+                            "value": 9
+                        }
+                    ]
+                },
+                {
+                    "title": "Skip Settings",
+                    "description": "Controls the users ability to skip the ad, and an optional countdown",
+                    "label": "skip",
+                    "options": [
+                        {
+                            "label": "No skipping allowed",
+                            "value": false
+                        },
+                        {
+                            "label": "Skip anytime",
+                            "value": true
+                        },
+                        {
+                            "label": "After 6 sec.",
+                            "value": 6
+                        }
+                    ]
+                }
+            ]
+        },
+        "defaultSplashOptions": [
+            {
+                "title": "Default Splash Ratio",
+                "description": "Sets the default aspect ratio for users in the MR Studio",
+                "options": ["1-1","3-2","6-5","16-9"],
+                "label": "ratio"
+            },
+            {
+                "title": "Default Splash Theme",
+                "description": "Sets the default embed theme for users in the MR Studio",
+                "options": ["text-only","img-only","img-text-overlay","vertical-stack","horizontal-stack"],
+                "label": "theme"
+            }
+        ]
+    }
+}

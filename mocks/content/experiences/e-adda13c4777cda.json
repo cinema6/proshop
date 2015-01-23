@@ -1,0 +1,88 @@
+{
+  "access": "private",
+  "appUri": "proshop",
+  "org": "o-e4e8b0f244bafc",
+  "status": "inactive",
+  "uri": "proshop",
+  "title": "Proshop",
+  "data": {
+    "userRoles": {
+      "admin": {
+        "elections": {
+          "read": "all",
+          "create": "all",
+          "edit": "all",
+          "delete": "all"
+        },
+        "experiences": {
+          "read": "all",
+          "create": "all",
+          "edit": "all",
+          "delete": "all",
+          "editAdConfig": "all",
+          "editSponsorships": "all"
+        },
+        "users": {
+          "read": "all",
+          "create": "all",
+          "edit": "all",
+          "delete": "all"
+        },
+        "orgs": {
+          "read": "all",
+          "create": "all",
+          "edit": "all",
+          "delete": "all",
+          "editAdConfig": "all"
+        },
+        "sites": {
+          "read": "all",
+          "create": "all",
+          "edit": "all",
+          "delete": "all"
+        },
+        "cards": {
+          "read": "all",
+          "create": "all",
+          "edit": "all",
+          "delete": "all"
+        },
+        "categories": {
+          "read": "all",
+          "create": "all",
+          "edit": "all",
+          "delete": "all"
+        }
+      },
+      "publisher": {
+        "elections": {
+          "read": "org",
+          "create": "org",
+          "edit": "org",
+          "delete": "org"
+        },
+        "experiences": {
+          "read": "org",
+          "create": "org",
+          "edit": "org",
+          "delete": "org"
+        },
+        "users": {
+          "read": "org",
+          "edit": "own"
+        },
+        "orgs": {
+          "read": "own",
+          "edit": "own"
+        },
+        "sites": {
+          "read": "org"
+        }
+      }
+    }
+  },
+  "versionId": "42426dc9",
+  "created": "2015-01-20T15:39:40.733Z",
+  "lastUpdated": "2015-01-20T15:39:40.733Z",
+  "user": "u-3062e5261a176a"
+}
