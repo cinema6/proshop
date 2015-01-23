@@ -114,7 +114,7 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
                     deferred.reject(err);
                 }
 
-                if (!applications) {
+                if (!applications || !applications.length) {
                     return handleError('You do not have any applications');
                 }
 
