@@ -45,6 +45,14 @@ define(['angular','c6ui'],function(angular,c6ui) {
                 });
             };
 
+            this.getExperiences = function(params) {
+                return httpWrapper({
+                    method: 'GET',
+                    params: params,
+                    url: c6UrlMaker('content/experiences','api')
+                });
+            };
+
             this.getExperiencesByOrg = function(orgId) {
                 return httpWrapper({
                     method: 'GET',

@@ -110,23 +110,27 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
             function checkApplications(applications) {
                 var deferred = $q.defer();
 
-                $q.all(applications.map(function(app) {
-                    return content.getExperience(app);
-                }))
-                .then(function(promises) {
-                    promises.forEach(function(promise) {
-                        appData[promise.appUri] = promise;
-                    });
-
-                    if (appData.proshop && appData['mini-reel-maker']) {
-                        deferred.resolve();
-                    } else {
-                        deferred.reject('Unable to find required experiences');
-                    }
-                })
-                .catch(function(err) {
+                function handleError(err) {
                     deferred.reject(err);
-                });
+                }
+
+                if (!applications) {
+                    return handleError('You do not have any applications');
+                }
+
+                content.getExperiences({ ids: applications.join() })
+                    .then(function(experiences) {
+                        experiences.forEach(function(experience) {
+                            appData[experience.appUri] = experience;
+                        });
+
+                        if (appData.proshop && appData['mini-reel-maker']) {
+                            deferred.resolve();
+                        } else {
+                            handleError('You do not have the required applications');
+                        }
+                    })
+                    .catch(handleError);
 
                 return deferred.promise;
             }
@@ -199,7 +203,7 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
                     .then(function(org){
                         $log.info('found user org: ',org);
                         _user.org = org;
-                        return checkApplications(_user.applications || []);
+                        return checkApplications(_user.applications);
                     })
                     .then(function() {
                         self.updateUser(_user);
@@ -250,7 +254,7 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
             $scope.$on('loginSuccess',function(evt, user) {
                 $log.info('Login succeeded, new user:', user);
 
-                checkApplications(user.applications || [])
+                checkApplications(user.applications)
                     .then(function() {
                         self.updateUser(user);
                         self.goTo('/');
