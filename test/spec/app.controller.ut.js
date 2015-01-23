@@ -36,7 +36,7 @@
                 };
 
                 content = {
-                    getExperience: jasmine.createSpy('content.getExperience')
+                    getExperiences: jasmine.createSpy('content.getExperience')
                 };
 
                 c6Defines = {
@@ -67,16 +67,8 @@
                     account.getOrg.deferred = $q.defer();
                     account.getOrg.and.returnValue(account.getOrg.deferred.promise);
 
-                    content.getExperience.deferred1 = $q.defer();
-                    content.getExperience.deferred2 = $q.defer();
-                    content.getExperience.and.callFake(function(id) {
-                        if (id === 'app1') {
-                            return content.getExperience.deferred1.promise;
-                        }
-                        if (id === 'app2') {
-                            return content.getExperience.deferred2.promise;
-                        }
-                    });
+                    content.getExperiences.deferred = $q.defer();
+                    content.getExperiences.and.returnValue(content.getExperiences.deferred.promise);
 
                     auth.checkStatus.deferred = $q.defer();
                     auth.checkStatus.and.returnValue(auth.checkStatus.deferred.promise);
@@ -154,8 +146,7 @@
 
                         account.getOrg.deferred.resolve(org)
                         auth.checkStatus.deferred.resolve(newUser);
-                        content.getExperience.deferred1.resolve({appUri: 'proshop'});
-                        content.getExperience.deferred2.resolve({appUri: 'mini-reel-maker'});
+                        content.getExperiences.deferred.resolve([{appUri: 'proshop'}, {appUri: 'mini-reel-maker'}]);
 
                         $scope.$apply();
 
@@ -170,8 +161,7 @@
 
                         auth.checkStatus.deferred.resolve(newUser);
                         account.getOrg.deferred.resolve(org)
-                        content.getExperience.deferred1.resolve({appUri: 'proshop'});
-                        content.getExperience.deferred2.resolve({appUri: 'mini-reel-maker'});
+                        content.getExperiences.deferred.resolve([{appUri: 'proshop'}, {appUri: 'mini-reel-maker'}]);
 
                         $scope.$apply();
 
@@ -179,15 +169,14 @@
                         expect($location.path).toHaveBeenCalledWith('/');
                     });
 
-                    it('should remove user and go to /login if application requests fail', function() {
+                    it('should remove user and go to /login if applications request fail', function() {
                         var newUser = {id: 'new', applications: ['app1','app2']}, org = { id: 'o1' };
 
                         spyOn(AppCtrl, 'updateUser');
 
                         auth.checkStatus.deferred.resolve(newUser);
                         account.getOrg.deferred.resolve(org)
-                        content.getExperience.deferred1.resolve({appUri: 'proshop'});
-                        content.getExperience.deferred2.reject();
+                        content.getExperiences.deferred.reject();
 
                         $scope.$apply();
 
@@ -202,8 +191,7 @@
 
                         auth.checkStatus.deferred.resolve(newUser);
                         account.getOrg.deferred.resolve(org)
-                        content.getExperience.deferred1.resolve({appUri: 'proshop'});
-                        content.getExperience.deferred2.resolve({appUri: 'some-app'});
+                        content.getExperiences.deferred.resolve([{appUri: 'proshop'}]);
 
                         $scope.$apply();
 
@@ -428,8 +416,7 @@
                 it('should trigger a user update if applications are retrieved',function(){
                     loginSuccess(mockEvent, mockUser);
 
-                    content.getExperience.deferred1.resolve({appUri: 'proshop'});
-                    content.getExperience.deferred2.resolve({appUri: 'mini-reel-maker'});
+                    content.getExperiences.deferred.resolve([{appUri: 'proshop'}, {appUri: 'mini-reel-maker'}]);
 
                     $scope.$apply();
 
@@ -437,11 +424,10 @@
                     expect($location.path).toHaveBeenCalledWith('/');
                 });
 
-                it('should remove user and go to /login if applications requests fail', function() {
+                it('should remove user and go to /login if applications request fail', function() {
                     loginSuccess(mockEvent, mockUser);
 
-                    content.getExperience.deferred1.resolve();
-                    content.getExperience.deferred2.reject();
+                    content.getExperiences.deferred.reject();
 
                     $scope.$apply();
 
@@ -452,8 +438,7 @@
                 it('should remove user and go to /login if applications do not include proshop and mini-reel-maker', function() {
                     loginSuccess(mockEvent, mockUser);
 
-                    content.getExperience.deferred1.resolve({appUri: 'proshop'});
-                    content.getExperience.deferred2.resolve({appUri: 'some-app'});
+                    content.getExperiences.deferred.resolve([{appUri: 'proshop'}]);
 
                     $scope.$apply();
 

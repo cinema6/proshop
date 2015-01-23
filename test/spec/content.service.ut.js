@@ -101,6 +101,53 @@
                     });
                 });
 
+                describe('getExperiences(params)', function() {
+                    beforeEach(function(){
+                        successSpy = jasmine.createSpy('getExperiences.success');
+                        failureSpy = jasmine.createSpy('getExperiences.failure');
+                        spyOn($timeout,'cancel');
+                    });
+
+                    it('will accept empty params', function() {
+                        $httpBackend.expectGET('/api/content/experiences')
+                            .respond(200,mockExperiences);
+                        content.getExperiences().then(successSpy,failureSpy);
+                        $httpBackend.flush();
+                        expect(successSpy).toHaveBeenCalledWith(mockExperiences);
+                        expect(failureSpy).not.toHaveBeenCalled();
+                        expect($timeout.cancel).toHaveBeenCalled();
+                    });
+
+                    it('will resolve promise if successfull',function(){
+                        $httpBackend.expectGET('/api/content/experiences?ids=e-1,e-2,e-3')
+                            .respond(200,mockExperiences);
+                        content.getExperiences({ids: 'e-1,e-2,e-3'}).then(successSpy,failureSpy);
+                        $httpBackend.flush();
+                        expect(successSpy).toHaveBeenCalledWith(mockExperiences);
+                        expect(failureSpy).not.toHaveBeenCalled();
+                        expect($timeout.cancel).toHaveBeenCalled();
+                    });
+
+                    it('will reject promise if not successful',function(){
+                        $httpBackend.expectGET('/api/content/experiences?ids=e-1,e-2,e-3')
+                            .respond(404,'Unable to find experiences.');
+                        content.getExperiences({ids: 'e-1,e-2,e-3'}).then(successSpy,failureSpy);
+                        $httpBackend.flush();
+                        expect(successSpy).not.toHaveBeenCalled();
+                        expect(failureSpy).toHaveBeenCalledWith('Unable to find experiences.');
+                        expect($timeout.cancel).toHaveBeenCalled();
+                    });
+
+                    it('will reject promise if times out',function(){
+                        $httpBackend.expectGET('/api/content/experiences?ids=e-1,e-2,e-3')
+                            .respond(200,'');
+                        content.getExperiences({ids: 'e-1,e-2,e-3'}).then(successSpy,failureSpy);
+                        $timeout.flush(60000);
+                        expect(successSpy).not.toHaveBeenCalled();
+                        expect(failureSpy).toHaveBeenCalledWith('Request timed out.');
+                    });
+                });
+
                 describe('getExperience()', function() {
                     beforeEach(function(){
                         successSpy = jasmine.createSpy('getExperience.success');
