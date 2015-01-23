@@ -1,5 +1,7 @@
 # ProShop
 
+## v0.6.16 (January 23, 2015)
+
 * *[v0.6.16]*
   * Moved User permissions configuration into a Proshop experience
   * User management area is now route based
@@ -7,6 +9,7 @@
   * [FEATURE]: Deny access to Proshop if User does not have Proshop or MiniReelinator
     applications
   * [FIX]: When refreshing non-login pages we no longer make duplicate API calls
+* *[/v0.6.16]*
 
 ## v0.6.15 (January 9, 2015)
 
