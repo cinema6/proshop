@@ -4,6 +4,7 @@
   "org": "o-e4e8b0f244bafc",
   "status": "inactive",
   "uri": "proshop",
+  "title": "Proshop",
   "data": {
     "userRoles": {
       "admin": {
@@ -75,7 +76,6 @@
     }
   },
   "versionId": "42426dc9",
-  "id": "e-adda13c4777cda",
   "created": "2015-01-20T15:39:40.733Z",
   "lastUpdated": "2015-01-20T15:39:40.733Z",
   "user": "u-3062e5261a176a"

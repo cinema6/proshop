@@ -1,7 +1,6 @@
 {
     "access": "private",
     "appUri": "proshop",
-    "id": "e-51ae37625cb57f",
     "org": "o-e4e8b0f244bafc",
     "status": "inactive",
     "title": "Proshop",
@@ -39,22 +38,22 @@
                 {
                     "name": "Cinema6",
                     "value": "cinema6",
-                    "enabled": true,
+                    "enabled": true
                 },
                 {
                     "name": "Cinema6 - Publisher",
                     "value": "cinema6-publisher",
-                    "enabled": false,
+                    "enabled": false
                 },
                 {
                     "name": "Publisher",
                     "value": "publisher",
-                    "enabled": false,
+                    "enabled": false
                 },
                 {
                     "name": "Publisher - Cinema6",
                     "value": "publisher-cinema6",
-                    "enabled": false,
+                    "enabled": false
                 }
             ]
         },
@@ -113,7 +112,7 @@
                             "label": "After 10th Video",
                             "value": 10
                         }
-                    ],
+                    ]
                 },
                 {
                     "title": "Ad Frequency",
