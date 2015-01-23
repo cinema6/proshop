@@ -32,7 +32,6 @@ module.exports = function(http) {
     http.whenPUT('/api/account/user/**', function(request) {
         var id = idFromPath(request.pathname),
             filePath = userPath(id),
-            userCache = require('../auth/user_cache'),
             currentUser = grunt.file.readJSON(filePath),
             newUser = extend(currentUser, request.body, {
                 lastUpdated: (new Date()).toISOString()
@@ -43,15 +42,13 @@ module.exports = function(http) {
         } else {
             grunt.file.write(filePath, JSON.stringify(newUser, null, '    '));
 
-            this.respond(200, (userCache.user = extend(newUser, { id: id })));
+            this.respond(200, extend(newUser, { id: id }));
         }
     });
 
     http.whenPOST('/api/account/user', function(request) {
         var id = 'u-' + Math.floor(Math.random() * 10000) + 1,
             filePath = userPath(id),
-            userCache = require('../auth/user_cache'),
-            user = userCache.user,
             currentTime = (new Date()).toISOString(),
             data = request.body,
             newUser = extend(request.body, {

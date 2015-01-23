@@ -19,7 +19,40 @@
 
                 appData = {
                     appUser : null,
-                    user: null, users: null, org: null, orgs: null
+                    user: null, users: null, org: null, orgs: null,
+                    'mini-reel-maker': {
+                        id: 'e-MRinator',
+                        data: {
+                            modes: [
+                                {
+                                    value: 'lightbox',
+                                    modes:[
+                                        {
+                                            value: 'lightbox',
+                                            name: 'Lightbox Player'
+                                        },
+                                        {
+                                            value: 'lightbox-playlist',
+                                            name: 'Lightbox, with Playlist'
+                                        }
+                                    ]
+                                },
+                                {
+                                    value: 'inline',
+                                    modes:[
+                                        {
+                                            value: 'light',
+                                            name: 'Embedded'
+                                        },
+                                        {
+                                            value: 'full',
+                                            deprecated: true
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    },
                 };
 
                 mockOrgs = [
@@ -111,7 +144,8 @@
                         $log: $log,
                         $scope: $scope,
                         account: account,
-                        ConfirmDialogService: ConfirmDialogService
+                        ConfirmDialogService: ConfirmDialogService,
+                        appData: appData
                     });
                 });
             });
@@ -153,6 +187,25 @@
             });
 
             describe('properties', function() {
+                describe('defaultModes', function() {
+                    it('should copy from MRinator experience on appData, excluding deprecated modes', function() {
+                        expect(OrgsCtrl.defaultModes).toEqual([
+                            {
+                                value: 'lightbox',
+                                name: 'Lightbox Player'
+                            },
+                            {
+                                value: 'lightbox-playlist',
+                                name: 'Lightbox, with Playlist'
+                            },
+                            {
+                                value: 'light',
+                                name: 'Embedded'
+                            }
+                        ]);
+                    });
+                });
+
                 describe('total', function() {
                     it('should be undefined by default', function() {
                         expect(OrgsCtrl.total).toBe(undefined);

@@ -53,6 +53,16 @@ function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines ,
                     controllerAs: 'UsersCtrl',
                     templateUrl: 'views/users/users.html'
                 })
+                .when('/user/new', {
+                    controller: 'UserController',
+                    controllerAs: 'UserCtrl',
+                    templateUrl: 'views/users/user.html'
+                })
+                .when('/user/:id', {
+                    controller: 'UserController',
+                    controllerAs: 'UserCtrl',
+                    templateUrl: 'views/users/user.html'
+                })
                 .when('/minireels', {
                     controller: 'MinireelsController',
                     controllerAs: 'MinireelsCtrl',
@@ -123,11 +133,41 @@ function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines ,
         .value('appData', {appUser: null, user: null, users: null, org: null, orgs: null})
         .controller('AppController', ['$scope', '$log', '$location', '$timeout', '$q', '$route',
                                       'c6Defines','c6LocalStorage', 'auth', 'appData', 'account',
+                                      'content',
             function(                  $scope ,  $log ,  $location ,  $timeout ,  $q , $route,
-                                       c6Defines , c6LocalStorage ,  auth ,  appData ,  account ) {
+                                       c6Defines , c6LocalStorage ,  auth ,  appData ,  account ,
+                                       content ) {
 
             var self = this,
                 _user;
+
+            function checkApplications(applications) {
+                var deferred = $q.defer();
+
+                function handleError(err) {
+                    deferred.reject(err);
+                }
+
+                if (!applications || !applications.length) {
+                    return handleError('You do not have any applications');
+                }
+
+                content.getExperiences({ ids: applications.join() })
+                    .then(function(experiences) {
+                        experiences.forEach(function(experience) {
+                            appData[experience.appUri] = experience;
+                        });
+
+                        if (appData.proshop && appData['mini-reel-maker']) {
+                            deferred.resolve();
+                        } else {
+                            handleError('You do not have the required applications');
+                        }
+                    })
+                    .catch(handleError);
+
+                return deferred.promise;
+            }
 
             $scope.data = {
                 appData: appData
@@ -197,6 +237,9 @@ function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines ,
                     .then(function(org){
                         $log.info('found user org: ',org);
                         _user.org = org;
+                        return checkApplications(_user.applications);
+                    })
+                    .then(function() {
                         self.updateUser(_user);
                         self.ready = true;
                         self.goTo(self.entryPath || '/');
@@ -232,13 +275,29 @@ function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines ,
 
                     return;
                 }
+
+                if (!isLogin && oldUrl === newUrl) {
+                    // this only happens when the page is refreshed
+                    // at which point the auth check will handle the location change
+                    // so prevent this one from instantiating a route controller twice
+                    evt.preventDefault();
+                    return;
+                }
             });
 
             $scope.$on('loginSuccess',function(evt, user) {
                 $log.info('Login succeeded, new user:', user);
 
-                self.updateUser(user);
-                self.goTo('/');
+                checkApplications(user.applications)
+                    .then(function() {
+                        self.updateUser(user);
+                        self.goTo('/');
+                    })
+                    .catch(function(err) {
+                        $log.info('application check failed: ', err);
+                        self.updateUser(null);
+                        self.goTo('/login');
+                    });
             });
 
         }])

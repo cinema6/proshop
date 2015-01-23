@@ -1,13 +1,14 @@
 define(['account'],function(account) {
     'use strict';
 
-    var extend = angular.extend;
+    var extend = angular.extend,
+        copy = angular.copy;
 
     return angular.module('c6.proshop.users',[account.name])
-        .controller('UsersController', ['$scope', '$log', 'account', 'ConfirmDialogService', '$q',
-        function                       ( $scope ,  $log,   account ,  ConfirmDialogService ,  $q ) {
+        .controller('UsersController', ['$scope','$log','account','$q','$location',
+        function                       ( $scope , $log,  account , $q , $location ) {
             var self = this,
-                data = $scope.data;
+                _data = {};
 
             $log = $log.context('UsersCtrl');
             $log.info('instantiated');
@@ -21,11 +22,11 @@ define(['account'],function(account) {
                             users = promises[1],
                             userOrgPromiseArray = [];
 
-                        data.appData.orgs = orgs;
-                        data.orgs = orgs;
+                        self.users = users;
+                        _data.users = users;
 
-                        data.appData.users = users;
-                        data.users = users;
+                        self.orgs = orgs;
+                        _data.orgs = orgs;
 
                         users.forEach(function(user) {
                             userOrgPromiseArray.push(account.getOrg(user.org)
@@ -41,14 +42,137 @@ define(['account'],function(account) {
                     });
             }
 
-            function deleteUser() {
-                $log.info('deleting user: ', data.user);
+            $scope.tableHeaders = [
+                {label:'Email',value:'email'},
+                {label:'Name',value:'lastName'},
+                {label:'Org',value:'org.name'},
+                {label:'Status',value:'status'}
+            ];
 
-                account.deleteUser(data.user)
+            $scope.sort = {
+                column: 'email',
+                descending: false
+            };
+
+            $scope.doSort = function(column) {
+                var sort = $scope.sort;
+                if (sort.column === column) {
+                    sort.descending = !sort.descending;
+                } else {
+                    sort.column = column;
+                    sort.descending = false;
+                }
+            };
+
+            self.page = 1;
+            self.limit = 50;
+            self.limits = [5,10,50,100];
+            Object.defineProperties(self, {
+                total: {
+                    get: function() {
+                        return self.users && Math.ceil(self.users.length / self.limit);
+                    }
+                }
+            });
+
+            self.filterData = function(query) {
+                var _query = query.toLowerCase(),
+                    orgs = _data.orgs.filter(function(org) {
+                        return org.name.toLowerCase().indexOf(_query) >= 0;
+                    });
+
+                self.page = 1;
+
+                self.users = _data.users.filter(function(user) {
+                    var bool = false;
+
+                    orgs.forEach(function(org) {
+                        bool = (user.org.id.indexOf(org.id) >= 0) || bool;
+                    });
+
+                    [user.email, user.firstName, user.lastName].forEach(function(field) {
+                        bool = (field && field.toLowerCase().indexOf(_query) >= 0) || bool;
+                    });
+
+                    return bool;
+                });
+            };
+
+            self.sortUsers = function(/*field*/) {
+                // I imagine there will be something in the UI to allow sorting the list
+                // return account.getOrgs(field).then(updateOrgs);
+            };
+
+            self.addNewUser = function() {
+                $location.path('/user/new');
+            };
+
+            $scope.$watch(function() {
+                return self.page + ':' + self.limit;
+            }, function(newVal, oldVal) {
+                var samePage;
+
+                if (newVal === oldVal) { return; }
+
+                newVal = newVal.split(':');
+                oldVal = oldVal.split(':');
+
+                samePage = newVal[0] === oldVal[0];
+
+                if (self.page !== 1 && samePage) {
+                    /* jshint boss:true */
+                    return self.page = 1;
+                    /* jshint boss:false */
+                }
+            });
+
+            initView();
+
+        }])
+
+        .controller('UserController', ['$scope','$log','account','ConfirmDialogService','$q','appData','$routeParams','$location',
+        function                      ( $scope , $log,  account , ConfirmDialogService , $q , appData , $routeParams , $location ) {
+            var self = this,
+                userRoles = appData.proshop.data.userRoles;
+
+            $log = $log.context('UserCtrl');
+            $log.info('instantiated');
+
+            function initView() {
+                var promiseArray = [account.getOrgs()];
+
+                self.loading = true;
+
+                if ($routeParams.id) {
+                    promiseArray.push(account.getUser($routeParams.id));
+                }
+
+                $q.all(promiseArray)
+                    .then(function(promises) {
+                        var orgs = promises[0],
+                            user = promises[1] || {
+                                status: 'active',
+                                type: 'Publisher'
+                            };
+
+                        self.orgs = orgs;
+                        self.org = orgs.filter(function(org) {
+                            return user.org === org.id;
+                        })[0];
+                        self.user = convertUserForEditing(user, self.org || {});
+                    })
+                    .finally(function() {
+                        self.loading = false;
+                    });
+            }
+
+            function deleteUser() {
+                $log.info('deleting user: ', self.user);
+
+                account.deleteUser(self.user)
                     .then(function() {
-                        $scope.message = 'Successfully deleted user: ' + data.user.email;
-                        initView();
-                        self.action = 'all';
+                        $scope.message = 'Successfully deleted user: ' + self.user.email;
+                        $location.path('/users');
                     }, function(err) {
                         $log.error(err);
                         ConfirmDialogService.display({
@@ -61,74 +185,10 @@ define(['account'],function(account) {
                     });
             }
 
-            function setPermissions() {
+            function getPermissions() {
                 var permissions = self.role === 'Admin' ?
-                    {
-                        elections: {
-                            read    : 'all',
-                            create  : 'all',
-                            edit    : 'all',
-                            delete  : 'all'
-                        },
-                        experiences: {
-                            read    : 'all',
-                            create  : 'all',
-                            edit    : 'all',
-                            delete  : 'all',
-                            editAdConfig: 'all',
-                            editSponsorships: 'all'
-                        },
-                        users: {
-                            read    : 'all',
-                            create  : 'all',
-                            edit    : 'all',
-                            delete  : 'all'
-                        },
-                        orgs: {
-                            read    : 'all',
-                            create  : 'all',
-                            edit    : 'all',
-                            delete  : 'all',
-                            editAdConfig: 'all'
-                        },
-                        sites: {
-                            read    : 'all',
-                            create  : 'all',
-                            edit    : 'all',
-                            delete  : 'all'
-                        },
-                        campaigns: {
-                            read    : 'all',
-                            create  : 'all',
-                            edit    : 'all',
-                            delete  : 'all'
-                        }
-                    } :
-                    {
-                        elections: {
-                            read    : 'org',
-                            create  : 'org',
-                            edit    : 'org',
-                            delete  : 'org'
-                        },
-                        experiences: {
-                            read    : 'org',
-                            create  : 'org',
-                            edit    : 'org',
-                            delete  : 'org'
-                        },
-                        users: {
-                            read    : 'org',
-                            edit    : 'own'
-                        },
-                        orgs: {
-                            read    : 'own',
-                            edit    : 'own'
-                        },
-                        sites: {
-                            read    : 'org'
-                        }
-                    };
+                    copy(userRoles.admin) :
+                    copy(userRoles.publisher);
 
                 if (self.role === 'Publisher') {
                     self.editAdConfigOptions.forEach(function(option) {
@@ -139,6 +199,12 @@ define(['account'],function(account) {
                 }
 
                 return permissions;
+            }
+
+            function getApplications() {
+                return self.role === 'Admin' ?
+                    [appData.proshop.id, appData['mini-reel-maker'].id] :
+                    [appData['mini-reel-maker'].id];
             }
 
             function isAdmin(user) {
@@ -183,48 +249,8 @@ define(['account'],function(account) {
                 return user;
             }
 
-            $scope.tableHeaders = [
-                {label:'Email',value:'email'},
-                {label:'Name',value:'lastName'},
-                {label:'Org',value:'org.name'},
-                {label:'Status',value:'status'}
-            ];
-
-            $scope.sort = {
-                column: 'email',
-                descending: false
-            };
-
-            Object.defineProperty($scope, 'passwordMessage', {
-                get: function() {
-                    return this.showPassword ? 'Hide Password' : 'Show Password';
-                }
-            });
-
-            $scope.doSort = function(column) {
-                var sort = $scope.sort;
-                if (sort.column === column) {
-                    sort.descending = !sort.descending;
-                } else {
-                    sort.column = column;
-                    sort.descending = false;
-                }
-            };
-
-            self.action = 'all';
-            self.page = 1;
-            self.limit = 50;
-            self.limits = [5,10,50,100];
+            self.appData = appData;
             self.emailPattern = /^\w+.*\w@\w.*\.\w{2,}$/;
-            Object.defineProperties(self, {
-                total: {
-                    get: function() {
-                        return data.users && Math.ceil(data.users.length / self.limit);
-                    }
-                }
-            });
-            self.showUserSettings = false;
-            self.userPermissionOptions = angular.copy(account.userPermissionOptions);
             self.editAdConfigOptions = [
                 {
                     name: 'orgs',
@@ -237,58 +263,6 @@ define(['account'],function(account) {
                     value: 'org'
                 }
             ];
-
-            self.editUser = function(user){
-                $scope.message = null;
-                self.action = 'edit';
-                data.org = data.appData.orgs.filter(function(org) {
-                    return user.org.id === org.id;
-                })[0];
-                data.user = convertUserForEditing(user, data.org);
-            };
-
-            self.addNewUser = function() {
-                $scope.message = null;
-                self.action = 'new';
-                self.role = null;
-                data.user = {
-                    status: 'active'
-                };
-                data.org = null;
-            };
-
-            self.filterData = function() {
-                var query = data.query.toLowerCase(),
-                    orgs = data.appData.orgs.filter(function(org) {
-                        return org.name.toLowerCase().indexOf(query) >= 0;
-                    });
-
-                self.page = 1;
-
-                data.users = data.appData.users.filter(function(user) {
-                    var bool = false;
-
-                    orgs.forEach(function(org) {
-                        bool = (user.org.id.indexOf(org.id) >= 0) || bool;
-                    });
-
-                    [user.email, user.firstName, user.lastName].forEach(function(field) {
-                        bool = (field && field.toLowerCase().indexOf(query) >= 0) || bool;
-                    });
-
-                    return bool;
-                });
-            };
-
-            self.sortUsers = function(/*field*/) {
-                // I imagine there will be something in the UI to allow sorting the list
-                // return account.getOrgs(field).then(updateOrgs);
-            };
-
-            self.backToList = function() {
-                self.action = 'all';
-                initView();
-            };
 
             self.confirmDelete = function() {
                 ConfirmDialogService.display({
@@ -307,13 +281,14 @@ define(['account'],function(account) {
 
             self.saveUser = function() {
                 var user = {
-                    firstName: data.user.firstName,
-                    lastName: data.user.lastName,
-                    org: data.org.id,
-                    config: data.user.config,
+                    firstName: self.user.firstName,
+                    lastName: self.user.lastName,
+                    org: self.org.id,
+                    config: self.user.config,
                     type: (self.role === 'Admin' ? 'Publisher' : self.role),
-                    status: data.user.status,
-                    permissions: setPermissions()
+                    status: self.user.status,
+                    permissions: getPermissions(),
+                    applications: getApplications()
                 };
 
                 function handleError(err) {
@@ -329,24 +304,22 @@ define(['account'],function(account) {
 
                 function handleSuccess(user) {
                     $log.info('saved user: ', user);
-                    $scope.message = 'Successfully saved user: ' + data.user.email;
-                    initView();
-                    self.action = 'all';
-                    data.user = user;
+                    $scope.message = 'Successfully saved user: ' + self.user.email;
+                    $location.path('/users');
                 }
 
-                if (data.user.id) {
-                    $log.info('PUT', data.user.id, data.user.email, data.user.firstName, data.user.lastName, data.org.id);
+                if (self.user.id) {
+                    $log.info('PUT', self.user.id, self.user.email, self.user.firstName, self.user.lastName, self.org.id);
 
-                    account.putUser(data.user.id, user)
+                    account.putUser(self.user.id, user)
                         .then(handleSuccess, handleError);
 
                 } else {
-                    $log.info('POST', data.user.email, data.user.firstName, data.user.lastName, data.org.id);
+                    $log.info('POST', self.user.email, self.user.firstName, self.user.lastName, self.org.id);
 
                     user = extend(user, {
-                        email: data.user.email,
-                        password: data.user.password,
+                        email: self.user.email,
+                        password: self.user.password,
                     });
 
                     account.postUser(user)
@@ -355,16 +328,15 @@ define(['account'],function(account) {
             };
 
             self.cancelOrgChange = function() {
-                $scope.changingOrgWarning = false;
-                data.org = data.orgs.filter(function(org) {
-                    return org.id === data.user.org.id;
+                self.org = self.orgs.filter(function(org) {
+                    return org.id === self.user.org;
                 })[0];
             };
 
             self.confirmOrgChange = function() {
-                $scope.changingOrgWarning = false;
-                data.user.config = null;
-                data.user = convertUserForEditing(data.user, data.org);
+                self.user.org = self.org.id;
+                self.user.config = null;
+                self.user = convertUserForEditing(self.user, self.org);
             };
 
             self.confirmFreeze = function() {
@@ -374,17 +346,15 @@ define(['account'],function(account) {
                     affirm: 'Yes',
                     cancel: 'Cancel',
                     onAffirm: function() {
-                        $log.info('freezing user: ', data.user);
+                        $log.info('freezing user: ', self.user);
                         ConfirmDialogService.close();
 
                         $q.all([
-                            account.putUser(data.user.id, { status: 'inactive' }),
-                            account.logoutUser(data.user.id)
+                            account.putUser(self.user.id, { status: 'inactive' }),
+                            account.logoutUser(self.user.id)
                         ])
                         .then(function() {
-                            $scope.message = 'Successfully froze user: ' + data.user.email + '.';
-                            initView();
-                            self.action = 'all';
+                            $scope.message = 'Successfully froze user: ' + self.user.email + '.';
                         }, function(err) {
                             $log.error(err);
                             ConfirmDialogService.display({
@@ -402,10 +372,16 @@ define(['account'],function(account) {
                 });
             };
 
-            $scope.$watch('data.org', function(newOrg) {
+            $scope.message = null;
+            Object.defineProperty($scope, 'passwordMessage', {
+                get: function() {
+                    return this.showPassword ? 'Hide Password' : 'Show Password';
+                }
+            });
+
+            $scope.$watch(function() { return self.org; }, function(newOrg) {
                 if (newOrg) {
-                    if (self.action === 'edit' && data.user.org.id !== data.org.id) {
-                        $scope.changingOrgWarning = true;
+                    if (self.user.id && self.user.org !== self.org.id) {
                         ConfirmDialogService.display({
                             prompt: 'Warning: All of this User\'s Minireels will remain with the original Org.',
                             affirm: 'OK, move User without Minireels',
@@ -421,74 +397,15 @@ define(['account'],function(account) {
                         });
                     }
 
-                    if (self.action === 'new') {
-                        data.user.config = null;
-                        data.user.branding = null;
-                        data.user = convertUserForEditing(data.user, newOrg);
+                    if (!self.user.id) {
+                        self.user.config = null;
+                        self.user.branding = null;
+                        self.user = convertUserForEditing(self.user, newOrg);
                     }
-                }
-            });
-
-            $scope.$watch(function() {
-                return self.action;
-            }, function(action) {
-                if (action === 'new') {
-                    self.editAdConfigOptions.forEach(function(option) {
-                        option.enabled = false;
-                    });
-                }
-            });
-
-            $scope.$watch(function() {
-                return self.page + ':' + self.limit;
-            }, function(newVal, oldVal) {
-                var samePage;
-
-                if (newVal === oldVal) { return; }
-
-                newVal = newVal.split(':');
-                oldVal = oldVal.split(':');
-
-                samePage = newVal[0] === oldVal[0];
-
-                if (self.page !== 1 && samePage) {
-                    /* jshint boss:true */
-                    return self.page = 1;
-                    /* jshint boss:false */
                 }
             });
 
             initView();
 
-        }])
-
-        .directive('newUser', [ function ( ) {
-            return {
-                restrict: 'E',
-                templateUrl: 'views/users/user_edit.html',
-                link: function(/*scope, element, attrs, ctrl*/) {
-                    // can move any DOM stuff from Ctrl into here...
-                }
-            };
-        }])
-
-        .directive('editUser', [ function ( ) {
-            return {
-                restrict: 'E',
-                templateUrl: 'views/users/user_edit.html',
-                link: function(/*scope, element, attrs, ctrl*/) {
-                    // can move any DOM stuff from Ctrl into here...
-                }
-            };
-        }])
-
-        .directive('allUsers', [ function ( ) {
-            return {
-                restrict: 'E',
-                templateUrl: 'views/users/users_all.html',
-                link: function(/*scope, element, attrs, ctrl*/) {
-                    // can move any DOM stuff from Ctrl into here...
-                }
-            };
         }]);
 });

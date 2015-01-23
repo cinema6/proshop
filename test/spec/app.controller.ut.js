@@ -13,6 +13,7 @@
                 appData,
                 auth,
                 account,
+                content,
                 c6Defines,
                 localStorage,
                 createAppCtrl,
@@ -32,7 +33,11 @@
 
                 account = {
                     getOrg: jasmine.createSpy('account.getOrg')
-                }
+                };
+
+                content = {
+                    getExperiences: jasmine.createSpy('content.getExperience')
+                };
 
                 c6Defines = {
                     kTracker: {
@@ -62,6 +67,9 @@
                     account.getOrg.deferred = $q.defer();
                     account.getOrg.and.returnValue(account.getOrg.deferred.promise);
 
+                    content.getExperiences.deferred = $q.defer();
+                    content.getExperiences.and.returnValue(content.getExperiences.deferred.promise);
+
                     auth.checkStatus.deferred = $q.defer();
                     auth.checkStatus.and.returnValue(auth.checkStatus.deferred.promise);
 
@@ -88,7 +96,8 @@
                             auth: auth,
                             c6Defines: c6Defines,
                             c6LocalStorage: localStorage,
-                            account: account
+                            account: account,
+                            content: content
                         });
                     };
                 });
@@ -116,7 +125,7 @@
                         mockUser = {
                             id: 'user1',
                             applications: ['app1','app2','app3']
-                        }
+                        };
 
                         localStorage.get.and.returnValue(mockUser);
                         createAppCtrl();
@@ -129,7 +138,7 @@
                     });
 
                     it('success should update user and move to entryPath if set',function(){
-                        var newUser = { id : 'new'}, org = { id: 'o1' };
+                        var newUser = { id : 'new', applications: ['app1','app2']}, org = { id: 'o1' };
 
                         AppCtrl.entryPath = '/foo';
 
@@ -137,6 +146,7 @@
 
                         account.getOrg.deferred.resolve(org)
                         auth.checkStatus.deferred.resolve(newUser);
+                        content.getExperiences.deferred.resolve([{appUri: 'proshop'}, {appUri: 'mini-reel-maker'}]);
 
                         $scope.$apply();
 
@@ -145,17 +155,48 @@
                     });
 
                     it('success should update user and move to / if no entryPath',function(){
-                        var newUser = {id: 'new'}, org = { id: 'o1' };
+                        var newUser = {id: 'new', applications: ['app1','app2']}, org = { id: 'o1' };
 
                         spyOn(AppCtrl, 'updateUser');
 
                         auth.checkStatus.deferred.resolve(newUser);
                         account.getOrg.deferred.resolve(org)
+                        content.getExperiences.deferred.resolve([{appUri: 'proshop'}, {appUri: 'mini-reel-maker'}]);
 
                         $scope.$apply();
 
                         expect(AppCtrl.updateUser).toHaveBeenCalledWith(newUser);
                         expect($location.path).toHaveBeenCalledWith('/');
+                    });
+
+                    it('should remove user and go to /login if applications request fail', function() {
+                        var newUser = {id: 'new', applications: ['app1','app2']}, org = { id: 'o1' };
+
+                        spyOn(AppCtrl, 'updateUser');
+
+                        auth.checkStatus.deferred.resolve(newUser);
+                        account.getOrg.deferred.resolve(org)
+                        content.getExperiences.deferred.reject();
+
+                        $scope.$apply();
+
+                        expect(AppCtrl.updateUser).toHaveBeenCalledWith(null);
+                        expect($location.path).toHaveBeenCalledWith('/login');
+                    });
+
+                    it('should remove user and go to /login if applications do not include proshop and mini-reel-maker', function() {
+                        var newUser = {id: 'new', applications: ['app1','app2']}, org = { id: 'o1' };
+
+                        spyOn(AppCtrl, 'updateUser');
+
+                        auth.checkStatus.deferred.resolve(newUser);
+                        account.getOrg.deferred.resolve(org)
+                        content.getExperiences.deferred.resolve([{appUri: 'proshop'}]);
+
+                        $scope.$apply();
+
+                        expect(AppCtrl.updateUser).toHaveBeenCalledWith(null);
+                        expect($location.path).toHaveBeenCalledWith('/login');
                     });
 
                     it('failure should update user to null and move to login',function(){
@@ -242,7 +283,6 @@
                         AppCtrl.updateUser(mockUser);
                         expect(appData.appUser).toBe(mockUser);
                     });
-
                 });
             });
 
@@ -338,6 +378,14 @@
                     expect(mockEvent.preventDefault).not.toHaveBeenCalled();
                 });
 
+                it('refreshing page when url === /users and user is set', function() {
+                    AppCtrl.user = mockUser;
+
+                    $locationChangeStart(mockEvent, '/users', '/users');
+
+                    expect(mockEvent.preventDefault).toHaveBeenCalled();
+                });
+
             });
 
             describe('$scope.$on(loginSuccess)',function(){
@@ -346,7 +394,8 @@
                 beforeEach(function(){
                     mockUser = {
                         id: 'user',
-                        org: 'org'
+                        org: 'org',
+                        applications: ['app1','app2']
                     };
 
                     mockEvent = {
@@ -364,11 +413,37 @@
                     expect(loginSuccess).toBeDefined();
                 });
 
-                it('should trigger a user update',function(){
+                it('should trigger a user update if applications are retrieved',function(){
                     loginSuccess(mockEvent, mockUser);
+
+                    content.getExperiences.deferred.resolve([{appUri: 'proshop'}, {appUri: 'mini-reel-maker'}]);
+
+                    $scope.$apply();
 
                     expect(AppCtrl.updateUser).toHaveBeenCalledWith(mockUser);
                     expect($location.path).toHaveBeenCalledWith('/');
+                });
+
+                it('should remove user and go to /login if applications request fail', function() {
+                    loginSuccess(mockEvent, mockUser);
+
+                    content.getExperiences.deferred.reject();
+
+                    $scope.$apply();
+
+                    expect(AppCtrl.updateUser).toHaveBeenCalledWith(null);
+                    expect($location.path).toHaveBeenCalledWith('/login');
+                });
+
+                it('should remove user and go to /login if applications do not include proshop and mini-reel-maker', function() {
+                    loginSuccess(mockEvent, mockUser);
+
+                    content.getExperiences.deferred.resolve([{appUri: 'proshop'}]);
+
+                    $scope.$apply();
+
+                    expect(AppCtrl.updateUser).toHaveBeenCalledWith(null);
+                    expect($location.path).toHaveBeenCalledWith('/login');
                 });
             });
         });

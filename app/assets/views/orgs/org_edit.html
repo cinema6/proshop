@@ -121,7 +121,7 @@
             <h3>Default Mode</h3>
             <div ng-repeat="setting in OrgsCtrl.defaultModes">
                 <input type="radio" name="defaultMode" ng-model="data.org.config.minireelinator.minireelDefaults.mode" value="{{setting.value}}" required>
-                <label for="defaultMode">{{setting.label}}</label>
+                <label for="defaultMode">{{setting.name}}</label>
             </div>
         </div>
     </div>

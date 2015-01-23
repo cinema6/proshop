@@ -1,0 +1,147 @@
+<h1>Users</h1>
+<br>
+<section ng-switch="UserCtrl.action" class="view">
+    <div style="padding-bottom:20px">{{message}}</div>
+
+    <form name="theForm" ng-submit="UserCtrl.saveUser()">
+        <a href="/#/users">&lsaquo; Back to list</a>
+        <br>
+        <br>
+        <div ng-if="UserCtrl.user.id" style="padding-bottom:20px;">
+            <b>Username:<br>{{UserCtrl.user.email}}</b>
+        </div>
+
+        <div class="form-group" ng-class="{'has-error': theForm.firstName.$error.required}">
+            <label for="firstName" class="control-label"> First Name: </label>
+            <div>
+                <input type="text" class="col-md-3" class="form-control" name="firstName" ng-model="UserCtrl.user.firstName" autocomplete="off" ng-trim="true" ng-minlength="2" ng-maxlength="128" required ignore-spaces>
+                <span class="help-block">
+                    <span ng-show="theForm.firstName.$error.required"> Required. </span>
+                    <span ng-show="theForm.firstName.$error.minlength"> Too short. </span>
+                    <span ng-show="theForm.firstName.$error.maxlength"> Too long. </span>
+                </span>
+            </div>
+        </div>
+
+        <div class="form-group" ng-class="{'has-error': theForm.lastName.$error.required}">
+            <label for="lastName" class="control-label"> Last Name: </label>
+            <div>
+                <input type="text" class="col-md-3" class="form-control" name="lastName" ng-model="UserCtrl.user.lastName" autocomplete="off" ng-trim="true" ng-minlength="2" ng-maxlength="128" required ignore-spaces>
+                <span class="help-block">
+                    <span ng-show="theForm.lastName.$error.required"> Required. </span>
+                    <span ng-show="theForm.lastName.$error.minlength"> Too short. </span>
+                    <span ng-show="theForm.lastName.$error.maxlength"> Too long. </span>
+                </span>
+            </div>
+        </div>
+        <div ng-if="!UserCtrl.user.id">
+            <div class="form-group" ng-class="{'has-error': theForm.email.$error.required || theForm.email.$error.pattern}">
+                <label for="email" class="control-label"> Email: </label>
+                <div>
+                    <input class="col-md-3" class="form-control" type="text" name="email" ng-model="UserCtrl.user.email" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" ng-pattern="UserCtrl.emailPattern" required ignore-spaces>
+                    <span class="help-block">
+                        <span ng-show="theForm.email.$error.required"> Required. </span>
+                        <span ng-show="theForm.email.$error.minlength"> Too short. </span>
+                        <span ng-show="theForm.email.$error.maxlength"> Too long. </span>
+                        <span ng-show="theForm.email.$error.pattern"> Not a valid email. </span>
+                    </span>
+                </div>
+            </div>
+            <div class="form-group" ng-class="{'has-error': theForm.password.$error.required}">
+                <label for="password" class="control-label"> Password: </label>
+                <div class="clearfix">
+                    <input class="col-md-3" class="form-control" type="password" name="password" ng-model="UserCtrl.user.password" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" ng-show="!showPassword" required>
+                    <input class="col-md-3" class="form-control" type="text" name="password" ng-model="UserCtrl.user.password" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" ng-show="showPassword" required ignore-spaces>
+                    <span class="help-block">
+                        <span ng-show="theForm.password.$error.required"> Required. </span>
+                        <span ng-show="theForm.password.$error.minlength"> Too short. </span>
+                        <span ng-show="theForm.password.$error.maxlength"> Too long. </span>
+                    </span>
+                    <br>
+                </div>
+                    <a href="" ng-click="showPassword = !showPassword"> {{passwordMessage}} </a>
+            </div>
+        </div>
+        <div class="form-group" ng-class="{'has-error': theForm.org.$error.required}">
+            <label for="org" class="control-label"> Org: </label>
+            <div>
+                <select ng-model="UserCtrl.org" name="org" ng-options="org.name for org in UserCtrl.orgs | orderBy:'name'" required>
+                    <option value="">-- Choose Org --</option>
+                </select>
+                <span class="help-block">
+                    <span ng-show="theForm.org.$error.required"> Required. </span>
+                </span>
+            </div>
+        </div>
+
+        <div class="form-group" ng-class="{'has-error': theForm.user_role.$error.required}">
+            <label for="user_role" class="control-label"> Role: </label>
+            <div>
+                <select ng-model="UserCtrl.role" name="user_role" required>
+                    <option value="">-- Choose Role --</option>
+                    <option value="Publisher">Publisher</option>
+                    <option value="ContentProvider">Content Provider</option>
+                    <option value="Admin">System Admin</option>
+                </select>
+                <span class="help-block">
+                    <span ng-show="theForm.user_role.$error.required"> Required. </span>
+                </span>
+            </div>
+        </div>
+
+        <div ng-show="UserCtrl.role === 'Publisher'">
+            <div class="form-group">
+                <div>
+                    <input type="checkbox" name="can_edit_org_ad_settings" ng-model="UserCtrl.editAdConfigOptions[0].enabled">
+                    <label for="can_edit_org_ad_settings" class="control-label"> Can manage Organization's Ad default settings </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div>
+                    <input type="checkbox" name="can_edit_experience_ad_settings" ng-model="UserCtrl.editAdConfigOptions[1].enabled">
+                    <label for="can_edit_experience_ad_settings" class="control-label"> Can manage MiniReel Ad settings </label>
+                </div>
+            </div>
+        </div>
+
+
+        <div ng-if="UserCtrl.org">
+            <div class="form-group">
+                <div ng-repeat="setting in UserCtrl.appData.defaultSplashOptions">
+                    <label for="{{setting.label}}">{{setting.title}}</label>
+                    <div ng-repeat="option in setting.options">
+                        <input type="radio" name="{{setting.label}}" ng-model="UserCtrl.user.config.minireelinator.minireelDefaults.splash[setting.label]" value="{{option}}" required>
+                        <span>{{option}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Status:</label>
+                <br>
+                <input type="radio" id="user_status" name="status" ng-model="UserCtrl.user.status" value="active" required>
+                Active
+                <br>
+                <input type="radio" id="user_status" name="status" ng-model="UserCtrl.user.status" value="inactive" required>
+                Inactive
+                <br>
+                <input type="radio" id="user_status" name="status" ng-model="UserCtrl.user.status" value="pending" required>
+                Pending
+                <div>
+                    <span ng-show="theForm.status.$error.required"> Required. </span>
+                </div>
+            </div>
+
+            <div style="padding-bottom:40px;">
+                <input type="submit" value="Save" ng-disabled="!theForm.$valid">
+                <input type="button" value="Delete" ng-show="UserCtrl.user.id" ng-click="UserCtrl.confirmDelete()">
+                <input type="button" value="Freeze" ng-show="UserCtrl.user.id" ng-click="UserCtrl.confirmFreeze()">
+                <span ng-show="!theForm.$valid" class="text-danger"> There are errors above. See highlighted fields. </span>
+            </div>
+        </div>
+    </form>
+
+    <div class="mask" ng-show="UserCtrl.loading"></div>
+</section>
+

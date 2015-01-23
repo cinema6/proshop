@@ -5,31 +5,48 @@
     "lastName": "Testmonkey",
     "branding": "elitedaily",
     "created": "2014-06-13T19:28:39.408Z",
-    "lastUpdated": "2014-06-13T19:28:39.408Z",
-    "applications": ["e-51ae37625cb57f"],
+    "lastUpdated": "2015-01-20T19:30:41.961Z",
+    "applications": [
+        "e-51ae37625cb57f"
+    ],
     "org": "o-111",
     "status": "active",
-    "config": {},
+    "config": {
+        "minireelinator": {
+            "minireelDefaults": {
+                "splash": {
+                    "ratio": "3-2",
+                    "theme": "img-text-overlay"
+                }
+            }
+        }
+    },
     "permissions": {
-        "experiences": {
-            "read": "own",
-            "create": "own",
-            "edit": "own",
-            "delete": "own"
-        },
         "elections": {
-            "read": "own",
-            "create": "own",
-            "edit": "own",
-            "delete": "own"
+            "read": "org",
+            "create": "org",
+            "edit": "org",
+            "delete": "org"
+        },
+        "experiences": {
+            "read": "org",
+            "create": "org",
+            "edit": "org",
+            "delete": "org",
+            "editAdConfig": "org"
         },
         "users": {
-            "read": "own",
+            "read": "org",
             "edit": "own"
         },
         "orgs": {
             "read": "own",
-            "edit": "own"
+            "edit": "own",
+            "editAdConfig": "own"
+        },
+        "sites": {
+            "read": "org"
         }
-    }
+    },
+    "type": "Publisher"
 }
