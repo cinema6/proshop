@@ -76,7 +76,13 @@
                                         edit    : 'all',
                                         delete  : 'all'
                                     },
-                                    campaigns: {
+                                    cards: {
+                                        read    : 'all',
+                                        create  : 'all',
+                                        edit    : 'all',
+                                        delete  : 'all'
+                                    },
+                                    categories: {
                                         read    : 'all',
                                         create  : 'all',
                                         edit    : 'all',
@@ -455,7 +461,13 @@
                                         edit    : 'all',
                                         delete  : 'all'
                                     },
-                                    campaigns: {
+                                    cards: {
+                                        read    : 'all',
+                                        create  : 'all',
+                                        edit    : 'all',
+                                        delete  : 'all'
+                                    },
+                                    categories: {
                                         read    : 'all',
                                         create  : 'all',
                                         edit    : 'all',
@@ -640,7 +652,13 @@
                                         edit    : 'all',
                                         delete  : 'all'
                                     },
-                                    campaigns: {
+                                    cards: {
+                                        read    : 'all',
+                                        create  : 'all',
+                                        edit    : 'all',
+                                        delete  : 'all'
+                                    },
+                                    categories: {
                                         read    : 'all',
                                         create  : 'all',
                                         edit    : 'all',
