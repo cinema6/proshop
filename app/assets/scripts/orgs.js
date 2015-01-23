@@ -2,8 +2,8 @@ define(['account'],function(account) {
     'use strict';
 
     return angular.module('c6.proshop.orgs',[account.name])
-        .controller('OrgsController', ['$scope', '$log', 'account', 'ConfirmDialogService',
-        function                      ( $scope ,  $log,   account ,  ConfirmDialogService ) {
+        .controller('OrgsController', ['$scope','$log','account','ConfirmDialogService','appData',
+        function                      ( $scope , $log,  account , ConfirmDialogService , appData ) {
             var self = this,
                 data = $scope.data,
                 bindBrandToName = true;
@@ -51,11 +51,12 @@ define(['account'],function(account) {
                 }
             };
 
-            self.defaultModes = [
-                {label:'Embedded',value:'light'},
-                {label:'Lightbox, with Companion',value:'lightbox-ads'},
-                {label:'Lightbox, without Companion',value:'lightbox'}
-            ];
+            self.defaultModes = appData['mini-reel-maker'].data.modes
+                .reduce(function(result, mode) {
+                    return result.concat(mode.modes.filter(function(innerMode) {
+                        return !innerMode.deprecated;
+                    }));
+                },[]);
 
             self.action = 'all';
             self.page = 1;
