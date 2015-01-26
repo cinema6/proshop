@@ -2,7 +2,7 @@
     "id": "s-111",
     "status": "active",
     "created": "2014-06-13T19:28:39.408Z",
-    "lastUpdated": "2014-06-13T19:28:39.408Z",
+    "lastUpdated": "2015-01-26T20:28:42.355Z",
     "org": "o-112",
     "branding": "site1_branding",
     "placementId": "111111",
@@ -10,12 +10,17 @@
     "host": "bestever.com",
     "containers": [
         {
-            "type": "veeseo",
+            "id": "veeseo_number2",
             "displayPlacementId": "1212121",
             "contentPlacementId": "232443"
         },
         {
-            "type": "mr2",
+            "id": "veeseo_number1",
+            "displayPlacementId": "12121245",
+            "contentPlacementId": "232443577"
+        },
+        {
+            "id": "mr2_some_id",
             "displayPlacementId": "34343",
             "contentPlacementId": "4544556"
         }

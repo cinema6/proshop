@@ -70,18 +70,34 @@
 
         <div class="form-group">
             <label for="containers" class="control-label"> Containers: </label>
-            <div ng-repeat="container in SiteCtrl.containers">
-                <span ng-if="container.enabled">
-                    <span class="glyphicon glyphicon-remove" ng-click="container.enabled = false"></span><strong> {{container.name}} </strong>
-                    <small ng-if="container.displayPlacementId && container.contentPlacementId">DisplayID: {{container.displayPlacementId}}, ContentID: {{container.contentPlacementId}}</small>
+            <div ng-repeat="container in SiteCtrl.site.containers">
+                <span>
+                    <span class="glyphicon glyphicon-remove" ng-click="SiteCtrl.site.containers.splice($index,1)"></span><strong> {{container.name}} </strong>
+                    <small>ID: {{container.id}}<span ng-show="container.displayPlacementId && container.contentPlacementId">, DisplayID: {{container.displayPlacementId}}, ContentID: {{container.contentPlacementId}}</span></small>
             </span>
             </div>
-            <div class="clearfix">
-                <select name="containers" ng-model="container" ng-options="container.name for container in SiteCtrl.containers | filter:enabled:false | orderBy:'name'">
+            <div class="clearfix" style="padding-top:10px;">
+                <label for="containers" class="control-label"> Add a Container: </label>
+                <select name="containers" ng-model="SiteCtrl.container" ng-options="container.name for container in SiteCtrl.containerTypes | orderBy:'name'">
                     <option value=""> Choose a type </option>
                 </select>
-                <input ng-show="container.name === 'Other'" type="text" ng-model="container.type" autocomplete="off" ng-minlength="3" ng-maxlength="128" ignore-spaces>
-                <span ng-click="SiteCtrl.addContainerItem(container)">Add</span>
+
+                <div ng-if="SiteCtrl.container">
+                    <span ng-if="SiteCtrl.duplicateContainers">
+                        NOTE: You already have a <strong>{{SiteCtrl.container.name}}</strong> container.
+                        <br>
+                    </span>
+                    <span ng-show="SiteCtrl.newContainerId">
+                        The new container id will be: <strong>{{SiteCtrl.newContainerId}}</strong>
+                        <br>
+                    </span>
+                    <a ng-hide="!SiteCtrl.container.type" ng-click="customize = true" href="">Customize the ID</a>
+                    <span ng-hide="SiteCtrl.container.type">Enter a Container ID: </span>
+                    <input type="text" ng-show="customize || !SiteCtrl.container.type" ng-model="SiteCtrl.container.customization" autocomplete="off" ng-minlength="3" ng-maxlength="128" ignore-spaces> <a ng-show="customize" ng-click="customize = false; SiteCtrl.container.customization = null;" href="">Cancel</a>
+                    <br>
+                    <input type="button" ng-click="SiteCtrl.addContainerItem()" ng-disabled="!SiteCtrl.newContainerId" value="Add">
+                    <!-- <span ng-click="SiteCtrl.addContainerItem(container)">Add</span> -->
+                </div>
             </div>
         </div>
 

@@ -1,6 +1,9 @@
 define(['account'], function(account) {
     'use strict';
 
+    var extend = angular.extend,
+        copy = angular.copy;
+
     return angular.module('c6.proshop.sites', [account.name])
         .controller('SitesController', ['$scope','$location','$log','SitesService','account','$q',
         function                       ( $scope , $location , $log , SitesService , account , $q ) {
@@ -151,81 +154,85 @@ define(['account'], function(account) {
                             return site.org === org.id;
                         })[0];
 
-                        enableActiveContainers(site.containers);
+                        convertContainersForEditing(site.containers);
                     })
                     .finally(function() {
                         self.loading = false;
                     });
             }
 
-            function enableActiveContainers(containers) {
+            function convertContainersForEditing(containers) {
                 if (!containers) { return; }
 
-                var types = self.containers.reduce(function(result, container) {
-                    return result.concat(container.type);
-                },[]);
+                containers.forEach(function(container) {
+                    var type = container.id.split('_')[0],
+                        _container = getElementByValue(type, 'type', self.containerTypes);
 
-                containers.forEach(function(siteContainer) {
-                    if (types.indexOf(siteContainer.type) > -1) {
-                        self.containers.forEach(function(ctrlContainer) {
-                            if (siteContainer.type === ctrlContainer.type) {
-                                ctrlContainer.enabled = true;
-                                angular.extend(ctrlContainer, siteContainer);
-                            }
-                        });
+                    if (_container) {
+                        extend(container, _container);
                     } else {
-                        self.containers.push(angular.extend({
-                            name: toTitleCase(siteContainer.type.replace(/_/g, ' ')),
-                            enabled: true
-                        }, siteContainer));
+                        container.name = 'Custom';
                     }
                 });
+            }
+
+            function getElementByValue(value, prop, array) {
+                return array.filter(function(el) {
+                    return el[prop] === value;
+                })[0];
             }
 
             function convertContainersForSaving(containers) {
-                var _containers = [],
-                    types = self.containers.reduce(function(result, container) {
-                        return container.enabled && result.indexOf(container.type) < 0 ? result.concat(container.type) : result;
-                    }, []);
-
-                containers.forEach(function(container) {
-                    var index = types.indexOf(container.type);
-
-                    if (index > -1) {
-                        types.splice(index, 1);
-                        _containers.push(container);
-                    }
+                return containers.map(function(container) {
+                    return {id: container.id};
                 });
-
-                types.forEach(function(type) {
-                    _containers.push({ type: type });
-                });
-
-                return _containers;
             }
 
-            self.containers = [
-                {type: 'embed', name: 'Embed', enabled: false},
-                {type: 'mr2', name: 'MR2 Widget', enabled: false},
-                {type: 'taboola', name: 'Taboola', enabled: false},
-                {type: 'outbrain', name: 'Outbrain', enabled: false},
-                {type: 'veeseo', name: 'Veeseo', enabled: false},
-                {type: '', name: 'Other', enabled: false}
+            Object.defineProperties(self, {
+                duplicateContainers: {
+                    get: function() {
+                        return self.container && self.container.type &&
+                            self.site && self.site.containers &&
+                            !!self.site.containers.filter(function(container) {
+                                return container.type === self.container.type;
+                            })[0];
+                    }
+                },
+                newContainerId: {
+                    get: function() {
+                        var container = self.container,
+                            prefix = container.type !== '';
+
+                        function getNum() {
+                            return self.site.containers.filter(function(cont) {
+                                return cont.type === container.type;
+                            }).length + 1;
+                        }
+
+                        return !container ? '' : container.type +
+                            (container.customization ?
+                                (prefix ? '_' : '') + container.customization.toLowerCase().replace(/ /g, '_') :
+                                (self.duplicateContainers ? '_' + getNum() : '')
+                            );
+                    }
+                }
+            });
+
+            self.containerTypes = [
+                {type: 'embed', name: 'Embed'},
+                {type: 'mr2', name: 'MR2 Widget'},
+                {type: 'taboola', name: 'Taboola'},
+                {type: 'outbrain', name: 'Outbrain'},
+                {type: 'veeseo', name: 'Veeseo'},
+                {type: '', name: 'Custom'}
             ];
 
-            self.addContainerItem = function(container) {
-                if (!container.type) { return; }
-
-                if (container.name === 'Other') {
-                    self.containers.push({
-                        type: container.type.replace(/ /g, '_').toLowerCase(),
-                        name: toTitleCase(container.type),
-                        enabled: true
-                    });
-                    container.type = '';
-                } else {
-                    container.enabled = true;
-                }
+            self.addContainerItem = function() {
+                self.site.containers.push(
+                    extend({
+                        id: self.newContainerId
+                    }, copy(self.container))
+                );
             };
 
             self.disableBrandBinding = function() {
