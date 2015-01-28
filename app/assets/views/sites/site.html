@@ -90,7 +90,7 @@
             </div>
 
             <div class="clearfix">
-                <label for="containers" class="control-label"> Add a Container: </label>
+                <label for="containers" class="control-label"> Add a container: </label>
                 <select name="containers" ng-model="SiteCtrl.container" ng-options="container.name for container in SiteCtrl.containerTypes | orderBy:'name'">
                     <option value=""> Choose a type </option>
                 </select>
@@ -98,10 +98,10 @@
                 <div ng-if="SiteCtrl.container">
                     <div style="line-height:1.8em;padding-top:5px;">
                         <div ng-if="SiteCtrl.duplicateContainerId">
-                            <span class="text-danger"><strong>ERROR</strong></span>: You already have a container with an ID of <strong>{{SiteCtrl.newContainerId}}</strong> container.
+                            <span class="text-danger"><strong>ERROR</strong></span>: A container with the ID of <strong>{{SiteCtrl.newContainerId}}</strong> already exists.
                         </div>
                         <div ng-if="SiteCtrl.duplicateContainerType">
-                            <span class="text-warning"><strong>NOTE</strong></span>: You already have a <strong>{{SiteCtrl.container.name}}</strong> container.
+                            <span class="text-warning"><strong>NOTE</strong></span>: A<span ng-show="SiteCtrl.container.name.charAt(0).match(SiteCtrl.vowelRegex).length">n</span> <strong>{{SiteCtrl.container.name}}</strong> container already exists. Multiple containers of the same type are allowed as long as the ID is different.
                         </div>
                         <div>
                             <div ng-show="SiteCtrl.newContainerId">A new container <span ng-show="!SiteCtrl.duplicateContainerId">will</span> <span ng-show="SiteCtrl.duplicateContainerId"><strong>cannot</strong></span> be created with this ID: <strong>{{SiteCtrl.newContainerId}}</strong></div>
@@ -114,28 +114,28 @@
                         <a ng-show="customize" ng-click="customize = false; SiteCtrl.container.customization = null;" href="">Cancel</a>
                     </div>
                     <input type="button" ng-click="SiteCtrl.addContainerItem()" ng-disabled="!SiteCtrl.newContainerId || SiteCtrl.duplicateContainerId" value="Add" style="margin-top:10px;">
-                    <!-- <span ng-click="SiteCtrl.addContainerItem(container)">Add</span> -->
                 </div>
             </div>
         </div>
 
-            <div class="form-group" ng-class="{'has-error': theForm.status.$error.required}">
-                <label for="status" class="control-label"> Status: </label>
-                <div>
-                    <input type="radio" name="status" ng-model="SiteCtrl.site.status" value="active" required>
-                    <label for="new_org_status"> Active</label>
-                    <br>
-                    <input type="radio" name="status" ng-model="SiteCtrl.site.status" value="inactive" required>
-                    <label for="new_org_status"> Inactive</label>
-                    <br>
-                    <input type="radio" name="status" ng-model="SiteCtrl.site.status" value="pending" required>
-                    <label for="new_org_status"> Pending</label>
-                    <br>
-                    <span class="help-block">
-                        <span ng-show="theForm.status.$error.required"> Required. </span>
-                    </span>
-                </div>
+        <div class="form-group" ng-class="{'has-error': theForm.status.$error.required}">
+            <label for="status" class="control-label"> Status: </label>
+            <div>
+                <input type="radio" name="status" ng-model="SiteCtrl.site.status" value="active" required>
+                <label for="new_org_status"> Active</label>
+                <br>
+                <input type="radio" name="status" ng-model="SiteCtrl.site.status" value="inactive" required>
+                <label for="new_org_status"> Inactive</label>
+                <br>
+                <input type="radio" name="status" ng-model="SiteCtrl.site.status" value="pending" required>
+                <label for="new_org_status"> Pending</label>
+                <br>
+                <span class="help-block">
+                    <span ng-show="theForm.status.$error.required"> Required. </span>
+                </span>
             </div>
+        </div>
+
         <div style="padding:20px 0 40px 0;">
             <input type="submit" value="Save" ng-disabled="!theForm.$valid">
             <input type="button" value="Delete" ng-show="SiteCtrl.site.id" ng-click="SiteCtrl.confirmDelete()">

@@ -121,9 +121,9 @@ define(['account'], function(account) {
             $log = $log.context('SiteCtrl');
             $log.info('instantiated');
 
-            function getByValue(value, prop, array) {
-                return array.filter(function(el) {
-                    return el[prop] === value;
+            function getObjectByProp(prop, value, array) {
+                return array.filter(function(obj) {
+                    return obj[prop] === value;
                 })[0];
             }
 
@@ -152,7 +152,7 @@ define(['account'], function(account) {
             function convertContainersForEditing(containers) {
                 containers.forEach(function(container) {
                     var type = container.id.split('_')[0],
-                        _container = getByValue(type, 'type', self.containerTypes);
+                        _container = getObjectByProp('type', type, self.containerTypes);
 
                     extend(container, _container || {name: 'Custom'});
                 });
@@ -188,41 +188,10 @@ define(['account'], function(account) {
                     });
             }
 
-            Object.defineProperties(self, {
-                duplicateContainerId: {
-                    get: function() {
-                        return self.site && self.site.containers &&
-                            !!self.site.containers.filter(function(container) {
-                                return container.id === self.newContainerId;
-                            })[0];
-                    }
-                },
-                duplicateContainerType: {
-                    get: function() {
-                        return self.container && self.container.type &&
-                            self.site && self.site.containers &&
-                            !!self.site.containers.filter(function(container) {
-                                return container.type === self.container.type;
-                            })[0];
-                    }
-                },
-                newContainerId: {
-                    get: function() {
-                        var container = self.container || { type: '' },
-                            customization = container.customization,
-                            prefix = container.type !== '';
-
-                        return container.type +
-                            (customization ?
-                                (prefix ? '_' : '') + filterId(customization) :
-                                (self.duplicateContainerType ?
-                                    '_' + getNextNum(self.site.containers, container) :
-                                    '')
-                            );
-                    }
-                }
-            });
-
+            self.newContainerId = '';
+            self.duplicateContainerType = false;
+            self.duplicateContainerId = false;
+            self.vowelRegex = /[AEIOUaeiou]/;
             self.containerTypes = [
                 {type: 'embed', name: 'Embed'},
                 {type: 'mr2', name: 'MR2 Widget'},
@@ -338,6 +307,26 @@ define(['account'], function(account) {
                 if (newName && bindBrandToName) {
                     self.site.branding = convertNameToBrand(newName);
                 }
+            });
+
+            $scope.$watchCollection(function() { return self.container; }, function(container) {
+                if (!container || !self.site.containers) { return; }
+
+                var newId,
+                    type = container.type,
+                    isCustom = type === '',
+                    prefix = isCustom ? '' : '_',
+                    containers = self.site.containers,
+                    customization = container.customization,
+                    typeExists = !isCustom && !!getObjectByProp('type', type, containers);
+
+                self.newContainerId = newId = type +
+                    (customization ?
+                        prefix + filterId(customization) :
+                        (typeExists ? '_' + getNextNum(containers, container) : '')
+                    );
+                self.duplicateContainerType = typeExists;
+                self.duplicateContainerId = !!getObjectByProp('id', newId, containers);
             });
 
             initView();
