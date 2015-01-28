@@ -121,13 +121,40 @@ define(['account'], function(account) {
             $log = $log.context('SiteCtrl');
             $log.info('instantiated');
 
+            function getByValue(value, prop, array) {
+                return array.filter(function(el) {
+                    return el[prop] === value;
+                })[0];
+            }
+
+            function filterId(string) {
+                return string.toLowerCase()
+                    .replace(/ /g, '_')
+                    .replace(/[^0-9a-zA-Z_]*/g,'');
+            }
+
+            function getNextNum(containers, container) {
+                return containers.filter(function(cont) {
+                    return cont.type === container.type;
+                }).length + 1;
+            }
+
             function convertNameToBrand(name) {
                 return name.toLowerCase().split(',')[0].replace(/ /g, '_');
             }
 
-            function toTitleCase(str) {
-                return str.replace(/\w\S*/g, function(txt) {
-                    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+            function convertContainersForSaving(containers) {
+                return containers.map(function(container) {
+                    return {id: container.id};
+                });
+            }
+
+            function convertContainersForEditing(containers) {
+                containers.forEach(function(container) {
+                    var type = container.id.split('_')[0],
+                        _container = getByValue(type, 'type', self.containerTypes);
+
+                    extend(container, _container || {name: 'Custom'});
                 });
             }
 
@@ -161,35 +188,16 @@ define(['account'], function(account) {
                     });
             }
 
-            function convertContainersForEditing(containers) {
-                if (!containers) { return; }
-
-                containers.forEach(function(container) {
-                    var type = container.id.split('_')[0],
-                        _container = getElementByValue(type, 'type', self.containerTypes);
-
-                    if (_container) {
-                        extend(container, _container);
-                    } else {
-                        container.name = 'Custom';
-                    }
-                });
-            }
-
-            function getElementByValue(value, prop, array) {
-                return array.filter(function(el) {
-                    return el[prop] === value;
-                })[0];
-            }
-
-            function convertContainersForSaving(containers) {
-                return containers.map(function(container) {
-                    return {id: container.id};
-                });
-            }
-
             Object.defineProperties(self, {
-                duplicateContainers: {
+                duplicateContainerId: {
+                    get: function() {
+                        return self.site && self.site.containers &&
+                            !!self.site.containers.filter(function(container) {
+                                return container.id === self.newContainerId;
+                            })[0];
+                    }
+                },
+                duplicateContainerType: {
                     get: function() {
                         return self.container && self.container.type &&
                             self.site && self.site.containers &&
@@ -200,19 +208,16 @@ define(['account'], function(account) {
                 },
                 newContainerId: {
                     get: function() {
-                        var container = self.container,
+                        var container = self.container || { type: '' },
+                            customization = container.customization,
                             prefix = container.type !== '';
 
-                        function getNum() {
-                            return self.site.containers.filter(function(cont) {
-                                return cont.type === container.type;
-                            }).length + 1;
-                        }
-
-                        return !container ? '' : container.type +
-                            (container.customization ?
-                                (prefix ? '_' : '') + container.customization.toLowerCase().replace(/ /g, '_') :
-                                (self.duplicateContainers ? '_' + getNum() : '')
+                        return container.type +
+                            (customization ?
+                                (prefix ? '_' : '') + filterId(customization) :
+                                (self.duplicateContainerType ?
+                                    '_' + getNextNum(self.site.containers, container) :
+                                    '')
                             );
                     }
                 }
@@ -233,6 +238,9 @@ define(['account'], function(account) {
                         id: self.newContainerId
                     }, copy(self.container))
                 );
+
+                self.container.customization = '';
+                self.container = null;
             };
 
             self.disableBrandBinding = function() {
@@ -302,6 +310,28 @@ define(['account'], function(account) {
                         ConfirmDialogService.close();
                     }
                 });
+            };
+
+            $scope.containerTableHeaders = [
+                {label:'ID',value:'id'},
+                {label:'Type',value:'name'},
+                {label:'Display Placement ID',value:'displayPlacementId'},
+                {label:'Content Placement ID',value:'contentPlacementId'}
+            ];
+
+            $scope.sort = {
+                column: 'id',
+                descending: false
+            };
+
+            $scope.doSort = function(column) {
+                var sort = $scope.sort;
+                if (sort.column === column) {
+                    sort.descending = !sort.descending;
+                } else {
+                    sort.column = column;
+                    sort.descending = false;
+                }
             };
 
             $scope.$watch(function() {return self.site && self.site.name;}, function(newName) {
