@@ -159,6 +159,8 @@ define(['angular'], function(angular) {
 
             self.newLink = new Link();
             self.newLogo = new Link();
+            self.imageRegex = /^(http:\/\/|https:\/\/)([\w-]+\.)+[\w-]+\/([\w-]+(\/)?)+(\.)(\w{3,4})$/;
+            self.urlRegex =   /^(http:\/\/|https:\/\/)([\w-]+\.)+[\w-]+(\/([\w-]+(\/)?)*)*$/;
 
             self.addLink = function() {
                 self.links = self.links.concat([self.newLink]);
