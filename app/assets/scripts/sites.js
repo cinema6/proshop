@@ -195,8 +195,10 @@ define(['account'], function(account) {
             self.containerTypes = [
                 {type: 'embed', name: 'Embed'},
                 {type: 'mr2', name: 'MR2 Widget'},
-                {type: 'taboola', name: 'Taboola'},
-                {type: 'outbrain', name: 'Outbrain'},
+                {type: 'jun', name: 'Jun Group'},
+                {type: 'adblade', name: 'Adblade'},
+                {type: 'bidtellect', name: 'Bidtellect'},
+                {type: 'connatix', name: 'Connatix'},
                 {type: 'veeseo', name: 'Veeseo'},
                 {type: '', name: 'Custom'}
             ];
