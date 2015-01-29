@@ -15,6 +15,7 @@
                 SitesService,
                 account,
                 ConfirmDialogService,
+                appData,
                 mockSite,
                 mockOrgs;
 
@@ -42,6 +43,47 @@
                 };
 
                 /* jshint quotmark:false */
+                appData = {
+                    "proshop": {
+                        "data": {
+                            "siteContainers": [
+                                {
+                                    "type": "embed",
+                                    "name": "Embed"
+                                },
+                                {
+                                    "type": "mr2",
+                                    "name": "MR2 Widget"
+                                },
+                                {
+                                    "type": "jun",
+                                    "name": "Jun Group"
+                                },
+                                {
+                                    "type": "adblade",
+                                    "name": "Adblade"
+                                },
+                                {
+                                    "type": "bidtellect",
+                                    "name": "Bidtellect"
+                                },
+                                {
+                                    "type": "connatix",
+                                    "name": "Connatix"
+                                },
+                                {
+                                    "type": "veeseo",
+                                    "name": "Veeseo"
+                                },
+                                {
+                                    "type": "",
+                                    "name": "Custom"
+                                }
+                            ]
+                        }
+                    }
+                };
+
                 mockSite = {
                     "id": "s-1",
                     "status": "active",
@@ -113,7 +155,8 @@
                         $routeParams: $routeParams,
                         account: account,
                         SitesService: SitesService,
-                        ConfirmDialogService: ConfirmDialogService
+                        ConfirmDialogService: ConfirmDialogService,
+                        appData: appData
                     });
                 });
             });
@@ -139,7 +182,8 @@
                         $routeParams: $routeParams,
                         account: account,
                         SitesService: SitesService,
-                        ConfirmDialogService: ConfirmDialogService
+                        ConfirmDialogService: ConfirmDialogService,
+                        appData: appData
                     });
 
                     expect(SitesService.getSite).not.toHaveBeenCalled();
@@ -359,7 +403,8 @@
                                 $routeParams: $routeParams,
                                 account: account,
                                 SitesService: SitesService,
-                                ConfirmDialogService: ConfirmDialogService
+                                ConfirmDialogService: ConfirmDialogService,
+                                appData: appData
                             });
 
                             $scope.$apply(function() {
@@ -677,7 +722,8 @@
                                 $routeParams: $routeParams,
                                 account: account,
                                 SitesService: SitesService,
-                                ConfirmDialogService: ConfirmDialogService
+                                ConfirmDialogService: ConfirmDialogService,
+                                appData: appData
                             });
 
                             $scope.$apply(function() {

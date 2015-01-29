@@ -113,10 +113,13 @@ define(['account'], function(account) {
 
         }])
 
-        .controller('SiteController', ['$scope','$routeParams','$location','$log','$q','SitesService','account','ConfirmDialogService',
-        function                      ( $scope , $routeParams , $location , $log , $q , SitesService , account , ConfirmDialogService ) {
+        .controller('SiteController', ['$scope','$routeParams','$location','$log','$q',
+                                       'SitesService','account','ConfirmDialogService','appData',
+        function                      ( $scope , $routeParams , $location , $log , $q ,
+                                        SitesService , account , ConfirmDialogService , appData ) {
             var self = this,
-                bindBrandToName = !$routeParams.id;
+                bindBrandToName = !$routeParams.id,
+                containerTypes = appData.proshop.data.siteContainers;
 
             $log = $log.context('SiteCtrl');
             $log.info('instantiated');
@@ -189,19 +192,10 @@ define(['account'], function(account) {
             }
 
             self.newContainerId = '';
-            self.duplicateContainerType = false;
-            self.duplicateContainerId = false;
             self.vowelRegex = /[AEIOUaeiou]/;
-            self.containerTypes = [
-                {type: 'embed', name: 'Embed'},
-                {type: 'mr2', name: 'MR2 Widget'},
-                {type: 'jun', name: 'Jun Group'},
-                {type: 'adblade', name: 'Adblade'},
-                {type: 'bidtellect', name: 'Bidtellect'},
-                {type: 'connatix', name: 'Connatix'},
-                {type: 'veeseo', name: 'Veeseo'},
-                {type: '', name: 'Custom'}
-            ];
+            self.duplicateContainerId = false;
+            self.duplicateContainerType = false;
+            self.containerTypes = containerTypes;
 
             self.addContainerItem = function() {
                 self.site.containers.push(
