@@ -1,6 +1,9 @@
 define(['account'], function(account) {
     'use strict';
 
+    var extend = angular.extend,
+        copy = angular.copy;
+
     return angular.module('c6.proshop.sites', [account.name])
         .controller('SitesController', ['$scope','$location','$log','SitesService','account','$q',
         function                       ( $scope , $location , $log , SitesService , account , $q ) {
@@ -110,21 +113,51 @@ define(['account'], function(account) {
 
         }])
 
-        .controller('SiteController', ['$scope','$routeParams','$location','$log','$q','SitesService','account','ConfirmDialogService',
-        function                      ( $scope , $routeParams , $location , $log , $q , SitesService , account , ConfirmDialogService ) {
+        .controller('SiteController', ['$scope','$routeParams','$location','$log','$q',
+                                       'SitesService','account','ConfirmDialogService','appData',
+        function                      ( $scope , $routeParams , $location , $log , $q ,
+                                        SitesService , account , ConfirmDialogService , appData ) {
             var self = this,
-                bindBrandToName = !$routeParams.id;
+                bindBrandToName = !$routeParams.id,
+                containerTypes = appData.proshop.data.siteContainers;
 
             $log = $log.context('SiteCtrl');
             $log.info('instantiated');
+
+            function getObjectByProp(prop, value, array) {
+                return array.filter(function(obj) {
+                    return obj[prop] === value;
+                })[0];
+            }
+
+            function filterId(string) {
+                return string.toLowerCase()
+                    .replace(/ /g, '_')
+                    .replace(/[^0-9a-zA-Z_]*/g,'');
+            }
+
+            function getNextNum(containers, container) {
+                return containers.filter(function(cont) {
+                    return cont.type === container.type;
+                }).length + 1;
+            }
 
             function convertNameToBrand(name) {
                 return name.toLowerCase().split(',')[0].replace(/ /g, '_');
             }
 
-            function toTitleCase(str) {
-                return str.replace(/\w\S*/g, function(txt) {
-                    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+            function convertContainersForSaving(containers) {
+                return containers.map(function(container) {
+                    return {id: container.id};
+                });
+            }
+
+            function convertContainersForEditing(containers) {
+                containers.forEach(function(container) {
+                    var type = container.id.split('_')[0],
+                        _container = getObjectByProp('type', type, self.containerTypes);
+
+                    extend(container, _container || {name: 'Custom'});
                 });
             }
 
@@ -151,81 +184,28 @@ define(['account'], function(account) {
                             return site.org === org.id;
                         })[0];
 
-                        enableActiveContainers(site.containers);
+                        convertContainersForEditing(site.containers);
                     })
                     .finally(function() {
                         self.loading = false;
                     });
             }
 
-            function enableActiveContainers(containers) {
-                if (!containers) { return; }
+            self.newContainerId = '';
+            self.vowelRegex = /[AEIOUaeiou]/;
+            self.duplicateContainerId = false;
+            self.duplicateContainerType = false;
+            self.containerTypes = containerTypes;
 
-                var types = self.containers.reduce(function(result, container) {
-                    return result.concat(container.type);
-                },[]);
+            self.addContainerItem = function() {
+                self.site.containers.push(
+                    extend({
+                        id: self.newContainerId
+                    }, copy(self.container))
+                );
 
-                containers.forEach(function(siteContainer) {
-                    if (types.indexOf(siteContainer.type) > -1) {
-                        self.containers.forEach(function(ctrlContainer) {
-                            if (siteContainer.type === ctrlContainer.type) {
-                                ctrlContainer.enabled = true;
-                                angular.extend(ctrlContainer, siteContainer);
-                            }
-                        });
-                    } else {
-                        self.containers.push(angular.extend({
-                            name: toTitleCase(siteContainer.type.replace(/_/g, ' ')),
-                            enabled: true
-                        }, siteContainer));
-                    }
-                });
-            }
-
-            function convertContainersForSaving(containers) {
-                var _containers = [],
-                    types = self.containers.reduce(function(result, container) {
-                        return container.enabled && result.indexOf(container.type) < 0 ? result.concat(container.type) : result;
-                    }, []);
-
-                containers.forEach(function(container) {
-                    var index = types.indexOf(container.type);
-
-                    if (index > -1) {
-                        types.splice(index, 1);
-                        _containers.push(container);
-                    }
-                });
-
-                types.forEach(function(type) {
-                    _containers.push({ type: type });
-                });
-
-                return _containers;
-            }
-
-            self.containers = [
-                {type: 'embed', name: 'Embed', enabled: false},
-                {type: 'mr2', name: 'MR2 Widget', enabled: false},
-                {type: 'taboola', name: 'Taboola', enabled: false},
-                {type: 'outbrain', name: 'Outbrain', enabled: false},
-                {type: 'veeseo', name: 'Veeseo', enabled: false},
-                {type: '', name: 'Other', enabled: false}
-            ];
-
-            self.addContainerItem = function(container) {
-                if (!container.type) { return; }
-
-                if (container.name === 'Other') {
-                    self.containers.push({
-                        type: container.type.replace(/ /g, '_').toLowerCase(),
-                        name: toTitleCase(container.type),
-                        enabled: true
-                    });
-                    container.type = '';
-                } else {
-                    container.enabled = true;
-                }
+                self.container.customization = '';
+                self.container = null;
             };
 
             self.disableBrandBinding = function() {
@@ -297,10 +277,52 @@ define(['account'], function(account) {
                 });
             };
 
+            $scope.containerTableHeaders = [
+                {label:'ID',value:'id'},
+                {label:'Type',value:'name'},
+                {label:'Display Placement ID',value:'displayPlacementId'},
+                {label:'Content Placement ID',value:'contentPlacementId'}
+            ];
+
+            $scope.sort = {
+                column: 'id',
+                descending: false
+            };
+
+            $scope.doSort = function(column) {
+                var sort = $scope.sort;
+                if (sort.column === column) {
+                    sort.descending = !sort.descending;
+                } else {
+                    sort.column = column;
+                    sort.descending = false;
+                }
+            };
+
             $scope.$watch(function() {return self.site && self.site.name;}, function(newName) {
                 if (newName && bindBrandToName) {
                     self.site.branding = convertNameToBrand(newName);
                 }
+            });
+
+            $scope.$watchCollection(function() { return self.container; }, function(container) {
+                if (!container || !self.site.containers) { return; }
+
+                var newId,
+                    type = container.type,
+                    isCustom = type === '',
+                    prefix = isCustom ? '' : '_',
+                    containers = self.site.containers,
+                    customization = container.customization,
+                    typeExists = !isCustom && !!getObjectByProp('type', type, containers);
+
+                self.newContainerId = newId = type +
+                    (customization ?
+                        prefix + filterId(customization) :
+                        (typeExists ? '_' + getNextNum(containers, container) : '')
+                    );
+                self.duplicateContainerType = typeExists;
+                self.duplicateContainerId = !!getObjectByProp('id', newId, containers);
             });
 
             initView();

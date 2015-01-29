@@ -79,7 +79,41 @@
           "read": "org"
         }
       }
-    }
+    },
+    "siteContainers": [
+      {
+        "type": "embed",
+        "name": "Embed"
+      },
+      {
+        "type": "mr2",
+        "name": "MR2 Widget"
+      },
+      {
+        "type": "jun",
+        "name": "Jun Group"
+      },
+      {
+        "type": "adblade",
+        "name": "Adblade"
+      },
+      {
+        "type": "bidtellect",
+        "name": "Bidtellect"
+      },
+      {
+        "type": "connatix",
+        "name": "Connatix"
+      },
+      {
+        "type": "veeseo",
+        "name": "Veeseo"
+        },
+      {
+        "type": "",
+        "name": "Custom"
+      }
+    ]
   },
   "versionId": "42426dc9",
   "created": "2015-01-20T15:39:40.733Z",

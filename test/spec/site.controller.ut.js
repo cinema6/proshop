@@ -15,6 +15,7 @@
                 SitesService,
                 account,
                 ConfirmDialogService,
+                appData,
                 mockSite,
                 mockOrgs;
 
@@ -42,6 +43,47 @@
                 };
 
                 /* jshint quotmark:false */
+                appData = {
+                    "proshop": {
+                        "data": {
+                            "siteContainers": [
+                                {
+                                    "type": "embed",
+                                    "name": "Embed"
+                                },
+                                {
+                                    "type": "mr2",
+                                    "name": "MR2 Widget"
+                                },
+                                {
+                                    "type": "jun",
+                                    "name": "Jun Group"
+                                },
+                                {
+                                    "type": "adblade",
+                                    "name": "Adblade"
+                                },
+                                {
+                                    "type": "bidtellect",
+                                    "name": "Bidtellect"
+                                },
+                                {
+                                    "type": "connatix",
+                                    "name": "Connatix"
+                                },
+                                {
+                                    "type": "veeseo",
+                                    "name": "Veeseo"
+                                },
+                                {
+                                    "type": "",
+                                    "name": "Custom"
+                                }
+                            ]
+                        }
+                    }
+                };
+
                 mockSite = {
                     "id": "s-1",
                     "status": "active",
@@ -53,7 +95,14 @@
                     "wildCardPlacement": "121212",
                     "name": "Best Website Ever",
                     "host": "bestever.com",
-                    "containers": []
+                    "containers": [
+                        {
+                            "id": "embed"
+                        },
+                        {
+                            "id": "custom_container_id"
+                        }
+                    ]
                 };
                 /* jshint quotmark:single */
 
@@ -106,7 +155,8 @@
                         $routeParams: $routeParams,
                         account: account,
                         SitesService: SitesService,
-                        ConfirmDialogService: ConfirmDialogService
+                        ConfirmDialogService: ConfirmDialogService,
+                        appData: appData
                     });
                 });
             });
@@ -132,62 +182,84 @@
                         $routeParams: $routeParams,
                         account: account,
                         SitesService: SitesService,
-                        ConfirmDialogService: ConfirmDialogService
+                        ConfirmDialogService: ConfirmDialogService,
+                        appData: appData
                     });
 
                     expect(SitesService.getSite).not.toHaveBeenCalled();
+                });
+
+                it('should set up objects on the controller for editing when promises resolve', function() {
+                    $scope.$apply(function() {
+                        SitesService.getSite.deferred.resolve(angular.copy(mockSite));
+                        account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
+                    });
+
+                    expect(SiteCtrl.orgs).toEqual(mockOrgs);
+                    expect(SiteCtrl.org).toEqual(mockOrgs[1]);
+                    expect(SiteCtrl.site.id).toBe('s-1');
+                    expect(SiteCtrl.site.status).toBe('active');
+                    expect(SiteCtrl.site.org).toBe('o-112');
+                    expect(SiteCtrl.site.branding).toBe('site1_branding');
+                    expect(SiteCtrl.site.host).toBe('bestever.com');
+                    expect(SiteCtrl.site.placementId).toBe('111111');
+                    expect(SiteCtrl.site.wildCardPlacement).toBe('121212');
+                    expect(SiteCtrl.site.containers).toEqual([
+                        {
+                            id: 'embed',
+                            type: 'embed',
+                            name: 'Embed'
+                        },
+                        {
+                            id: 'custom_container_id',
+                            name: 'Custom'
+                        }
+                    ]);
                 });
             });
 
             describe('methods', function() {
                 describe('addContainerItem()', function() {
-                    describe('adding an existing container type', function() {
-                        it('should enable it', function() {
-                            expect(SiteCtrl.containers[2].enabled).toBe(false);
+                    it('should add a new container object to the Site Container array', function() {
+                        $scope.$apply(function() {
+                            SitesService.getSite.deferred.resolve(angular.copy(mockSite));
+                            account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
+                        });
 
-                            SiteCtrl.addContainerItem(SiteCtrl.containers[2]);
+                        SiteCtrl.container = SiteCtrl.containerTypes[0];
 
-                            expect(SiteCtrl.containers[2].enabled).toBe(true);
+                        $scope.$digest();
+
+                        SiteCtrl.addContainerItem();
+
+                        expect(SiteCtrl.site.containers[2]).toEqual({
+                            type: 'embed',
+                            name: 'Embed',
+                            id: 'embed_2'
                         });
                     });
 
-                    describe('adding a custom container', function() {
-                        var standardContainerCount,
-                            customContainer;
-
-                        beforeEach(function() {
-                            standardContainerCount = SiteCtrl.containers.length;
-
-                            customContainer = SiteCtrl.containers.filter(function(container) {
-                                return container.name === 'Other';
-                            })[0];
+                    it('should reset customization prop and reset selected container type', function() {
+                        $scope.$apply(function() {
+                            SitesService.getSite.deferred.resolve(angular.copy(mockSite));
+                            account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
                         });
 
-                        it('should do nothing if type is not defined', function() {
-                            customContainer.type = '';
+                        SiteCtrl.container = SiteCtrl.containerTypes[0];
+                        SiteCtrl.container.customization = 'Number 2';
 
-                            SiteCtrl.addContainerItem(customContainer);
+                        $scope.$digest();
 
-                            expect(SiteCtrl.containers.length).toEqual(standardContainerCount);
+                        SiteCtrl.addContainerItem();
+
+                        expect(SiteCtrl.site.containers[2]).toEqual({
+                            type: 'embed',
+                            name: 'Embed',
+                            id: 'embed_number_2',
+                            customization: 'Number 2'
                         });
-
-                        it('should do add a container to the list and enable it', function() {
-                            var newContainer;
-
-                            customContainer.type = 'Some Custom Container';
-
-                            SiteCtrl.addContainerItem(customContainer);
-
-                            expect(SiteCtrl.containers.length).toEqual(standardContainerCount + 1);
-
-                            newContainer = SiteCtrl.containers.filter(function(container) {
-                                return container.name === 'Some Custom Container';
-                            })[0];
-
-                            expect(newContainer.enabled).toBe(true);
-                            expect(newContainer.name).toBe('Some Custom Container');
-                            expect(newContainer.type).toBe('some_custom_container');
-                        });
+                        expect(SiteCtrl.container).toBe(null);
+                        expect(SiteCtrl.containerTypes[0].customization).toBe('');
                     });
                 });
 
@@ -211,7 +283,14 @@
                                 wildCardPlacement: '121212',
                                 name: 'Best Website Ever',
                                 host: 'bestever.com',
-                                containers: []
+                                containers: [
+                                    {
+                                        id: 'embed'
+                                    },
+                                    {
+                                        id: 'custom_container_id'
+                                    }
+                                ]
                             });
 
                             SiteCtrl.site.branding = 'test_branding';
@@ -220,10 +299,22 @@
                             SiteCtrl.site.wildCardPlacement = '';
                             SiteCtrl.site.host = 'test.com';
                             SiteCtrl.site.status = 'inactive';
-                            SiteCtrl.containers = [
+                            SiteCtrl.site.containers = [
+                                {
+                                    id: 'embed'
+                                },
+                                {
+                                    id: 'custom_container_id'
+                                },
                                 {
                                     type: 'veeseo',
-                                    enabled: true
+                                    id: 'veeseo',
+                                    name: 'Veeseo'
+                                },
+                                {
+                                    type: '',
+                                    id: 'custom_container',
+                                    name: 'Custom'
                                 }
                             ];
                             SiteCtrl.org = { id: 'o-999', name: 'New Org' };
@@ -242,7 +333,16 @@
                                 host: 'test.com',
                                 containers: [
                                     {
-                                        type: 'veeseo'
+                                        id: 'embed'
+                                    },
+                                    {
+                                        id: 'custom_container_id'
+                                    },
+                                    {
+                                        id: 'veeseo'
+                                    },
+                                    {
+                                        id: 'custom_container'
                                     }
                                 ]
                             });
@@ -260,7 +360,14 @@
                                 wildCardPlacement: '121212',
                                 name: 'Best Website Ever',
                                 host: 'bestever.com',
-                                containers: []
+                                containers: [
+                                    {
+                                        id: 'embed'
+                                    },
+                                    {
+                                        id: 'custom_container_id'
+                                    }
+                                ]
                             });
                         });
 
@@ -296,7 +403,8 @@
                                 $routeParams: $routeParams,
                                 account: account,
                                 SitesService: SitesService,
-                                ConfirmDialogService: ConfirmDialogService
+                                ConfirmDialogService: ConfirmDialogService,
+                                appData: appData
                             });
 
                             $scope.$apply(function() {
@@ -306,6 +414,18 @@
                             SiteCtrl.site.name = 'New Site';
                             SiteCtrl.site.branding = 'new_site';
                             SiteCtrl.site.host = 'newsite.com';
+                            SiteCtrl.site.containers = [
+                                {
+                                    type: 'veeseo',
+                                    id: 'veeseo',
+                                    name: 'Veeseo'
+                                },
+                                {
+                                    type: '',
+                                    id: 'custom_container',
+                                    name: 'Custom'
+                                }
+                            ];
                             SiteCtrl.org = { id: 'o-1', name: 'Org1' };
                         });
 
@@ -320,7 +440,14 @@
                                 wildCardPlacement: undefined,
                                 name: 'New Site',
                                 host: 'newsite.com',
-                                containers: []
+                                containers: [
+                                    {
+                                        id: 'veeseo'
+                                    },
+                                    {
+                                        id: 'custom_container'
+                                    }
+                                ]
                             });
                         });
 
@@ -336,7 +463,14 @@
                                 wildCardPlacement: undefined,
                                 name: 'New Site',
                                 host: 'newsite.com',
-                                containers: []
+                                containers: [
+                                    {
+                                        id: 'veeseo'
+                                    },
+                                    {
+                                        id: 'custom_container'
+                                    }
+                                ]
                             });
                         });
 
@@ -430,6 +564,127 @@
             });
 
             describe('properties', function() {
+                describe('duplicateContainerId', function() {
+                    it('should only be true if new container id matches an existing id', function() {
+                        $scope.$apply(function() {
+                            SitesService.getSite.deferred.resolve(angular.copy(mockSite));
+                            account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
+                        });
+
+                        SiteCtrl.container = { type: '', name: 'Custom', customization: 'custom_container_id'};
+
+                        $scope.$digest();
+
+                        expect(SiteCtrl.duplicateContainerId).toBe(true);
+
+                        SiteCtrl.container = { type: '', name: 'Custom', customization: 'new_custom_container_id'};
+
+                        $scope.$digest();
+
+                        expect(SiteCtrl.duplicateContainerId).toBe(false);
+                    });
+                });
+
+                describe('duplicateContainerType', function() {
+                    it('should only be true if the new container type matches an existing container', function() {
+                        $scope.$apply(function() {
+                            SitesService.getSite.deferred.resolve(angular.copy(mockSite));
+                            account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
+                        });
+
+                        SiteCtrl.container = { type: 'embed', name: 'Embed' };
+
+                        $scope.$digest();
+
+                        expect(SiteCtrl.duplicateContainerType).toBe(true);
+
+                        SiteCtrl.container = { type: '', name: 'Custom' };
+
+                        $scope.$digest();
+
+                        expect(SiteCtrl.duplicateContainerType).toBe(false);
+                    });
+                });
+
+                describe('newContainerId', function() {
+                    beforeEach(function() {
+                        $scope.$apply(function() {
+                            SitesService.getSite.deferred.resolve(angular.copy(mockSite));
+                            account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
+                        });
+                    });
+
+                    describe('when there is no customization', function() {
+                        describe('with no duplicate types', function() {
+                            it('should be set to the container type', function() {
+                                SiteCtrl.container = { type: 'veeseo', name: 'Veeseo'};
+
+                                $scope.$digest();
+
+                                expect(SiteCtrl.newContainerId).toBe('veeseo');
+
+                                SiteCtrl.container = { type: 'mr2', name: 'MR2 Widget'};
+
+                                $scope.$digest();
+
+                                expect(SiteCtrl.newContainerId).toBe('mr2');
+                            });
+                        });
+
+                        describe('with duplicate types', function() {
+                            it('should add an incremented counter to the id to guarantee uniqueness', function() {
+                                SiteCtrl.container = { type: 'embed', name: 'Embed'};
+
+                                $scope.$digest();
+
+                                expect(SiteCtrl.newContainerId).toBe('embed_2');
+
+                                SiteCtrl.addContainerItem();
+
+                                $scope.$digest();
+
+                                SiteCtrl.container = { type: 'embed', name: 'Embed'};
+
+                                $scope.$digest();
+
+                                expect(SiteCtrl.newContainerId).toBe('embed_3');
+                            });
+                        });
+                    });
+
+                    describe('when there is customization', function() {
+                        describe('with no duplicate types', function() {
+                            it('should add the customization to the end of the type', function() {
+                                SiteCtrl.container = { type: 'veeseo', name: 'Veeseo', customization: 'Custom Container' };
+
+                                $scope.$digest();
+
+                                expect(SiteCtrl.newContainerId).toBe('veeseo_custom_container');
+                            });
+                        });
+
+                        describe('with duplicate types', function() {
+                            it('should add the customization to the end of the type, overriding the incremented counter', function() {
+                                SiteCtrl.container = { type: 'embed', name: 'Embed', customization: 'Custom Container' };
+
+                                $scope.$digest();
+
+                                expect(SiteCtrl.newContainerId).toBe('embed_custom_container');
+                            });
+                        });
+                    });
+
+                    describe('when container is Custom', function() {
+                        it('should not prefix the id with anything', function() {
+                            SiteCtrl.container = { type: '', name: 'Custom', customization: 'Custom Container' };
+
+                            $scope.$digest();
+
+                            expect(SiteCtrl.newContainerId).toBe('custom_container');
+                        });
+                    });
+                });
+
                 describe('loading', function() {
                     it('should be true on initialization', function() {
                         expect(SiteCtrl.loading).toBe(true);
@@ -467,7 +722,8 @@
                                 $routeParams: $routeParams,
                                 account: account,
                                 SitesService: SitesService,
-                                ConfirmDialogService: ConfirmDialogService
+                                ConfirmDialogService: ConfirmDialogService,
+                                appData: appData
                             });
 
                             $scope.$apply(function() {
@@ -499,6 +755,29 @@
 
                             expect(SiteCtrl.site.branding).toBe('some_new_site_name');
                         });
+                    });
+                });
+
+                describe('SiteCtrl.container', function() {
+                    it('should set the newContainerId, duplicateContainerType, and duplicateContainerId', function() {
+                        $scope.$apply(function() {
+                            SitesService.getSite.deferred.resolve(angular.copy(mockSite));
+                            account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
+                        });
+
+                        expect(SiteCtrl.newContainerId).toBe('');
+                        expect(SiteCtrl.duplicateContainerType).toBe(false);
+                        expect(SiteCtrl.duplicateContainerId).toBe(false);
+
+                        SiteCtrl.site.containers.push({ type: 'embed', name: 'Embed', id: 'embed_my_container'})
+
+                        SiteCtrl.container = { type: 'embed', name: 'Embed', customization: 'My Container' };
+
+                        $scope.$digest();
+
+                        expect(SiteCtrl.newContainerId).toBe('embed_my_container');
+                        expect(SiteCtrl.duplicateContainerType).toBe(true);
+                        expect(SiteCtrl.duplicateContainerId).toBe(true);
                     });
                 });
             });
