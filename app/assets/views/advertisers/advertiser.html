@@ -21,9 +21,9 @@
         <div class="form-group clearfix" style="padding-top:20px">
             <label class="control-label"> Default Links: </label>
             <div class="clearfix" ng-repeat="link in AdvertiserCtrl.links">
-                <label for="{{link.name}}" class="col-md-2 control-label"> {{link.name}}: </label>
+                <label for="link{{$index}}" class="col-md-2 control-label"> {{link.name}}: </label>
                 <div>
-                    <input class="col-md-3" class="form-control" type="text" name="{{link.name}}" ng-model="link.href" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" ignore-spaces>
+                    <input class="col-md-3" class="form-control" type="text" name="link{{$index}}" ng-model="link.href" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" ng-pattern="AdvertiserCtrl.urlRegex" ignore-spaces>
                 </div>
                 <span class="glyphicon glyphicon-remove" ng-click="AdvertiserCtrl.removeLink(link)" style="padding-top:5px;"></span>
             </div>
@@ -31,25 +31,26 @@
                 <div style="float:left;padding-left:15px;">
                     <label for="newlink"> Name: </label>
                     <div>
-                        <input type="text" name="newlink" ng-model="AdvertiserCtrl.newLink.name" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" ignore-spaces>
+                        <input type="text" name="newlink_name" ng-model="AdvertiserCtrl.newLink.name" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" ignore-spaces>
                     </div>
                 </div>
                 <div>
                     <label for="newlink"> Link: </label>
                     <div>
-                        <input type="text" name="newlink" ng-model="AdvertiserCtrl.newLink.href" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" ignore-spaces>
+                        <input type="text" name="newlink_href" ng-model="AdvertiserCtrl.newLink.href" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" ng-pattern="AdvertiserCtrl.urlRegex" ignore-spaces>
+                        <span ng-show="!theForm.newlink_href.$valid" class="text-danger">Invalid url</span>
                     </div>
                 </div>
-                <input type="button" value="Add" ng-click="AdvertiserCtrl.addLink()" style="margin: 5px 0 0 15px;">
+                <input type="button" value="Add" ng-disabled="!theForm.newlink_href.$valid || !theForm.newlink_name.$valid" ng-click="AdvertiserCtrl.addLink()" style="margin: 5px 0 0 15px;">
             </div>
         </div>
 
         <div class="form-group clearfix" style="padding-top:20px;">
             <label class="control-label"> Default Logos: </label>
             <div class="clearfix" ng-repeat="logo in AdvertiserCtrl.logos">
-                <label for="{{logo.name}}" class="col-md-2 control-label"> {{logo.name}}: </label>
+                <label for="logo{{$index}}" class="col-md-2 control-label"> {{logo.name}}: </label>
                 <div>
-                    <input class="col-md-3" class="form-control" type="text" name="{{logo.name}}" ng-model="logo.href" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" ignore-spaces>
+                    <input class="col-md-3" class="form-control" type="text" name="logo{{$index}}" ng-model="logo.href" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" ng-pattern="AdvertiserCtrl.imageRegex" ignore-spaces>
                 </div>
                 <span class="glyphicon glyphicon-remove" ng-click="AdvertiserCtrl.removeLogo(logo)" style="padding-top:5px;"></span>
             </div>
@@ -57,16 +58,17 @@
                 <div style="float:left;padding-left:15px;">
                     <label for="newlogo"> Name: </label>
                     <div>
-                        <input type="text" name="newlink" ng-model="AdvertiserCtrl.newLogo.name" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" ignore-spaces>
+                        <input type="text" name="newlogo_name" ng-model="AdvertiserCtrl.newLogo.name" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" ignore-spaces>
                     </div>
                 </div>
                 <div>
                     <label for="newlogo"> Link: </label>
                     <div>
-                        <input type="text" name="newlink" ng-model="AdvertiserCtrl.newLogo.href" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" ignore-spaces>
+                        <input type="text" name="newlogo_href" ng-model="AdvertiserCtrl.newLogo.href" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" ng-pattern="AdvertiserCtrl.imageRegex" ignore-spaces>
+                        <span ng-show="!theForm.newlogo_href.$valid" class="text-danger">Invalid url</span>
                     </div>
                 </div>
-                <input type="button" value="Add" ng-click="AdvertiserCtrl.addLogo()" style="margin: 5px 0 0 15px;">
+                <input type="button" value="Add" ng-disabled="!theForm.newlogo_href.$valid || !theForm.newlogo_name.$valid" ng-click="AdvertiserCtrl.addLogo()" style="margin: 5px 0 0 15px;">
             </div>
         </div>
 
