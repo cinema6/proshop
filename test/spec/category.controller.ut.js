@@ -307,6 +307,72 @@
                         });
                     });
                 });
+
+                describe('disableLabelBinding()', function() {
+                    it('should stop the binding of name to label', function() {
+                        compileCtrl();
+
+                        CategoryCtrl.category.label = 'A New Label';
+
+                        $scope.$digest();
+
+                        expect(CategoryCtrl.category.name).toBe('a_new_label');
+
+                        CategoryCtrl.disableLabelBinding();
+
+                        CategoryCtrl.category.label = 'Edit After Name Field Has Been Clicked Into';
+
+                        $scope.$digest();
+
+                        expect(CategoryCtrl.category.name).toBe('a_new_label');
+                    });
+                });
+            });
+
+            describe('$watch', function() {
+                describe('label binding', function() {
+                    describe('when /:id', function() {
+                        it('should not bind label to name at all', function() {
+                            compileCtrl('c-111');
+
+                            $scope.$apply(function() {
+                                CategoriesService.getCategory.deferred.resolve(mockCategory);
+                            });
+
+                            CategoryCtrl.category.label = 'Some New Label';
+
+                            $scope.$digest();
+
+                            expect(CategoryCtrl.category.name).toBe('sports');
+                        });
+                    });
+
+                    describe('when /new', function() {
+                        it('should bind the name to the label, converting to acceptable format until the name input field has been clicked into, triggering Ctrl.disableLabelBinding()', function() {
+                            compileCtrl();
+
+                            CategoryCtrl.category.label = 'A New Label';
+
+                            $scope.$digest();
+
+                            expect(CategoryCtrl.category.name).toBe('a_new_label');
+
+                            CategoryCtrl.category.label = 'A Bad Label *&%$%))';
+
+                            $scope.$digest();
+
+                            expect(CategoryCtrl.category.name).toBe('a_bad_label');
+
+                            CategoryCtrl.disableLabelBinding();
+
+                            CategoryCtrl.category.label = 'Edit After Name Field Has Been Clicked Into';
+
+                            $scope.$digest();
+
+                            expect(CategoryCtrl.category.name).toBe('a_bad_label');
+                        });
+                    });
+                });
             });
         });
     });

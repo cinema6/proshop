@@ -41,7 +41,7 @@
                         <span ng-show="!theForm.newlink_href.$valid" class="text-danger">Invalid url</span>
                     </div>
                 </div>
-                <input type="button" value="Add" ng-click="AdvertiserCtrl.addLink()" style="margin: 5px 0 0 15px;">
+                <input type="button" value="Add" ng-disabled="!theForm.newlink_href.$valid || !theForm.newlink_name.$valid" ng-click="AdvertiserCtrl.addLink()" style="margin: 5px 0 0 15px;">
             </div>
         </div>
 
@@ -68,7 +68,7 @@
                         <span ng-show="!theForm.newlogo_href.$valid" class="text-danger">Invalid url</span>
                     </div>
                 </div>
-                <input type="button" value="Add" ng-click="AdvertiserCtrl.addLogo()" style="margin: 5px 0 0 15px;">
+                <input type="button" value="Add" ng-disabled="!theForm.newlogo_href.$valid || !theForm.newlogo_name.$valid" ng-click="AdvertiserCtrl.addLogo()" style="margin: 5px 0 0 15px;">
             </div>
         </div>
 
