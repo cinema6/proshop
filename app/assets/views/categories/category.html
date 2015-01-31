@@ -50,6 +50,7 @@
         </div>
         <div style="padding:20px 0 40px 0;">
             <input type="submit" value="Save" ng-disabled="!theForm.$valid">
+            <input c6-href="/categories" type="button" value="Cancel">
             <input type="button" value="Delete" ng-show="CategoryCtrl.category.id" ng-click="CategoryCtrl.delete()">
             <span ng-show="!theForm.$valid" class="text-danger"> There are errors above. See highlighted fields. </span>
         </div>

@@ -127,6 +127,7 @@
     </div>
     <div style="padding:20px 0 40px 0;">
         <input type="submit" value="Save" ng-disabled="!theForm.$valid || !OrgsCtrl.formIsValid()">
+        <input c6-href="/orgs" type="button" value="Cancel">
         <input type="button" value="Delete" ng-show="data.org.id" ng-click="OrgsCtrl.confirmDelete()">
         <span ng-show="!theForm.$valid || !OrgsCtrl.formIsValid()" class="text-danger"> There are errors above. See highlighted fields. </span>
         <!-- <div style="display:inline;padding-left:30px;" ng-show="confirmDelete === true">

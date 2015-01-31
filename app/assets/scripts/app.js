@@ -425,6 +425,24 @@ function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines ,
             });
         }])
 
+        .directive('c6Href', ['$location',function($location) {
+            return {
+                link: function(scope, $element, attrs) {
+                    var path;
+
+                    attrs.$observe('c6Href', function(href) {
+                        path = href;
+                    });
+
+                    $element.on('click', function() {
+                        scope.$apply(function() {
+                            $location.path(path);
+                        });
+                    });
+                }
+            };
+        }])
+
         .directive('c6Autoselect', [function() {
             function link(scope, $element) {
                 $element.on('focus', function() {

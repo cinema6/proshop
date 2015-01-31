@@ -91,6 +91,7 @@
         </div>
         <div style="padding:20px 0 40px 0;">
             <input type="submit" value="Save" ng-disabled="!theForm.$valid">
+            <input c6-href="/advertisers" type="button" value="Cancel">
             <input type="button" value="Delete" ng-show="AdvertiserCtrl.advertiser.id" ng-click="AdvertiserCtrl.delete()">
             <span ng-show="!theForm.$valid" class="text-danger"> There are errors above. See highlighted fields. </span>
         </div>
