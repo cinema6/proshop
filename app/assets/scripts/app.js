@@ -1,7 +1,9 @@
-define( [   'angular','ngAnimate','ngRoute','c6ui','c6log', 'c6defines',
-            'auth', 'login','users', 'orgs', 'minireels', 'sites', 'categories', 'templates'],
-function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
-            auth  ,  login , users ,  orgs ,  minireels ,  sites ,  categories ,  templates ) {
+define(['angular','ngAnimate','ngRoute','c6ui','c6log','c6defines',
+        'auth','login','users','orgs','minireels','sites','advertisers',
+        'categories','customers','templates'],
+function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines ,
+         auth  , login , users , orgs , minireels , sites , advertisers ,
+         categories , customers , templates ) {
     /* jshint -W106 */
     'use strict';
 
@@ -19,7 +21,9 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
             orgs.name,
             minireels.name,
             sites.name,
+            advertisers.name,
             categories.name,
+            customers.name,
             templates.name
         ])
         .constant('c6Defines',c6Defines)
@@ -78,6 +82,36 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
                     controller: 'SiteController',
                     controllerAs: 'SiteCtrl',
                     templateUrl: 'views/sites/site.html'
+                })
+                .when('/advertisers', {
+                    controller: 'AdvertisersController',
+                    controllerAs: 'AdvertisersCtrl',
+                    templateUrl: 'views/advertisers/advertisers.html'
+                })
+                .when('/advertiser/new', {
+                    controller: 'AdvertiserController',
+                    controllerAs: 'AdvertiserCtrl',
+                    templateUrl: 'views/advertisers/advertiser.html'
+                })
+                .when('/advertiser/:id', {
+                    controller: 'AdvertiserController',
+                    controllerAs: 'AdvertiserCtrl',
+                    templateUrl: 'views/advertisers/advertiser.html'
+                })
+                .when('/customers', {
+                    controller: 'CustomersController',
+                    controllerAs: 'CustomersCtrl',
+                    templateUrl: 'views/customers/customers.html'
+                })
+                .when('/customer/new', {
+                    controller: 'CustomerController',
+                    controllerAs: 'CustomerCtrl',
+                    templateUrl: 'views/customers/customer.html'
+                })
+                .when('/customer/:id', {
+                    controller: 'CustomerController',
+                    controllerAs: 'CustomerCtrl',
+                    templateUrl: 'views/customers/customer.html'
                 })
                 .when('/categories', {
                     controller: 'CategoriesController',
@@ -389,6 +423,24 @@ function(   angular , ngAnimate , ngRoute , c6ui , c6log,  c6Defines,
             $scope.$watch('page', function(page) {
                 self.page = page;
             });
+        }])
+
+        .directive('c6Href', ['$location',function($location) {
+            return {
+                link: function(scope, $element, attrs) {
+                    var path;
+
+                    attrs.$observe('c6Href', function(href) {
+                        path = href;
+                    });
+
+                    $element.on('click', function() {
+                        scope.$apply(function() {
+                            $location.path(path);
+                        });
+                    });
+                }
+            };
         }])
 
         .directive('c6Autoselect', [function() {

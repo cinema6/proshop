@@ -197,6 +197,10 @@ section.view {
     position: relative;
 }
 
+.glyphicon-remove {
+    cursor: pointer;
+}
+
 /*.glyphicon-chevron-down:before {
     content: "";
 }

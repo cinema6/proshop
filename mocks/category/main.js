@@ -13,7 +13,7 @@ module.exports = function(http) {
         return path.resolve(__dirname, './categories/' + id + '.json');
     }
 
-    http.whenGET('/api/categories', function(request) {
+    http.whenGET('/api/content/categories', function(request) {
         var allCats = grunt.file.expand(path.resolve(__dirname, './categories/*.json'))
             .map(function(path) {
                 return grunt.file.readJSON(path);
@@ -22,7 +22,7 @@ module.exports = function(http) {
         this.respond(200, allCats);
     });
 
-    http.whenGET('/api/category/**', function(request) {
+    http.whenGET('/api/content/category/**', function(request) {
         var id = idFromPath(request.pathname),
             filePath = categoryPath(id);
 
@@ -33,7 +33,7 @@ module.exports = function(http) {
         }
     });
 
-    http.whenPOST('/api/category', function(request) {
+    http.whenPOST('/api/content/category', function(request) {
         var id = 'c-' + Math.floor(Math.random() * 10000) + 1,
             filePath = categoryPath(id),
             currentTime = (new Date()).toISOString(),
@@ -49,7 +49,7 @@ module.exports = function(http) {
         this.respond(201, newCat);
     });
 
-    http.whenPUT('/api/category/**', function(request) {
+    http.whenPUT('/api/content/category/**', function(request) {
         var id = idFromPath(request.pathname),
             filePath = categoryPath(id),
             currentCat = grunt.file.readJSON(filePath),
@@ -66,7 +66,7 @@ module.exports = function(http) {
         }
     });
 
-    http.whenDELETE('/api/category/**', function(request) {
+    http.whenDELETE('/api/content/category/**', function(request) {
         grunt.file.delete(categoryPath(idFromPath(request.pathname)));
 
         this.respond(204, '');

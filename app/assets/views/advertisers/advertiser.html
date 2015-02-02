@@ -1,0 +1,102 @@
+<h1>Advertisers</h1>
+<br>
+<section class="view">
+    <div style="padding-bottom:20px">{{message}}</div>
+
+    <form name="theForm" ng-submit="AdvertiserCtrl.save(AdvertiserCtrl.advertiser)">
+        <a href="/#/advertisers">&lsaquo; Back to list</a>
+
+        <div class="form-group" style="padding-top:20px" ng-class="{'has-error': theForm.name.$error.required}">
+            <label for="name" class="control-label"> Name: </label>
+            <div>
+                <input class="col-md-3" class="form-control" type="text" name="name" ng-model="AdvertiserCtrl.advertiser.name" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" required ignore-spaces>
+                <span class="help-block">
+                    <span ng-show="theForm.name.$error.required"> Required. </span>
+                    <span ng-show="theForm.name.$error.minlength"> Too short. </span>
+                    <span ng-show="theForm.name.$error.maxlength"> Too long. </span>
+                </span>
+            </div>
+        </div>
+
+        <div class="form-group clearfix" style="padding-top:20px">
+            <label class="control-label"> Default Links: </label>
+            <div class="clearfix" ng-repeat="link in AdvertiserCtrl.links">
+                <label for="link{{$index}}" class="col-md-2 control-label"> {{link.name}}: </label>
+                <div>
+                    <input class="col-md-3" class="form-control" type="text" name="link{{$index}}" ng-model="link.href" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" ng-pattern="AdvertiserCtrl.urlRegex" ignore-spaces>
+                </div>
+                <span class="glyphicon glyphicon-remove" ng-click="AdvertiserCtrl.removeLink(link)" style="padding-top:5px;"></span>
+            </div>
+            <div class="clearfix" style="margin-top:10px;">
+                <div style="float:left;padding-left:15px;">
+                    <label for="newlink"> Name: </label>
+                    <div>
+                        <input type="text" name="newlink_name" ng-model="AdvertiserCtrl.newLink.name" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" ignore-spaces>
+                    </div>
+                </div>
+                <div>
+                    <label for="newlink"> Link: </label>
+                    <div>
+                        <input type="text" name="newlink_href" ng-model="AdvertiserCtrl.newLink.href" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" ng-pattern="AdvertiserCtrl.urlRegex" ignore-spaces>
+                        <span ng-show="!theForm.newlink_href.$valid" class="text-danger">Invalid url</span>
+                    </div>
+                </div>
+                <input type="button" value="Add" ng-disabled="!theForm.newlink_href.$valid || !theForm.newlink_name.$valid" ng-click="AdvertiserCtrl.addLink()" style="margin: 5px 0 0 15px;">
+            </div>
+        </div>
+
+        <div class="form-group clearfix" style="padding-top:20px;">
+            <label class="control-label"> Default Logos: </label>
+            <div class="clearfix" ng-repeat="logo in AdvertiserCtrl.logos">
+                <label for="logo{{$index}}" class="col-md-2 control-label"> {{logo.name}}: </label>
+                <div>
+                    <input class="col-md-3" class="form-control" type="text" name="logo{{$index}}" ng-model="logo.href" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" ng-pattern="AdvertiserCtrl.imageRegex" ignore-spaces>
+                </div>
+                <span class="glyphicon glyphicon-remove" ng-click="AdvertiserCtrl.removeLogo(logo)" style="padding-top:5px;"></span>
+            </div>
+            <div class="clearfix" style="margin-top:10px;">
+                <div style="float:left;padding-left:15px;">
+                    <label for="newlogo"> Name: </label>
+                    <div>
+                        <input type="text" name="newlogo_name" ng-model="AdvertiserCtrl.newLogo.name" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" ignore-spaces>
+                    </div>
+                </div>
+                <div>
+                    <label for="newlogo"> Link: </label>
+                    <div>
+                        <input type="text" name="newlogo_href" ng-model="AdvertiserCtrl.newLogo.href" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" ng-pattern="AdvertiserCtrl.imageRegex" ignore-spaces>
+                        <span ng-show="!theForm.newlogo_href.$valid" class="text-danger">Invalid url</span>
+                    </div>
+                </div>
+                <input type="button" value="Add" ng-disabled="!theForm.newlogo_href.$valid || !theForm.newlogo_name.$valid" ng-click="AdvertiserCtrl.addLogo()" style="margin: 5px 0 0 15px;">
+            </div>
+        </div>
+
+        <div class="form-group" ng-class="{'has-error': theForm.status.$error.required}">
+            <label for="status" class="control-label"> Status: </label>
+            <div>
+                <input type="radio" name="status" ng-model="AdvertiserCtrl.advertiser.status" value="active" required>
+                <label for="new_org_status"> Active</label>
+                <br>
+                <input type="radio" name="status" ng-model="AdvertiserCtrl.advertiser.status" value="inactive" required>
+                <label for="new_org_status"> Inactive</label>
+                <br>
+                <input type="radio" name="status" ng-model="AdvertiserCtrl.advertiser.status" value="pending" required>
+                <label for="new_org_status"> Pending</label>
+                <br>
+                <span class="help-block">
+                    <span ng-show="theForm.status.$error.required"> Required. </span>
+                </span>
+            </div>
+        </div>
+        <div style="padding:20px 0 40px 0;">
+            <input type="submit" value="Save" ng-disabled="!theForm.$valid">
+            <input c6-href="/advertisers" type="button" value="Cancel">
+            <input type="button" value="Delete" ng-show="AdvertiserCtrl.advertiser.id" ng-click="AdvertiserCtrl.delete()">
+            <span ng-show="!theForm.$valid" class="text-danger"> There are errors above. See highlighted fields. </span>
+        </div>
+    </form>
+
+    <div class="mask" ng-show="AdvertiserCtrl.loading"></div>
+
+</section>

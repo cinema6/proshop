@@ -1,5 +1,5 @@
 (function() {
-    'user strict';
+    'use strict';
 
     define(['orgs'], function() {
         describe('OrgsController', function() {
@@ -7,6 +7,7 @@
                 $scope,
                 $log,
                 $q,
+                $controller,
                 OrgsCtrl,
                 account,
                 appData,

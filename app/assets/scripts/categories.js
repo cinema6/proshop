@@ -76,7 +76,8 @@ define(['angular'], function(angular) {
         }])
         .controller('CategoryController', ['$scope','$log','ConfirmDialogService','$q','$location','CategoriesService','$routeParams',
         function                          ( $scope , $log , ConfirmDialogService , $q , $location , CategoriesService , $routeParams ) {
-            var self = this;
+            var self = this,
+                bindLabelToName = false;
 
             function initView() {
                 self.loading = true;
@@ -90,11 +91,20 @@ define(['angular'], function(angular) {
                             self.loading = false;
                         });
                 } else {
+                    bindLabelToName = true;
                     self.loading = false;
                     self.category = {
                         status: 'active'
                     };
                 }
+            }
+
+            function convertLabelToName(label) {
+                return label.toLowerCase()
+                    .replace(/ /g, '_')
+                    .replace(/[^0-9a-zA-Z_ ]*/g,'')
+                    .replace(/^(_)+/,'')
+                    .replace(/(_)+$/,'');
             }
 
             self.save = function(category) {
@@ -158,6 +168,16 @@ define(['angular'], function(angular) {
                 });
             };
 
+            self.disableLabelBinding = function() {
+                bindLabelToName = false;
+            };
+
+            $scope.$watch(function() {return self.category && self.category.label;}, function(newLabel) {
+                if (newLabel && bindLabelToName && !self.category.id) {
+                    self.category.name = convertLabelToName(newLabel);
+                }
+            });
+
             initView();
         }])
         .service('CategoriesService', ['c6UrlMaker','$http','$q','$timeout',
@@ -193,21 +213,21 @@ define(['angular'], function(angular) {
             this.getCategories = function() {
                 return httpWrapper({
                     method: 'GET',
-                    url: c6UrlMaker('categories', 'api')
+                    url: c6UrlMaker('content/categories', 'api')
                 });
             };
 
             this.getCategory = function(id) {
                 return httpWrapper({
                     method: 'GET',
-                    url: c6UrlMaker('category/' + id, 'api')
+                    url: c6UrlMaker('content/category/' + id, 'api')
                 });
             };
 
             this.putCategory = function(id, cat) {
                 return httpWrapper({
                     method: 'PUT',
-                    url: c6UrlMaker('category/' + id, 'api'),
+                    url: c6UrlMaker('content/category/' + id, 'api'),
                     data: cat
                 });
             };
@@ -215,7 +235,7 @@ define(['angular'], function(angular) {
             this.postCategory = function(cat) {
                 return httpWrapper({
                     method: 'POST',
-                    url: c6UrlMaker('category', 'api'),
+                    url: c6UrlMaker('content/category', 'api'),
                     data: cat
                 });
             };
@@ -223,7 +243,7 @@ define(['angular'], function(angular) {
             this.deleteCategory = function(id) {
                 return httpWrapper({
                     method: 'DELETE',
-                    url: c6UrlMaker('category/' + id, 'api')
+                    url: c6UrlMaker('content/category/' + id, 'api')
                 });
             };
         }]);

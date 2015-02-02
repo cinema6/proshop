@@ -1,51 +1,79 @@
 (function() {
     'use strict';
 
-    define(['categories'], function(categoriesModule) {
-        describe('CategoriesService', function() {
+    define(['advertisers'], function(advertisersModule) {
+        describe('AdvertisersService', function() {
             var $httpBackend,
                 $timeout,
-                CategoriesService,
+                AdvertisersService,
                 successSpy,
                 failureSpy,
                 c6UrlMaker,
-                mockCategory,
-                mockCategories;
+                mockAdvertiser,
+                mockAdvertisers;
 
             beforeEach(function() {
                 /* jsHint quotmark:false */
-                mockCategory = {
-                    "id": "c-111",
-                    "name": "sports",
-                    "label": "Sports",
+                mockAdvertiser = {
+                    "id": "a-111",
+                    "adtechId": "12121212",
+                    "name": "Ybrant",
                     "created": "2014-06-13T19:28:39.408Z",
-                    "lastUpdated": "2014-06-13T19:28:39.408Z",
+                    "lastUpdated": "2015-01-12T18:06:52.877Z",
+                    "defaultLinks": {
+                        "Facebook": "http://facebook.com",
+                        "Twitter": "http://twitter.com"
+                    },
+                    "defaultLogos": {
+                        "Main": "http://example.com/logo.jpg"
+                    },
                     "status": "active"
                 };
 
-                mockCategories = [
+                mockAdvertisers = [
                     {
-                        "id": "c-111",
-                        "name": "sports",
-                        "label": "Sports",
+                        "id": "a-111",
+                        "adtechId": "12121212",
+                        "name": "Ybrant",
                         "created": "2014-06-13T19:28:39.408Z",
-                        "lastUpdated": "2014-06-13T19:28:39.408Z",
+                        "lastUpdated": "2015-01-12T18:06:52.877Z",
+                        "defaultLinks": {
+                            "Facebook": "http://facebook.com",
+                            "Twitter": "http://twitter.com"
+                        },
+                        "defaultLogos": {
+                            "Main": "http://example.com/logo.jpg"
+                        },
                         "status": "active"
                     },
                     {
-                        "id": "c-112",
-                        "name": "technology",
-                        "label": "Technology",
+                        "id": "a-112",
+                        "adtechId": "12121213",
+                        "name": "DashBid",
                         "created": "2014-06-13T19:28:39.408Z",
                         "lastUpdated": "2014-06-13T19:28:39.408Z",
+                        "defaultLinks": {
+                            "Facebook": "http://facebook.com",
+                            "Twitter": "http://twitter.com"
+                        },
+                        "defaultLogos": {
+                            "logo1": "http://example.com/logo.jpg"
+                        },
                         "status": "active"
                     },
                     {
-                        "id": "c-113",
-                        "name": "people_blogs",
-                        "label": "People & Blogs",
+                        "id": "a-113",
+                        "adtechId": "12121233",
+                        "name": "Adap.tv",
                         "created": "2014-06-13T19:28:39.408Z",
                         "lastUpdated": "2014-06-13T19:28:39.408Z",
+                        "defaultLinks": {
+                            "Facebook": "http://facebook.com",
+                            "Twitter": "http://twitter.com"
+                        },
+                        "defaultLogos": {
+                            "logo1": "http://example.com/logo.jpg"
+                        },
                         "status": "active"
                     }
                 ];
@@ -61,12 +89,12 @@
                     });
                 });
 
-                module(categoriesModule.name);
+                module(advertisersModule.name);
 
                 inject(function($injector) {
                     $httpBackend = $injector.get('$httpBackend');
                     $timeout = $injector.get('$timeout');
-                    CategoriesService = $injector.get('CategoriesService');
+                    AdvertisersService = $injector.get('AdvertisersService');
                     c6UrlMaker = $injector.get('c6UrlMaker');
                 });
 
@@ -76,7 +104,7 @@
             });
 
             describe('methods', function() {
-                describe('getCategories()', function() {
+                describe('getAdvertisers()', function() {
                     beforeEach(function(){
                         successSpy = jasmine.createSpy('getSites.success');
                         failureSpy = jasmine.createSpy('getSites.failure');
@@ -84,171 +112,157 @@
                     });
 
                     it('will resolve promise if successfull',function(){
-                        $httpBackend.expectGET('/api/content/categories')
-                            .respond(200,mockCategories);
-                        CategoriesService.getCategories().then(successSpy,failureSpy);
+                        $httpBackend.expectGET('/api/account/advertisers')
+                            .respond(200,mockAdvertisers);
+                        AdvertisersService.getAdvertisers().then(successSpy,failureSpy);
                         $httpBackend.flush();
-                        expect(successSpy).toHaveBeenCalledWith(mockCategories);
+                        expect(successSpy).toHaveBeenCalledWith(mockAdvertisers);
                         expect(failureSpy).not.toHaveBeenCalled();
                         expect($timeout.cancel).toHaveBeenCalled();
                     });
 
                     it('will reject promise if not successful',function(){
-                        $httpBackend.expectGET('/api/content/categories')
-                            .respond(404,'Unable to find categories.');
-                        CategoriesService.getCategories().then(successSpy,failureSpy);
+                        $httpBackend.expectGET('/api/account/advertisers')
+                            .respond(404,'Unable to find advertisers.');
+                        AdvertisersService.getAdvertisers().then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).not.toHaveBeenCalled();
-                        expect(failureSpy).toHaveBeenCalledWith('Unable to find categories.');
+                        expect(failureSpy).toHaveBeenCalledWith('Unable to find advertisers.');
                         expect($timeout.cancel).toHaveBeenCalled();
                     });
 
                     it('will reject promise if times out',function(){
-                        $httpBackend.expectGET('/api/content/categories')
+                        $httpBackend.expectGET('/api/account/advertisers')
                             .respond(200,'');
-                        CategoriesService.getCategories().then(successSpy,failureSpy);
+                        AdvertisersService.getAdvertisers().then(successSpy,failureSpy);
                         $timeout.flush(60000);
                         expect(successSpy).not.toHaveBeenCalled();
                         expect(failureSpy).toHaveBeenCalledWith('Request timed out.');
                     });
                 });
 
-                describe('getCategory(id)', function() {
+                describe('getAdvertiser(id)', function() {
                     beforeEach(function(){
-                        successSpy = jasmine.createSpy('getCategory.success');
-                        failureSpy = jasmine.createSpy('getCategory.failure');
+                        successSpy = jasmine.createSpy('getAdvertiser.success');
+                        failureSpy = jasmine.createSpy('getAdvertiser.failure');
                         spyOn($timeout,'cancel');
                     });
 
                     it('will resolve promise if successfull',function(){
-                        $httpBackend.expectGET('/api/content/category/c-111')
-                            .respond(200,mockCategory);
-                        CategoriesService.getCategory(mockCategory.id).then(successSpy,failureSpy);
+                        $httpBackend.expectGET('/api/account/advertiser/a-111')
+                            .respond(200,mockAdvertiser);
+                        AdvertisersService.getAdvertiser(mockAdvertiser.id).then(successSpy,failureSpy);
                         $httpBackend.flush();
-                        expect(successSpy).toHaveBeenCalledWith(mockCategory);
+                        expect(successSpy).toHaveBeenCalledWith(mockAdvertiser);
                         expect(failureSpy).not.toHaveBeenCalled();
                         expect($timeout.cancel).toHaveBeenCalled();
                     });
 
                     it('will reject promise if not successful',function(){
-                        $httpBackend.expectGET('/api/content/category/c-111')
-                            .respond(404,'Unable to find category.');
-                        CategoriesService.getCategory(mockCategory.id).then(successSpy,failureSpy);
+                        $httpBackend.expectGET('/api/account/advertiser/a-111')
+                            .respond(404,'Unable to find advertiser.');
+                        AdvertisersService.getAdvertiser(mockAdvertiser.id).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).not.toHaveBeenCalled();
-                        expect(failureSpy).toHaveBeenCalledWith('Unable to find category.');
+                        expect(failureSpy).toHaveBeenCalledWith('Unable to find advertiser.');
                         expect($timeout.cancel).toHaveBeenCalled();
                     });
 
                     it('will reject promise if times out',function(){
-                        $httpBackend.expectGET('/api/content/category/c-111')
+                        $httpBackend.expectGET('/api/account/advertiser/a-111')
                             .respond(200,'');
-                        CategoriesService.getCategory(mockCategory.id).then(successSpy,failureSpy);
+                        AdvertisersService.getAdvertiser(mockAdvertiser.id).then(successSpy,failureSpy);
                         $timeout.flush(60000);
                         expect(successSpy).not.toHaveBeenCalled();
                         expect(failureSpy).toHaveBeenCalledWith('Request timed out.');
                     });
                 });
 
-                describe('putCategory(id, category)', function() {
-                    var editedCategory;
-
+                describe('putAdvertiser(id, advertiser)', function() {
                     beforeEach(function(){
-                        successSpy = jasmine.createSpy('putCategory.success');
-                        failureSpy = jasmine.createSpy('putCategory.failure');
+                        successSpy = jasmine.createSpy('putAdvertiser.success');
+                        failureSpy = jasmine.createSpy('putAdvertiser.failure');
                         spyOn($timeout,'cancel');
-
-                        editedCategory = {};
-                        ['name','label','status'].forEach(function(prop) {
-                            editedCategory[prop] = mockCategory[prop];
-                        });
                     });
 
                     it('will resolve promise if successfull',function(){
-                        $httpBackend.expectPUT('/api/content/category/c-111')
-                            .respond(200,mockCategory);
-                        CategoriesService.putCategory(mockCategory.id, editedCategory).then(successSpy,failureSpy);
+                        $httpBackend.expectPUT('/api/account/advertiser/a-111')
+                            .respond(200,mockAdvertiser);
+                        AdvertisersService.putAdvertiser(mockAdvertiser.id, mockAdvertiser).then(successSpy,failureSpy);
                         $httpBackend.flush();
-                        expect(successSpy).toHaveBeenCalledWith(mockCategory);
+                        expect(successSpy).toHaveBeenCalledWith(mockAdvertiser);
                         expect(failureSpy).not.toHaveBeenCalled();
                         expect($timeout.cancel).toHaveBeenCalled();
                     });
 
                     it('will reject promise if not successful',function(){
-                        $httpBackend.expectPUT('/api/content/category/c-111')
-                            .respond(404,'Unable to update category.');
-                        CategoriesService.putCategory(mockCategory.id, editedCategory).then(successSpy,failureSpy);
+                        $httpBackend.expectPUT('/api/account/advertiser/a-111')
+                            .respond(404,'Unable to update advertiser.');
+                        AdvertisersService.putAdvertiser(mockAdvertiser.id, mockAdvertiser).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).not.toHaveBeenCalled();
-                        expect(failureSpy).toHaveBeenCalledWith('Unable to update category.');
+                        expect(failureSpy).toHaveBeenCalledWith('Unable to update advertiser.');
                         expect($timeout.cancel).toHaveBeenCalled();
                     });
 
                     it('will reject promise if times out',function(){
-                        $httpBackend.expectPUT('/api/content/category/c-111')
+                        $httpBackend.expectPUT('/api/account/advertiser/a-111')
                             .respond(200,'');
-                        CategoriesService.putCategory(mockCategory.id, editedCategory).then(successSpy,failureSpy);
+                        AdvertisersService.putAdvertiser(mockAdvertiser.id, mockAdvertiser).then(successSpy,failureSpy);
                         $timeout.flush(60000);
                         expect(successSpy).not.toHaveBeenCalled();
                         expect(failureSpy).toHaveBeenCalledWith('Request timed out.');
                     });
                 });
 
-                describe('postCategory(category)', function() {
-                    var newCategory;
-
+                describe('postAdvertiser(advertiser)', function() {
                     beforeEach(function(){
                         successSpy = jasmine.createSpy('postSite.success');
                         failureSpy = jasmine.createSpy('postSite.failure');
                         spyOn($timeout,'cancel');
-
-                        newCategory = {};
-                        ['name','label','status'].forEach(function(prop) {
-                            newCategory[prop] = mockCategory[prop];
-                        });
                     });
 
                     it('will resolve promise if successfull',function(){
-                        $httpBackend.expectPOST('/api/content/category')
-                            .respond(200,mockCategory);
-                        CategoriesService.postCategory(newCategory).then(successSpy,failureSpy);
+                        $httpBackend.expectPOST('/api/account/advertiser')
+                            .respond(200,mockAdvertiser);
+                        AdvertisersService.postAdvertiser(mockAdvertiser).then(successSpy,failureSpy);
                         $httpBackend.flush();
-                        expect(successSpy).toHaveBeenCalledWith(mockCategory);
+                        expect(successSpy).toHaveBeenCalledWith(mockAdvertiser);
                         expect(failureSpy).not.toHaveBeenCalled();
                         expect($timeout.cancel).toHaveBeenCalled();
                     });
 
                     it('will reject promise if not successful',function(){
-                        $httpBackend.expectPOST('/api/content/category')
-                            .respond(404,'Unable to create category.');
-                        CategoriesService.postCategory(newCategory).then(successSpy,failureSpy);
+                        $httpBackend.expectPOST('/api/account/advertiser')
+                            .respond(404,'Unable to create advertiser.');
+                        AdvertisersService.postAdvertiser(mockAdvertiser).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).not.toHaveBeenCalled();
-                        expect(failureSpy).toHaveBeenCalledWith('Unable to create category.');
+                        expect(failureSpy).toHaveBeenCalledWith('Unable to create advertiser.');
                         expect($timeout.cancel).toHaveBeenCalled();
                     });
 
                     it('will reject promise if times out',function(){
-                        $httpBackend.expectPOST('/api/content/category')
+                        $httpBackend.expectPOST('/api/account/advertiser')
                             .respond(200,'');
-                        CategoriesService.postCategory(newCategory).then(successSpy,failureSpy);
+                        AdvertisersService.postAdvertiser(mockAdvertiser).then(successSpy,failureSpy);
                         $timeout.flush(60000);
                         expect(successSpy).not.toHaveBeenCalled();
                         expect(failureSpy).toHaveBeenCalledWith('Request timed out.');
                     });
                 });
 
-                describe('deleteCategory(id)', function() {
+                describe('deleteAdvertiser(id)', function() {
                     beforeEach(function(){
-                        successSpy = jasmine.createSpy('deleteCategory.success');
-                        failureSpy = jasmine.createSpy('deleteCategory.failure');
+                        successSpy = jasmine.createSpy('deleteAdvertiser.success');
+                        failureSpy = jasmine.createSpy('deleteAdvertiser.failure');
                         spyOn($timeout,'cancel');
                     });
 
                     it('will resolve promise if successfull',function(){
-                        $httpBackend.expectDELETE('/api/content/category/c-111')
+                        $httpBackend.expectDELETE('/api/account/advertiser/a-111')
                             .respond(204,'');
-                        CategoriesService.deleteCategory(mockCategory.id).then(successSpy,failureSpy);
+                        AdvertisersService.deleteAdvertiser(mockAdvertiser.id).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).toHaveBeenCalled();
                         expect(failureSpy).not.toHaveBeenCalled();
@@ -256,9 +270,9 @@
                     });
 
                     it('will reject promise if not successful',function(){
-                        $httpBackend.expectDELETE('/api/content/category/c-111')
+                        $httpBackend.expectDELETE('/api/account/advertiser/a-111')
                             .respond(401,'Unauthorized.');
-                        CategoriesService.deleteCategory(mockCategory.id).then(successSpy,failureSpy);
+                        AdvertisersService.deleteAdvertiser(mockAdvertiser.id).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).not.toHaveBeenCalled();
                         expect(failureSpy).toHaveBeenCalledWith('Unauthorized.');
@@ -266,9 +280,9 @@
                     });
 
                     it('will reject promise if times out',function(){
-                        $httpBackend.expectDELETE('/api/content/category/c-111')
+                        $httpBackend.expectDELETE('/api/account/advertiser/a-111')
                             .respond(200,'');
-                        CategoriesService.deleteCategory(mockCategory.id).then(successSpy,failureSpy);
+                        AdvertisersService.deleteAdvertiser(mockAdvertiser.id).then(successSpy,failureSpy);
                         $timeout.flush(60000);
                         expect(successSpy).not.toHaveBeenCalled();
                         expect(failureSpy).toHaveBeenCalledWith('Request timed out.');

@@ -1,52 +1,63 @@
 (function() {
     'use strict';
 
-    define(['categories'], function(categoriesModule) {
-        describe('CategoriesService', function() {
+    define(['customers'], function(customersModule) {
+        describe('CustomersService', function() {
             var $httpBackend,
                 $timeout,
-                CategoriesService,
+                CustomersService,
                 successSpy,
                 failureSpy,
                 c6UrlMaker,
-                mockCategory,
-                mockCategories;
+                mockCustomer,
+                mockCustomers;
 
             beforeEach(function() {
                 /* jsHint quotmark:false */
-                mockCategory = {
-                    "id": "c-111",
-                    "name": "sports",
-                    "label": "Sports",
+                mockCustomer = {
+                    "id": "cus-111",
+                    "name": "Ybrant",
+                    "adtechId": "12234354",
                     "created": "2014-06-13T19:28:39.408Z",
                     "lastUpdated": "2014-06-13T19:28:39.408Z",
-                    "status": "active"
+                    "status": "active",
+                    "advertisers": [
+                        "a-111"
+                    ]
                 };
 
-                mockCategories = [
+                mockCustomers = [
                     {
-                        "id": "c-111",
-                        "name": "sports",
-                        "label": "Sports",
+                        "id": "cus-111",
+                        "name": "Ybrant",
+                        "adtechId": "12234354",
                         "created": "2014-06-13T19:28:39.408Z",
                         "lastUpdated": "2014-06-13T19:28:39.408Z",
-                        "status": "active"
+                        "status": "active",
+                        "advertisers": [
+                            "a-111"
+                        ]
                     },
                     {
-                        "id": "c-112",
-                        "name": "technology",
-                        "label": "Technology",
+                        "id": "cus-112",
+                        "name": "Carat USA",
+                        "adtechId": "28746456",
                         "created": "2014-06-13T19:28:39.408Z",
                         "lastUpdated": "2014-06-13T19:28:39.408Z",
-                        "status": "active"
+                        "status": "active",
+                        "advertisers": [
+                            "a-112",
+                            "a-113"
+                        ]
                     },
                     {
-                        "id": "c-113",
-                        "name": "people_blogs",
-                        "label": "People & Blogs",
+                        "id": "cus-113",
+                        "name": "Live Nation",
+                        "adtechId": "9874587676",
                         "created": "2014-06-13T19:28:39.408Z",
                         "lastUpdated": "2014-06-13T19:28:39.408Z",
-                        "status": "active"
+                        "status": "active",
+                        "advertisers": []
                     }
                 ];
                 /* jshint quotmark:single */
@@ -61,12 +72,12 @@
                     });
                 });
 
-                module(categoriesModule.name);
+                module(customersModule.name);
 
                 inject(function($injector) {
                     $httpBackend = $injector.get('$httpBackend');
                     $timeout = $injector.get('$timeout');
-                    CategoriesService = $injector.get('CategoriesService');
+                    CustomersService = $injector.get('CustomersService');
                     c6UrlMaker = $injector.get('c6UrlMaker');
                 });
 
@@ -76,7 +87,7 @@
             });
 
             describe('methods', function() {
-                describe('getCategories()', function() {
+                describe('getCustomers()', function() {
                     beforeEach(function(){
                         successSpy = jasmine.createSpy('getSites.success');
                         failureSpy = jasmine.createSpy('getSites.failure');
@@ -84,171 +95,157 @@
                     });
 
                     it('will resolve promise if successfull',function(){
-                        $httpBackend.expectGET('/api/content/categories')
-                            .respond(200,mockCategories);
-                        CategoriesService.getCategories().then(successSpy,failureSpy);
+                        $httpBackend.expectGET('/api/account/customers')
+                            .respond(200,mockCustomers);
+                        CustomersService.getCustomers().then(successSpy,failureSpy);
                         $httpBackend.flush();
-                        expect(successSpy).toHaveBeenCalledWith(mockCategories);
+                        expect(successSpy).toHaveBeenCalledWith(mockCustomers);
                         expect(failureSpy).not.toHaveBeenCalled();
                         expect($timeout.cancel).toHaveBeenCalled();
                     });
 
                     it('will reject promise if not successful',function(){
-                        $httpBackend.expectGET('/api/content/categories')
-                            .respond(404,'Unable to find categories.');
-                        CategoriesService.getCategories().then(successSpy,failureSpy);
+                        $httpBackend.expectGET('/api/account/customers')
+                            .respond(404,'Unable to find customers.');
+                        CustomersService.getCustomers().then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).not.toHaveBeenCalled();
-                        expect(failureSpy).toHaveBeenCalledWith('Unable to find categories.');
+                        expect(failureSpy).toHaveBeenCalledWith('Unable to find customers.');
                         expect($timeout.cancel).toHaveBeenCalled();
                     });
 
                     it('will reject promise if times out',function(){
-                        $httpBackend.expectGET('/api/content/categories')
+                        $httpBackend.expectGET('/api/account/customers')
                             .respond(200,'');
-                        CategoriesService.getCategories().then(successSpy,failureSpy);
+                        CustomersService.getCustomers().then(successSpy,failureSpy);
                         $timeout.flush(60000);
                         expect(successSpy).not.toHaveBeenCalled();
                         expect(failureSpy).toHaveBeenCalledWith('Request timed out.');
                     });
                 });
 
-                describe('getCategory(id)', function() {
+                describe('getCustomer(id)', function() {
                     beforeEach(function(){
-                        successSpy = jasmine.createSpy('getCategory.success');
-                        failureSpy = jasmine.createSpy('getCategory.failure');
+                        successSpy = jasmine.createSpy('getCustomer.success');
+                        failureSpy = jasmine.createSpy('getCustomer.failure');
                         spyOn($timeout,'cancel');
                     });
 
                     it('will resolve promise if successfull',function(){
-                        $httpBackend.expectGET('/api/content/category/c-111')
-                            .respond(200,mockCategory);
-                        CategoriesService.getCategory(mockCategory.id).then(successSpy,failureSpy);
+                        $httpBackend.expectGET('/api/account/customer/cus-111')
+                            .respond(200,mockCustomer);
+                        CustomersService.getCustomer(mockCustomer.id).then(successSpy,failureSpy);
                         $httpBackend.flush();
-                        expect(successSpy).toHaveBeenCalledWith(mockCategory);
+                        expect(successSpy).toHaveBeenCalledWith(mockCustomer);
                         expect(failureSpy).not.toHaveBeenCalled();
                         expect($timeout.cancel).toHaveBeenCalled();
                     });
 
                     it('will reject promise if not successful',function(){
-                        $httpBackend.expectGET('/api/content/category/c-111')
-                            .respond(404,'Unable to find category.');
-                        CategoriesService.getCategory(mockCategory.id).then(successSpy,failureSpy);
+                        $httpBackend.expectGET('/api/account/customer/cus-111')
+                            .respond(404,'Unable to find customer.');
+                        CustomersService.getCustomer(mockCustomer.id).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).not.toHaveBeenCalled();
-                        expect(failureSpy).toHaveBeenCalledWith('Unable to find category.');
+                        expect(failureSpy).toHaveBeenCalledWith('Unable to find customer.');
                         expect($timeout.cancel).toHaveBeenCalled();
                     });
 
                     it('will reject promise if times out',function(){
-                        $httpBackend.expectGET('/api/content/category/c-111')
+                        $httpBackend.expectGET('/api/account/customer/cus-111')
                             .respond(200,'');
-                        CategoriesService.getCategory(mockCategory.id).then(successSpy,failureSpy);
+                        CustomersService.getCustomer(mockCustomer.id).then(successSpy,failureSpy);
                         $timeout.flush(60000);
                         expect(successSpy).not.toHaveBeenCalled();
                         expect(failureSpy).toHaveBeenCalledWith('Request timed out.');
                     });
                 });
 
-                describe('putCategory(id, category)', function() {
-                    var editedCategory;
-
+                describe('putCustomer(id, customer)', function() {
                     beforeEach(function(){
-                        successSpy = jasmine.createSpy('putCategory.success');
-                        failureSpy = jasmine.createSpy('putCategory.failure');
+                        successSpy = jasmine.createSpy('putCustomer.success');
+                        failureSpy = jasmine.createSpy('putCustomer.failure');
                         spyOn($timeout,'cancel');
-
-                        editedCategory = {};
-                        ['name','label','status'].forEach(function(prop) {
-                            editedCategory[prop] = mockCategory[prop];
-                        });
                     });
 
                     it('will resolve promise if successfull',function(){
-                        $httpBackend.expectPUT('/api/content/category/c-111')
-                            .respond(200,mockCategory);
-                        CategoriesService.putCategory(mockCategory.id, editedCategory).then(successSpy,failureSpy);
+                        $httpBackend.expectPUT('/api/account/customer/cus-111')
+                            .respond(200,mockCustomer);
+                        CustomersService.putCustomer(mockCustomer.id, mockCustomer).then(successSpy,failureSpy);
                         $httpBackend.flush();
-                        expect(successSpy).toHaveBeenCalledWith(mockCategory);
+                        expect(successSpy).toHaveBeenCalledWith(mockCustomer);
                         expect(failureSpy).not.toHaveBeenCalled();
                         expect($timeout.cancel).toHaveBeenCalled();
                     });
 
                     it('will reject promise if not successful',function(){
-                        $httpBackend.expectPUT('/api/content/category/c-111')
-                            .respond(404,'Unable to update category.');
-                        CategoriesService.putCategory(mockCategory.id, editedCategory).then(successSpy,failureSpy);
+                        $httpBackend.expectPUT('/api/account/customer/cus-111')
+                            .respond(404,'Unable to update customer.');
+                        CustomersService.putCustomer(mockCustomer.id, mockCustomer).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).not.toHaveBeenCalled();
-                        expect(failureSpy).toHaveBeenCalledWith('Unable to update category.');
+                        expect(failureSpy).toHaveBeenCalledWith('Unable to update customer.');
                         expect($timeout.cancel).toHaveBeenCalled();
                     });
 
                     it('will reject promise if times out',function(){
-                        $httpBackend.expectPUT('/api/content/category/c-111')
+                        $httpBackend.expectPUT('/api/account/customer/cus-111')
                             .respond(200,'');
-                        CategoriesService.putCategory(mockCategory.id, editedCategory).then(successSpy,failureSpy);
+                        CustomersService.putCustomer(mockCustomer.id, mockCustomer).then(successSpy,failureSpy);
                         $timeout.flush(60000);
                         expect(successSpy).not.toHaveBeenCalled();
                         expect(failureSpy).toHaveBeenCalledWith('Request timed out.');
                     });
                 });
 
-                describe('postCategory(category)', function() {
-                    var newCategory;
-
+                describe('postCustomer(customer)', function() {
                     beforeEach(function(){
                         successSpy = jasmine.createSpy('postSite.success');
                         failureSpy = jasmine.createSpy('postSite.failure');
                         spyOn($timeout,'cancel');
-
-                        newCategory = {};
-                        ['name','label','status'].forEach(function(prop) {
-                            newCategory[prop] = mockCategory[prop];
-                        });
                     });
 
                     it('will resolve promise if successfull',function(){
-                        $httpBackend.expectPOST('/api/content/category')
-                            .respond(200,mockCategory);
-                        CategoriesService.postCategory(newCategory).then(successSpy,failureSpy);
+                        $httpBackend.expectPOST('/api/account/customer')
+                            .respond(200,mockCustomer);
+                        CustomersService.postCustomer(mockCustomer).then(successSpy,failureSpy);
                         $httpBackend.flush();
-                        expect(successSpy).toHaveBeenCalledWith(mockCategory);
+                        expect(successSpy).toHaveBeenCalledWith(mockCustomer);
                         expect(failureSpy).not.toHaveBeenCalled();
                         expect($timeout.cancel).toHaveBeenCalled();
                     });
 
                     it('will reject promise if not successful',function(){
-                        $httpBackend.expectPOST('/api/content/category')
-                            .respond(404,'Unable to create category.');
-                        CategoriesService.postCategory(newCategory).then(successSpy,failureSpy);
+                        $httpBackend.expectPOST('/api/account/customer')
+                            .respond(404,'Unable to create customer.');
+                        CustomersService.postCustomer(mockCustomer).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).not.toHaveBeenCalled();
-                        expect(failureSpy).toHaveBeenCalledWith('Unable to create category.');
+                        expect(failureSpy).toHaveBeenCalledWith('Unable to create customer.');
                         expect($timeout.cancel).toHaveBeenCalled();
                     });
 
                     it('will reject promise if times out',function(){
-                        $httpBackend.expectPOST('/api/content/category')
+                        $httpBackend.expectPOST('/api/account/customer')
                             .respond(200,'');
-                        CategoriesService.postCategory(newCategory).then(successSpy,failureSpy);
+                        CustomersService.postCustomer(mockCustomer).then(successSpy,failureSpy);
                         $timeout.flush(60000);
                         expect(successSpy).not.toHaveBeenCalled();
                         expect(failureSpy).toHaveBeenCalledWith('Request timed out.');
                     });
                 });
 
-                describe('deleteCategory(id)', function() {
+                describe('deleteCustomer(id)', function() {
                     beforeEach(function(){
-                        successSpy = jasmine.createSpy('deleteCategory.success');
-                        failureSpy = jasmine.createSpy('deleteCategory.failure');
+                        successSpy = jasmine.createSpy('deleteCustomer.success');
+                        failureSpy = jasmine.createSpy('deleteCustomer.failure');
                         spyOn($timeout,'cancel');
                     });
 
                     it('will resolve promise if successfull',function(){
-                        $httpBackend.expectDELETE('/api/content/category/c-111')
+                        $httpBackend.expectDELETE('/api/account/customer/cus-111')
                             .respond(204,'');
-                        CategoriesService.deleteCategory(mockCategory.id).then(successSpy,failureSpy);
+                        CustomersService.deleteCustomer(mockCustomer.id).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).toHaveBeenCalled();
                         expect(failureSpy).not.toHaveBeenCalled();
@@ -256,9 +253,9 @@
                     });
 
                     it('will reject promise if not successful',function(){
-                        $httpBackend.expectDELETE('/api/content/category/c-111')
+                        $httpBackend.expectDELETE('/api/account/customer/cus-111')
                             .respond(401,'Unauthorized.');
-                        CategoriesService.deleteCategory(mockCategory.id).then(successSpy,failureSpy);
+                        CustomersService.deleteCustomer(mockCustomer.id).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).not.toHaveBeenCalled();
                         expect(failureSpy).toHaveBeenCalledWith('Unauthorized.');
@@ -266,9 +263,9 @@
                     });
 
                     it('will reject promise if times out',function(){
-                        $httpBackend.expectDELETE('/api/content/category/c-111')
+                        $httpBackend.expectDELETE('/api/account/customer/cus-111')
                             .respond(200,'');
-                        CategoriesService.deleteCategory(mockCategory.id).then(successSpy,failureSpy);
+                        CustomersService.deleteCustomer(mockCustomer.id).then(successSpy,failureSpy);
                         $timeout.flush(60000);
                         expect(successSpy).not.toHaveBeenCalled();
                         expect(failureSpy).toHaveBeenCalledWith('Request timed out.');
