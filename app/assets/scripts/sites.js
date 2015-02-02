@@ -208,6 +208,12 @@ define(['account'], function(account) {
                 self.container = null;
             };
 
+            self.removeContainerItem = function(container) {
+                var i = self.site.containers.indexOf(container);
+
+                self.site.containers.splice(i,1);
+            };
+
             self.disableBrandBinding = function() {
                 bindBrandToName = false;
             };

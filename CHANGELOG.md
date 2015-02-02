@@ -1,5 +1,13 @@
 # ProShop
 
+## v0.7.1 (February 2, 2015)
+
+* *[v0.7.1]*
+  * [FIX]: Fixed bug where incorrect Site Container was removed when clicked
+  * Category names are now read only once created
+  * Advertiser and Publisher permissions are now being set for Sys Admin Users
+* *[/v0.7.1]*
+
 ## v0.7.0 (February 2, 2015)
 
 * *[v0.7.0]*

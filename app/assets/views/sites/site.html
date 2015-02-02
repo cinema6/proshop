@@ -83,7 +83,7 @@
                             <td>{{container.name}}</td>
                             <td>{{container.displayPlacementId}} <span ng-show="!container.displayPlacementId"><small><em>Assigned when saved</em></small></span></td>
                             <td>{{container.contentPlacementId}} <span ng-show="!container.displayPlacementId"><small><em>Assigned when saved</em></small></span></td>
-                            <td><span class="glyphicon glyphicon-remove" ng-click="SiteCtrl.site.containers.splice($index,1)"></span></td>
+                            <td><span class="glyphicon glyphicon-remove" ng-click="SiteCtrl.removeContainerItem(container)"></span></td>
                         </tr>
                     </tbody>
                 </table>

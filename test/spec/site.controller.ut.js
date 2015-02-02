@@ -263,6 +263,26 @@
                     });
                 });
 
+                describe('removeContainerItem(container)', function() {
+                    it('should remove the container from the container array', function() {
+                        var cont;
+
+                        $scope.$apply(function() {
+                            SitesService.getSite.deferred.resolve(angular.copy(mockSite));
+                            account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
+                        });
+
+                        cont = angular.copy(SiteCtrl.site.containers[0]);
+
+                        expect(SiteCtrl.site.containers.length).toBe(2);
+
+                        SiteCtrl.removeContainerItem(SiteCtrl.site.containers[0]);
+
+                        expect(SiteCtrl.site.containers[0]).not.toEqual(cont);
+                        expect(SiteCtrl.site.containers.length).toBe(1);
+                    });
+                });
+
                 describe('saveSite(site)', function() {
                     describe('when editing existing site', function() {
                         beforeEach(function() {
