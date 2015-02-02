@@ -1,10 +1,13 @@
 # ProShop
 
+## v0.7.0 (February 2, 2015)
+
 * *[v0.7.0]*
   * [FEATURE]: Advertiser Manager
   * [FEATURE]: Category Manager
   * [FEATURE]: Customer Manager
   * [FEATURE]: Site Container Manager
+* *[/v0.7.0]*
 
 ## v0.6.16 (January 23, 2015)
 
