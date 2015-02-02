@@ -52,6 +52,18 @@
           "create": "all",
           "edit": "all",
           "delete": "all"
+        },
+        "customers": {
+          "read": "all",
+          "create": "all",
+          "edit": "all",
+          "delete": "all"
+        },
+        "advertisers": {
+          "read": "all",
+          "create": "all",
+          "edit": "all",
+          "delete": "all"
         }
       },
       "publisher": {
