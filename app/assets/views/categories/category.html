@@ -18,9 +18,9 @@
             </div>
         </div>
 
-        <div class="form-group" ng-class="{'has-error': theForm.name.$error.required}">
-            <label for="name" class="control-label"> Name: </label>
-            <div>
+        <div class="form-group" style="padding-top:10px" ng-class="{'has-error': theForm.name.$error.required}">
+            <label for="name" class="control-label"> Name: </label> <span ng-show="!!CategoryCtrl.category.id">{{CategoryCtrl.category.name}}</span>
+            <div ng-if="!CategoryCtrl.category.id">
                 <input class="col-md-3" ng-focus="CategoryCtrl.disableLabelBinding()" class="form-control" type="text" name="name" ng-model="CategoryCtrl.category.name" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" ng-pattern="/^[\w]*[a-zA-Z]+[\w]*$/" required ignore-spaces>
                 <span class="help-block">
                     <span ng-show="theForm.name.$error.required"> Required. </span>
