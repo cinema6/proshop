@@ -44,7 +44,7 @@ define(['angular'], function(angular) {
                 });
 
                 self.page = 1;
-            }
+            };
 
             $scope.tableHeaders = [
                 {label:'Name',value:'name'},
@@ -164,6 +164,8 @@ define(['angular'], function(angular) {
                     }
                 });
             };
+
+            initView();
         }])
 
         .service('GroupsService', ['$http','$q','$timeout','c6UrlMaker',
@@ -199,21 +201,21 @@ define(['angular'], function(angular) {
             this.getGroup = function(id) {
                 return httpWrapper({
                     method: 'GET',
-                    url: c6UrlMaker('api/minireelGroup/' + id, 'api')
+                    url: c6UrlMaker('minireelGroup/' + id, 'api')
                 });
             };
 
             this.getGroups = function() {
                 return httpWrapper({
                     method: 'GET',
-                    url: c6UrlMaker('api/minireelGroups', 'api')
+                    url: c6UrlMaker('minireelGroups', 'api')
                 });
             };
 
             this.postGroup = function(group) {
                 return httpWrapper({
                     method: 'POST',
-                    url: c6UrlMaker('api/minireelGroup', 'api'),
+                    url: c6UrlMaker('minireelGroup', 'api'),
                     data: group
                 });
             };
@@ -221,7 +223,7 @@ define(['angular'], function(angular) {
             this.putGroup = function(id, group) {
                 return httpWrapper({
                     method: 'PUT',
-                    url: c6UrlMaker('api/minireelGroup/' + id, 'api'),
+                    url: c6UrlMaker('minireelGroup/' + id, 'api'),
                     data: group
                 });
             };
@@ -229,7 +231,7 @@ define(['angular'], function(angular) {
             this.deleteGroup = function(id) {
                 return httpWrapper({
                     method: 'DELETE',
-                    url: c6UrlMaker('api/minireelGroup/' + id, 'api')
+                    url: c6UrlMaker('minireelGroup/' + id, 'api')
                 });
             };
         }]);

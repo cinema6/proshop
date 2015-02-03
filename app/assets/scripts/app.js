@@ -1,9 +1,9 @@
 define(['angular','ngAnimate','ngRoute','c6ui','c6log','c6defines',
         'auth','login','users','orgs','minireels','sites','advertisers',
-        'categories','customers','templates'],
+        'categories','customers','groups','templates'],
 function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines ,
          auth  , login , users , orgs , minireels , sites , advertisers ,
-         categories , customers , templates ) {
+         categories , customers , groups , templates ) {
     /* jshint -W106 */
     'use strict';
 
@@ -24,6 +24,7 @@ function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines ,
             advertisers.name,
             categories.name,
             customers.name,
+            groups.name,
             templates.name
         ])
         .constant('c6Defines',c6Defines)
@@ -127,6 +128,21 @@ function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines ,
                     controller: 'CategoryController',
                     controllerAs: 'CategoryCtrl',
                     templateUrl: 'views/categories/category.html'
+                })
+                .when('/groups', {
+                    controller: 'GroupsController',
+                    controllerAs: 'GroupsCtrl',
+                    templateUrl: 'views/groups/groups.html'
+                })
+                .when('/group/new', {
+                    controller: 'GroupController',
+                    controllerAs: 'GroupCtrl',
+                    templateUrl: 'views/groups/group.html'
+                })
+                .when('/group/:id', {
+                    controller: 'GroupController',
+                    controllerAs: 'GroupCtrl',
+                    templateUrl: 'views/groups/group.html'
                 })
                 .otherwise({redirectTo: '/users'});
         }])
