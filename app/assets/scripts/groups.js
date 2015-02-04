@@ -74,12 +74,62 @@ define(['angular'], function(angular) {
 
         .controller('GroupController', ['$scope','$log','$q','$location','$routeParams',
                                         'GroupsService','ConfirmDialogService','CategoriesService',
+                                        'content','account',
         function                       ( $scope , $log , $q , $location , $routeParams ,
-                                         GroupsService , ConfirmDialogService , CategoriesService ) {
-            var self = this;
+                                         GroupsService , ConfirmDialogService , CategoriesService ,
+                                         content , account ) {
+            var self = this,
+                _data = {};
 
             $log = $log.context('GroupCtrl');
             $log.info('instantiated');
+
+            function decorateExperiences(experiences) {
+                var deferred = $q.defer(),
+                    orgIds = filterDuplicates('org', experiences).join(),
+                    userIds = filterDuplicates('user', experiences).join();
+
+                $q.all([
+                        account.getOrgs({ids: orgIds}),
+                        account.getUsers({ids: userIds})
+                    ])
+                    .then(function(promises) {
+                        var orgs = promises[0],
+                            users = promises[1];
+
+                        experiences.forEach(function(mr) {
+                            mr.user = getObjectByProp('id', mr.user, users);
+                            mr.org = getObjectByProp('id', mr.org, orgs);
+                        });
+
+                        deferred.resolve(experiences);
+                    })
+                    .catch(function(err) {
+                        deferred.reject();
+                    });
+
+                return deferred.promise;
+            }
+
+            function filterDuplicates(prop, experiences) {
+                return experiences.reduce(function(result, exp) {
+                    var value = exp[prop];
+
+                    if (result.indexOf(value) < 0) {
+                        return result.concat(value);
+                    }
+                },[]);
+            }
+
+            function handleError(err) {
+                $log.error(err);
+            }
+
+            function getObjectByProp(prop, value, array) {
+                return array.filter(function(obj) {
+                    return obj[prop] === value;
+                })[0];
+            }
 
             function initView() {
                 var id = $routeParams.id,
@@ -105,17 +155,109 @@ define(['angular'], function(angular) {
                         self.group.categories = categories.filter(function(cat) {
                             return group.categories.indexOf(cat.name) > -1;
                         });
+
+                        content.getExperiences({ids: self.group.miniReels.join()})
+                            .then(decorateExperiences)
+                            .then(function(experiences) {
+                                self.group.miniReels = experiences;
+                            })
+                            .catch(function(err) {
+                                $scope.message = 'There was an error loading the Group\'s MiniReels. ' + err;
+                            });
                     })
                     .finally(function() {
                         self.loading = false;
                     });
             }
 
+            function activeMiniReels(experience) {
+                return !self.group.miniReels.filter(function(mr) {
+                    return mr.id === experience.id;
+                }).length;
+            }
+
+            self.showMiniReels = false;
+            self.query = null;
+            self.page = 1;
+            self.limit = 50;
+            self.limits = [1,10,50,100];
+            Object.defineProperties(self, {
+                total: {
+                    get: function() {
+                        return self.miniReels && Math.ceil(self.miniReels.length / self.limit);
+                    }
+                }
+            });
+
+            self.filterData = function(query) {
+                var _query = query.toLowerCase();
+
+                self.miniReels = _data.miniReels.filter(function(miniReel) {
+                    return miniReel.data.title.toLowerCase().indexOf(_query) > -1 ||
+                        miniReel.user.name.indexOf(_query) > -1 ||
+                        miniReel.org.name.indexOf(_query) > -1;
+                });
+
+                self.page = 1;
+            };
+
             self.addCategory = function(category) {
                 var categories = self.group.categories;
 
-                if (categories.indexOf(category) === -1) {
+                if (category && categories.indexOf(category) === -1) {
                     categories.push(category);
+                }
+            };
+
+            self.removeCategory = function(category) {
+                var categories = self.group.categories,
+                    index = categories.indexOf(category);
+
+                if (category && index > -1) {
+                    categories.splice(index,1);
+                }
+            };
+
+            self.removeMiniReel = function(miniReel) {
+                var miniReels = self.group.miniReels,
+                    index = miniReels.indexOf(miniReel);
+
+                if (miniReel && index > -1) {
+                    miniReels.splice(index,1);
+                }
+            };
+
+            self.loadMiniReels = function() {
+                var categories = self.group.categories
+                        .map(function(category) {
+                            return category.name;
+                        }).join();
+
+                content.getExperiences({categories: categories})
+                    .then(function(experiences) {
+                        var filteredExperiences = experiences.filter(activeMiniReels);
+
+                        return decorateExperiences(filteredExperiences);
+                    })
+                    .then(function(experiences) {
+                        self.miniReels = experiences;
+                        _data.miniReels = experiences;
+                    })
+                    .catch(handleError)
+                    .finally(function() {
+                        self.showMiniReels = true;
+                    });
+            };
+
+            self.saveMiniReels = function() {
+                var currentMiniReels = self.group.miniReels,
+                    chosenMiniReels = self.miniReels.filter(function(mr) {
+                        return mr.chosen;
+                    });
+
+                if (chosenMiniReels.length) {
+                    self.group.miniReels = currentMiniReels.concat(chosenMiniReels);
+                    self.showMiniReels = false;
                 }
             };
 
@@ -178,7 +320,6 @@ define(['angular'], function(angular) {
 
             $scope.miniReelTableHeaders = [
                 {label:'Title',value:'data.title'},
-                {label:'ID',value:'id'},
                 {label:'Mode',value:'data.mode'},
                 {label:'Org',value:'org'},
                 {label:'User',value:'user'}

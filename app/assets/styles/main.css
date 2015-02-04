@@ -35,7 +35,7 @@
     margin:-18.75em 0 0 -30.75em;
     background:#fff;
     border-radius:0.25em;
-    overflow: hidden;
+    overflow: scroll;
     box-sizing:border-box;
 
     -webkit-box-shadow: 0 0 4px 1px rgba(0,0,0,0.6);
@@ -50,6 +50,9 @@
 }
 /* end Modal styles from Studio */
 
+.clickable {
+    cursor: pointer;
+}
 
 .has-error .help-block, .has-error .control-label, .has-error .radio, .has-error .checkbox, .has-error .radio-inline, .has-error .checkbox-inline {
     color: #d61212;
