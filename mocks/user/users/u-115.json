@@ -1,13 +1,12 @@
 {
-    "id": "e2e-12223",
-    "email": "testerrr3@cinema6.com",
-    "firstName": "Testy",
-    "lastName": "McTest",
-    "branding": "test_branding",
+    "email": "google4@google.com",
+    "firstName": "Googley",
+    "lastName": "Google",
+    "branding": "googleytheme",
     "created": "2014-06-13T19:28:39.408Z",
     "lastUpdated": "2014-06-13T19:28:39.408Z",
     "applications": ["e-51ae37625cb57f"],
-    "org": "o-113",
+    "org": "o-114",
     "status": "active",
     "config": {},
     "permissions": {

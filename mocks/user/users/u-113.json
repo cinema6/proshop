@@ -1,13 +1,12 @@
 {
-    "id": "e2e-12224",
-    "email": "google4@google.com",
-    "firstName": "Googley",
-    "lastName": "Google",
-    "branding": "googleytheme",
+    "email": "email2@sample.com",
+    "firstName": "Emailio",
+    "lastName": "Addresstevez",
+    "branding": "specialtheme",
     "created": "2014-06-13T19:28:39.408Z",
     "lastUpdated": "2014-06-13T19:28:39.408Z",
     "applications": ["e-51ae37625cb57f"],
-    "org": "o-114",
+    "org": "o-112",
     "status": "active",
     "config": {},
     "permissions": {

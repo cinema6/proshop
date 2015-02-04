@@ -394,10 +394,11 @@ define(['angular','c6ui'], function(angular,c6ui){
             });
         };
 
-        this.getUsers = function(org) {
+        this.getUsers = function(params) {
             return httpWrapper({
                 method: 'GET',
-                url: c6UrlMaker('account/users' + (org ? '?org=' + org.id : ''),'api')
+                params: params,
+                url: c6UrlMaker('account/users','api')
             });
         };
 
@@ -597,10 +598,11 @@ define(['angular','c6ui'], function(angular,c6ui){
             });
         };
 
-        this.getOrgs = function(field) {
+        this.getOrgs = function(params) {
             return httpWrapper({
                 method: 'GET',
-                url: c6UrlMaker('account/orgs' + (field ? '?sort=' + field : ''),'api')
+                params: params,
+                url: c6UrlMaker('account/orgs','api')
             });
         };
 

@@ -125,7 +125,7 @@ define(['account'],function(account) {
                 data.users = null;
                 data.org = account.convertOrgForEditing(org);
 
-                account.getUsers(org)
+                account.getUsers({orgs: org.id})
                     .then(function(users) {
                         data.users = users;
                     });
