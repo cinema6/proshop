@@ -306,15 +306,15 @@
                         expect($scope.message).toBe(null);
                         expect(OrgsCtrl.action).toBe('edit');
                         expect($scope.data.org).toEqual(jasmine.any(Object));
-                        expect(account.getUsers).toHaveBeenCalledWith($scope.data.orgs[1]);
+                        expect(account.getUsers).toHaveBeenCalledWith({orgs: $scope.data.orgs[1].id });
 
                         expect($scope.data.users).toBe(null);
 
                         $scope.$apply(function() {
-                            account.getUsers.deferred.resolve(mockUsers[1]);
+                            account.getUsers.deferred.resolve([mockUsers[1]]);
                         });
 
-                        expect($scope.data.users).toBe(mockUsers[1]);
+                        expect($scope.data.users).toEqual([mockUsers[1]]);
                     });
                 });
 
@@ -454,7 +454,7 @@
 
                     it('should not DELETE the org if there are users belonging to it', function() {
                         $scope.$apply(function() {
-                            account.getUsers.deferred.resolve(mockUsers[0]);
+                            account.getUsers.deferred.resolve([mockUsers[0]]);
                         });
 
                         OrgsCtrl.confirmDelete();

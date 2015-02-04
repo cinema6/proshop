@@ -104,7 +104,7 @@ define(['angular'], function(angular) {
                         deferred.resolve(experiences);
                     })
                     .catch(function(err) {
-                        deferred.reject();
+                        deferred.reject(err);
                     });
 
                 return deferred.promise;

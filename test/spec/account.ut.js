@@ -323,21 +323,21 @@
                     });
                 });
 
-                describe('getOrgs()', function() {
+                describe('getOrgs(params)', function() {
                     describe('when querying by field', function() {
-                        var mockField;
+                        var mockIds;
 
                         beforeEach(function(){
                             successSpy = jasmine.createSpy('getOrgs.success');
                             failureSpy = jasmine.createSpy('getOrgs.failure');
                             spyOn($timeout,'cancel');
-                            mockField = 'name';
+                            mockIds = 'o-1,o-2,o-3';
                         });
 
                         it('will resolve promise if successfull',function(){
-                            $httpBackend.expectGET('/api/account/orgs?sort=name')
+                            $httpBackend.expectGET('/api/account/orgs?ids='+mockIds)
                                 .respond(200,mockOrgs);
-                            account.getOrgs(mockField).then(successSpy,failureSpy);
+                            account.getOrgs({ids: mockIds}).then(successSpy,failureSpy);
                             $httpBackend.flush();
                             expect(successSpy).toHaveBeenCalledWith(mockOrgs);
                             expect(failureSpy).not.toHaveBeenCalled();
@@ -345,9 +345,9 @@
                         });
 
                         it('will reject promise if not successful',function(){
-                            $httpBackend.expectGET('/api/account/orgs?sort=name')
+                            $httpBackend.expectGET('/api/account/orgs?ids='+mockIds)
                                 .respond(404,'Unable to find orgs.');
-                            account.getOrgs(mockField).then(successSpy,failureSpy);
+                            account.getOrgs({ids: mockIds}).then(successSpy,failureSpy);
                             $httpBackend.flush();
                             expect(successSpy).not.toHaveBeenCalled();
                             expect(failureSpy).toHaveBeenCalledWith('Unable to find orgs.');
@@ -355,9 +355,9 @@
                         });
 
                         it('will reject promise if times out',function(){
-                            $httpBackend.expectGET('/api/account/orgs?sort=name')
+                            $httpBackend.expectGET('/api/account/orgs?ids='+mockIds)
                                 .respond(200,'');
-                            account.getOrgs(mockField).then(successSpy,failureSpy);
+                            account.getOrgs({ids: mockIds}).then(successSpy,failureSpy);
                             $timeout.flush(60000);
                             expect(successSpy).not.toHaveBeenCalled();
                             expect(failureSpy).toHaveBeenCalledWith('Request timed out.');
@@ -696,17 +696,20 @@
 
                 describe('getUsers()', function() {
                     describe('when querying by org', function() {
+                        var mockOrgIds;
+
                         beforeEach(function(){
                             successSpy = jasmine.createSpy('getUsers.success');
                             failureSpy = jasmine.createSpy('getUsers.failure');
                             spyOn($timeout,'cancel');
                             mockUsers = [{id:'u-1'}, {name:'u-2'}];
+                            mockOrgIds = 'o-1,o-2';
                         });
 
                         it('will resolve promise if successfull',function(){
-                            $httpBackend.expectGET('/api/account/users?org=o-1')
+                            $httpBackend.expectGET('/api/account/users?orgs='+mockOrgIds)
                                 .respond(200,mockUsers);
-                            account.getUsers(mockOrg).then(successSpy,failureSpy);
+                            account.getUsers({orgs: mockOrgIds}).then(successSpy,failureSpy);
                             $httpBackend.flush();
                             expect(successSpy).toHaveBeenCalledWith(mockUsers);
                             expect(failureSpy).not.toHaveBeenCalled();
@@ -714,9 +717,9 @@
                         });
 
                         it('will reject promise if not successful',function(){
-                            $httpBackend.expectGET('/api/account/users?org=o-1')
+                            $httpBackend.expectGET('/api/account/users?orgs='+mockOrgIds)
                                 .respond(404,'Unable to find users.');
-                            account.getUsers(mockOrg).then(successSpy,failureSpy);
+                            account.getUsers({orgs: mockOrgIds}).then(successSpy,failureSpy);
                             $httpBackend.flush();
                             expect(successSpy).not.toHaveBeenCalled();
                             expect(failureSpy).toHaveBeenCalledWith('Unable to find users.');
@@ -724,9 +727,9 @@
                         });
 
                         it('will reject promise if times out',function(){
-                            $httpBackend.expectGET('/api/account/users?org=o-1')
+                            $httpBackend.expectGET('/api/account/users?orgs='+mockOrgIds)
                                 .respond(200,'');
-                            account.getUsers(mockOrg).then(successSpy,failureSpy);
+                            account.getUsers({orgs: mockOrgIds}).then(successSpy,failureSpy);
                             $timeout.flush(60000);
                             expect(successSpy).not.toHaveBeenCalled();
                             expect(failureSpy).toHaveBeenCalledWith('Request timed out.');
