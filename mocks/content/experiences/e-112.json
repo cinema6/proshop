@@ -3,7 +3,7 @@
     "appUriPrefix": "<%= settings.appUrl %>",
     "appUri": "rumble",
     "title": "The 15 Most Amazing GoPro Videos Ever Recorded",
-    "user": "u-9c2832ae79833a",
+    "user": "u-112",
     "org": "o-112",
     "status": "active",
     "access": "public",
@@ -11,6 +11,7 @@
     "lastUpdated": "2014-08-27T19:10:00.063Z",
     "type": "minireel",
     "sort": "lastUpdated,-1",
+    "categories": ["music","technology"],
     "data": {
         "title": "The 15 Most Amazing GoPro Videos Ever Recorded",
         "mode": "light",

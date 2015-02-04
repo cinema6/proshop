@@ -4,7 +4,7 @@
     "appUri": "rumble",
     "title": "Rumble Video",
     "img": {},
-    "user": "u-35b096c999711b",
+    "user": "u-113",
     "org": "o-113",
     "status": "pending",
     "access": "public",
@@ -12,6 +12,7 @@
     "lastUpdated": "2014-04-18T14:07:20+00:00",
     "type": "minireel",
     "sort": "lastUpdated,-1",
+    "categories": ["music"],
     "data": {
         "title": "Rumble Video",
         "mode": "light",

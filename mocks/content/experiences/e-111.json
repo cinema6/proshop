@@ -3,7 +3,7 @@
     "appUriPrefix": "<%= settings.appUrl %>",
     "appUri": "rumble",
     "title": "The 7 Most Legendary Pro Wrestling Intros Of All Time",
-    "user": "u-9c2832ae79833a",
+    "user": "u-111",
     "org": "o-111",
     "status": "pending",
     "access": "public",
@@ -11,6 +11,7 @@
     "lastUpdated": "2014-08-21T17:44:48.063Z",
     "type": "minireel",
     "sort": "lastUpdated,-1",
+    "categories": ["people_blogs","technology"],
     "data": {
         "title": "The 7 Most Legendary Pro Wrestling Intros Of All Time",
         "mode": "full",

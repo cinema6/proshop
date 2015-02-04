@@ -21,6 +21,16 @@ module.exports = function(http) {
         return 'e-' + Math.floor(Math.random() * 10000) + 1;
     }
 
+    function matchFilter(keyString, haystack) {
+        var keys = keyString.split(',');
+
+        if (!haystack) { return false; }
+
+        return keys.some(function(value) {
+            return value === haystack || haystack.indexOf(value) > -1;
+        });
+    }
+
     http.whenGET('/api/content/experiences', function(request) {
         var filters = pluckExcept(request.query, ['sort', 'limit', 'skip', 'text']),
             page = withDefaults(mapObject(pluck(request.query, ['limit', 'skip']), parseFloat), {
@@ -37,12 +47,16 @@ module.exports = function(http) {
                 .filter(function(experience) {
                     return Object.keys(filters)
                         .every(function(key) {
-                            if (key === 'ids') {
-                                return filters[key].split(',').some(function(id) {
-                                    return id === experience.id;
-                                });
-                            } else {
-                                return filters[key] === experience[key];
+                            switch (key) {
+                                case 'ids':
+                                    return matchFilter(filters[key], experience.id);
+                                    break;
+                                case 'categories':
+                                    return matchFilter(filters[key], experience[key]);
+                                    break;
+                                default:
+                                    return filters[key] === experience[key];
+                                    break;
                             }
                         });
                 })
