@@ -266,7 +266,11 @@ define(['angular'], function(angular) {
             };
 
             self.save = function(group) {
-                var _group = {};
+                var _group = {
+                    name: group.name,
+                    categories: group.categories.map(function(cat) { return cat.name; }),
+                    miniReels: group.miniReels.map(function(mr) { return mr.id; })
+                };
 
                 function handleError(err) {
                     $log.error(err);
