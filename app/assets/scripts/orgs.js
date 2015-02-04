@@ -141,7 +141,7 @@ define(['account'],function(account) {
             function deleteOrg() {
                 $log.info('deleting org: ', data.org);
 
-                if (data.users) {
+                if (data.users.length) {
                     $scope.message = 'You must delete or move the Users belonging to this Org before deleting it.';
                     return;
                 }
@@ -166,7 +166,7 @@ define(['account'],function(account) {
             self.confirmDelete = function() {
                 var dialogObject;
 
-                if (data.users) {
+                if (data.users.length) {
                     dialogObject = {
                         prompt: 'You must delete or move the Users belonging to this Org before deleting it.',
                         affirm: 'Close',
