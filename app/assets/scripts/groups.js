@@ -102,11 +102,22 @@ define(['angular'], function(angular) {
 
                         self.categories = categories;
                         self.group = group;
+                        self.group.categories = categories.filter(function(cat) {
+                            return group.categories.indexOf(cat.name) > -1;
+                        });
                     })
                     .finally(function() {
                         self.loading = false;
                     });
             }
+
+            self.addCategory = function(category) {
+                var categories = self.group.categories;
+
+                if (categories.indexOf(category) === -1) {
+                    categories.push(category);
+                }
+            };
 
             self.save = function(group) {
                 var _group = {};
@@ -163,6 +174,29 @@ define(['angular'], function(angular) {
                         ConfirmDialogService.close();
                     }
                 });
+            };
+
+            $scope.miniReelTableHeaders = [
+                {label:'Title',value:'data.title'},
+                {label:'ID',value:'id'},
+                {label:'Mode',value:'data.mode'},
+                {label:'Org',value:'org'},
+                {label:'User',value:'user'}
+            ];
+
+            $scope.sort = {
+                column: 'data.title',
+                descending: false
+            };
+
+            $scope.doSort = function(column) {
+                var sort = $scope.sort;
+                if (sort.column === column) {
+                    sort.descending = !sort.descending;
+                } else {
+                    sort.column = column;
+                    sort.descending = false;
+                }
             };
 
             initView();
