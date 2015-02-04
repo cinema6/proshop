@@ -48,7 +48,6 @@ define(['angular'], function(angular) {
 
             $scope.tableHeaders = [
                 {label:'Name',value:'name'},
-                {label:'ID',value:'id'},
                 {label:'Categories',value:'categories'},
                 {label:'MiniReel Count',value:'miniReels.length'},
                 {label:'Last Updated',value:'lastUpdated'}
@@ -156,14 +155,16 @@ define(['angular'], function(angular) {
                             return group.categories.indexOf(cat.name) > -1;
                         });
 
-                        content.getExperiences({ids: self.group.miniReels.join()})
-                            .then(decorateExperiences)
-                            .then(function(experiences) {
-                                self.group.miniReels = experiences;
-                            })
-                            .catch(function(err) {
-                                $scope.message = 'There was an error loading the Group\'s MiniReels. ' + err;
-                            });
+                        if (self.group.miniReels.length) {
+                            content.getExperiences({ids: self.group.miniReels.join()})
+                                .then(decorateExperiences)
+                                .then(function(experiences) {
+                                    self.group.miniReels = experiences;
+                                })
+                                .catch(function(err) {
+                                    $scope.message = 'There was an error loading the Group\'s MiniReels. ' + err;
+                                });
+                        }
                     })
                     .finally(function() {
                         self.loading = false;
@@ -194,7 +195,9 @@ define(['angular'], function(angular) {
 
                 self.miniReels = _data.miniReels.filter(function(miniReel) {
                     return miniReel.data.title.toLowerCase().indexOf(_query) > -1 ||
-                        miniReel.user.name.indexOf(_query) > -1 ||
+                        miniReel.user.email.indexOf(_query) > -1 ||
+                        miniReel.user.firstName.indexOf(_query) > -1 ||
+                        miniReel.user.lastName.indexOf(_query) > -1 ||
                         miniReel.org.name.indexOf(_query) > -1;
                 });
 
@@ -257,8 +260,9 @@ define(['angular'], function(angular) {
 
                 if (chosenMiniReels.length) {
                     self.group.miniReels = currentMiniReels.concat(chosenMiniReels);
-                    self.showMiniReels = false;
                 }
+
+                self.showMiniReels = false;
             };
 
             self.save = function(group) {
@@ -277,7 +281,7 @@ define(['angular'], function(angular) {
 
                 function handleSuccess(group) {
                     $log.info('saved Group: ', group);
-                    $location.path('/customers');
+                    $location.path('/groups');
                 }
 
                 if (group.id) {
@@ -320,6 +324,7 @@ define(['angular'], function(angular) {
 
             $scope.miniReelTableHeaders = [
                 {label:'Title',value:'data.title'},
+                {label:'Categories',value:'categories'},
                 {label:'Mode',value:'data.mode'},
                 {label:'Org',value:'org'},
                 {label:'User',value:'user'}

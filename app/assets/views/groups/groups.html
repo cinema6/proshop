@@ -20,8 +20,7 @@
             </tr>
             <tr ng-repeat="group in GroupsCtrl.groups | orderBy:sort.column:sort.descending | paginatorlimits:[(GroupsCtrl.page - 1) * GroupsCtrl.limit, (GroupsCtrl.page * GroupsCtrl.limit)]">
                 <td><a href="/#/group/{{group.id}}">{{group.name}}</a></td>
-                <td>{{group.id}}</td>
-                <td>{{group.categories}}</td>
+                <td>{{group.categories.join(', ')}}</td>
                 <td>{{group.miniReels.length}}</td>
                 <td>{{group.lastUpdated | date}}</td>
             </tr>
