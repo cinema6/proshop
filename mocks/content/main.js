@@ -32,7 +32,7 @@ module.exports = function(http) {
     }
 
     http.whenGET('/api/content/experiences', function(request) {
-        var filters = pluckExcept(request.query, ['sort', 'limit', 'skip', 'text']),
+        var filters = pluckExcept(request.query, ['sort', 'limit', 'skip', 'text', 'sponsored']),
             page = withDefaults(mapObject(pluck(request.query, ['limit', 'skip']), parseFloat), {
                 limit: Infinity,
                 skip: 0

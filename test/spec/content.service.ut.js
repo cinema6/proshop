@@ -109,7 +109,7 @@
                     });
 
                     it('will accept empty params', function() {
-                        $httpBackend.expectGET('/api/content/experiences')
+                        $httpBackend.expectGET('/api/content/experiences?sponsored=false')
                             .respond(200,mockExperiences);
                         content.getExperiences().then(successSpy,failureSpy);
                         $httpBackend.flush();
@@ -119,7 +119,7 @@
                     });
 
                     it('will resolve promise if successfull',function(){
-                        $httpBackend.expectGET('/api/content/experiences?ids=e-1,e-2,e-3')
+                        $httpBackend.expectGET('/api/content/experiences?ids=e-1,e-2,e-3&sponsored=false')
                             .respond(200,mockExperiences);
                         content.getExperiences({ids: 'e-1,e-2,e-3'}).then(successSpy,failureSpy);
                         $httpBackend.flush();
@@ -129,7 +129,7 @@
                     });
 
                     it('will reject promise if not successful',function(){
-                        $httpBackend.expectGET('/api/content/experiences?ids=e-1,e-2,e-3')
+                        $httpBackend.expectGET('/api/content/experiences?ids=e-1,e-2,e-3&sponsored=false')
                             .respond(404,'Unable to find experiences.');
                         content.getExperiences({ids: 'e-1,e-2,e-3'}).then(successSpy,failureSpy);
                         $httpBackend.flush();
@@ -139,7 +139,7 @@
                     });
 
                     it('will reject promise if times out',function(){
-                        $httpBackend.expectGET('/api/content/experiences?ids=e-1,e-2,e-3')
+                        $httpBackend.expectGET('/api/content/experiences?ids=e-1,e-2,e-3&sponsored=false')
                             .respond(200,'');
                         content.getExperiences({ids: 'e-1,e-2,e-3'}).then(successSpy,failureSpy);
                         $timeout.flush(60000);

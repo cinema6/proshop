@@ -46,6 +46,9 @@ define(['angular','c6ui'],function(angular,c6ui) {
             };
 
             this.getExperiences = function(params) {
+                params = params || {};
+                params.sponsored = false;
+
                 return httpWrapper({
                     method: 'GET',
                     params: params,
