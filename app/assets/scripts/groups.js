@@ -105,9 +105,9 @@ define(['angular'], function(angular) {
                 return experiences.reduce(function(result, exp) {
                     var value = exp[prop];
 
-                    if (result.indexOf(value) < 0) {
-                        return result.concat(value);
-                    }
+                    return result.indexOf(value) < 0 ?
+                        result.concat(value) :
+                        result;
                 },[]);
             }
 
