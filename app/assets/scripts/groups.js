@@ -83,31 +83,22 @@ define(['angular'], function(angular) {
             $log = $log.context('GroupCtrl');
             $log.info('instantiated');
 
-            function decorateExperiences(experiences) {
-                var deferred = $q.defer(),
-                    orgIds = filterDuplicates('org', experiences).join(),
-                    userIds = filterDuplicates('user', experiences).join();
+            function getObjectByProp(prop, value, array) {
+                return array.filter(function(obj) {
+                    return obj[prop] === value;
+                })[0];
+            }
 
-                $q.all([
-                        account.getOrgs({ids: orgIds}),
-                        account.getUsers({ids: userIds})
-                    ])
-                    .then(function(promises) {
-                        var orgs = promises[0],
-                            users = promises[1];
+            function getBy(prop) {
+                return function(obj) {
+                    return obj[prop];
+                };
+            }
 
-                        experiences.forEach(function(mr) {
-                            mr.user = getObjectByProp('id', mr.user, users);
-                            mr.org = getObjectByProp('id', mr.org, orgs);
-                        });
-
-                        deferred.resolve(experiences);
-                    })
-                    .catch(function(err) {
-                        deferred.reject(err);
-                    });
-
-                return deferred.promise;
+            function activeMiniReels(experience) {
+                return !self.group.miniReels.filter(function(mr) {
+                    return mr.id === experience.id;
+                }).length;
             }
 
             function filterDuplicates(prop, experiences) {
@@ -122,12 +113,6 @@ define(['angular'], function(angular) {
 
             function handleError(err) {
                 $log.error(err);
-            }
-
-            function getObjectByProp(prop, value, array) {
-                return array.filter(function(obj) {
-                    return obj[prop] === value;
-                })[0];
             }
 
             function initView() {
@@ -171,13 +156,56 @@ define(['angular'], function(angular) {
                     });
             }
 
-            function activeMiniReels(experience) {
-                return !self.group.miniReels.filter(function(mr) {
-                    return mr.id === experience.id;
-                }).length;
+            function decorateExperiences(experiences) {
+                var deferred = $q.defer(),
+                    orgIds = filterDuplicates('org', experiences).join(),
+                    userIds = filterDuplicates('user', experiences).join();
+
+                $q.all([
+                        account.getOrgs({ids: orgIds}),
+                        account.getUsers({ids: userIds})
+                    ])
+                    .then(function(promises) {
+                        var orgs = promises[0],
+                            users = promises[1];
+
+                        experiences.forEach(function(mr) {
+                            mr.user = getObjectByProp('id', mr.user, users);
+                            mr.org = getObjectByProp('id', mr.org, orgs);
+                        });
+
+                        deferred.resolve(experiences);
+                    })
+                    .catch(function(err) {
+                        deferred.reject(err);
+                    });
+
+                return deferred.promise;
+            }
+
+            function removeCategory(category) {
+                var categories = self.group.categories,
+                    index = categories.indexOf(category);
+
+                if (category && index > -1) {
+                    categories.splice(index,1);
+                }
+            }
+
+            function miniReelsWithout(category) {
+                return self.group.miniReels.filter(function(mr) {
+                    var hasMatch = mr.categories.indexOf(category.name) > -1,
+                        hasOthers = !!self.group.categories.filter(function(cat) {
+                            return mr.categories.indexOf(cat.name) > -1 &&
+                                cat.name !== category.name;
+                        })[0];
+
+                    return !hasMatch || hasOthers;
+                });
             }
 
             self.showMiniReels = false;
+            self.allAreSelected = false;
             self.query = null;
             self.page = 1;
             self.limit = 50;
@@ -213,12 +241,22 @@ define(['angular'], function(angular) {
             };
 
             self.removeCategory = function(category) {
-                var categories = self.group.categories,
-                    index = categories.indexOf(category);
+                ConfirmDialogService.display({
+                    prompt: 'Would you like to remove all MiniReels in this category?',
+                    message: 'NOTE: MiniReels in other Group categories will not be removed.',
+                    affirm: 'Yes, remove MiniReels',
+                    cancel: 'No, keep all MiniReels',
+                    onAffirm: function() {
+                        ConfirmDialogService.close();
+                        self.group.miniReels = miniReelsWithout(category);
+                        removeCategory(category);
 
-                if (category && index > -1) {
-                    categories.splice(index,1);
-                }
+                    },
+                    onCancel: function() {
+                        removeCategory(category);
+                        ConfirmDialogService.close();
+                    }
+                });
             };
 
             self.removeMiniReel = function(miniReel) {
@@ -238,9 +276,7 @@ define(['angular'], function(angular) {
 
                 content.getExperiences({categories: categories})
                     .then(function(experiences) {
-                        var filteredExperiences = experiences.filter(activeMiniReels);
-
-                        return decorateExperiences(filteredExperiences);
+                        return decorateExperiences(experiences.filter(activeMiniReels));
                     })
                     .then(function(experiences) {
                         self.miniReels = experiences;
@@ -268,8 +304,8 @@ define(['angular'], function(angular) {
             self.save = function(group) {
                 var _group = {
                     name: group.name,
-                    categories: group.categories.map(function(cat) { return cat.name; }),
-                    miniReels: group.miniReels.map(function(mr) { return mr.id; })
+                    categories: group.categories.map(getBy('name')),
+                    miniReels: group.miniReels.map(getBy('id'))
                 };
 
                 function handleError(err) {
@@ -348,6 +384,14 @@ define(['angular'], function(angular) {
                     sort.descending = false;
                 }
             };
+
+            $scope.$watch(function() { return self.allAreSelected; }, function(allSelected) {
+                if (!self.miniReels || !self.miniReels.length) { return; }
+
+                self.miniReels.forEach(function(mr) {
+                    mr.chosen = allSelected;
+                });
+            });
 
             initView();
         }])
