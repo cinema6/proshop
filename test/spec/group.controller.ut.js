@@ -157,7 +157,7 @@
                     },
                     {
                         "id": "e-113",
-                        "title": "Rumble Video",
+                        "title": "Rumble Video Mock 3",
                         "user": "u-111",
                         "org": "o-111",
                         "status": "pending",
@@ -168,7 +168,7 @@
                         "sort": "lastUpdated,-1",
                         "categories": ["music"],
                         "data": {
-                            "title": "Rumble Video",
+                            "title": "Rumble Video Mock 3",
                             "mode": "light",
                             "branding": "elitedaily",
                             "collateral": {},
@@ -333,7 +333,7 @@
                         expect(CategoriesService.getCategories).toHaveBeenCalled();
                     });
 
-                    describe('when promises resolve', function() {
+                    describe('when categories and group promises resolve', function() {
                         beforeEach(function() {
                             $scope.$apply(function() {
                                 CategoriesService.getCategories.deferred.resolve(mockCategories);
@@ -394,6 +394,534 @@
                     it('should not load a group but should load all categories', function() {
                         expect(CategoriesService.getCategories).toHaveBeenCalled();
                         expect(GroupsService.getGroup).not.toHaveBeenCalled();
+                    });
+
+                    describe('when the categories promise resolves', function() {
+                        beforeEach(function() {
+                            $scope.$apply(function() {
+                                CategoriesService.getCategories.deferred.resolve(mockCategories);
+                            });
+                        });
+
+                        it('should initialize data objects on the controller', function() {
+                            expect(GroupCtrl.categories).toEqual(mockCategories);
+                            expect(GroupCtrl.group).toEqual({
+                                name: '',
+                                categories: [],
+                                miniReels: []
+                            });
+                        });
+
+                        it('should not call the content service', function() {
+                            expect(content.getExperiences).not.toHaveBeenCalled();
+                        });
+                    });
+                });
+            });
+
+            describe('methods', function() {
+                describe('filterData(query)', function() {
+                    beforeEach(function() {
+                        compileCtrl('g-111');
+
+                        $scope.$apply(function() {
+                            mockGroup.miniReels = [];
+                            CategoriesService.getCategories.deferred.resolve(mockCategories);
+                            GroupsService.getGroup.deferred.resolve(copy(mockGroup));
+                        });
+
+                        $scope.$apply(function() {
+                            account.getOrgs.deferred.resolve(mockOrgs);
+                            account.getUsers.deferred.resolve(mockUsers);
+                        });
+
+                        $scope.$apply(function() {
+                            GroupCtrl.loadMiniReels();
+                        });
+
+                        $scope.$apply(function() {
+                            content.getExperiences.deferred.resolve(mockMiniReels);
+                        });
+                    });
+
+                    it('should match case-insensitively against title, user email and name', function() {
+                        expect(GroupCtrl.miniReels.length).toBe(4);
+
+                        GroupCtrl.filterData('wrestling'); // miniReel 1's name only
+                        expect(GroupCtrl.miniReels.length).toBe(1);
+                        expect(GroupCtrl.miniReels[0].id).toBe('e-111');
+
+                        GroupCtrl.filterData('mock'); // miniReel 3's name only
+                        expect(GroupCtrl.miniReels.length).toBe(1);
+                        expect(GroupCtrl.miniReels[0].id).toBe('e-113');
+
+                        GroupCtrl.filterData('rumble'); // miniReel 1 and 3 name only
+                        expect(GroupCtrl.miniReels.length).toBe(2);
+
+                        GroupCtrl.filterData('testmonkey'); // miniReel 2 and 4 user lastname only
+                        expect(GroupCtrl.miniReels.length).toBe(2);
+
+                        GroupCtrl.filterData('saxguy'); // miniReel 3's email only
+                        expect(GroupCtrl.miniReels.length).toBe(2);
+                        expect(GroupCtrl.miniReels[0].id).toBe('e-111');
+                        expect(GroupCtrl.miniReels[1].id).toBe('e-113');
+
+                        GroupCtrl.filterData('xxx');
+                        expect(GroupCtrl.miniReels.length).toBe(0);
+
+                        GroupCtrl.filterData('');
+                        expect(GroupCtrl.miniReels.length).toBe(4);
+                    });
+                });
+
+                describe('addCategory(category)', function() {
+                    it('should only add a category if not already assigned', function() {
+                        compileCtrl('g-111');
+
+                        $scope.$apply(function() {
+                            CategoriesService.getCategories.deferred.resolve(mockCategories);
+                            GroupsService.getGroup.deferred.resolve(copy(mockGroup));
+                        });
+
+                        expect(GroupCtrl.group.categories.length).toBe(2);
+
+                        GroupCtrl.addCategory(mockCategories[0]);
+
+                        expect(GroupCtrl.group.categories.length).toBe(2);
+
+                        GroupCtrl.addCategory(mockCategories[1]);
+
+                        expect(GroupCtrl.group.categories.length).toBe(3);
+                    });
+                });
+
+                describe('removeCategory(category)', function() {
+                    var onAffirm, onCancel;
+
+                    beforeEach(function() {
+                        compileCtrl('g-111');
+
+                        $scope.$apply(function() {
+                            mockGroup.miniReels = ['e-111','e-112','e-113','e-114'];
+                            mockGroup.categories = ['technology','sports','people_blogs'];
+                            CategoriesService.getCategories.deferred.resolve(mockCategories);
+                            GroupsService.getGroup.deferred.resolve(copy(mockGroup));
+                        });
+
+                        $scope.$apply(function() {
+                            content.getExperiences.deferred.resolve(mockMiniReels);
+                        });
+
+                        $scope.$apply(function() {
+                            account.getOrgs.deferred.resolve(mockOrgs);
+                            account.getUsers.deferred.resolve(mockUsers);
+                        });
+
+                        GroupCtrl.removeCategory(mockCategories[1]);
+
+                        onAffirm = ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm;
+                        onCancel = ConfirmDialogService.display.calls.mostRecent().args[0].onCancel;
+                    });
+
+                    it('should display a dialog', function() {
+                        expect(ConfirmDialogService.display).toHaveBeenCalled();
+                    });
+
+                    describe('onAffirm()', function() {
+                        it('should remove the category and all miniReels that match the category but don\'t also match another category', function() {
+                            expect(GroupCtrl.group.categories.length).toBe(3);
+                            expect(GroupCtrl.group.miniReels.length).toBe(4);
+
+                            onAffirm();
+
+                            expect(ConfirmDialogService.close).toHaveBeenCalled();
+                            expect(GroupCtrl.group.categories.length).toBe(2);
+                            expect(GroupCtrl.group.categories[0].id).toBe('c-111');
+                            expect(GroupCtrl.group.categories[1].id).toBe('c-113');
+                            expect(GroupCtrl.group.miniReels.length).toBe(2);
+                            expect(GroupCtrl.group.miniReels[0].id).toBe('e-111');
+                            expect(GroupCtrl.group.miniReels[1].id).toBe('e-113');
+                        });
+                    });
+
+                    describe('onCancel()', function() {
+                        it('should remove the category but leave all the miniReels', function() {
+                            expect(GroupCtrl.group.categories.length).toBe(3);
+                            expect(GroupCtrl.group.miniReels.length).toBe(4);
+
+                            onCancel();
+
+                            expect(ConfirmDialogService.close).toHaveBeenCalled();
+                            expect(GroupCtrl.group.categories.length).toBe(2);
+                            expect(GroupCtrl.group.categories[0].id).toBe('c-111');
+                            expect(GroupCtrl.group.categories[1].id).toBe('c-113');
+                            expect(GroupCtrl.group.miniReels.length).toBe(4);
+                        });
+                    });
+                });
+
+                describe('removeMiniReel(miniReel)', function() {
+                    it('should remove the specified minireel', function() {
+                        compileCtrl('g-111');
+
+                        $scope.$apply(function() {
+                            CategoriesService.getCategories.deferred.resolve(mockCategories);
+                            GroupsService.getGroup.deferred.resolve(copy(mockGroup));
+                        });
+
+                        $scope.$apply(function() {
+                            content.getExperiences.deferred.resolve(mockMiniReels);
+                        });
+
+                        $scope.$apply(function() {
+                            account.getOrgs.deferred.resolve(mockOrgs);
+                            account.getUsers.deferred.resolve(mockUsers);
+                        });
+
+                        expect(GroupCtrl.group.miniReels.length).toBe(4);
+                        expect(GroupCtrl.group.miniReels[0].id).toBe('e-111');
+
+                        GroupCtrl.removeMiniReel(GroupCtrl.group.miniReels[0]);
+
+                        expect(GroupCtrl.group.miniReels.length).toBe(3);
+                        expect(GroupCtrl.group.miniReels[0].id).toBe('e-112');
+                    });
+                });
+
+                describe('loadMiniReels()', function() {
+                    beforeEach(function() {
+                        compileCtrl('g-111');
+
+                        $scope.$apply(function() {
+                            mockGroup.miniReels = [];
+                            CategoriesService.getCategories.deferred.resolve(mockCategories);
+                            GroupsService.getGroup.deferred.resolve(copy(mockGroup));
+                        });
+
+                        $scope.$apply(function() {
+                            account.getOrgs.deferred.resolve(mockOrgs);
+                            account.getUsers.deferred.resolve(mockUsers);
+                        });
+
+                        GroupCtrl.loadMiniReels();
+                    });
+
+                    it('should call for miniReels by categories', function() {
+                        expect(content.getExperiences).toHaveBeenCalledWith({categories: 'sports,people_blogs'});
+                    });
+
+                    describe('when the content promise resolves', function() {
+                        it('should filter out minireels that already belong to the Group before calling for the experiences\' Org and User to decorate the experience', function() {
+                            GroupCtrl.group.miniReels = [mockMiniReels[0]];
+
+                            $scope.$apply(function() {
+                                content.getExperiences.deferred.resolve([mockMiniReels[0], mockMiniReels[1]]);
+                            });
+
+                            expect(account.getOrgs).toHaveBeenCalledWith({ids: 'o-112'});
+                            expect(account.getUsers).toHaveBeenCalledWith({ids: 'u-112'});
+                        });
+
+                        describe('when the account promises resolve', function() {
+                            it('should attach the correct Org and User objects to each MiniReel', function() {
+                                GroupCtrl.group.miniReels = [mockMiniReels[0]];
+
+                                $scope.$apply(function() {
+                                    content.getExperiences.deferred.resolve([mockMiniReels[0], mockMiniReels[1]]);
+                                    account.getOrgs.deferred.resolve(mockOrgs);
+                                    account.getUsers.deferred.resolve(mockUsers);
+                                });
+
+                                expect(GroupCtrl.miniReels.length).toBe(1);
+                                expect(GroupCtrl.miniReels[0]).toEqual(mockMiniReels[1]);
+                                expect(GroupCtrl.miniReels[0].org).toEqual(mockOrgs[1]);
+                                expect(GroupCtrl.miniReels[0].user).toEqual(mockUsers[1]);
+                            });
+                        });
+                    });
+                });
+
+                describe('saveMiniReels()', function() {
+                    beforeEach(function() {
+                        compileCtrl('g-111');
+
+                        $scope.$apply(function() {
+                            mockGroup.miniReels = [];
+                            CategoriesService.getCategories.deferred.resolve(mockCategories);
+                            GroupsService.getGroup.deferred.resolve(copy(mockGroup));
+                        });
+
+                        $scope.$apply(function() {
+                            account.getOrgs.deferred.resolve(mockOrgs);
+                            account.getUsers.deferred.resolve(mockUsers);
+                        });
+
+                        GroupCtrl.loadMiniReels();
+
+                        $scope.$apply(function() {
+                            content.getExperiences.deferred.resolve(mockMiniReels);
+                        });
+                    });
+
+                    it('should add all chosen miniReels', function() {
+                        GroupCtrl.miniReels[0].chosen = true;
+                        GroupCtrl.miniReels[1].chosen = true;
+                        GroupCtrl.miniReels[2].chosen = true;
+
+                        expect(GroupCtrl.group.miniReels.length).toBe(0);
+
+                        GroupCtrl.saveMiniReels();
+
+                        expect(GroupCtrl.group.miniReels.length).toBe(3);
+                    });
+                });
+
+                describe('save()', function() {
+                    describe('when /new', function() {
+                        beforeEach(function() {
+                            compileCtrl();
+
+                            $scope.$apply(function() {
+                                CategoriesService.getCategories.deferred.resolve(mockCategories);
+                            });
+
+                            GroupCtrl.group.name = 'New Group';
+                        });
+
+                        it('should POST the Group', function() {
+                            GroupCtrl.save(GroupCtrl.group);
+
+                            expect(GroupsService.postGroup).toHaveBeenCalledWith({
+                                name: 'New Group',
+                                categories: [],
+                                miniReels: []
+                            });
+                        });
+
+                        it('should convert categories and MiniReels into saveable arrays', function() {
+                            GroupCtrl.group.categories = mockCategories;
+                            GroupCtrl.group.miniReels = mockMiniReels;
+
+                            GroupCtrl.save(GroupCtrl.group);
+
+                            expect(GroupsService.postGroup).toHaveBeenCalledWith({
+                                name: 'New Group',
+                                categories: ['sports','technology','people_blogs'],
+                                miniReels: ['e-111','e-112','e-113','e-114']
+                            });
+                        });
+
+                        describe('on success', function() {
+                            it('should redirect to /groups', function() {
+                                GroupCtrl.save(GroupCtrl.group);
+
+                                $scope.$apply(function() {
+                                    GroupsService.postGroup.deferred.resolve();
+                                });
+
+                                expect($location.path).toHaveBeenCalledWith('/groups');
+                            });
+                        });
+
+                        describe('on error', function() {
+                            it('should display an error dialog', function() {
+                                GroupCtrl.save(GroupCtrl.group);
+
+                                $scope.$apply(function() {
+                                    GroupsService.postGroup.deferred.reject('Problem');
+                                });
+
+                                expect($location.path).not.toHaveBeenCalled();
+                                expect(ConfirmDialogService.display).toHaveBeenCalled();
+                                expect(ConfirmDialogService.display.calls.mostRecent().args[0].prompt).toBe('There was a problem saving the Group. Problem.');
+                            });
+                        });
+                    });
+
+                    describe('when /:id', function() {
+                        beforeEach(function() {
+                            compileCtrl('g-111');
+
+                            $scope.$apply(function() {
+                                GroupsService.getGroup.deferred.resolve(copy(mockGroup));
+                                CategoriesService.getCategories.deferred.resolve(mockCategories);
+                            });
+
+                            $scope.$apply(function() {
+                                content.getExperiences.deferred.resolve([mockMiniReels[0], mockMiniReels[1]]);
+                            });
+
+                            $scope.$apply(function() {
+                                account.getOrgs.deferred.resolve(mockOrgs);
+                                account.getUsers.deferred.resolve(mockUsers);
+                            });
+                        });
+
+                        it('should PUT the Group', function() {
+                            GroupCtrl.save(GroupCtrl.group);
+
+                            expect(GroupsService.putGroup).toHaveBeenCalledWith('g-111', {
+                                name: 'Group Number 1',
+                                categories: ['sports','people_blogs'],
+                                miniReels: ['e-111','e-112']
+                            });
+                        });
+
+                        it('should convert categories and MiniReels into saveable arrays', function() {
+                            GroupCtrl.group.categories = mockCategories;
+                            GroupCtrl.group.miniReels = mockMiniReels;
+
+                            GroupCtrl.save(GroupCtrl.group);
+
+                            expect(GroupsService.putGroup).toHaveBeenCalledWith('g-111', {
+                                name: 'Group Number 1',
+                                categories: ['sports','technology','people_blogs'],
+                                miniReels: ['e-111','e-112','e-113','e-114']
+                            });
+                        });
+
+                        describe('on success', function() {
+                            it('should redirect to /groups', function() {
+                                GroupCtrl.save(GroupCtrl.group);
+
+                                $scope.$apply(function() {
+                                    GroupsService.putGroup.deferred.resolve();
+                                });
+
+                                expect($location.path).toHaveBeenCalledWith('/groups');
+                            });
+                        });
+
+                        describe('on error', function() {
+                            it('should display an error dialog', function() {
+                                GroupCtrl.save(GroupCtrl.group);
+
+                                $scope.$apply(function() {
+                                    GroupsService.putGroup.deferred.reject('Problem');
+                                });
+
+                                expect($location.path).not.toHaveBeenCalled();
+                                expect(ConfirmDialogService.display).toHaveBeenCalled();
+                                expect(ConfirmDialogService.display.calls.mostRecent().args[0].prompt).toBe('There was a problem saving the Group. Problem.');
+                            });
+                        });
+                    });
+                });
+
+                describe('delete()', function() {
+                    var onAffirm, onCancel;
+
+                    beforeEach(function() {
+                        compileCtrl('g-111');
+
+                        $scope.$apply(function() {
+                            mockGroup.miniReels = [];
+                            GroupsService.getGroup.deferred.resolve(copy(mockGroup));
+                            CategoriesService.getCategories.deferred.resolve(mockCategories);
+                        });
+
+                        GroupCtrl.delete();
+
+                        onAffirm = ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm;
+                        onCancel = ConfirmDialogService.display.calls.mostRecent().args[0].onCancel;
+                    });
+
+                    it('should display a dialog confirming deletion', function() {
+                        expect(ConfirmDialogService.display).toHaveBeenCalled();
+                    });
+
+                    describe('onCancel()', function() {
+                        it('should close the dialog and stay on the page', function() {
+                            onCancel();
+
+                            expect(ConfirmDialogService.close).toHaveBeenCalled();
+                            expect($location.path).not.toHaveBeenCalled();
+                        });
+                    });
+
+                    describe('onAffirm()', function() {
+                        beforeEach(function() {
+                            onAffirm();
+                        });
+
+                        it('should call deleteGroup() and close the dialog', function() {
+                            expect(GroupsService.deleteGroup).toHaveBeenCalledWith(GroupCtrl.group.id);
+                            expect(ConfirmDialogService.close).toHaveBeenCalled();
+                        });
+
+                        describe('on success', function() {
+                            it('should redirect to /groups', function() {
+                                $scope.$apply(function() {
+                                    GroupsService.deleteGroup.deferred.resolve();
+                                });
+
+                                expect($location.path).toHaveBeenCalledWith('/groups');
+                            });
+                        });
+
+                        describe('on error', function() {
+                            it('should display an error dialog', function() {
+                                $scope.$apply(function() {
+                                    GroupsService.deleteGroup.deferred.reject('Sorry');
+                                });
+
+                                expect($location.path).not.toHaveBeenCalled();
+                                expect(ConfirmDialogService.display.calls.mostRecent().args[0].prompt).toBe('There was a problem deleting the Group. Sorry.');
+                            });
+                        });
+                    });
+                });
+            });
+
+            describe('$scope.doSort()', function() {
+                it('should sort', function() {
+                    $scope.doSort('categories');
+                    expect($scope.sort).toEqual({column:'categories',descending:false});
+                    $scope.doSort('categories');
+                    expect($scope.sort).toEqual({column:'categories',descending:true});
+                    $scope.doSort('data.title');
+                    expect($scope.sort).toEqual({column:'data.title',descending:false});
+                    $scope.doSort('mode');
+                    expect($scope.sort).toEqual({column:'mode',descending:false});
+                });
+            });
+
+            describe('$watch()', function() {
+                describe('allAreSelected', function() {
+                    it('should mark all miniReels as "chosen" if true', function() {
+                        GroupCtrl.miniReels = mockMiniReels;
+
+                        GroupCtrl.miniReels.forEach(function(mr) {
+                            expect(mr.chosen).toBe(undefined);
+                        });
+
+                        $scope.$apply(function() {
+                            GroupCtrl.allAreSelected = true;
+                        });
+
+                        GroupCtrl.miniReels.forEach(function(mr) {
+                            expect(mr.chosen).toBe(true);
+                        });
+                    });
+
+                    it('should unmark all MiniReels as "chosen" if false', function() {
+                        GroupCtrl.miniReels = mockMiniReels;
+
+                        GroupCtrl.miniReels.forEach(function(mr) {
+                            expect(mr.chosen).toBe(undefined);
+                        });
+
+                        $scope.$apply(function() {
+                            GroupCtrl.allAreSelected = true;
+                        });
+
+                        $scope.$apply(function() {
+                            GroupCtrl.allAreSelected = false;
+                        });
+
+                        GroupCtrl.miniReels.forEach(function(mr) {
+                            expect(mr.chosen).toBe(false);
+                        });
                     });
                 });
             });

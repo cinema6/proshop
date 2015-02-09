@@ -223,10 +223,10 @@ define(['angular'], function(angular) {
 
                 self.miniReels = _data.miniReels.filter(function(miniReel) {
                     return miniReel.data.title.toLowerCase().indexOf(_query) > -1 ||
-                        miniReel.user.email.indexOf(_query) > -1 ||
-                        miniReel.user.firstName.indexOf(_query) > -1 ||
-                        miniReel.user.lastName.indexOf(_query) > -1 ||
-                        miniReel.org.name.indexOf(_query) > -1;
+                        miniReel.user.email.toLowerCase().indexOf(_query) > -1 ||
+                        miniReel.user.firstName.toLowerCase().indexOf(_query) > -1 ||
+                        miniReel.user.lastName.toLowerCase().indexOf(_query) > -1 ||
+                        miniReel.org.name.toLowerCase().indexOf(_query) > -1;
                 });
 
                 self.page = 1;
