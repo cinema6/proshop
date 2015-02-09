@@ -21,13 +21,13 @@ module.exports = function(http) {
         return 'e-' + Math.floor(Math.random() * 10000) + 1;
     }
 
-    function matchFilter(keyString, haystack) {
-        var keys = keyString.split(',');
+    function contains(haystack, needle) {
+        var ids = haystack.split(',');
 
-        if (!haystack) { return false; }
+        if (!needle) { return false; }
 
-        return keys.some(function(value) {
-            return value === haystack || haystack.indexOf(value) > -1;
+        return ids.some(function(id) {
+            return id === needle || needle.indexOf(id) > -1;
         });
     }
 
@@ -49,10 +49,10 @@ module.exports = function(http) {
                         .every(function(key) {
                             switch (key) {
                                 case 'ids':
-                                    return matchFilter(filters[key], experience.id);
+                                    return contains(filters[key], experience.id);
                                     break;
                                 case 'categories':
-                                    return matchFilter(filters[key], experience[key]);
+                                    return contains(filters[key], experience[key]);
                                     break;
                                 default:
                                     return filters[key] === experience[key];

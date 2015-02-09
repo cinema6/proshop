@@ -17,13 +17,13 @@ module.exports = function(http) {
         return path.resolve(__dirname, './users/' + id + '.json');
     }
 
-    function matchFilter(keyString, haystack) {
-        var keys = keyString.split(',');
+    function contains(haystack, needle) {
+        var ids = haystack.split(',');
 
-        if (!haystack) { return false; }
+        if (!needle) { return false; }
 
-        return keys.some(function(value) {
-            return value === haystack || haystack.indexOf(value) > -1;
+        return ids.some(function(id) {
+            return id === needle || needle.indexOf(id) > -1;
         });
     }
 
@@ -121,10 +121,10 @@ module.exports = function(http) {
                         .every(function(key) {
                             switch (key) {
                                 case 'ids':
-                                    return matchFilter(filters[key], user.id);
+                                    return contains(filters[key], user.id);
                                     break;
                                 case 'orgs':
-                                    return matchFilter(filters[key], user.org);
+                                    return contains(filters[key], user.org);
                                     break;
                                 default:
                                     return filters[key] === user[key];
