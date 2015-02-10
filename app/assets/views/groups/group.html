@@ -1,0 +1,121 @@
+<h1>Group</h1>
+<br>
+<section class="view">
+    <div style="padding-bottom:20px">{{message}}</div>
+
+    <form name="theForm" ng-submit="GroupCtrl.save(GroupCtrl.group)">
+        <a href="/#/groups">&lsaquo; Back to list</a>
+
+        <div class="form-group" style="padding-top:20px" ng-class="{'has-error': theForm.name.$error.required}">
+            <label for="name" class="control-label"> Name: </label>
+            <div>
+                <input class="col-md-3" class="form-control" type="text" name="name" ng-model="GroupCtrl.group.name" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" required ignore-spaces>
+                <span class="help-block">
+                    <span ng-show="theForm.name.$error.required"> Required. </span>
+                    <span ng-show="theForm.name.$error.minlength"> Too short. </span>
+                    <span ng-show="theForm.name.$error.maxlength"> Too long. </span>
+                </span>
+            </div>
+        </div>
+
+        <div class="form-group" style="padding-top:20px">
+            <label for="categories" class="control-label"> Categories: </label>
+            <div ng-repeat="category in GroupCtrl.group.categories">
+                <span class="glyphicon glyphicon-remove" ng-click="GroupCtrl.removeCategory(category)"></span><strong> {{category.label}} </strong>
+            </div>
+            <div>
+                <select ng-model="GroupCtrl.category" name="category" ng-options="category.label for category in GroupCtrl.categories | orderBy:'name'">
+                    <option value="">-- Choose Category --</option>
+                </select>
+                <span class="clickable" ng-click="GroupCtrl.addCategory(GroupCtrl.category)">Add</span>
+            </div>
+        </div>
+
+        <div ng-show="GroupCtrl.group.miniReels.length">
+            <label for="minireels" class="control-label"> Active MiniReels: </label>
+            <table class="table table-condensed table-striped table-hover table-bordered">
+                <tbody>
+                    <tr>
+                        <th ng-repeat="th in miniReelTableHeaders" ng-click="doSort(th.value)" style="cursor:pointer;">
+                            {{th.label}} <span style="padding-left:5px;opacity:0.5;float:right;" ng-style="{visibility: sort.column === th.value ? 'visible' : 'hidden'}" ng-class="{'glyphicon-chevron-up': !sort.descending, 'glyphicon-chevron-down': sort.descending }" class="glyphicon "></span></th>
+                    </tr>
+                    <tr ng-repeat="miniReel in GroupCtrl.group.miniReels | orderBy:sort.column:sort.descending">
+                        <td>{{miniReel.data.title}}</td>
+                        <td>{{miniReel.categories.join(', ')}}</td>
+                        <td>{{miniReel.data.mode}}</td>
+                        <td>{{miniReel.org.name}}</td>
+                        <td>{{miniReel.user.email}}</td>
+                        <td>
+                            <a ng-href="{{miniReel.id | previewUrl}}" target="_blank">
+                                <svg style="width:1.125em;height:1.125em;" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
+                                    <path class="ui__icon" fill-rule="evenodd" clip-rule="evenodd" d="M13.4,7.9L5.7,2.2C5.5,2,5,1.9,4.6,2.1C4.3,2.2,4,2.7,4,3v11.9
+                                            c0,0.3,0.3,0.8,0.6,1c0.2,0.1,0.6,0.2,1.1-0.2l7.7-5.7C13.6,9.9,14,9.6,14,9C14,8.3,13.6,8,13.4,7.9z"></path>
+                                </svg>
+                            </a>
+                        </td>
+                        <td><span class="glyphicon glyphicon-remove" ng-click="GroupCtrl.removeMiniReel(miniReel)"></span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <input type="button" ng-show="GroupCtrl.group.categories.length" ng-click="GroupCtrl.loadMiniReels()" value="Add MiniReels">
+
+        <div style="padding:20px 0 40px 0;">
+            <input type="submit" value="Save" ng-disabled="!theForm.$valid">
+            <input c6-href="/groups" type="button" value="Cancel">
+            <input type="button" value="Delete" ng-show="GroupCtrl.group.id" ng-click="GroupCtrl.delete()">
+            <span ng-show="!theForm.$valid" class="text-danger"> There are errors above. See highlighted fields. </span>
+        </div>
+    </form>
+
+    <div ng-show="GroupCtrl.showMiniReels">
+            <div class="form-group modal__group">
+                <div style="padding:2em;">
+
+                    <div class="clearfix">
+                        <input style="float:right;width:250px;" type="text" ng-model="query" ng-change="GroupCtrl.filterData(query)" placeholder="Search MiniReels by Title">
+                    </div>
+
+                    <div class="clearfix">
+                        <paginator-controls page="GroupCtrl.page" limit="GroupCtrl.limit" limits="GroupCtrl.limits" total="GroupCtrl.total"></paginator-controls>
+                    </div>
+                    <table class="table table-condensed table-striped table-hover table-bordered">
+                        <tbody>
+                            <tr>
+                                <th>
+                                    <input type="checkbox" ng-model="GroupCtrl.allAreSelected">
+                                </th>
+                                <th ng-repeat="th in miniReelTableHeaders" ng-click="doSort(th.value)" style="cursor:pointer;">
+                                    {{th.label}} <span style="padding-left:5px;opacity:0.5;float:right;" ng-style="{visibility: sort.column === th.value ? 'visible' : 'hidden'}" ng-class="{'glyphicon-chevron-up': !sort.descending, 'glyphicon-chevron-down': sort.descending }" class="glyphicon "></span></th>
+                                <th></th>
+                            </tr>
+                            <tr ng-repeat="miniReel in GroupCtrl.miniReels | orderBy:sort.column:sort.descending | paginatorlimits:[(GroupCtrl.page - 1) * GroupCtrl.limit, (GroupCtrl.page * GroupCtrl.limit)]">
+                                <td><input type="checkbox" ng-model="miniReel.chosen"></td>
+                                <td>{{miniReel.data.title}}</td>
+                                <td>{{miniReel.categories.join(', ')}}</td>
+                                <td>{{miniReel.data.mode}}</td>
+                                <td>{{miniReel.org.name}}</td>
+                                <td>{{miniReel.user.email}}</td>
+                                <td>
+                                    <a ng-href="{{miniReel.id | previewUrl}}" target="_blank">
+                                        <svg style="width:1.125em;height:1.125em;" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 18 18" enable-background="new 0 0 18 18" xml:space="preserve">
+                                            <path class="ui__icon" fill-rule="evenodd" clip-rule="evenodd" d="M13.4,7.9L5.7,2.2C5.5,2,5,1.9,4.6,2.1C4.3,2.2,4,2.7,4,3v11.9
+                                                    c0,0.3,0.3,0.8,0.6,1c0.2,0.1,0.6,0.2,1.1-0.2l7.7-5.7C13.6,9.9,14,9.6,14,9C14,8.3,13.6,8,13.4,7.9z"></path>
+                                        </svg>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <h3 ng-show="!GroupCtrl.miniReels.length" style="padding-bottom:1em;">No Available MiniReels</h3>
+                    <input type="button" ng-click="GroupCtrl.saveMiniReels()" ng-show="GroupCtrl.miniReels.length" value="Add">
+                    <input type="button" ng-click="GroupCtrl.showMiniReels = false" value="Cancel">
+                </div>
+            </div>
+            <div class="modal__overlay">&nbsp;</div>
+        </div>
+
+    <div class="mask" ng-show="GroupCtrl.loading"></div>
+
+</section>

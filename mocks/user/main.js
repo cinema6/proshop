@@ -7,10 +7,24 @@ module.exports = function(http) {
     var fn = require('../utils/fn'),
         db = require('../utils/db'),
         idFromPath = db.idFromPath,
-        extend = fn.extend;
+        extend = fn.extend,
+        pluck = fn.pluck,
+        pluckExcept = fn.pluckExcept,
+        withDefaults = fn.withDefaults,
+        mapObject = fn.mapObject;
 
     function userPath(id) {
         return path.resolve(__dirname, './users/' + id + '.json');
+    }
+
+    function contains(haystack, needle) {
+        var ids = haystack.split(',');
+
+        if (!needle) { return false; }
+
+        return ids.some(function(id) {
+            return id === needle || needle.indexOf(id) > -1;
+        });
     }
 
     http.whenPOST('/api/account/user/email', function(request) {
@@ -37,7 +51,7 @@ module.exports = function(http) {
                 lastUpdated: (new Date()).toISOString()
             });
 
-        if (id === 'e2e-12224') {
+        if (id === 'u-114') {
             this.respond(401, 'Not Authorized');
         } else {
             grunt.file.write(filePath, JSON.stringify(newUser, null, '    '));
@@ -52,7 +66,6 @@ module.exports = function(http) {
             currentTime = (new Date()).toISOString(),
             data = request.body,
             newUser = extend(request.body, {
-                id: id,
                 created: currentTime,
                 lastUpdated: currentTime
             });
@@ -91,15 +104,68 @@ module.exports = function(http) {
     });
 
     http.whenGET('/api/account/users', function(request) {
-        var id = request.query.org,
+        var filters = pluckExcept(request.query, ['sort', 'limit', 'skip']),
+            page = withDefaults(mapObject(pluck(request.query, ['limit', 'skip']), parseFloat), {
+                limit: Infinity,
+                skip: 0
+            }),
+            sort = (request.query.sort || null) && request.query.sort.split(','),
             allUsers = grunt.file.expand(path.resolve(__dirname, './users/*.json'))
                 .map(function(path) {
-                    return grunt.file.readJSON(path);
+                    var id = path.match(/[^\/]+(?=\.json)/)[0];
+
+                    return extend(grunt.file.readJSON(path), { id: id });
                 })
                 .filter(function(user) {
-                    return id ? id === user.org : true;
-                });
+                    return Object.keys(filters)
+                        .every(function(key) {
+                            switch (key) {
+                                case 'ids':
+                                    return contains(filters[key], user.id);
+                                    break;
+                                case 'orgs':
+                                    return contains(filters[key], user.org);
+                                    break;
+                                default:
+                                    return filters[key] === user[key];
+                                    break;
+                            }
+                        });
+                }),
+            users = allUsers
+                .filter(function(user, index) {
+                    var startIndex = page.skip,
+                        endIndex = startIndex + page.limit;
 
-        this.respond(200, allUsers);
+                    return index >= startIndex && index <= endIndex;
+                })
+                .sort(function(a, b) {
+                    var prop = sort && sort[0],
+                        directionInt = parseInt(sort && sort[1]),
+                        isDate = ['lastUpdated', 'created', 'lastPublished'].indexOf(prop) > -1,
+                        aProp, bProp;
+
+                    if (!sort) {
+                        return 0;
+                    }
+
+                    aProp = isDate ? new Date(a[prop]) : a[prop];
+                    bProp = isDate ? new Date(b[prop]) : b[prop];
+
+                    if (aProp < bProp) {
+                        return directionInt * -1;
+                    } else if (bProp < aProp) {
+                        return directionInt;
+                    }
+
+                    return 0;
+                }),
+            startPosition = page.skip + 1,
+            endPosition = page.skip + Math.min(page.limit, users.length);
+
+        this.respond(200, users)
+            .setHeaders({
+                'Content-Range': startPosition + '-' + endPosition + '/' + allUsers.length
+            });
     });
 };

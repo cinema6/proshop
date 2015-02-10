@@ -8,7 +8,7 @@ module.exports = function(http) {
     var fn = require('../utils/fn'),
         extend = fn.extend;
 
-    var userId = 'e2e-light-user';
+    var userId = 'u-111';
 
     function userPath(id) {
         return path.resolve(__dirname, '../user/users/' + id + '.json');

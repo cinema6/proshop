@@ -28,6 +28,32 @@
     background: #fff;
 }
 
+/* Modal styles from Studio */
+.modal__group {
+    position:fixed; z-index: 100; top:50%; left:50%;
+    width:61.5em; height:37.5em;
+    margin:-18.75em 0 0 -30.75em;
+    background:#fff;
+    border-radius:0.25em;
+    overflow: scroll;
+    box-sizing:border-box;
+
+    -webkit-box-shadow: 0 0 4px 1px rgba(0,0,0,0.6);
+    box-shadow: 0 0 10px 1px rgba(0,0,0,0.6);
+    border-radius:5px;
+    border:2px solid #4c4c4c;
+}
+
+.modal__overlay {
+    position:fixed; z-index: 99; top:0; left:0; right:0; bottom:0;
+    background:#000; opacity:0.75;
+}
+/* end Modal styles from Studio */
+
+.clickable {
+    cursor: pointer;
+}
+
 .has-error .help-block, .has-error .control-label, .has-error .radio, .has-error .checkbox, .has-error .radio-inline, .has-error .checkbox-inline {
     color: #d61212;
 }

@@ -21,8 +21,18 @@ module.exports = function(http) {
         return 'e-' + Math.floor(Math.random() * 10000) + 1;
     }
 
+    function contains(haystack, needle) {
+        var ids = haystack.split(',');
+
+        if (!needle) { return false; }
+
+        return ids.some(function(id) {
+            return id === needle || needle.indexOf(id) > -1;
+        });
+    }
+
     http.whenGET('/api/content/experiences', function(request) {
-        var filters = pluckExcept(request.query, ['sort', 'limit', 'skip', 'text']),
+        var filters = pluckExcept(request.query, ['sort', 'limit', 'skip', 'text', 'sponsored']),
             page = withDefaults(mapObject(pluck(request.query, ['limit', 'skip']), parseFloat), {
                 limit: Infinity,
                 skip: 0
@@ -37,12 +47,16 @@ module.exports = function(http) {
                 .filter(function(experience) {
                     return Object.keys(filters)
                         .every(function(key) {
-                            if (key === 'ids') {
-                                return filters[key].split(',').some(function(id) {
-                                    return id === experience.id;
-                                });
-                            } else {
-                                return filters[key] === experience[key];
+                            switch (key) {
+                                case 'ids':
+                                    return contains(filters[key], experience.id);
+                                    break;
+                                case 'categories':
+                                    return contains(filters[key], experience[key]);
+                                    break;
+                                default:
+                                    return filters[key] === experience[key];
+                                    break;
                             }
                         });
                 })

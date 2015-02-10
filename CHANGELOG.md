@@ -1,5 +1,8 @@
 # ProShop
 
+* *[v0.7.2]*
+  * [FEATURE]: Groups Manager
+
 ## v0.7.1 (February 2, 2015)
 
 * *[v0.7.1]*

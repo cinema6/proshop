@@ -44,6 +44,8 @@
                             '/api/content/categories': 'mocks/category/main.js',
                             '/api/site': 'mocks/site/main.js',
                             '/api/sites': 'mocks/site/main.js',
+                            '/api/minireelGroup': 'mocks/group/main.js',
+                            '/api/minireelGroups': 'mocks/group/main.js',
                             '/api/collateral': 'mocks/collateral/main.js',
                             '/collateral/experiences': 'mocks/collateral/main.js'
                         }),

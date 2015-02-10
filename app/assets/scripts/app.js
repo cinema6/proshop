@@ -1,9 +1,9 @@
 define(['angular','ngAnimate','ngRoute','c6ui','c6log','c6defines',
         'auth','login','users','orgs','minireels','sites','advertisers',
-        'categories','customers','templates'],
+        'categories','customers','groups','templates'],
 function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines ,
          auth  , login , users , orgs , minireels , sites , advertisers ,
-         categories , customers , templates ) {
+         categories , customers , groups , templates ) {
     /* jshint -W106 */
     'use strict';
 
@@ -24,11 +24,13 @@ function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines ,
             advertisers.name,
             categories.name,
             customers.name,
+            groups.name,
             templates.name
         ])
         .constant('c6Defines',c6Defines)
         .config(['c6UrlMakerProvider', function( c6UrlMakerProvider ) {
             c6UrlMakerProvider.location(c6Defines.kApiUrl, 'api');
+            c6UrlMakerProvider.location(c6Defines.kPreviewUrl, 'preview');
         }])
         .config(['$routeProvider', function( $routeProvider  ){
             $routeProvider
@@ -127,6 +129,21 @@ function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines ,
                     controller: 'CategoryController',
                     controllerAs: 'CategoryCtrl',
                     templateUrl: 'views/categories/category.html'
+                })
+                .when('/groups', {
+                    controller: 'GroupsController',
+                    controllerAs: 'GroupsCtrl',
+                    templateUrl: 'views/groups/groups.html'
+                })
+                .when('/group/new', {
+                    controller: 'GroupController',
+                    controllerAs: 'GroupCtrl',
+                    templateUrl: 'views/groups/group.html'
+                })
+                .when('/group/:id', {
+                    controller: 'GroupController',
+                    controllerAs: 'GroupCtrl',
+                    templateUrl: 'views/groups/group.html'
                 })
                 .otherwise({redirectTo: '/users'});
         }])
@@ -549,6 +566,12 @@ function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines ,
             return function(input) {
                 return input.charAt(0).toUpperCase() + input.slice(1);
             };
-        });
+        })
+
+        .filter('previewUrl', ['c6UrlMaker', function(c6UrlMaker) {
+            return function(input) {
+                return c6UrlMaker('preview?id=' + input, 'preview');
+            };
+        }]);
 
 });

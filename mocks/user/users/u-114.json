@@ -1,13 +1,12 @@
 {
-    "id": "e2e-12222",
-    "email": "email2@sample.com",
-    "firstName": "Emailio",
-    "lastName": "Addresstevez",
-    "branding": "specialtheme",
+    "email": "testerrr3@cinema6.com",
+    "firstName": "Testy",
+    "lastName": "McTest",
+    "branding": "test_branding",
     "created": "2014-06-13T19:28:39.408Z",
     "lastUpdated": "2014-06-13T19:28:39.408Z",
     "applications": ["e-51ae37625cb57f"],
-    "org": "o-112",
+    "org": "o-113",
     "status": "active",
     "config": {},
     "permissions": {

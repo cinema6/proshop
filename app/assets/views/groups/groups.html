@@ -1,0 +1,32 @@
+<h1>Groups</h1>
+<br>
+<section class="view">
+    <div style="padding-bottom:20px">{{message}}</div>
+
+    <div class="clearfix">
+        <button c6-href="/group/new">Add New Group</button>
+        <input style="float:right;width:250px;" type="text" ng-model="query" ng-change="GroupsCtrl.filterData(query)" placeholder="Search Groups by Name">
+    </div>
+
+    <paginator-controls page="GroupsCtrl.page" limit="GroupsCtrl.limit" limits="GroupsCtrl.limits" total="GroupsCtrl.total"></paginator-controls>
+
+    <div class="clearfix"></div>
+
+    <table class="table table-striped table-hover table-bordered">
+        <tbody>
+            <tr>
+                <th ng-repeat="th in tableHeaders" ng-click="doSort(th.value)" style="cursor:pointer;">
+                    {{th.label}} <span style="padding-left:5px;opacity:0.5;float:right;" ng-style="{visibility: sort.column === th.value ? 'visible' : 'hidden'}" ng-class="{'glyphicon-chevron-up': !sort.descending, 'glyphicon-chevron-down': sort.descending }" class="glyphicon "></span></th>
+            </tr>
+            <tr ng-repeat="group in GroupsCtrl.groups | orderBy:sort.column:sort.descending | paginatorlimits:[(GroupsCtrl.page - 1) * GroupsCtrl.limit, (GroupsCtrl.page * GroupsCtrl.limit)]">
+                <td><a href="/#/group/{{group.id}}">{{group.name}}</a></td>
+                <td>{{group.categories.join(', ')}}</td>
+                <td>{{group.miniReels.length}}</td>
+                <td>{{group.lastUpdated | date}}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="mask" ng-show="GroupsCtrl.loading"></div>
+
+</section>

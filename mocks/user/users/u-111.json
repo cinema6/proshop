@@ -1,16 +1,7 @@
 {
-    "id": "e2e-12225",
-    "email": "testemail5@example.com",
-    "firstName": "First",
-    "lastName": "Last",
-    "branding": "fsdf",
-    "created": "2014-06-13T19:28:39.408Z",
-    "lastUpdated": "2014-09-03T20:28:04.544Z",
-    "applications": [
-        "e-51ae37625cb57f"
-    ],
-    "org": "o-112",
+    "email": "saxguy@cinema6.com",
     "status": "active",
+    "org": "o-115",
     "config": {
         "minireelinator": {
             "minireelDefaults": {
@@ -21,6 +12,10 @@
             }
         }
     },
+    "applications": [
+        "e-51ae37625cb57f",
+        "e-adda13c4777cda"
+    ],
     "permissions": {
         "experiences": {
             "read": "own",
@@ -35,13 +30,18 @@
             "delete": "own"
         },
         "users": {
-            "read": "own",
-            "edit": "own"
+            "read": "org",
+            "create": "org",
+            "edit": "org",
+            "delete": "org"
         },
         "orgs": {
-            "read": "own",
-            "edit": "own"
+            "read": "org"
         }
     },
-    "type": "Publisher"
+    "lastName": "sdfsdf",
+    "firstName": "sfdsf",
+    "branding": "khaki",
+    "type": "Publisher",
+    "lastUpdated": "2014-09-03T20:27:41.370Z"
 }
