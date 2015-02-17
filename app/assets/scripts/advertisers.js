@@ -1,6 +1,8 @@
 define(['angular'], function(angular) {
     'use strict';
 
+    var extend = angular.extend;
+
     return angular.module('c6.proshop.advertisers',[])
         .controller('AdvertisersController', ['$scope','$log','$location','AdvertisersService',
         function                             ( $scope , $log , $location , AdvertisersService ) {
@@ -23,8 +25,28 @@ define(['angular'], function(angular) {
                     });
             }
 
+            function fetchMiniReels() {
+                var page = self.page,
+                    limit = self.limit,
+                    advertisers = scopePromise(AdvertisersService.getAdvertisers({
+                        limit: limit,
+                        skip: (page - 1) * limit
+                    }), self.advertisers);
+
+                return advertisers.ensureResolution()
+                    .then(function(items) {
+                        var info = items.value.meta.items;
+
+                        self.page = ((info.start - 1) / limit) + 1,
+                        self.total = Math.ceil(info.total / limit);
+
+                        return items.value
+                    });
+            }
+
             self.query = null;
             self.page = 1;
+            // self.total = 1;
             self.limit = 50;
             self.limits = [5,10,50,100];
             Object.defineProperties(self, {
@@ -258,6 +280,26 @@ define(['angular'], function(angular) {
         }])
         .service('AdvertisersService', ['c6UrlMaker','$http','$q','$timeout',
         function                       ( c6UrlMaker , $http , $q , $timeout ) {
+            function fillMeta(meta) {
+                return function(response) {
+                    var data = {
+                        items: response.headers('Content-Range')
+                            .match(/\d+/g)
+                            .map(function(num, index) {
+                                return [this[index], parseInt(num)];
+                            }, ['start', 'end', 'total'])
+                            .reduce(function(obj, pair) {
+                                obj[pair[0]] = pair[1];
+                                return obj;
+                            }, {})
+                    };
+
+                    extend(meta, data);
+
+                    return response;
+                };
+            }
+
             function httpWrapper(request) {
                 var deferred = $q.defer(),
                     deferredTimeout = $q.defer(),
