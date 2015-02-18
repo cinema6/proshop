@@ -8,7 +8,8 @@ function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines ,
     'use strict';
 
     var jqLite = angular.element,
-        isArray = angular.isArray;
+        isArray = angular.isArray,
+        extend = angular.extend;
 
     return angular.module('c6.proshop', [
             ngAnimate.name,
@@ -317,6 +318,142 @@ function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines ,
                     });
             });
 
+        }])
+
+        .config(['$provide', function($provide) {
+            // function fillMeta(meta) {
+            //     return function(response) {
+            //         var data = {
+            //             items: response.headers('Content-Range')
+            //                 .match(/\d+/g)
+            //                 .map(function(num, index) {
+            //                     return [this[index], parseInt(num)];
+            //                 }, ['start', 'end', 'total'])
+            //                 .reduce(function(obj, pair) {
+            //                     obj[pair[0]] = pair[1];
+            //                     return obj;
+            //                 }, {})
+            //         };
+
+            //         extend(meta, data);
+
+            //         return response;
+            //     };
+            // }
+
+            $provide.constant('AdvertiserAdapter', ['$http','c6UrlMaker',
+            function                               ( $http , c6UrlMaker ) {
+                var apiBase = c6UrlMaker('account/advertiser', 'api');
+
+                this.get = function(id) {
+                    return $http({
+                        method: 'GET',
+                        url: apiBase + '/' + id
+                    });
+                };
+
+                this.getAll = function(params) {
+                    return $http({
+                        method: 'GET',
+                        url: apiBase + 's',
+                        params: params || {}
+                    });
+                };
+
+                this.put = function(id, model) {
+                    return $http({
+                        method: 'PUT',
+                        url: apiBase + '/' + id,
+                        data: model
+                    });
+                };
+
+                this.post = function(model) {
+                    return $http({
+                        method: 'POST',
+                        url: apiBase,
+                        data: model
+                    });
+                };
+
+                this.delete = function(id) {
+                    return $http({
+                        method: 'DELETE',
+                        url: apiBase + '/' + id
+                    });
+                };
+            }]);
+        }])
+
+        .provider('Cinema6Service', [function() {
+            var Adapters = null;
+
+            this.useAdapters = function(adapters) {
+                Adapters = adapters;
+
+                return this;
+            };
+
+            this.$get = ['$injector','$q','$timeout', function($injector, $q, $timeout) {
+                var adapter = {};
+
+                function getAdapter(type) {
+                    return adapter[type] || (adapter[type] = $injector.instantiate(Adapters[type]));
+                }
+
+                function requestWrapper(promise) {
+                    var deferred = $q.defer(),
+                        cancelTimeout;
+
+                    promise
+                        .success(function(data) {
+                            $timeout.cancel(cancelTimeout);
+                            deferred.resolve(data);
+                        })
+                        .error(function(data) {
+                            if (!data) {
+                                data = 'Unable to locate failed';
+                            }
+                            $timeout.cancel(cancelTimeout);
+                            deferred.reject(data);
+                        });
+
+                    cancelTimeout = $timeout(function() {
+                        deferred.reject('Request timed out.');
+                    },30000);
+
+                    return deferred.promise;
+                }
+
+                this.get = function(type, id) {
+                    return requestWrapper(getAdapter(type).get(id));
+                };
+
+                this.getAll = function(type, params) {
+                    return requestWrapper(getAdapter(type).getAll(params));
+                };
+
+                this.put = function(type, id, model) {
+                    return requestWrapper(getAdapter(type).put(id, model));
+                };
+
+                this.post = function(type, model) {
+                    return requestWrapper(getAdapter(type).post(model));
+                };
+
+                this.delete = function(type, id) {
+                    return requestWrapper(getAdapter(type).delete(id));
+                };
+
+                return this;
+            }];
+        }])
+
+        .config(['Cinema6ServiceProvider','AdvertiserAdapter',
+        function( Cinema6ServiceProvider , AdvertiserAdapter ) {
+            Cinema6ServiceProvider.useAdapters({
+                advertisers: AdvertiserAdapter
+            });
         }])
 
         .factory('scopePromise', ['$q',

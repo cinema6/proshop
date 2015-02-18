@@ -1,11 +1,9 @@
 define(['angular'], function(angular) {
     'use strict';
 
-    var extend = angular.extend;
-
     return angular.module('c6.proshop.advertisers',[])
-        .controller('AdvertisersController', ['$scope','$log','$location','AdvertisersService',
-        function                             ( $scope , $log , $location , AdvertisersService ) {
+        .controller('AdvertisersController', ['$scope','$log','$location','Cinema6Service',
+        function                             ( $scope , $log , $location , Cinema6Service ) {
             var self = this,
                 _data = {};
 
@@ -15,7 +13,7 @@ define(['angular'], function(angular) {
             function initView() {
                 self.loading = true;
 
-                AdvertisersService.getAdvertisers()
+                Cinema6Service.getAll('advertisers')
                     .then(function(advertisers) {
                         self.advertisers = advertisers;
                         _data.advertisers = advertisers;
@@ -25,24 +23,24 @@ define(['angular'], function(angular) {
                     });
             }
 
-            function fetchMiniReels() {
-                var page = self.page,
-                    limit = self.limit,
-                    advertisers = scopePromise(AdvertisersService.getAdvertisers({
-                        limit: limit,
-                        skip: (page - 1) * limit
-                    }), self.advertisers);
+            // function fetchMiniReels() {
+            //     var page = self.page,
+            //         limit = self.limit,
+            //         advertisers = scopePromise(Cinema6Service.getAll('advertisers', {
+            //             limit: limit,
+            //             skip: (page - 1) * limit
+            //         }), self.advertisers);
 
-                return advertisers.ensureResolution()
-                    .then(function(items) {
-                        var info = items.value.meta.items;
+            //     return advertisers.ensureResolution()
+            //         .then(function(items) {
+            //             var info = items.value.meta.items;
 
-                        self.page = ((info.start - 1) / limit) + 1,
-                        self.total = Math.ceil(info.total / limit);
+            //             self.page = ((info.start - 1) / limit) + 1;
+            //             self.total = Math.ceil(info.total / limit);
 
-                        return items.value
-                    });
-            }
+            //             return items.value;
+            //         });
+            // }
 
             self.query = null;
             self.page = 1;
@@ -96,8 +94,8 @@ define(['angular'], function(angular) {
 
             initView();
         }])
-        .controller('AdvertiserController', ['$scope','$log','ConfirmDialogService','$location','AdvertisersService','$routeParams',
-        function                            ( $scope , $log , ConfirmDialogService , $location , AdvertisersService , $routeParams ) {
+        .controller('AdvertiserController', ['$scope','$log','ConfirmDialogService','$location','$routeParams','Cinema6Service',
+        function                            ( $scope , $log , ConfirmDialogService , $location , $routeParams , Cinema6Service ) {
             var self = this;
 
             $log = $log.context('AdvertiserCtrl');
@@ -107,7 +105,7 @@ define(['angular'], function(angular) {
                 self.loading = true;
 
                 if ($routeParams.id) {
-                    AdvertisersService.getAdvertiser($routeParams.id)
+                    Cinema6Service.get('advertisers', $routeParams.id)
                         .then(function(advertiser) {
                             self.advertiser = advertiser;
                             enableActiveLinks(self.advertiser.defaultLinks);
@@ -240,10 +238,10 @@ define(['angular'], function(angular) {
                 a.defaultLogos = convertLogosForSaving();
 
                 if (advertiser.id) {
-                    AdvertisersService.putAdvertiser(advertiser.id, a)
+                    Cinema6Service.put('advertisers', advertiser.id, a)
                         .then(handleSuccess, handleError);
                 } else {
-                    AdvertisersService.postAdvertiser(a)
+                    Cinema6Service.post('advertisers', a)
                         .then(handleSuccess, handleError);
                 }
             };
@@ -255,7 +253,7 @@ define(['angular'], function(angular) {
                     cancel: 'Cancel',
                     onAffirm: function() {
                         ConfirmDialogService.close();
-                        AdvertisersService.deleteAdvertiser(self.advertiser.id)
+                        Cinema6Service.delete('advertisers', self.advertiser.id)
                             .then(function() {
                                 $scope.message = 'Successfully deleted Advertiser: ' + self.advertiser.name;
                                 $location.path('/advertisers');
@@ -280,26 +278,6 @@ define(['angular'], function(angular) {
         }])
         .service('AdvertisersService', ['c6UrlMaker','$http','$q','$timeout',
         function                       ( c6UrlMaker , $http , $q , $timeout ) {
-            function fillMeta(meta) {
-                return function(response) {
-                    var data = {
-                        items: response.headers('Content-Range')
-                            .match(/\d+/g)
-                            .map(function(num, index) {
-                                return [this[index], parseInt(num)];
-                            }, ['start', 'end', 'total'])
-                            .reduce(function(obj, pair) {
-                                obj[pair[0]] = pair[1];
-                                return obj;
-                            }, {})
-                    };
-
-                    extend(meta, data);
-
-                    return response;
-                };
-            }
-
             function httpWrapper(request) {
                 var deferred = $q.defer(),
                     deferredTimeout = $q.defer(),

@@ -10,14 +10,14 @@
                 $q,
                 $location,
                 AdvertisersCtrl,
-                AdvertisersService,
+                Cinema6Service,
                 mockAdvertisers;
 
             beforeEach(function() {
                 module(proshop.name);
 
-                AdvertisersService = {
-                    getAdvertisers: jasmine.createSpy('AdvertisersService.getAdvertisers')
+                Cinema6Service = {
+                    getAll: jasmine.createSpy('Cinema6Service.get()')
                 };
 
                 /* jsHint quotmark:false */
@@ -78,8 +78,8 @@
                     $q = $injector.get('$q');
                 });
 
-                AdvertisersService.getAdvertisers.deferred = $q.defer();
-                AdvertisersService.getAdvertisers.and.returnValue(AdvertisersService.getAdvertisers.deferred.promise);
+                Cinema6Service.getAll.deferred = $q.defer();
+                Cinema6Service.getAll.and.returnValue(Cinema6Service.getAll.deferred.promise);
 
                 $log.context = function() { return $log; }
 
@@ -88,7 +88,7 @@
                 AdvertisersCtrl = $controller('AdvertisersController', {
                     $log: $log,
                     $scope: $scope,
-                    AdvertisersService: AdvertisersService
+                    Cinema6Service: Cinema6Service
                 });
             });
 
@@ -98,7 +98,7 @@
                 });
 
                 it('should load all advertisers', function() {
-                    expect(AdvertisersService.getAdvertisers).toHaveBeenCalled();
+                    expect(Cinema6Service.getAll).toHaveBeenCalled();
                 });
             });
 
@@ -110,7 +110,7 @@
 
                     it('should be false after all data promises resolve', function() {
                         $scope.$apply(function() {
-                            AdvertisersService.getAdvertisers.deferred.resolve(angular.copy(mockAdvertisers));
+                            Cinema6Service.getAll.deferred.resolve(angular.copy(mockAdvertisers));
                         });
 
                         expect(AdvertisersCtrl.loading).toBe(false);
@@ -118,7 +118,7 @@
 
                     it('should be false even if there are errors loading data', function() {
                         $scope.$apply(function() {
-                            AdvertisersService.getAdvertisers.deferred.reject();
+                            Cinema6Service.getAll.deferred.reject();
                         });
 
                         expect(AdvertisersCtrl.loading).toBe(false);
@@ -130,7 +130,7 @@
                 describe('filterData(query)', function() {
                     it('should match case-insensitively against name, domain, and org name', function() {
                         $scope.$apply(function() {
-                            AdvertisersService.getAdvertisers.deferred.resolve(angular.copy(mockAdvertisers));
+                            Cinema6Service.getAll.deferred.resolve(angular.copy(mockAdvertisers));
                         });
 
                         expect(AdvertisersCtrl.advertisers.length).toBe(3);
