@@ -1,9 +1,11 @@
 define(['angular'], function(angular) {
     'use strict';
 
+    var equals = angular.equals;
+
     return angular.module('c6.proshop.advertisers',[])
-        .controller('AdvertisersController', ['$scope','$log','$location','Cinema6Service',
-        function                             ( $scope , $log , $location , Cinema6Service ) {
+        .controller('AdvertisersController', ['$scope','$log','$location','Cinema6Service','scopePromise',
+        function                             ( $scope , $log , $location , Cinema6Service , scopePromise ) {
             var self = this,
                 _data = {};
 
@@ -13,47 +15,40 @@ define(['angular'], function(angular) {
             function initView() {
                 self.loading = true;
 
-                Cinema6Service.getAll('advertisers')
+                fetchMiniReels()
                     .then(function(advertisers) {
-                        self.advertisers = advertisers;
-                        _data.advertisers = advertisers;
+                        self.advertisers = advertisers.data;
+                        _data.advertisers = advertisers.data;
                     })
                     .finally(function() {
                         self.loading = false;
                     });
             }
 
-            // function fetchMiniReels() {
-            //     var page = self.page,
-            //         limit = self.limit,
-            //         advertisers = scopePromise(Cinema6Service.getAll('advertisers', {
-            //             limit: limit,
-            //             skip: (page - 1) * limit
-            //         }), self.advertisers);
+            function fetchMiniReels() {
+                var page = self.page,
+                    limit = self.limit,
+                    advertisers = scopePromise(Cinema6Service.getAll('advertisers', {
+                        limit: limit,
+                        skip: (page - 1) * limit
+                    }), self.advertisers);
 
-            //     return advertisers.ensureResolution()
-            //         .then(function(items) {
-            //             var info = items.value.meta.items;
+                return advertisers.ensureResolution()
+                    .then(function(items) {
+                        var info = items.value.meta.items;
 
-            //             self.page = ((info.start - 1) / limit) + 1;
-            //             self.total = Math.ceil(info.total / limit);
+                        self.page = ((info.start - 1) / limit) + 1;
+                        self.total = Math.ceil(info.total / limit);
 
-            //             return items.value;
-            //         });
-            // }
+                        return items.value;
+                    });
+            }
 
             self.query = null;
             self.page = 1;
-            // self.total = 1;
+            self.total = 1;
             self.limit = 50;
             self.limits = [5,10,50,100];
-            Object.defineProperties(self, {
-                total: {
-                    get: function() {
-                        return self.advertisers && Math.ceil(self.advertisers.length / self.limit);
-                    }
-                }
-            });
 
             self.addNew = function() {
                 $location.path('/advertiser/new');
@@ -91,6 +86,28 @@ define(['angular'], function(angular) {
                     sort.descending = false;
                 }
             };
+
+            $scope.$watchCollection(
+                function() {
+                    return [
+                        self.page,
+                        self.limit
+                    ];
+                },
+                function(props, prevProps) {
+                    var samePage = props[0] === prevProps[0];
+
+                    if (equals(props, prevProps)) { return; }
+
+                    if (self.page !== 1 && samePage) {
+                        /* jshint boss:true */
+                        return self.page = 1;
+                        /* jshint boss:false */
+                    }
+
+                    return initView();
+                }
+            );
 
             initView();
         }])

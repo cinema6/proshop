@@ -21,53 +21,63 @@
                 };
 
                 /* jsHint quotmark:false */
-                mockAdvertisers = [
-                    {
-                        "id": "a-111",
-                        "adtechId": "12121212",
-                        "name": "Ybrant",
-                        "created": "2014-06-13T19:28:39.408Z",
-                        "lastUpdated": "2015-01-12T18:06:52.877Z",
-                        "defaultLinks": {
-                            "Facebook": "http://facebook.com",
-                            "Twitter": "http://twitter.com"
-                        },
-                        "defaultLogos": {
-                            "Main": "http://example.com/logo.jpg"
-                        },
-                        "status": "active"
+                mockAdvertisers = {
+                    meta: {
+                        items: {
+                            start: 1,
+                            end: 3,
+                            total: 3
+                        }
                     },
-                    {
-                        "id": "a-112",
-                        "adtechId": "12121213",
-                        "name": "DashBid",
-                        "created": "2014-06-13T19:28:39.408Z",
-                        "lastUpdated": "2014-06-13T19:28:39.408Z",
-                        "defaultLinks": {
-                            "Facebook": "http://facebook.com",
-                            "Twitter": "http://twitter.com"
+                    data: [
+                        {
+                            "id": "a-111",
+                            "adtechId": "12121212",
+                            "name": "Ybrant",
+                            "created": "2014-06-13T19:28:39.408Z",
+                            "lastUpdated": "2015-01-12T18:06:52.877Z",
+                            "defaultLinks": {
+                                "Facebook": "http://facebook.com",
+                                "Twitter": "http://twitter.com"
+                            },
+                            "defaultLogos": {
+                                "Main": "http://example.com/logo.jpg"
+                            },
+                            "status": "active"
                         },
-                        "defaultLogos": {
-                            "logo1": "http://example.com/logo.jpg"
+                        {
+                            "id": "a-112",
+                            "adtechId": "12121213",
+                            "name": "DashBid",
+                            "created": "2014-06-13T19:28:39.408Z",
+                            "lastUpdated": "2014-06-13T19:28:39.408Z",
+                            "defaultLinks": {
+                                "Facebook": "http://facebook.com",
+                                "Twitter": "http://twitter.com"
+                            },
+                            "defaultLogos": {
+                                "logo1": "http://example.com/logo.jpg"
+                            },
+                            "status": "active"
                         },
-                        "status": "active"
-                    },
-                    {
-                        "id": "a-113",
-                        "adtechId": "12121233",
-                        "name": "Adap.tv",
-                        "created": "2014-06-13T19:28:39.408Z",
-                        "lastUpdated": "2014-06-13T19:28:39.408Z",
-                        "defaultLinks": {
-                            "Facebook": "http://facebook.com",
-                            "Twitter": "http://twitter.com"
-                        },
-                        "defaultLogos": {
-                            "logo1": "http://example.com/logo.jpg"
-                        },
-                        "status": "active"
-                    }
-                ];
+                        {
+                            "id": "a-113",
+                            "adtechId": "12121233",
+                            "name": "Adap.tv",
+                            "created": "2014-06-13T19:28:39.408Z",
+                            "lastUpdated": "2014-06-13T19:28:39.408Z",
+                            "defaultLinks": {
+                                "Facebook": "http://facebook.com",
+                                "Twitter": "http://twitter.com"
+                            },
+                            "defaultLogos": {
+                                "logo1": "http://example.com/logo.jpg"
+                            },
+                            "status": "active"
+                        }
+                    ]
+                }
+                ;
                 /* jshint quotmark:single */
 
                 inject(function($injector) {

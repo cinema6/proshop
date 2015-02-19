@@ -8,8 +8,7 @@ function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines ,
     'use strict';
 
     var jqLite = angular.element,
-        isArray = angular.isArray,
-        extend = angular.extend;
+        isArray = angular.isArray;
 
     return angular.module('c6.proshop', [
             ngAnimate.name,
@@ -321,25 +320,27 @@ function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines ,
         }])
 
         .config(['$provide', function($provide) {
-            // function fillMeta(meta) {
-            //     return function(response) {
-            //         var data = {
-            //             items: response.headers('Content-Range')
-            //                 .match(/\d+/g)
-            //                 .map(function(num, index) {
-            //                     return [this[index], parseInt(num)];
-            //                 }, ['start', 'end', 'total'])
-            //                 .reduce(function(obj, pair) {
-            //                     obj[pair[0]] = pair[1];
-            //                     return obj;
-            //                 }, {})
-            //         };
+            function pick(prop) {
+                return function(object) {
+                    return object[prop];
+                };
+            }
 
-            //         extend(meta, data);
+            function fillMeta(response) {
+                response.meta = {
+                    items: response.headers('Content-Range')
+                        .match(/\d+/g)
+                        .map(function(num, index) {
+                            return [this[index], parseInt(num)];
+                        }, ['start', 'end', 'total'])
+                        .reduce(function(obj, pair) {
+                            obj[pair[0]] = pair[1];
+                            return obj;
+                        }, {})
+                };
 
-            //         return response;
-            //     };
-            // }
+                return response;
+            }
 
             $provide.constant('AdvertiserAdapter', ['$http','c6UrlMaker',
             function                               ( $http , c6UrlMaker ) {
@@ -349,7 +350,7 @@ function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines ,
                     return $http({
                         method: 'GET',
                         url: apiBase + '/' + id
-                    });
+                    }).then(pick('data'));
                 };
 
                 this.getAll = function(params) {
@@ -357,7 +358,7 @@ function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines ,
                         method: 'GET',
                         url: apiBase + 's',
                         params: params || {}
-                    });
+                    }).then(fillMeta);
                 };
 
                 this.put = function(id, model) {
@@ -406,16 +407,15 @@ function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines ,
                         cancelTimeout;
 
                     promise
-                        .success(function(data) {
+                        .then(function(data) {
                             $timeout.cancel(cancelTimeout);
                             deferred.resolve(data);
-                        })
-                        .error(function(data) {
-                            if (!data) {
-                                data = 'Unable to locate failed';
+                        }, function(err) {
+                            if (!err) {
+                                err = 'Unable to locate failed';
                             }
                             $timeout.cancel(cancelTimeout);
-                            deferred.reject(data);
+                            deferred.reject(err);
                         });
 
                     cancelTimeout = $timeout(function() {
