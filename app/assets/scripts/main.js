@@ -7,9 +7,9 @@
         paths: {
             jquery: 'https://lib.cinema6.com/jquery/2.0.3-0-gf576d00/jquery.min',
             modernizr: 'https://lib.cinema6.com/modernizr/modernizr.custom.71747',
-            angular: 'https://lib.cinema6.com/angular/v1.2.14-0-g729fb13/angular.min',
-            ngRoute: 'https://lib.cinema6.com/angular/v1.2.14-0-g729fb13/angular-route.min',
-            ngAnimate: 'https://lib.cinema6.com/angular/v1.2.14-0-g729fb13/angular-animate.min',
+            angular: 'https://lib.cinema6.com/angular/v1.2.22-0-g93b0c2d/angular.min',
+            ngRoute: 'https://lib.cinema6.com/angular/v1.2.22-0-g93b0c2d/angular-route.min',
+            ngAnimate: 'https://lib.cinema6.com/angular/v1.2.22-0-g93b0c2d/angular-animate.min',
             c6ui: 'https://lib.cinema6.com/c6ui/v2.6.4-0-g0df471c/c6uilib.min',
             c6log: 'https://lib.cinema6.com/c6ui/v2.6.4-0-g0df471c/c6log.min'
         },
