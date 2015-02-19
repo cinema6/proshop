@@ -56,7 +56,7 @@ module.exports = function(http) {
             advertisers = allAdvertisers
                 .filter(function(advertiser, index) {
                     var startIndex = page.skip,
-                        endIndex = startIndex + page.limit;
+                        endIndex = startIndex + page.limit - 1;
 
                     return index >= startIndex && index <= endIndex;
                 })
