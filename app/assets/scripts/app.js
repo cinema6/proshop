@@ -8,7 +8,8 @@ function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines ,
     'use strict';
 
     var jqLite = angular.element,
-        isArray = angular.isArray;
+        isArray = angular.isArray,
+        noop = angular.noop;
 
     return angular.module('c6.proshop', [
             ngAnimate.name,
@@ -396,17 +397,26 @@ function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines ,
             };
 
             this.$get = ['$injector','$q','$timeout', function($injector, $q, $timeout) {
-                var adapter = {};
+                var adapter = {},
+                    noopAdapter = {
+                        get: noop,
+                        getAll: noop,
+                        put: noop,
+                        post: noop,
+                        delete: noop
+                    };
 
                 function getAdapter(type) {
-                    return adapter[type] || (adapter[type] = $injector.instantiate(Adapters[type]));
+                    return Adapters[type] ?
+                        adapter[type] || (adapter[type] = $injector.instantiate(Adapters[type])) :
+                        noopAdapter;
                 }
 
                 function requestWrapper(promise) {
                     var deferred = $q.defer(),
                         cancelTimeout;
 
-                    promise
+                    (promise || $q.reject('Unable to resolve request'))
                         .then(function(data) {
                             $timeout.cancel(cancelTimeout);
                             deferred.resolve(data);
