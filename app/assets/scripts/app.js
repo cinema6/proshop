@@ -343,15 +343,22 @@ function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines ,
                 return response;
             }
 
-            $provide.constant('AdvertiserAdapter', ['$http','c6UrlMaker',
-            function                               ( $http , c6UrlMaker ) {
+            $provide.constant('AdvertiserAdapter', ['$http','$q','c6UrlMaker',
+            function                               ( $http , $q , c6UrlMaker ) {
                 var apiBase = c6UrlMaker('account/advertiser', 'api');
+
+                function handleError(err) {
+                    return $q.reject((err && err.data) || 'Unable to complete request');
+                }
 
                 this.get = function(id) {
                     return $http({
                         method: 'GET',
                         url: apiBase + '/' + id
-                    }).then(pick('data'));
+                    }).then(
+                        pick('data'),
+                        handleError
+                    );
                 };
 
                 this.getAll = function(params) {
@@ -359,7 +366,10 @@ function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines ,
                         method: 'GET',
                         url: apiBase + 's',
                         params: params || {}
-                    }).then(fillMeta);
+                    }).then(
+                        fillMeta,
+                        handleError
+                    );
                 };
 
                 this.put = function(id, model) {
@@ -367,7 +377,10 @@ function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines ,
                         method: 'PUT',
                         url: apiBase + '/' + id,
                         data: model
-                    });
+                    }).then(
+                        pick('data'),
+                        handleError
+                    );
                 };
 
                 this.post = function(model) {
@@ -375,14 +388,21 @@ function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines ,
                         method: 'POST',
                         url: apiBase,
                         data: model
-                    });
+                    }).then(
+                        pick('data'),
+                        handleError
+                    );
                 };
 
                 this.delete = function(id) {
                     return $http({
                         method: 'DELETE',
                         url: apiBase + '/' + id
-                    });
+                    })
+                    .then(
+                        pick('data'),
+                        handleError
+                    );
                 };
             }]);
         }])
