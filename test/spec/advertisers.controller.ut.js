@@ -134,37 +134,76 @@
                         expect(AdvertisersCtrl.loading).toBe(false);
                     });
                 });
+
+                describe('page', function() {
+                    it('should query for advertisers when page changes', function() {
+                        AdvertisersCtrl.page = 1;
+                        AdvertisersCtrl.limit = 10;
+                        $scope.$digest();
+
+                        AdvertisersCtrl.page = 2;
+                        $scope.$digest();
+
+                        expect(Cinema6Service.getAll).toHaveBeenCalledWith('advertisers', jasmine.objectContaining({limit: 10, skip: 10}));
+
+                        AdvertisersCtrl.page = 3;
+                        $scope.$digest();
+
+                        expect(Cinema6Service.getAll).toHaveBeenCalledWith('advertisers', jasmine.objectContaining({limit: 10, skip: 20}));
+                    });
+                });
+
+                describe('limit', function() {
+                    it('should query for advertiser when changed', function() {
+                        AdvertisersCtrl.page = 1;
+                        AdvertisersCtrl.limit = 10;
+                        $scope.$digest();
+
+                        AdvertisersCtrl.limit = 20;
+                        $scope.$digest();
+
+                        expect(Cinema6Service.getAll).toHaveBeenCalledWith('advertisers', jasmine.objectContaining({limit: 20}));
+
+                        AdvertisersCtrl.limit = 30;
+                        $scope.$digest();
+
+                        expect(Cinema6Service.getAll).toHaveBeenCalledWith('advertisers', jasmine.objectContaining({limit: 30}));
+                    });
+                });
             });
 
             describe('methods', function() {
-                describe('filterData(query)', function() {
-                    it('should match case-insensitively against name, domain, and org name', function() {
-                        $scope.$apply(function() {
-                            Cinema6Service.getAll.deferred.resolve(angular.copy(mockAdvertisers));
-                        });
+                describe('search(query)', function() {
+                    it('should set the page to 1', function() {
+                        AdvertisersCtrl.page = 2;
+                        AdvertisersCtrl.search('Ybrant');
+                        expect(AdvertisersCtrl.page).toBe(1);
+                    });
 
-                        expect(AdvertisersCtrl.advertisers.length).toBe(3);
+                    it('should query for advertisers', function() {
+                        AdvertisersCtrl.search('Ybrant');
+                        expect(Cinema6Service.getAll).toHaveBeenCalledWith('advertisers', jasmine.objectContaining({text: 'Ybrant'}));
+                    });
 
-                        AdvertisersCtrl.filterData('Y'); // advertiser 1's name only
-                        expect(AdvertisersCtrl.advertisers.length).toBe(1);
-                        expect(AdvertisersCtrl.advertisers[0].id).toBe('a-111');
+                    it('should remove the bound query value if page === 1', function() {
+                        $scope.query = 'Ybrant';
+                        AdvertisersCtrl.page = 1;
+                        AdvertisersCtrl.search($scope.query);
+                        expect($scope.query).toBe('');
+                    });
 
-                        AdvertisersCtrl.filterData('.'); // advertiser 3's name only
-                        expect(AdvertisersCtrl.advertisers.length).toBe(1);
-                        expect(AdvertisersCtrl.advertisers[0].id).toBe('a-113');
+                    it('should trigger a $digest cycle if page !== 1', function() {
+                        AdvertisersCtrl.page = 2;
+                        $scope.$digest();
 
-                        AdvertisersCtrl.filterData('213'); // advertiser 2's adtechID only
-                        expect(AdvertisersCtrl.advertisers.length).toBe(1);
-                        expect(AdvertisersCtrl.advertisers[0].id).toBe('a-112');
+                        $scope.query = 'Ybrant';
+                        AdvertisersCtrl.search($scope.query);
 
-                        AdvertisersCtrl.filterData('t'); // advertiser 1 and 3 name only
-                        expect(AdvertisersCtrl.advertisers.length).toBe(2);
+                        expect($scope.query).toBe('Ybrant');
+                        expect(AdvertisersCtrl.page).toBe(1);
 
-                        AdvertisersCtrl.filterData('xxx');
-                        expect(AdvertisersCtrl.advertisers.length).toBe(0);
-
-                        AdvertisersCtrl.filterData('');
-                        expect(AdvertisersCtrl.advertisers.length).toBe(3);
+                        $scope.$digest();
+                        expect($scope.query).toBe('');
                     });
                 });
 
@@ -180,15 +219,22 @@
             });
 
             describe('$scope.doSort()', function() {
-                it('should sort', function() {
+                it('should request sorted advertisers', function() {
                     $scope.doSort('adtechId');
                     expect($scope.sort).toEqual({column:'adtechId',descending:false});
+                    expect(Cinema6Service.getAll).toHaveBeenCalledWith('advertisers', jasmine.objectContaining({sort: 'adtechId,-1'}));
+
                     $scope.doSort('adtechId');
                     expect($scope.sort).toEqual({column:'adtechId',descending:true});
+                    expect(Cinema6Service.getAll).toHaveBeenCalledWith('advertisers', jasmine.objectContaining({sort: 'adtechId,1'}));
+
                     $scope.doSort('name');
                     expect($scope.sort).toEqual({column:'name',descending:false});
+                    expect(Cinema6Service.getAll).toHaveBeenCalledWith('advertisers', jasmine.objectContaining({sort: 'name,-1'}));
+
                     $scope.doSort('active');
                     expect($scope.sort).toEqual({column:'active',descending:false});
+                    expect(Cinema6Service.getAll).toHaveBeenCalledWith('advertisers', jasmine.objectContaining({sort: 'active,-1'}));
                 });
             });
         });

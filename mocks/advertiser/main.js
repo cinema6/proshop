@@ -28,7 +28,7 @@ module.exports = function(http) {
     }
 
     http.whenGET('/api/account/advertisers', function(request) {
-        var filters = pluckExcept(request.query, ['sort', 'limit', 'skip']),
+        var filters = pluckExcept(request.query, ['sort', 'limit', 'skip', 'text']),
             page = withDefaults(mapObject(pluck(request.query, ['limit', 'skip']), parseFloat), {
                 limit: Infinity,
                 skip: 0
@@ -52,14 +52,13 @@ module.exports = function(http) {
                                     break;
                             }
                         });
+                })
+                .filter(function(advertiser) {
+                    var text = request.query.text || advertiser.name;
+
+                    return advertiser.name.indexOf(text) > -1;
                 }),
             advertisers = allAdvertisers
-                .filter(function(advertiser, index) {
-                    var startIndex = page.skip,
-                        endIndex = startIndex + page.limit - 1;
-
-                    return index >= startIndex && index <= endIndex;
-                })
                 .sort(function(a, b) {
                     var prop = sort && sort[0],
                         directionInt = parseInt(sort && sort[1]),
@@ -80,6 +79,12 @@ module.exports = function(http) {
                     }
 
                     return 0;
+                })
+                .filter(function(advertiser, index) {
+                    var startIndex = page.skip,
+                        endIndex = startIndex + page.limit - 1;
+
+                    return index >= startIndex && index <= endIndex;
                 }),
             startPosition = page.skip + 1,
             endPosition = page.skip + Math.min(page.limit, advertisers.length);

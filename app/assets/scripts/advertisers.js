@@ -1,46 +1,65 @@
 define(['angular'], function(angular) {
     'use strict';
 
-    var equals = angular.equals;
+    var equals = angular.equals,
+        extend = angular.extend;
 
     return angular.module('c6.proshop.advertisers',[])
         .controller('AdvertisersController', ['$scope','$log','$location','Cinema6Service','scopePromise',
         function                             ( $scope , $log , $location , Cinema6Service , scopePromise ) {
-            var self = this,
-                _data = {};
+            var self = this;
 
             $log = $log.context('AdvertisersCtrl');
             $log.info('instantiated');
 
-            function initView() {
-                self.loading = true;
-
-                fetchMiniReels()
-                    .then(function(advertisers) {
-                        self.advertisers = advertisers.data;
-                        _data.advertisers = advertisers.data;
-                    })
-                    .finally(function() {
-                        self.loading = false;
-                    });
+            function toNum(bool) {
+                return bool ? '1' : '-1';
             }
 
-            function fetchMiniReels() {
+            function queryAdvertisers(query) {
+                var advertisers = scopePromise(
+                        Cinema6Service.getAll('advertisers', query),
+                        self.advertisers
+                    );
+
+                return advertisers.ensureResolution();
+            }
+
+            function setPaginationValues(items) {
+                var info = items.value.meta.items,
+                    limit = self.limit;
+
+                self.page = ((info.start - 1) / limit) + 1;
+                self.total = Math.ceil(info.total / limit);
+
+                return items.value;
+            }
+
+            function setAdvertisers(advertisers) {
+                self.advertisers = advertisers.data;
+
+                return advertisers;
+            }
+
+            function fetchAdvertisers(query) {
                 var page = self.page,
                     limit = self.limit,
-                    advertisers = scopePromise(Cinema6Service.getAll('advertisers', {
+                    sort = [
+                        $scope.sort.column,
+                        toNum($scope.sort.descending)
+                    ].join();
+
+                self.loading = true;
+
+                return queryAdvertisers(extend((query || {}), {
                         limit: limit,
-                        skip: (page - 1) * limit
-                    }), self.advertisers);
-
-                return advertisers.ensureResolution()
-                    .then(function(items) {
-                        var info = items.value.meta.items;
-
-                        self.page = ((info.start - 1) / limit) + 1;
-                        self.total = Math.ceil(info.total / limit);
-
-                        return items.value;
+                        skip: (page - 1) * limit,
+                        sort: sort
+                    }))
+                    .then(setPaginationValues)
+                    .then(setAdvertisers)
+                    .finally(function() {
+                        self.loading = false;
                     });
             }
 
@@ -48,21 +67,24 @@ define(['angular'], function(angular) {
             self.page = 1;
             self.total = 1;
             self.limit = 50;
-            self.limits = [5,10,50,100];
+            self.limits = [5,10,50];
 
             self.addNew = function() {
                 $location.path('/advertiser/new');
             };
 
-            self.filterData = function(query) {
-                var _query = query.toLowerCase();
+            self.search = function(query) {
+                var text = query && query.replace(/[^a-zA-Z_0-9 ]/g, '');
 
-                self.advertisers = _data.advertisers.filter(function(advertiser) {
-                    return advertiser.name.toLowerCase().indexOf(_query) >= 0 ||
-                        advertiser.adtechId.indexOf(_query) >= 0;
-                });
+                if (!query) { return; }
 
-                self.page = 1;
+                if (self.page !== 1) {
+                    self.page = 1;
+                } else {
+                    $scope.query = '';
+                }
+
+                fetchAdvertisers({text: text});
             };
 
             $scope.tableHeaders = [
@@ -73,8 +95,8 @@ define(['angular'], function(angular) {
             ];
 
             $scope.sort = {
-                column: 'name',
-                descending: false
+                column: 'lastUpdated',
+                descending: true
             };
 
             $scope.doSort = function(column) {
@@ -85,6 +107,7 @@ define(['angular'], function(angular) {
                     sort.column = column;
                     sort.descending = false;
                 }
+                fetchAdvertisers();
             };
 
             $scope.$watchCollection(
@@ -105,11 +128,17 @@ define(['angular'], function(angular) {
                         /* jshint boss:false */
                     }
 
-                    return initView();
+                    if ($scope.query) {
+                        /* jshint boss:true */
+                        return $scope.query = '';
+                        /* jshint boss:false */
+                    }
+
+                    return fetchAdvertisers();
                 }
             );
 
-            initView();
+            fetchAdvertisers();
         }])
         .controller('AdvertiserController', ['$scope','$log','ConfirmDialogService','$location','$routeParams','Cinema6Service',
         function                            ( $scope , $log , ConfirmDialogService , $location , $routeParams , Cinema6Service ) {
