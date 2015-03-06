@@ -1,91 +1,19 @@
-define(['angular'], function(angular) {
+define(['angular','./mixins/paginatedListController'], function(angular, PaginatedListCtrl) {
     'use strict';
 
-    var equals = angular.equals,
-        extend = angular.extend;
-
     return angular.module('c6.proshop.advertisers',[])
-        .controller('AdvertisersController', ['$scope','$log','$location','Cinema6Service','scopePromise',
-        function                             ( $scope , $log , $location , Cinema6Service , scopePromise ) {
+        .controller('AdvertisersController', ['$scope','$log','$location','Cinema6Service','scopePromise','$injector',
+        function                             ( $scope , $log , $location , Cinema6Service , scopePromise , $injector ) {
             var self = this;
 
             $log = $log.context('AdvertisersCtrl');
             $log.info('instantiated');
 
-            function toNum(bool) {
-                return bool ? '1' : '-1';
-            }
-
-            function queryAdvertisers(query) {
-                var advertisers = scopePromise(
-                        Cinema6Service.getAll('advertisers', query),
-                        self.advertisers
-                    );
-
-                return advertisers.ensureResolution();
-            }
-
-            function setPaginationValues(items) {
-                var info = items.value.meta.items,
-                    limit = self.limit;
-
-                self.page = ((info.start - 1) / limit) + 1;
-                self.total = Math.ceil(info.total / limit);
-
-                return items.value;
-            }
-
-            function setAdvertisers(advertisers) {
-                self.advertisers = advertisers.data;
-
-                return advertisers;
-            }
-
-            function fetchAdvertisers(query) {
-                var page = self.page,
-                    limit = self.limit,
-                    sort = [
-                        $scope.sort.column,
-                        toNum($scope.sort.descending)
-                    ].join();
-
-                self.loading = true;
-
-                return queryAdvertisers(extend((query || {}), {
-                        limit: limit,
-                        skip: (page - 1) * limit,
-                        sort: sort
-                    }))
-                    .then(setPaginationValues)
-                    .then(setAdvertisers)
-                    .finally(function() {
-                        self.loading = false;
-                    });
-            }
-
-            self.query = null;
-            self.page = 1;
-            self.total = 1;
-            self.limit = 50;
-            self.limits = [5,10,50];
-
             self.addNew = function() {
                 $location.path('/advertiser/new');
             };
 
-            self.search = function(query) {
-                var text = query && query.replace(/[^a-zA-Z_0-9 ]/g, '');
-
-                if (!query) { return; }
-
-                if (self.page !== 1) {
-                    self.page = 1;
-                } else {
-                    $scope.query = '';
-                }
-
-                fetchAdvertisers({text: text});
-            };
+            $scope.endpoint = 'advertisers';
 
             $scope.tableHeaders = [
                 {label:'Name',value:'name'},
@@ -99,46 +27,11 @@ define(['angular'], function(angular) {
                 descending: true
             };
 
-            $scope.doSort = function(column) {
-                var sort = $scope.sort;
-                if (sort.column === column) {
-                    sort.descending = !sort.descending;
-                } else {
-                    sort.column = column;
-                    sort.descending = false;
-                }
-                fetchAdvertisers();
-            };
-
-            $scope.$watchCollection(
-                function() {
-                    return [
-                        self.page,
-                        self.limit
-                    ];
-                },
-                function(props, prevProps) {
-                    var samePage = props[0] === prevProps[0];
-
-                    if (equals(props, prevProps)) { return; }
-
-                    if (self.page !== 1 && samePage) {
-                        /* jshint boss:true */
-                        return self.page = 1;
-                        /* jshint boss:false */
-                    }
-
-                    if ($scope.query) {
-                        /* jshint boss:true */
-                        return $scope.query = '';
-                        /* jshint boss:false */
-                    }
-
-                    return fetchAdvertisers();
-                }
-            );
-
-            fetchAdvertisers();
+            $injector.invoke(PaginatedListCtrl, self, {
+                $scope: $scope,
+                scopePromise: scopePromise,
+                Cinema6Service: Cinema6Service
+            });
         }])
         .controller('AdvertiserController', ['$scope','$log','ConfirmDialogService','$location','$routeParams','Cinema6Service',
         function                            ( $scope , $log , ConfirmDialogService , $location , $routeParams , Cinema6Service ) {
