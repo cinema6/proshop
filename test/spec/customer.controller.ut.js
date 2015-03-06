@@ -11,9 +11,8 @@
                 $routeParams,
                 $location,
                 CustomerCtrl,
-                CustomersService,
-                AdvertisersService,
                 ConfirmDialogService,
+                Cinema6Service,
                 mockCustomer,
                 mockAdvertisers;
 
@@ -26,9 +25,8 @@
                     $log: $log,
                     $scope: $scope,
                     $routeParams: $routeParams,
-                    CustomersService: CustomersService,
-                    AdvertisersService: AdvertisersService,
-                    ConfirmDialogService: ConfirmDialogService
+                    ConfirmDialogService: ConfirmDialogService,
+                    Cinema6Service: Cinema6Service
                 });
             }
 
@@ -40,18 +38,17 @@
                     close: jasmine.createSpy('ConfirmDialogService.close()')
                 };
 
-                CustomersService = {
-                    getCustomer: jasmine.createSpy('CustomersService.getCustomer'),
-                    putCustomer: jasmine.createSpy('CustomersService.putCustomer'),
-                    postCustomer: jasmine.createSpy('CustomersService.postCustomer'),
-                    deleteCustomer: jasmine.createSpy('CustomersService.deleteCustomer')
-                };
-
-                AdvertisersService = {
-                    getAdvertisers: jasmine.createSpy('AdvertisersService.getAdvertisers')
-                };
+                Cinema6Service = {
+                    getAll: jasmine.createSpy('Cinema6Service.getAll'),
+                    get: jasmine.createSpy('Cinema6Service.get'),
+                    put: jasmine.createSpy('Cinema6Service.put'),
+                    post: jasmine.createSpy('Cinema6Service.post'),
+                    delete: jasmine.createSpy('Cinema6Service.delete')
+                }
 
                 /* jshint quotmark:false */
+                // the 'advertisers' property has been decorated.
+                // In the real app this takes place in the CustomerAdapter
                 mockCustomer = {
                     "id": "cus-111",
                     "name": "Ybrant",
@@ -60,57 +57,80 @@
                     "lastUpdated": "2014-06-13T19:28:39.408Z",
                     "status": "active",
                     "advertisers": [
-                        "a-111"
+                        {
+                            "id": "a-111",
+                            "adtechId": "12121212",
+                            "name": "Ybrant",
+                            "created": "2014-06-13T19:28:39.408Z",
+                            "lastUpdated": "2015-01-12T18:06:52.877Z",
+                            "defaultLinks": {
+                                "Facebook": "http://facebook.com",
+                                "Twitter": "http://twitter.com"
+                            },
+                            "defaultLogos": {
+                                "Main": "http://example.com/logo.jpg"
+                            },
+                            "status": "active"
+                        }
                     ]
                 };
 
-                mockAdvertisers = [
-                    {
-                        "id": "a-111",
-                        "adtechId": "12121212",
-                        "name": "Ybrant",
-                        "created": "2014-06-13T19:28:39.408Z",
-                        "lastUpdated": "2015-01-12T18:06:52.877Z",
-                        "defaultLinks": {
-                            "Facebook": "http://facebook.com",
-                            "Twitter": "http://twitter.com"
-                        },
-                        "defaultLogos": {
-                            "Main": "http://example.com/logo.jpg"
-                        },
-                        "status": "active"
+                mockAdvertisers = {
+                    meta: {
+                        items: {
+                            start: 1,
+                            end: 3,
+                            total: 3
+                        }
                     },
-                    {
-                        "id": "a-112",
-                        "adtechId": "12121213",
-                        "name": "DashBid",
-                        "created": "2014-06-13T19:28:39.408Z",
-                        "lastUpdated": "2014-06-13T19:28:39.408Z",
-                        "defaultLinks": {
-                            "Facebook": "http://facebook.com",
-                            "Twitter": "http://twitter.com"
+                    data: [
+                        {
+                            "id": "a-111",
+                            "adtechId": "12121212",
+                            "name": "Ybrant",
+                            "created": "2014-06-13T19:28:39.408Z",
+                            "lastUpdated": "2015-01-12T18:06:52.877Z",
+                            "defaultLinks": {
+                                "Facebook": "http://facebook.com",
+                                "Twitter": "http://twitter.com"
+                            },
+                            "defaultLogos": {
+                                "Main": "http://example.com/logo.jpg"
+                            },
+                            "status": "active"
                         },
-                        "defaultLogos": {
-                            "logo1": "http://example.com/logo.jpg"
+                        {
+                            "id": "a-112",
+                            "adtechId": "12121213",
+                            "name": "DashBid",
+                            "created": "2014-06-13T19:28:39.408Z",
+                            "lastUpdated": "2014-06-13T19:28:39.408Z",
+                            "defaultLinks": {
+                                "Facebook": "http://facebook.com",
+                                "Twitter": "http://twitter.com"
+                            },
+                            "defaultLogos": {
+                                "logo1": "http://example.com/logo.jpg"
+                            },
+                            "status": "active"
                         },
-                        "status": "active"
-                    },
-                    {
-                        "id": "a-113",
-                        "adtechId": "12121233",
-                        "name": "Adap.tv",
-                        "created": "2014-06-13T19:28:39.408Z",
-                        "lastUpdated": "2014-06-13T19:28:39.408Z",
-                        "defaultLinks": {
-                            "Facebook": "http://facebook.com",
-                            "Twitter": "http://twitter.com"
-                        },
-                        "defaultLogos": {
-                            "logo1": "http://example.com/logo.jpg"
-                        },
-                        "status": "active"
-                    }
-                ];
+                        {
+                            "id": "a-113",
+                            "adtechId": "12121233",
+                            "name": "Adap.tv",
+                            "created": "2014-06-13T19:28:39.408Z",
+                            "lastUpdated": "2014-06-13T19:28:39.408Z",
+                            "defaultLinks": {
+                                "Facebook": "http://facebook.com",
+                                "Twitter": "http://twitter.com"
+                            },
+                            "defaultLogos": {
+                                "logo1": "http://example.com/logo.jpg"
+                            },
+                            "status": "active"
+                        }
+                    ]
+                };
                 /* jshint quotmark:single */
 
                 inject(function($injector) {
@@ -123,20 +143,20 @@
                     spyOn($location, 'path');
                     $log.context = function(){ return $log; }
 
-                    CustomersService.getCustomer.deferred = $q.defer();
-                    CustomersService.getCustomer.and.returnValue(CustomersService.getCustomer.deferred.promise);
+                    Cinema6Service.getAll.deferred = $q.defer();
+                    Cinema6Service.getAll.and.returnValue(Cinema6Service.getAll.deferred.promise);
 
-                    CustomersService.putCustomer.deferred = $q.defer();
-                    CustomersService.putCustomer.and.returnValue(CustomersService.putCustomer.deferred.promise);
+                    Cinema6Service.get.deferred = $q.defer();
+                    Cinema6Service.get.and.returnValue(Cinema6Service.get.deferred.promise);
 
-                    CustomersService.postCustomer.deferred = $q.defer();
-                    CustomersService.postCustomer.and.returnValue(CustomersService.postCustomer.deferred.promise);
+                    Cinema6Service.put.deferred = $q.defer();
+                    Cinema6Service.put.and.returnValue(Cinema6Service.put.deferred.promise);
 
-                    CustomersService.deleteCustomer.deferred = $q.defer();
-                    CustomersService.deleteCustomer.and.returnValue(CustomersService.deleteCustomer.deferred.promise);
+                    Cinema6Service.post.deferred = $q.defer();
+                    Cinema6Service.post.and.returnValue(Cinema6Service.post.deferred.promise);
 
-                    AdvertisersService.getAdvertisers.deferred = $q.defer();
-                    AdvertisersService.getAdvertisers.and.returnValue(AdvertisersService.getAdvertisers.deferred.promise);
+                    Cinema6Service.delete.deferred = $q.defer();
+                    Cinema6Service.delete.and.returnValue(Cinema6Service.delete.deferred.promise);
                 });
             });
 
@@ -151,8 +171,8 @@
                     });
 
                     it('should load the customer and all advertisers', function() {
-                        expect(CustomersService.getCustomer).toHaveBeenCalled();
-                        expect(AdvertisersService.getAdvertisers).toHaveBeenCalled();
+                        expect(Cinema6Service.get).toHaveBeenCalledWith('customers','cus-111');
+                        expect(Cinema6Service.getAll).toHaveBeenCalledWith('advertisers');
                     });
                 });
 
@@ -166,11 +186,11 @@
                     });
 
                     it('should not load a customer', function() {
-                        expect(CustomersService.getCustomer).not.toHaveBeenCalled();
+                        expect(Cinema6Service.get).not.toHaveBeenCalled();
                     });
 
                     it('should load all advertisers', function() {
-                        expect(AdvertisersService.getAdvertisers).toHaveBeenCalled();
+                        expect(Cinema6Service.getAll).toHaveBeenCalledWith('advertisers');
                     });
                 });
             });
@@ -187,7 +207,7 @@
 
                         it('should be false after all advertiser are loaded', function() {
                             $scope.$apply(function() {
-                                AdvertisersService.getAdvertisers.deferred.resolve(mockAdvertisers);
+                                Cinema6Service.getAll.deferred.resolve(mockAdvertisers);
                             });
 
                             expect(CustomerCtrl.loading).toBe(false);
@@ -195,7 +215,7 @@
 
                         it('should be false even if there are errors loading data', function() {
                             $scope.$apply(function() {
-                                AdvertisersService.getAdvertisers.deferred.reject();
+                                Cinema6Service.getAll.deferred.reject();
                             });
 
                             expect(CustomerCtrl.loading).toBe(false);
@@ -213,8 +233,8 @@
 
                         it('should be false after all data promises resolve', function() {
                             $scope.$apply(function() {
-                                CustomersService.getCustomer.deferred.resolve(angular.copy(mockCustomer));
-                                AdvertisersService.getAdvertisers.deferred.resolve(mockAdvertisers);
+                                Cinema6Service.get.deferred.resolve(angular.copy(mockCustomer));
+                                Cinema6Service.getAll.deferred.resolve(mockAdvertisers);
                             });
 
                             expect(CustomerCtrl.loading).toBe(false);
@@ -222,8 +242,8 @@
 
                         it('should be false even if there are errors loading data', function() {
                             $scope.$apply(function() {
-                                CustomersService.getCustomer.deferred.reject();
-                                AdvertisersService.getAdvertisers.deferred.reject();
+                                Cinema6Service.get.deferred.reject();
+                                Cinema6Service.getAll.deferred.reject();
                             });
 
                             expect(CustomerCtrl.loading).toBe(false);
@@ -238,19 +258,19 @@
                         compileCtrl();
 
                         $scope.$apply(function() {
-                            AdvertisersService.getAdvertisers.deferred.resolve(mockAdvertisers);
+                            Cinema6Service.getAll.deferred.resolve(mockAdvertisers);
                         });
 
                         expect(CustomerCtrl.customer.advertisers.length).toBe(0);
 
-                        CustomerCtrl.addAdvertiser(mockAdvertisers[0]);
-                        CustomerCtrl.addAdvertiser(mockAdvertisers[1]);
-                        CustomerCtrl.addAdvertiser(mockAdvertisers[2]);
+                        CustomerCtrl.addAdvertiser(mockAdvertisers.data[0]);
+                        CustomerCtrl.addAdvertiser(mockAdvertisers.data[1]);
+                        CustomerCtrl.addAdvertiser(mockAdvertisers.data[2]);
 
                         expect(CustomerCtrl.customer.advertisers.length).toBe(3);
-                        expect(CustomerCtrl.customer.advertisers[0]).toEqual(mockAdvertisers[0]);
-                        expect(CustomerCtrl.customer.advertisers[1]).toEqual(mockAdvertisers[1]);
-                        expect(CustomerCtrl.customer.advertisers[2]).toEqual(mockAdvertisers[2]);
+                        expect(CustomerCtrl.customer.advertisers[0]).toEqual(mockAdvertisers.data[0]);
+                        expect(CustomerCtrl.customer.advertisers[1]).toEqual(mockAdvertisers.data[1]);
+                        expect(CustomerCtrl.customer.advertisers[2]).toEqual(mockAdvertisers.data[2]);
                     });
                 });
 
@@ -259,26 +279,26 @@
                         compileCtrl('cus-111');
 
                         $scope.$apply(function() {
-                            CustomersService.getCustomer.deferred.resolve(angular.copy(mockCustomer));
-                            AdvertisersService.getAdvertisers.deferred.resolve(mockAdvertisers);
+                            Cinema6Service.get.deferred.resolve(angular.copy(mockCustomer));
+                            Cinema6Service.getAll.deferred.resolve(mockAdvertisers);
                         });
 
-                        expect(CustomerCtrl.customer.advertisers).toEqual([mockAdvertisers[0]]);
+                        expect(CustomerCtrl.customer.advertisers).toEqual([mockAdvertisers.data[0]]);
                         expect(CustomerCtrl.customer.advertisers.length).toBe(1);
 
                         CustomerCtrl.removeAdvertiser(0);
 
                         expect(CustomerCtrl.customer.advertisers.length).toBe(0);
 
-                        CustomerCtrl.customer.advertisers = angular.copy(mockAdvertisers);
+                        CustomerCtrl.customer.advertisers = angular.copy(mockAdvertisers.data);
 
                         expect(CustomerCtrl.customer.advertisers.length).toBe(3);
 
                         CustomerCtrl.removeAdvertiser(1);
 
                         expect(CustomerCtrl.customer.advertisers.length).toBe(2);
-                        expect(CustomerCtrl.customer.advertisers[0]).toEqual(mockAdvertisers[0]);
-                        expect(CustomerCtrl.customer.advertisers[1]).toEqual(mockAdvertisers[2]);
+                        expect(CustomerCtrl.customer.advertisers[0]).toEqual(mockAdvertisers.data[0]);
+                        expect(CustomerCtrl.customer.advertisers[1]).toEqual(mockAdvertisers.data[2]);
                     });
                 });
 
@@ -288,7 +308,7 @@
                             compileCtrl();
 
                             $scope.$apply(function() {
-                                AdvertisersService.getAdvertisers.deferred.resolve(mockAdvertisers);
+                                Cinema6Service.getAll.deferred.resolve(mockAdvertisers);
                             });
 
                             CustomerCtrl.customer.name = 'New Customer';
@@ -298,17 +318,17 @@
                         it('should POST the customer', function() {
                             CustomerCtrl.save(CustomerCtrl.customer);
 
-                            expect(CustomersService.postCustomer).toHaveBeenCalledWith({
+                            expect(Cinema6Service.post).toHaveBeenCalledWith('customers', {
                                 name: 'New Customer',
                                 status: 'active',
                                 advertisers: []
                             });
 
-                            CustomerCtrl.customer.advertisers = [mockAdvertisers[0], mockAdvertisers[2]];
+                            CustomerCtrl.customer.advertisers = [mockAdvertisers.data[0], mockAdvertisers.data[2]];
 
                             CustomerCtrl.save(CustomerCtrl.customer);
 
-                            expect(CustomersService.postCustomer).toHaveBeenCalledWith({
+                            expect(Cinema6Service.post).toHaveBeenCalledWith('customers', {
                                 name: 'New Customer',
                                 status: 'active',
                                 advertisers: ['a-111', 'a-113']
@@ -319,7 +339,7 @@
                             CustomerCtrl.save(CustomerCtrl.customer);
 
                             $scope.$apply(function() {
-                                CustomersService.postCustomer.deferred.resolve(CustomerCtrl.customer);
+                                Cinema6Service.post.deferred.resolve(CustomerCtrl.customer);
                             });
 
                             expect($location.path).toHaveBeenCalledWith('/customers');
@@ -329,7 +349,7 @@
                             CustomerCtrl.save(CustomerCtrl.customer);
 
                             $scope.$apply(function() {
-                                CustomersService.postCustomer.deferred.reject('Error message');
+                                Cinema6Service.post.deferred.reject('Error message');
                             });
 
                             expect(ConfirmDialogService.display).toHaveBeenCalled();
@@ -342,15 +362,15 @@
                             compileCtrl('cus-111');
 
                             $scope.$apply(function() {
-                                CustomersService.getCustomer.deferred.resolve(mockCustomer);
-                                AdvertisersService.getAdvertisers.deferred.resolve(mockAdvertisers);
+                                Cinema6Service.get.deferred.resolve(mockCustomer);
+                                Cinema6Service.getAll.deferred.resolve(mockAdvertisers);
                             });
                         });
 
                         it('should PUT the customer', function() {
                             CustomerCtrl.save(CustomerCtrl.customer);
 
-                            expect(CustomersService.putCustomer).toHaveBeenCalledWith('cus-111', {
+                            expect(Cinema6Service.put).toHaveBeenCalledWith('customers', 'cus-111', {
                                 name: 'Ybrant',
                                 status: 'active',
                                 advertisers: ['a-111']
@@ -358,11 +378,11 @@
 
                             CustomerCtrl.customer.name = 'DashBid';
                             CustomerCtrl.customer.status = 'inactive';
-                            CustomerCtrl.customer.advertisers = [mockAdvertisers[0], mockAdvertisers[2]];
+                            CustomerCtrl.customer.advertisers = [mockAdvertisers.data[0], mockAdvertisers.data[2]];
 
                             CustomerCtrl.save(CustomerCtrl.customer);
 
-                            expect(CustomersService.putCustomer).toHaveBeenCalledWith('cus-111', {
+                            expect(Cinema6Service.put).toHaveBeenCalledWith('customers', 'cus-111', {
                                 name: 'DashBid',
                                 status: 'inactive',
                                 advertisers: ['a-111', 'a-113']
@@ -373,7 +393,7 @@
                             CustomerCtrl.save(CustomerCtrl.customer);
 
                             $scope.$apply(function() {
-                                CustomersService.putCustomer.deferred.resolve(CustomerCtrl.customer);
+                                Cinema6Service.put.deferred.resolve(CustomerCtrl.customer);
                             });
 
                             expect($location.path).toHaveBeenCalledWith('/customers');
@@ -383,7 +403,7 @@
                             CustomerCtrl.save(CustomerCtrl.customer);
 
                             $scope.$apply(function() {
-                                CustomersService.putCustomer.deferred.reject('Error message');
+                                Cinema6Service.put.deferred.reject('Error message');
                             });
 
                             expect(ConfirmDialogService.display).toHaveBeenCalled();
@@ -399,8 +419,8 @@
                         compileCtrl('cus-111');
 
                         $scope.$apply(function() {
-                            CustomersService.getCustomer.deferred.resolve(mockCustomer);
-                            AdvertisersService.getAdvertisers.deferred.resolve(mockAdvertisers);
+                            Cinema6Service.get.deferred.resolve(mockCustomer);
+                            Cinema6Service.getAll.deferred.resolve(mockAdvertisers);
                         });
 
                         CustomerCtrl.delete();
@@ -418,7 +438,7 @@
                             onAffirm();
 
                             expect(ConfirmDialogService.close).toHaveBeenCalled();
-                            expect(CustomersService.deleteCustomer).toHaveBeenCalled();
+                            expect(Cinema6Service.delete).toHaveBeenCalled();
                         });
 
                         describe('when delete is successful', function() {
@@ -426,7 +446,7 @@
                                 onAffirm();
 
                                 $scope.$apply(function() {
-                                    CustomersService.deleteCustomer.deferred.resolve();
+                                    Cinema6Service.delete.deferred.resolve();
                                 });
 
                                 expect($location.path).toHaveBeenCalledWith('/customers');
@@ -440,7 +460,7 @@
                                 ConfirmDialogService.display.calls.reset();
 
                                 $scope.$apply(function() {
-                                    CustomersService.deleteCustomer.deferred.reject('Error message');
+                                    Cinema6Service.delete.deferred.reject('Error message');
                                 });
 
                                 expect(ConfirmDialogService.display).toHaveBeenCalled();
@@ -454,7 +474,7 @@
                             onCancel();
 
                             expect(ConfirmDialogService.close).toHaveBeenCalled();
-                            expect(CustomersService.deleteCustomer).not.toHaveBeenCalled();
+                            expect(Cinema6Service.delete).not.toHaveBeenCalled();
                         });
                     });
                 });

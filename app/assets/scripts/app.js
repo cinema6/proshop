@@ -343,6 +343,115 @@ function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines ,
                 return response;
             }
 
+            $provide.constant('CustomerAdapter', ['$http','$q','c6UrlMaker','Cinema6Service',
+            function                             ( $http , $q , c6UrlMaker , Cinema6Service ) {
+                var apiBase = c6UrlMaker('account/customer', 'api');
+
+                function handleError(err) {
+                    return $q.reject((err && err.data) || 'Unable to complete request');
+                }
+
+                function getObjectByProp(prop, value, array) {
+                    return array.filter(function(obj) {
+                        return obj[prop] === value;
+                    })[0];
+                }
+
+                function decorateCustomer(customer) {
+                    var deferred = $q.defer(),
+                        ids = customer.advertisers.join();
+
+                    Cinema6Service.getAll('advertisers', {ids: ids})
+                        .then(function(advertisers) {
+                            customer.advertisers = advertisers.data;
+                            deferred.resolve(customer);
+                        })
+                        .catch(function(err) {
+                            deferred.reject(err);
+                        });
+
+                    return deferred.promise;
+                }
+
+                function decorateCustomers(customers) {
+                    var deferred = $q.defer(),
+                        ids = customers.data.reduce(function(result, customer) {
+                            return result.concat(customer.advertisers);
+                        }, [])
+                        .filter(function(id, index, ids) {
+                            return ids.indexOf(id) === index;
+                        }).join();
+
+                    Cinema6Service.getAll('advertisers', {ids: ids})
+                        .then(pick('data'))
+                        .then(function(advertisers) {
+                            customers.data.forEach(function(customer) {
+                                customer.advertisers = customer.advertisers.map(function(id) {
+                                    return getObjectByProp('id', id, advertisers);
+                                });
+                            });
+                            deferred.resolve(customers);
+                        })
+                        .catch(function(err) {
+                            deferred.reject(err);
+                        });
+
+                    return deferred.promise;
+                }
+
+                this.get = function(id) {
+                    return $http({
+                        method: 'GET',
+                        url: apiBase + '/' + id
+                    }).then(pick('data'))
+                        .then(decorateCustomer)
+                        .catch(handleError);
+                };
+
+                this.getAll = function(params) {
+                    return $http({
+                        method: 'GET',
+                        url: apiBase + 's',
+                        params: params || {}
+                    }).then(fillMeta)
+                        .then(decorateCustomers)
+                        .catch(handleError);
+                };
+
+                this.put = function(id, model) {
+                    return $http({
+                        method: 'PUT',
+                        url: apiBase + '/' + id,
+                        data: model
+                    }).then(
+                        pick('data'),
+                        handleError
+                    );
+                };
+
+                this.post = function(model) {
+                    return $http({
+                        method: 'POST',
+                        url: apiBase,
+                        data: model
+                    }).then(
+                        pick('data'),
+                        handleError
+                    );
+                };
+
+                this.delete = function(id) {
+                    return $http({
+                        method: 'DELETE',
+                        url: apiBase + '/' + id
+                    })
+                    .then(
+                        pick('data'),
+                        handleError
+                    );
+                };
+            }]);
+
             $provide.constant('AdvertiserAdapter', ['$http','$q','c6UrlMaker',
             function                               ( $http , $q , c6UrlMaker ) {
                 var apiBase = c6UrlMaker('account/advertiser', 'api');
@@ -479,10 +588,11 @@ function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines ,
             }];
         }])
 
-        .config(['Cinema6ServiceProvider','AdvertiserAdapter',
-        function( Cinema6ServiceProvider , AdvertiserAdapter ) {
+        .config(['Cinema6ServiceProvider','AdvertiserAdapter','CustomerAdapter',
+        function( Cinema6ServiceProvider , AdvertiserAdapter , CustomerAdapter ) {
             Cinema6ServiceProvider.useAdapters({
-                advertisers: AdvertiserAdapter
+                advertisers: AdvertiserAdapter,
+                customers: CustomerAdapter
             });
         }])
 
