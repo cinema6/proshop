@@ -7,19 +7,93 @@ module.exports = function(http) {
     var fn = require('../utils/fn'),
         db = require('../utils/db'),
         idFromPath = db.idFromPath,
-        extend = fn.extend;
+        extend = fn.extend,
+        pluck = fn.pluck,
+        pluckExcept = fn.pluckExcept,
+        withDefaults = fn.withDefaults,
+        mapObject = fn.mapObject;
 
     function categoryPath(id) {
         return path.resolve(__dirname, './categories/' + id + '.json');
     }
 
-    http.whenGET('/api/content/categories', function(request) {
-        var allCats = grunt.file.expand(path.resolve(__dirname, './categories/*.json'))
-            .map(function(path) {
-                return grunt.file.readJSON(path);
-            });
+    function contains(haystack, needle) {
+        var ids = haystack.split(',');
 
-        this.respond(200, allCats);
+        if (!needle) { return false; }
+
+        return ids.some(function(id) {
+            return id === needle || needle.indexOf(id) > -1;
+        });
+    }
+
+    http.whenGET('/api/content/categories', function(request) {
+        var filters = pluckExcept(request.query, ['sort', 'limit', 'skip', 'text']),
+            page = withDefaults(mapObject(pluck(request.query, ['limit', 'skip']), parseFloat), {
+                limit: Infinity,
+                skip: 0
+            }),
+            sort = (request.query.sort || null) && request.query.sort.split(','),
+            allCats = grunt.file.expand(path.resolve(__dirname, './categories/*.json'))
+                .map(function(path) {
+                    var id = path.match(/[^\/]+(?=\.json)/)[0];
+
+                    return extend(grunt.file.readJSON(path), { id: id });
+                })
+                .filter(function(category) {
+                    return Object.keys(filters)
+                        .every(function(key) {
+                            switch (key) {
+                                case 'ids':
+                                    return contains(filters[key], category.id);
+                                    break;
+                                default:
+                                    return filters[key] === category[key];
+                                    break;
+                            }
+                        });
+                })
+                .filter(function(category) {
+                    var text = request.query.text || category.name;
+
+                    return category.name.indexOf(text) > -1 ||
+                        category.label.indexOf(text) > -1;
+                }),
+            cats = allCats
+                .sort(function(a, b) {
+                    var prop = sort && sort[0],
+                        directionInt = parseInt(sort && sort[1]),
+                        isDate = ['lastUpdated', 'created', 'lastPublished'].indexOf(prop) > -1,
+                        aProp, bProp;
+
+                    if (!sort) {
+                        return 0;
+                    }
+
+                    aProp = isDate ? new Date(a[prop]) : a[prop];
+                    bProp = isDate ? new Date(b[prop]) : b[prop];
+
+                    if (aProp < bProp) {
+                        return directionInt * -1;
+                    } else if (bProp < aProp) {
+                        return directionInt;
+                    }
+
+                    return 0;
+                })
+                .filter(function(category, index) {
+                    var startIndex = page.skip,
+                        endIndex = startIndex + page.limit - 1;
+
+                    return index >= startIndex && index <= endIndex;
+                }),
+            startPosition = page.skip + 1,
+            endPosition = page.skip + Math.min(page.limit, cats.length);
+
+        this.respond(200, cats)
+            .setHeaders({
+                'Content-Range': startPosition + '-' + endPosition + '/' + allCats.length
+            });
     });
 
     http.whenGET('/api/content/category/**', function(request) {

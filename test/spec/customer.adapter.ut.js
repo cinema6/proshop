@@ -164,6 +164,10 @@
                 it('should exist', function() {
                     expect(adapter).toEqual(jasmine.any(Object));
                 });
+
+                it('should set the apiBase', function() {
+                    expect(c6UrlMaker).toHaveBeenCalledWith('account/customer','api');
+                });
             });
 
             describe('methods', function() {

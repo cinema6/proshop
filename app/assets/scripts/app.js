@@ -343,6 +343,68 @@ function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines ,
                 return response;
             }
 
+            $provide.constant('CategoryAdapter', ['$http','$q','c6UrlMaker',
+            function                             ( $http , $q , c6UrlMaker ) {
+                var apiBase = c6UrlMaker('content/category', 'api');
+
+                function handleError(err) {
+                    return $q.reject((err && err.data) || 'Unable to complete request');
+                }
+
+                this.get = function(id) {
+                    return $http({
+                        method: 'GET',
+                        url: apiBase + '/' + id
+                    }).then(
+                        pick('data'),
+                        handleError
+                    );
+                };
+
+                this.getAll = function(params) {
+                    return $http({
+                        method: 'GET',
+                        url: apiBase.slice(0,-1) + 'ies',
+                        params: params || {}
+                    }).then(
+                        fillMeta,
+                        handleError
+                    );
+                };
+
+                this.put = function(id, model) {
+                    return $http({
+                        method: 'PUT',
+                        url: apiBase + '/' + id,
+                        data: model
+                    }).then(
+                        pick('data'),
+                        handleError
+                    );
+                };
+
+                this.post = function(model) {
+                    return $http({
+                        method: 'POST',
+                        url: apiBase,
+                        data: model
+                    }).then(
+                        pick('data'),
+                        handleError
+                    );
+                };
+
+                this.delete = function(id) {
+                    return $http({
+                        method: 'DELETE',
+                        url: apiBase + '/' + id
+                    }).then(
+                        pick('data'),
+                        handleError
+                    );
+                };
+            }]);
+
             $provide.constant('CustomerAdapter', ['$http','$q','c6UrlMaker','Cinema6Service',
             function                             ( $http , $q , c6UrlMaker , Cinema6Service ) {
                 var apiBase = c6UrlMaker('account/customer', 'api');
@@ -444,8 +506,7 @@ function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines ,
                     return $http({
                         method: 'DELETE',
                         url: apiBase + '/' + id
-                    })
-                    .then(
+                    }).then(
                         pick('data'),
                         handleError
                     );
@@ -507,8 +568,7 @@ function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines ,
                     return $http({
                         method: 'DELETE',
                         url: apiBase + '/' + id
-                    })
-                    .then(
+                    }).then(
                         pick('data'),
                         handleError
                     );
@@ -588,11 +648,12 @@ function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines ,
             }];
         }])
 
-        .config(['Cinema6ServiceProvider','AdvertiserAdapter','CustomerAdapter',
-        function( Cinema6ServiceProvider , AdvertiserAdapter , CustomerAdapter ) {
+        .config(['Cinema6ServiceProvider','AdvertiserAdapter','CustomerAdapter','CategoryAdapter',
+        function( Cinema6ServiceProvider , AdvertiserAdapter , CustomerAdapter , CategoryAdapter ) {
             Cinema6ServiceProvider.useAdapters({
                 advertisers: AdvertiserAdapter,
-                customers: CustomerAdapter
+                customers: CustomerAdapter,
+                categories: CategoryAdapter
             });
         }])
 

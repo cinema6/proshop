@@ -2,80 +2,52 @@
     'use strict';
 
     define(['app'], function(proshop) {
-        describe('AdvertiserAdapter', function() {
+        describe('CategoryAdapter', function() {
             var $rootScope,
                 $httpBackend,
-                AdvertiserAdapter,
+                CategoryAdapter,
                 adapter,
                 c6UrlMaker,
                 successSpy,
                 failureSpy;
 
-            var mockAdvertiser,
-                mockAdvertisers;
+            var mockCategory,
+                mockCategories;
 
             beforeEach(function() {
                 /* jsHint quotmark:false */
-                mockAdvertiser = {
-                    "id": "a-111",
-                    "adtechId": "12121212",
-                    "name": "Ybrant",
+                mockCategory = {
+                    "id": "c-111",
+                    "name": "sports",
+                    "label": "Sports",
                     "created": "2014-06-13T19:28:39.408Z",
-                    "lastUpdated": "2015-01-12T18:06:52.877Z",
-                    "defaultLinks": {
-                        "Facebook": "http://facebook.com",
-                        "Twitter": "http://twitter.com"
-                    },
-                    "defaultLogos": {
-                        "Main": "http://example.com/logo.jpg"
-                    },
+                    "lastUpdated": "2014-06-13T19:28:39.408Z",
                     "status": "active"
                 };
 
-                mockAdvertisers = [
+                mockCategories = [
                     {
-                        "id": "a-111",
-                        "adtechId": "12121212",
-                        "name": "Ybrant",
+                        "id": "c-111",
+                        "name": "sports",
+                        "label": "Sports",
                         "created": "2014-06-13T19:28:39.408Z",
-                        "lastUpdated": "2015-01-12T18:06:52.877Z",
-                        "defaultLinks": {
-                            "Facebook": "http://facebook.com",
-                            "Twitter": "http://twitter.com"
-                        },
-                        "defaultLogos": {
-                            "Main": "http://example.com/logo.jpg"
-                        },
+                        "lastUpdated": "2014-06-13T19:28:39.408Z",
                         "status": "active"
                     },
                     {
-                        "id": "a-112",
-                        "adtechId": "12121213",
-                        "name": "DashBid",
+                        "id": "c-112",
+                        "name": "technology",
+                        "label": "Technology",
                         "created": "2014-06-13T19:28:39.408Z",
                         "lastUpdated": "2014-06-13T19:28:39.408Z",
-                        "defaultLinks": {
-                            "Facebook": "http://facebook.com",
-                            "Twitter": "http://twitter.com"
-                        },
-                        "defaultLogos": {
-                            "logo1": "http://example.com/logo.jpg"
-                        },
                         "status": "active"
                     },
                     {
-                        "id": "a-113",
-                        "adtechId": "12121233",
-                        "name": "Adap.tv",
+                        "id": "c-113",
+                        "name": "people_blogs",
+                        "label": "People & Blogs",
                         "created": "2014-06-13T19:28:39.408Z",
                         "lastUpdated": "2014-06-13T19:28:39.408Z",
-                        "defaultLinks": {
-                            "Facebook": "http://facebook.com",
-                            "Twitter": "http://twitter.com"
-                        },
-                        "defaultLogos": {
-                            "logo1": "http://example.com/logo.jpg"
-                        },
                         "status": "active"
                     }
                 ];
@@ -101,9 +73,9 @@
                         return '/' + base + '/' + path;
                     });
 
-                    AdvertiserAdapter = $injector.get('AdvertiserAdapter');
+                    CategoryAdapter = $injector.get('CategoryAdapter');
 
-                    adapter = $injector.instantiate(AdvertiserAdapter);
+                    adapter = $injector.instantiate(CategoryAdapter);
                 });
             });
 
@@ -113,7 +85,7 @@
                 });
 
                 it('should set the apiBase', function() {
-                    expect(c6UrlMaker).toHaveBeenCalledWith('account/advertiser','api');
+                    expect(c6UrlMaker).toHaveBeenCalledWith('content/category','api');
                 });
             });
 
@@ -125,21 +97,21 @@
                     });
 
                     it('will resolve promise if successfull',function(){
-                        $httpBackend.expectGET('/api/account/advertiser/a-111')
-                            .respond(200,mockAdvertiser);
-                        adapter.get('a-111').then(successSpy,failureSpy);
+                        $httpBackend.expectGET('/api/content/category/c-111')
+                            .respond(200,mockCategory);
+                        adapter.get('c-111').then(successSpy,failureSpy);
                         $httpBackend.flush();
-                        expect(successSpy).toHaveBeenCalledWith(mockAdvertiser);
+                        expect(successSpy).toHaveBeenCalledWith(mockCategory);
                         expect(failureSpy).not.toHaveBeenCalled();
                     });
 
                     it('will reject promise if not successful',function(){
-                        $httpBackend.expectGET('/api/account/advertiser/a-111')
-                            .respond(404,'Unable to find advertisers.');
-                        adapter.get('a-111').then(successSpy,failureSpy);
+                        $httpBackend.expectGET('/api/content/category/c-111')
+                            .respond(404,'Unable to find category.');
+                        adapter.get('c-111').then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).not.toHaveBeenCalled();
-                        expect(failureSpy).toHaveBeenCalledWith('Unable to find advertisers.');
+                        expect(failureSpy).toHaveBeenCalledWith('Unable to find category.');
                     });
                 });
 
@@ -150,13 +122,13 @@
                     });
 
                     it('will accept empty params', function() {
-                        $httpBackend.expectGET('/api/account/advertisers')
-                            .respond(200,mockAdvertisers,{'Content-Range': 'items 1-19/19'});
+                        $httpBackend.expectGET('/api/content/categories')
+                            .respond(200,mockCategories,{'Content-Range': 'items 1-19/19'});
                         adapter.getAll().then(successSpy,failureSpy);
                         $httpBackend.flush();
 
                         expect(successSpy).toHaveBeenCalledWith(jasmine.objectContaining({
-                            data: mockAdvertisers,
+                            data: mockCategories,
                             meta: {
                                 items: {
                                     start: 1,
@@ -170,12 +142,12 @@
                     });
 
                     it('will resolve promise if successfull',function(){
-                        $httpBackend.expectGET('/api/account/advertisers?ids=e-1,e-2,e-3&limit=3')
-                            .respond(200,mockAdvertisers,{'Content-Range': 'items 1-19/19'});
-                        adapter.getAll({ids: 'e-1,e-2,e-3', limit: 3}).then(successSpy,failureSpy);
+                        $httpBackend.expectGET('/api/content/categories?ids=c-1,c-2,c-3&limit=3')
+                            .respond(200,mockCategories,{'Content-Range': 'items 1-19/19'});
+                        adapter.getAll({ids: 'c-1,c-2,c-3', limit: 3}).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).toHaveBeenCalledWith(jasmine.objectContaining({
-                            data: mockAdvertisers,
+                            data: mockCategories,
                             meta: {
                                 items: {
                                     start: 1,
@@ -188,12 +160,12 @@
                     });
 
                     it('will reject promise if not successful',function(){
-                        $httpBackend.expectGET('/api/account/advertisers?ids=e-1,e-2,e-3')
-                            .respond(404,'Unable to find advertisers.');
-                        adapter.getAll({ids: 'e-1,e-2,e-3'}).then(successSpy,failureSpy);
+                        $httpBackend.expectGET('/api/content/categories?ids=c-1,c-2,c-3')
+                            .respond(404,'Unable to find categories.');
+                        adapter.getAll({ids: 'c-1,c-2,c-3'}).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).not.toHaveBeenCalled();
-                        expect(failureSpy).toHaveBeenCalledWith('Unable to find advertisers.');
+                        expect(failureSpy).toHaveBeenCalledWith('Unable to find categories.');
                     });
                 });
 
@@ -204,21 +176,21 @@
                     });
 
                     it('will resolve promise if successfull',function(){
-                        $httpBackend.expectPUT('/api/account/advertiser/a-111')
-                            .respond(200,mockAdvertiser);
-                        adapter.put(mockAdvertiser.id, mockAdvertiser).then(successSpy,failureSpy);
+                        $httpBackend.expectPUT('/api/content/category/c-111')
+                            .respond(200,mockCategory);
+                        adapter.put(mockCategory.id, mockCategory).then(successSpy,failureSpy);
                         $httpBackend.flush();
-                        expect(successSpy).toHaveBeenCalledWith(mockAdvertiser);
+                        expect(successSpy).toHaveBeenCalledWith(mockCategory);
                         expect(failureSpy).not.toHaveBeenCalled();
                     });
 
                     it('will reject promise if not successful',function(){
-                        $httpBackend.expectPUT('/api/account/advertiser/a-111')
-                            .respond(404,'Unable to update advertiser.');
-                        adapter.put(mockAdvertiser.id, mockAdvertiser).then(successSpy,failureSpy);
+                        $httpBackend.expectPUT('/api/content/category/c-111')
+                            .respond(404,'Unable to update category.');
+                        adapter.put(mockCategory.id, mockCategory).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).not.toHaveBeenCalled();
-                        expect(failureSpy).toHaveBeenCalledWith('Unable to update advertiser.');
+                        expect(failureSpy).toHaveBeenCalledWith('Unable to update category.');
                     });
                 });
 
@@ -229,21 +201,21 @@
                     });
 
                     it('will resolve promise if successfull',function(){
-                        $httpBackend.expectPOST('/api/account/advertiser')
-                            .respond(200,mockAdvertiser);
-                        adapter.post(mockAdvertiser).then(successSpy,failureSpy);
+                        $httpBackend.expectPOST('/api/content/category')
+                            .respond(200,mockCategory);
+                        adapter.post(mockCategory).then(successSpy,failureSpy);
                         $httpBackend.flush();
-                        expect(successSpy).toHaveBeenCalledWith(mockAdvertiser);
+                        expect(successSpy).toHaveBeenCalledWith(mockCategory);
                         expect(failureSpy).not.toHaveBeenCalled();
                     });
 
                     it('will reject promise if not successful',function(){
-                        $httpBackend.expectPOST('/api/account/advertiser')
-                            .respond(404,'Unable to create advertiser.');
-                        adapter.post(mockAdvertiser).then(successSpy,failureSpy);
+                        $httpBackend.expectPOST('/api/content/category')
+                            .respond(404,'Unable to create category.');
+                        adapter.post(mockCategory).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).not.toHaveBeenCalled();
-                        expect(failureSpy).toHaveBeenCalledWith('Unable to create advertiser.');
+                        expect(failureSpy).toHaveBeenCalledWith('Unable to create category.');
                     });
                 });
 
@@ -254,18 +226,18 @@
                     });
 
                     it('will resolve promise if successfull',function(){
-                        $httpBackend.expectDELETE('/api/account/advertiser/a-111')
+                        $httpBackend.expectDELETE('/api/content/category/c-111')
                             .respond(204,'');
-                        adapter.delete(mockAdvertiser.id).then(successSpy,failureSpy);
+                        adapter.delete(mockCategory.id).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).toHaveBeenCalled();
                         expect(failureSpy).not.toHaveBeenCalled();
                     });
 
                     it('will reject promise if not successful',function(){
-                        $httpBackend.expectDELETE('/api/account/advertiser/a-111')
+                        $httpBackend.expectDELETE('/api/content/category/c-111')
                             .respond(401,'Unauthorized.');
-                        adapter.delete(mockAdvertiser.id).then(successSpy,failureSpy);
+                        adapter.delete(mockCategory.id).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).not.toHaveBeenCalled();
                         expect(failureSpy).toHaveBeenCalledWith('Unauthorized.');

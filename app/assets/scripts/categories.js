@@ -1,60 +1,25 @@
-define(['angular'], function(angular) {
+define(['angular','./mixins/paginatedListController'], function(angular, PaginatedListCtrl) {
     'use strict';
 
     return angular.module('c6.proshop.categories',[])
-        .controller('CategoriesController', ['$scope','$log','$location','CategoriesService',
-        function                            ( $scope , $log , $location , CategoriesService ) {
-            var self = this,
-                _data = {};
+        .controller('CategoriesController', ['$scope','$log','$location','Cinema6Service','scopePromise','$injector',
+        function                            ( $scope , $log , $location , Cinema6Service , scopePromise , $injector ) {
+            var self = this;
 
             $log = $log.context('CategoriesCtrl');
             $log.info('instantiated');
 
-            function initView() {
-                self.loading = true;
-
-                CategoriesService.getCategories()
-                    .then(function(categories) {
-                        self.categories = categories;
-                        _data.categories = categories;
-                    })
-                    .finally(function() {
-                        self.loading = false;
-                    });
-            }
-
-            self.query = null;
-            self.page = 1;
-            self.limit = 50;
-            self.limits = [5,10,50,100];
-            Object.defineProperties(self, {
-                total: {
-                    get: function() {
-                        return self.categories && Math.ceil(self.categories.length / self.limit);
-                    }
-                }
-            });
+            $scope.endpoint = 'categories';
 
             self.addNew = function() {
                 $location.path('/category/new');
             };
 
-            self.filterData = function(query) {
-                var _query = query.toLowerCase();
-
-                self.categories = _data.categories.filter(function(category) {
-                    return category.name.toLowerCase().indexOf(_query) >= 0 ||
-                        category.label.toLowerCase().indexOf(_query) >= 0;
-                });
-
-                self.page = 1;
-            };
-
             $scope.tableHeaders = [
-                {label:'Label',value:'label'},
-                {label:'Name',value:'name'},
-                {label:'Status',value:'status'},
-                {label:'Last Updated',value:'lastUpdated'}
+                {label:'Label',value:'label',sortable:true},
+                {label:'Name',value:'name',sortable:false},
+                {label:'Status',value:'status',sortable:false},
+                {label:'Last Updated',value:'lastUpdated',sortable:true}
             ];
 
             $scope.sort = {
@@ -62,17 +27,11 @@ define(['angular'], function(angular) {
                 descending: false
             };
 
-            $scope.doSort = function(column) {
-                var sort = $scope.sort;
-                if (sort.column === column) {
-                    sort.descending = !sort.descending;
-                } else {
-                    sort.column = column;
-                    sort.descending = false;
-                }
-            };
-
-            initView();
+            $injector.invoke(PaginatedListCtrl, self, {
+                $scope: $scope,
+                scopePromise: scopePromise,
+                Cinema6Service: Cinema6Service
+            });
         }])
         .controller('CategoryController', ['$scope','$log','ConfirmDialogService','$q','$location','CategoriesService','$routeParams',
         function                          ( $scope , $log , ConfirmDialogService , $q , $location , CategoriesService , $routeParams ) {
