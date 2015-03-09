@@ -16,10 +16,10 @@ define(['angular','./mixins/paginatedListController'], function(angular, Paginat
             $scope.endpoint = 'advertisers';
 
             $scope.tableHeaders = [
-                {label:'Name',value:'name'},
-                {label:'Adtech ID',value:'adtechId'},
-                {label:'Status',value:'status'},
-                {label:'Last Updated',value:'lastUpdated'}
+                {label:'Name',value:'name',sortable:true},
+                {label:'Adtech ID',value:'adtechId',sortable:false},
+                {label:'Status',value:'status',sortable:false},
+                {label:'Last Updated',value:'lastUpdated',sortable:true}
             ];
 
             $scope.sort = {
