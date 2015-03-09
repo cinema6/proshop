@@ -60,27 +60,30 @@ define(['angular'], function(angular) {
         }
 
         self.search = function(query) {
-            var text = query && query.replace(/[^a-zA-Z_0-9 ]/g, '');
-
-            if (!query) { return; }
+            self.query = query && query.replace(/[^a-zA-Z_0-9 ]/g, '');
 
             if (self.page !== 1) {
-                self.page = 1;
-            } else {
-                $scope.query = '';
+                /* jshint boss:true */
+                return self.page = 1;
+                /* jshint boss:false */
             }
 
-            fetch({text: text});
+            return self.query ? fetch({text: self.query}) : fetch();
         };
 
-        self.doSort = function(column) {
-            var sort = $scope.sort;
+        self.doSort = function(heading) {
+            var sort = $scope.sort,
+                column = heading.value;
+
+            if (!heading.sortable) { return; }
+
             if (sort.column === column) {
                 sort.descending = !sort.descending;
             } else {
                 sort.column = column;
                 sort.descending = false;
             }
+
             fetch();
         };
 
@@ -108,13 +111,7 @@ define(['angular'], function(angular) {
                     /* jshint boss:false */
                 }
 
-                if ($scope.query) {
-                    /* jshint boss:true */
-                    return $scope.query = '';
-                    /* jshint boss:false */
-                }
-
-                return fetch();
+                return self.query ? fetch({text: self.query}) : fetch();
             }
         );
 

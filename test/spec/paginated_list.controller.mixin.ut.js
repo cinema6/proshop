@@ -147,57 +147,106 @@
 
             describe('methods', function() {
                 describe('search(query)', function() {
-                    it('should set the page to 1', function() {
-                        PaginatedListCtrl.page = 2;
+                    it('should put the query on the Ctrl', function() {
                         PaginatedListCtrl.search('Ybrant');
-                        expect(PaginatedListCtrl.page).toBe(1);
+                        expect(PaginatedListCtrl.query).toBe('Ybrant');
                     });
 
-                    it('should query for advertisers', function() {
-                        PaginatedListCtrl.search('Ybrant');
-                        expect(Cinema6Service.getAll).toHaveBeenCalledWith('advertisers', jasmine.objectContaining({text: 'Ybrant'}));
+                    describe('if the page === 1', function() {
+                        beforeEach(function() {
+                            Cinema6Service.getAll.calls.reset();
+                            PaginatedListCtrl.page = 1;
+                        });
+
+                        describe('if there is a valid query', function() {
+                            it('should query for advertisers', function() {
+                                PaginatedListCtrl.search('Ybrant');
+                                expect(Cinema6Service.getAll).toHaveBeenCalledWith('advertisers', jasmine.objectContaining({text: 'Ybrant'}));
+                            });
+
+                            it('should filter out invalid characters form the query', function() {
+                                PaginatedListCtrl.search('Ybr&*^&%^%$an)(&^t');
+                                expect(Cinema6Service.getAll).toHaveBeenCalledWith('advertisers', jasmine.objectContaining({text: 'Ybrant'}));
+                            });
+                        });
+
+                        describe('if the query is empty', function() {
+                            it('should query for advertisers', function() {
+                                PaginatedListCtrl.search('');
+                                expect(Cinema6Service.getAll).not.toHaveBeenCalledWith('advertisers', jasmine.objectContaining({text: 'Ybrant'}));
+                            });
+                        });
                     });
 
-                    it('should remove the bound query value if page === 1', function() {
-                        $scope.query = 'Ybrant';
-                        PaginatedListCtrl.page = 1;
-                        PaginatedListCtrl.search($scope.query);
-                        expect($scope.query).toBe('');
-                    });
+                    describe('if the page is !== 1', function() {
+                        beforeEach(function() {
+                            Cinema6Service.getAll.calls.reset();
+                            PaginatedListCtrl.page = 1;
+                            $scope.$digest();
+                            PaginatedListCtrl.page = 2;
+                            $scope.$digest();
+                        });
 
-                    it('should trigger a $digest cycle if page !== 1', function() {
-                        PaginatedListCtrl.page = 2;
-                        $scope.$digest();
+                        describe('if there is a valid query', function() {
+                            it('should set the page to 1 and trigger a fetch with a text param', function() {
+                                PaginatedListCtrl.search('Ybrant');
+                                expect(PaginatedListCtrl.page).toBe(1);
 
-                        $scope.query = 'Ybrant';
-                        PaginatedListCtrl.search($scope.query);
+                                $scope.$digest();
 
-                        expect($scope.query).toBe('Ybrant');
-                        expect(PaginatedListCtrl.page).toBe(1);
+                                expect(Cinema6Service.getAll).toHaveBeenCalledWith('advertisers', jasmine.objectContaining({text: 'Ybrant'}));
+                            });
 
-                        $scope.$digest();
-                        expect($scope.query).toBe('');
+                            it('should filter out invalid characters from the query', function() {
+                                PaginatedListCtrl.search('Ybr&*^&%^%$an)(&^t');
+                                $scope.$digest();
+                                expect(Cinema6Service.getAll).toHaveBeenCalledWith('advertisers', jasmine.objectContaining({text: 'Ybrant'}));
+                            });
+                        });
+
+                        describe('if the query is empty', function() {
+                            it('should set the page to 1 and trigger a fetch with no text param', function() {
+                                PaginatedListCtrl.search('');
+                                expect(PaginatedListCtrl.page).toBe(1);
+
+                                $scope.$digest();
+
+                                expect(Cinema6Service.getAll).not.toHaveBeenCalledWith('advertisers', jasmine.objectContaining({text: 'Ybrant'}));
+                            });
+                        });
                     });
                 });
             });
 
             describe('$scope.doSort()', function() {
                 it('should request sorted advertisers', function() {
-                    PaginatedListCtrl.doSort('adtechId');
+                    PaginatedListCtrl.doSort({value:'adtechId',sortable:true});
                     expect($scope.sort).toEqual({column:'adtechId',descending:false});
                     expect(Cinema6Service.getAll).toHaveBeenCalledWith('advertisers', jasmine.objectContaining({sort: 'adtechId,-1'}));
 
-                    PaginatedListCtrl.doSort('adtechId');
+                    PaginatedListCtrl.doSort({value:'adtechId',sortable:true});
                     expect($scope.sort).toEqual({column:'adtechId',descending:true});
                     expect(Cinema6Service.getAll).toHaveBeenCalledWith('advertisers', jasmine.objectContaining({sort: 'adtechId,1'}));
 
-                    PaginatedListCtrl.doSort('name');
+                    PaginatedListCtrl.doSort({value:'name',sortable:true});
                     expect($scope.sort).toEqual({column:'name',descending:false});
                     expect(Cinema6Service.getAll).toHaveBeenCalledWith('advertisers', jasmine.objectContaining({sort: 'name,-1'}));
 
-                    PaginatedListCtrl.doSort('active');
+                    PaginatedListCtrl.doSort({value:'active',sortable:true});
                     expect($scope.sort).toEqual({column:'active',descending:false});
                     expect(Cinema6Service.getAll).toHaveBeenCalledWith('advertisers', jasmine.objectContaining({sort: 'active,-1'}));
+                });
+
+                it('should not fetch and sort if column is not sortable', function() {
+                    Cinema6Service.getAll.calls.reset();
+
+                    PaginatedListCtrl.doSort({value:'adtechId',sortable:false});
+                    expect($scope.sort).toEqual({column:'lastUpdated',descending:true});
+                    expect(Cinema6Service.getAll).not.toHaveBeenCalled();
+
+                    PaginatedListCtrl.doSort({value:'lastUpdated',sortable:false});
+                    expect($scope.sort).toEqual({column:'lastUpdated',descending:true});
+                    expect(Cinema6Service.getAll).not.toHaveBeenCalled();
                 });
             });
 
