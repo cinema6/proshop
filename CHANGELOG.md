@@ -1,5 +1,11 @@
 # ProShop
 
+## v0.7.3 (February 19, 2015)
+
+* *[v0.7.3]*
+  * [FIX]: Use hostname to determine correct MiniReel preview url
+* *[/v0.7.3]*
+
 ## v0.7.2 (February 17, 2015)
 
 * *[v0.7.2]*
