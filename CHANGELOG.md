@@ -1,5 +1,11 @@
 # ProShop
 
+* *[v0.7.4]*
+  * Advertisers, Customers and Categories lists no longer load every
+    entity when displaying results. Results are fetched as users paginate.
+    Filtering by column heading and searching by name now loads new
+    results from the server.
+
 ## v0.7.3 (February 19, 2015)
 
 * *[v0.7.3]*
