@@ -1,5 +1,11 @@
 # ProShop
 
+## v0.7.4 (June 15, 2015)
+
+* *[v0.7.4]*
+  * [FEATURE]: Handle 202 response from API
+* *[/v0.7.4]*
+
 ## v0.7.3 (February 19, 2015)
 
 * *[v0.7.3]*
