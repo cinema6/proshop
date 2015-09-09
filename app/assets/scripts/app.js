@@ -33,6 +33,45 @@ function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines ,
             c6UrlMakerProvider.location(c6Defines.kApiUrl, 'api');
             c6UrlMakerProvider.location(c6Defines.kPreviewUrl, 'preview');
         }])
+        .config(['$provide','$httpProvider',
+        function( $provide , $httpProvider ) {
+            $provide.factory('Accepted202Interceptor', ['$q','$interval','$injector',
+            function                                   ( $q , $interval , $injector ) {
+                return {
+                    response: function(response) {
+                        var deferred = $q.defer(),
+                            status = response.status,
+                            config = response.config,
+                            isRetry = config.retry,
+                            data = response.data,
+                            checkAgain;
+
+
+                        if (!isRetry && status === 202 && data.url) {
+                            $injector.invoke(['$http', function($http) {
+                                checkAgain = $interval(function() {
+                                    $http.get(data.url, {retry: true})
+                                        .then(function(resp) {
+                                            if (resp.status !== 202) {
+                                                deferred.resolve(resp);
+                                                $interval.cancel(checkAgain);
+                                            }
+                                        }, function(err) {
+                                            deferred.reject(err);
+                                            $interval.cancel(checkAgain);
+                                        });
+                                }, 1000);
+                            }]);
+                        } else {
+                            deferred.resolve(response);
+                        }
+
+                        return deferred.promise;
+                    }
+                };
+            }]);
+            $httpProvider.interceptors.push('Accepted202Interceptor');
+        }])
         .config(['$routeProvider', function( $routeProvider  ){
             $routeProvider
                 .when('/login', {
