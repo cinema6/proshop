@@ -2,11 +2,10 @@
     'use strict';
 
     define(['app'], function(proshop) {
-        describe('CategoryAdapter', function() {
+        describe('CategoryService', function() {
             var $rootScope,
                 $httpBackend,
-                CategoryAdapter,
-                adapter,
+                CategoryService,
                 c6UrlMaker,
                 successSpy,
                 failureSpy;
@@ -73,15 +72,13 @@
                         return '/' + base + '/' + path;
                     });
 
-                    CategoryAdapter = $injector.get('CategoryAdapter');
-
-                    adapter = $injector.instantiate(CategoryAdapter);
+                    CategoryService = $injector.get('CategoryService');
                 });
             });
 
             describe('initialization', function() {
                 it('should exist', function() {
-                    expect(adapter).toEqual(jasmine.any(Object));
+                    expect(CategoryService).toEqual(jasmine.any(Object));
                 });
 
                 it('should set the apiBase', function() {
@@ -99,7 +96,7 @@
                     it('will resolve promise if successfull',function(){
                         $httpBackend.expectGET('/api/content/category/c-111')
                             .respond(200,mockCategory);
-                        adapter.get('c-111').then(successSpy,failureSpy);
+                        CategoryService.get('c-111').then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).toHaveBeenCalledWith(mockCategory);
                         expect(failureSpy).not.toHaveBeenCalled();
@@ -108,7 +105,7 @@
                     it('will reject promise if not successful',function(){
                         $httpBackend.expectGET('/api/content/category/c-111')
                             .respond(404,'Unable to find category.');
-                        adapter.get('c-111').then(successSpy,failureSpy);
+                        CategoryService.get('c-111').then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).not.toHaveBeenCalled();
                         expect(failureSpy).toHaveBeenCalledWith('Unable to find category.');
@@ -124,7 +121,7 @@
                     it('will accept empty params', function() {
                         $httpBackend.expectGET('/api/content/categories')
                             .respond(200,mockCategories,{'Content-Range': 'items 1-19/19'});
-                        adapter.getAll().then(successSpy,failureSpy);
+                        CategoryService.getAll().then(successSpy,failureSpy);
                         $httpBackend.flush();
 
                         expect(successSpy).toHaveBeenCalledWith(jasmine.objectContaining({
@@ -144,7 +141,7 @@
                     it('will resolve promise if successfull',function(){
                         $httpBackend.expectGET('/api/content/categories?ids=c-1,c-2,c-3&limit=3')
                             .respond(200,mockCategories,{'Content-Range': 'items 1-19/19'});
-                        adapter.getAll({ids: 'c-1,c-2,c-3', limit: 3}).then(successSpy,failureSpy);
+                        CategoryService.getAll({ids: 'c-1,c-2,c-3', limit: 3}).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).toHaveBeenCalledWith(jasmine.objectContaining({
                             data: mockCategories,
@@ -162,7 +159,7 @@
                     it('will reject promise if not successful',function(){
                         $httpBackend.expectGET('/api/content/categories?ids=c-1,c-2,c-3')
                             .respond(404,'Unable to find categories.');
-                        adapter.getAll({ids: 'c-1,c-2,c-3'}).then(successSpy,failureSpy);
+                        CategoryService.getAll({ids: 'c-1,c-2,c-3'}).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).not.toHaveBeenCalled();
                         expect(failureSpy).toHaveBeenCalledWith('Unable to find categories.');
@@ -178,7 +175,7 @@
                     it('will resolve promise if successfull',function(){
                         $httpBackend.expectPUT('/api/content/category/c-111')
                             .respond(200,mockCategory);
-                        adapter.put(mockCategory.id, mockCategory).then(successSpy,failureSpy);
+                        CategoryService.put(mockCategory.id, mockCategory).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).toHaveBeenCalledWith(mockCategory);
                         expect(failureSpy).not.toHaveBeenCalled();
@@ -187,7 +184,7 @@
                     it('will reject promise if not successful',function(){
                         $httpBackend.expectPUT('/api/content/category/c-111')
                             .respond(404,'Unable to update category.');
-                        adapter.put(mockCategory.id, mockCategory).then(successSpy,failureSpy);
+                        CategoryService.put(mockCategory.id, mockCategory).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).not.toHaveBeenCalled();
                         expect(failureSpy).toHaveBeenCalledWith('Unable to update category.');
@@ -203,7 +200,7 @@
                     it('will resolve promise if successfull',function(){
                         $httpBackend.expectPOST('/api/content/category')
                             .respond(200,mockCategory);
-                        adapter.post(mockCategory).then(successSpy,failureSpy);
+                        CategoryService.post(mockCategory).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).toHaveBeenCalledWith(mockCategory);
                         expect(failureSpy).not.toHaveBeenCalled();
@@ -212,7 +209,7 @@
                     it('will reject promise if not successful',function(){
                         $httpBackend.expectPOST('/api/content/category')
                             .respond(404,'Unable to create category.');
-                        adapter.post(mockCategory).then(successSpy,failureSpy);
+                        CategoryService.post(mockCategory).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).not.toHaveBeenCalled();
                         expect(failureSpy).toHaveBeenCalledWith('Unable to create category.');
@@ -228,7 +225,7 @@
                     it('will resolve promise if successfull',function(){
                         $httpBackend.expectDELETE('/api/content/category/c-111')
                             .respond(204,'');
-                        adapter.delete(mockCategory.id).then(successSpy,failureSpy);
+                        CategoryService.delete(mockCategory.id).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).toHaveBeenCalled();
                         expect(failureSpy).not.toHaveBeenCalled();
@@ -237,7 +234,7 @@
                     it('will reject promise if not successful',function(){
                         $httpBackend.expectDELETE('/api/content/category/c-111')
                             .respond(401,'Unauthorized.');
-                        adapter.delete(mockCategory.id).then(successSpy,failureSpy);
+                        CategoryService.delete(mockCategory.id).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).not.toHaveBeenCalled();
                         expect(failureSpy).toHaveBeenCalledWith('Unauthorized.');

@@ -9,128 +9,41 @@
                 $http;
 
             var Cinema6Service,
-                Cinema6ServiceProvider,
-                ContentAdapter,
-                ContentAdapterInjectable,
-                UserAdapter,
-                UserAdapterInjectable;
+                CategoryService;
 
-            var adapters = {};
-
-            function createAdapter(name) {
-                return jasmine.createSpy(name)
-                    .and.callFake(function($http, $q) {
-                        this._deferreds = {
-                            get: $q.defer(),
-                            getAll: $q.defer(),
-                            put: $q.defer(),
-                            post: $q.defer(),
-                            delete: $q.defer()
-                        };
-
-                        this.get = jasmine.createSpy(name + '.get()')
-                            .and.returnValue(this._deferreds.get.promise);
-
-                        this.getAll = jasmine.createSpy(name + '.getAll()')
-                            .and.returnValue(this._deferreds.getAll.promise);
-
-                        this.put = jasmine.createSpy(name + '.put()')
-                            .and.returnValue(this._deferreds.put.promise);
-
-                        this.post = jasmine.createSpy(name + '.post()')
-                            .and.returnValue(this._deferreds.post.promise);
-
-                        this.delete = jasmine.createSpy(name + '.delete()')
-                            .and.returnValue(this._deferreds.delete.promise);
-
-                        adapters[name] = this;
-                    });
-            }
+            var _deferreds;
 
             beforeEach(function() {
-                ContentAdapter = createAdapter('ContentAdapter');
-                UserAdapter = createAdapter('UserAdapter');
-
-                ContentAdapterInjectable = ['$http', '$q', ContentAdapter];
-                UserAdapterInjectable = ['$http', '$q', UserAdapter];
-
-                module(proshop.name, function($injector) {
-                    Cinema6ServiceProvider = $injector.get('Cinema6ServiceProvider');
-
-                    Cinema6ServiceProvider.useAdapters({
-                        content: ContentAdapterInjectable,
-                        user: UserAdapterInjectable
-                    });
-                });
+                module(proshop.name);
 
                 inject(function($injector) {
                     $rootScope = $injector.get('$rootScope');
                     $q = $injector.get('$q');
                     $http = $injector.get('$http');
                     $timeout = $injector.get('$timeout');
+
+                    CategoryService = $injector.get('CategoryService');
+                    Cinema6Service = $injector.get('Cinema6Service');
+
+                    _deferreds = {
+                        get: $q.defer(),
+                        getAll: $q.defer(),
+                        put: $q.defer(),
+                        post: $q.defer(),
+                        delete: $q.defer()
+                    };
+
+                    spyOn(CategoryService, 'getAll').and.returnValue(_deferreds.getAll.promise);
+                    spyOn(CategoryService, 'get').and.returnValue(_deferreds.get.promise);
+                    spyOn(CategoryService, 'put').and.returnValue(_deferreds.put.promise);
+                    spyOn(CategoryService, 'post').and.returnValue(_deferreds.post.promise);
+                    spyOn(CategoryService, 'delete').and.returnValue(_deferreds.delete.promise);
                 });
             });
 
             describe('initialization', function() {
                 it('should exist', function() {
-                    inject(function($injector) {
-                        Cinema6Service = $injector.get('Cinema6Service');
-                    });
-
                     expect(Cinema6Service).toEqual(jasmine.any(Object));
-                });
-            });
-
-            describe('instantiating adapters', function() {
-                it('should instantiate adapters as they are needed', function() {
-                    inject(function($injector) {
-                        Cinema6Service = $injector.get('Cinema6Service');
-                    });
-
-                    Cinema6Service.get('content', 'e-111');
-
-                    expect(ContentAdapter).toHaveBeenCalledWith($http, $q);
-                    expect(UserAdapter).not.toHaveBeenCalled();
-
-                    Cinema6Service.get('user', 'u-111');
-
-                    expect(UserAdapter).toHaveBeenCalledWith($http, $q);
-                });
-
-                it('should only instantiate the adapter once', function() {
-                    var _$injector;
-
-                    inject(function($injector) {
-                        Cinema6Service = $injector.get('Cinema6Service');
-
-                        _$injector = $injector;
-                        spyOn(_$injector, 'instantiate').and.callThrough();
-                    });
-
-                    expect(_$injector.instantiate.calls.count()).toBe(0);
-
-                    Cinema6Service.get('content', 'e-111');
-                    Cinema6Service.get('content', 'e-112');
-                    Cinema6Service.get('content', 'e-113');
-
-                    expect(_$injector.instantiate.calls.count()).toBe(1);
-                });
-
-                it('should handle attempts to instantiate undefined adapters', function() {
-                    var successSpy = jasmine.createSpy('success'),
-                        errorSpy = jasmine.createSpy('error');
-
-                    inject(function($injector) {
-                        Cinema6Service = $injector.get('Cinema6Service');
-                    });
-
-                    Cinema6Service.get('bad', 'b-111')
-                        .then(successSpy, errorSpy);
-
-                    $rootScope.$digest();
-
-                    expect(errorSpy).toHaveBeenCalledWith('Unable to resolve request');
-                    expect(successSpy).not.toHaveBeenCalled();
                 });
             });
 
@@ -140,10 +53,6 @@
                 beforeEach(function() {
                     successSpy = jasmine.createSpy('success');
                     errorSpy = jasmine.createSpy('error');
-
-                    inject(function($injector) {
-                        Cinema6Service = $injector.get('Cinema6Service');
-                    });
                 });
 
                 [
@@ -177,10 +86,18 @@
                     describe(obj.method + '(type, args...)', function() {
                         it('should return a promise', function() {
                             var badArgs = ['bad'].concat(obj.args),
-                                goodArgs = ['content'].concat(obj.args);
+                                goodArgs = ['categories'].concat(obj.args);
 
                             expect(Cinema6Service[obj.method].apply(null, badArgs).then).toBeDefined();
                             expect(Cinema6Service[obj.method].apply(null, goodArgs).then).toBeDefined();
+                        });
+
+                        it('should use the corresponding service', function() {
+                            var categoryArgs = ['categories'].concat(obj.args);
+
+                            Cinema6Service[obj.method].apply(null, categoryArgs);
+
+                            expect(CategoryService[obj.method]).toHaveBeenCalled();
                         });
 
                         describe('when type is invalid', function() {
@@ -201,7 +118,7 @@
                             var args;
 
                             beforeEach(function() {
-                                args = ['content'].concat(obj.args);
+                                args = ['categories'].concat(obj.args);
 
                                 Cinema6Service[obj.method].apply(null, args)
                                     .then(successSpy, errorSpy);
@@ -210,7 +127,7 @@
                             it('should resolve the promise if successful', function() {
                                 var data = {id: '123', prop: 'yup'};
 
-                                adapters.ContentAdapter._deferreds[obj.method].resolve(data);
+                                _deferreds[obj.method].resolve(data);
 
                                 $rootScope.$digest();
 
@@ -226,7 +143,7 @@
                             });
 
                             it('should reject the promise if call fails', function() {
-                                adapters.ContentAdapter._deferreds[obj.method].reject();
+                                _deferreds[obj.method].reject();
 
                                 $rootScope.$digest();
 

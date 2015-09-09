@@ -4,13 +4,12 @@
     define(['app'], function(proshop) {
         var copy = angular.copy;
 
-        describe('CustomerAdapter', function() {
+        describe('CustomerService', function() {
             var $rootScope,
                 $httpBackend,
                 $q,
-                Cinema6Service,
-                CustomerAdapter,
-                adapter,
+                AdvertiserService,
+                CustomerService,
                 c6UrlMaker,
                 successSpy,
                 failureSpy;
@@ -143,10 +142,10 @@
                     $httpBackend = $injector.get('$httpBackend');
                     $q = $injector.get('$q');
 
-                    Cinema6Service = $injector.get('Cinema6Service');
-                    Cinema6Service.getAll.deferred = $q.defer();
-                    spyOn(Cinema6Service, 'getAll').and.callFake(function(endpoint, params) {
-                        return Cinema6Service.getAll.deferred.promise;
+                    AdvertiserService = $injector.get('AdvertiserService');
+                    AdvertiserService.getAll.deferred = $q.defer();
+                    spyOn(AdvertiserService, 'getAll').and.callFake(function(endpoint, params) {
+                        return AdvertiserService.getAll.deferred.promise;
                     });
 
                     c6UrlMaker = $injector.get('c6UrlMaker');
@@ -154,15 +153,13 @@
                         return '/' + base + '/' + path;
                     });
 
-                    CustomerAdapter = $injector.get('CustomerAdapter');
-
-                    adapter = $injector.instantiate(CustomerAdapter);
+                    CustomerService = $injector.get('CustomerService');
                 });
             });
 
             describe('initialization', function() {
                 it('should exist', function() {
-                    expect(adapter).toEqual(jasmine.any(Object));
+                    expect(CustomerService).toEqual(jasmine.any(Object));
                 });
 
                 it('should set the apiBase', function() {
@@ -184,11 +181,11 @@
 
                         $httpBackend.expectGET('/api/account/customer/cus-111')
                             .respond(200,mockCustomer);
-                        adapter.get('cus-111').then(successSpy,failureSpy);
-                        Cinema6Service.getAll.deferred.resolve(mockAdvertisers)
+                        CustomerService.get('cus-111').then(successSpy,failureSpy);
+                        AdvertiserService.getAll.deferred.resolve(mockAdvertisers)
                         $httpBackend.flush();
 
-                        expect(Cinema6Service.getAll).toHaveBeenCalledWith('advertisers', {ids: 'a-111'});
+                        expect(AdvertiserService.getAll).toHaveBeenCalledWith({ids: 'a-111'});
                         expect(successSpy).toHaveBeenCalledWith(decoratedCustomer);
                         expect(failureSpy).not.toHaveBeenCalled();
                     });
@@ -196,7 +193,7 @@
                     it('will reject promise if not successful',function(){
                         $httpBackend.expectGET('/api/account/customer/cus-111')
                             .respond(404,'Unable to find customers.');
-                        adapter.get('cus-111').then(successSpy,failureSpy);
+                        CustomerService.get('cus-111').then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).not.toHaveBeenCalled();
                         expect(failureSpy).toHaveBeenCalledWith('Unable to find customers.');
@@ -205,8 +202,8 @@
                     it('will reject promise if decoration call is not successful',function(){
                         $httpBackend.expectGET('/api/account/customer/cus-111')
                             .respond(200,mockCustomer);
-                        adapter.get('cus-111').then(successSpy,failureSpy);
-                        Cinema6Service.getAll.deferred.reject();
+                        CustomerService.get('cus-111').then(successSpy,failureSpy);
+                        AdvertiserService.getAll.deferred.reject();
                         $httpBackend.flush();
                         expect(successSpy).not.toHaveBeenCalled();
                         expect(failureSpy).toHaveBeenCalledWith('Unable to complete request');
@@ -228,11 +225,11 @@
 
                         $httpBackend.expectGET('/api/account/customers')
                             .respond(200,mockCustomers,{'Content-Range': 'items 1-19/19'});
-                        adapter.getAll().then(successSpy,failureSpy);
-                        Cinema6Service.getAll.deferred.resolve(mockAdvertisers);
+                        CustomerService.getAll().then(successSpy,failureSpy);
+                        AdvertiserService.getAll.deferred.resolve(mockAdvertisers);
                         $httpBackend.flush();
 
-                        expect(Cinema6Service.getAll).toHaveBeenCalledWith('advertisers', {ids: 'a-111,a-112,a-113'});
+                        expect(AdvertiserService.getAll).toHaveBeenCalledWith({ids: 'a-111,a-112,a-113'});
                         expect(successSpy).toHaveBeenCalledWith(jasmine.objectContaining({
                             data: decoratedCustomers,
                             meta: {
@@ -256,11 +253,11 @@
 
                         $httpBackend.expectGET('/api/account/customers?ids=cus-1,cus-2,cus-3&limit=3')
                             .respond(200,mockCustomers,{'Content-Range': 'items 1-19/19'});
-                        adapter.getAll({ids: 'cus-1,cus-2,cus-3', limit: 3}).then(successSpy,failureSpy);
-                        Cinema6Service.getAll.deferred.resolve(mockAdvertisers);
+                        CustomerService.getAll({ids: 'cus-1,cus-2,cus-3', limit: 3}).then(successSpy,failureSpy);
+                        AdvertiserService.getAll.deferred.resolve(mockAdvertisers);
                         $httpBackend.flush();
 
-                        expect(Cinema6Service.getAll).toHaveBeenCalledWith('advertisers', {ids: 'a-111,a-112,a-113'});
+                        expect(AdvertiserService.getAll).toHaveBeenCalledWith({ids: 'a-111,a-112,a-113'});
                         expect(successSpy).toHaveBeenCalledWith(jasmine.objectContaining({
                             data: decoratedCustomers,
                             meta: {
@@ -277,7 +274,7 @@
                     it('will reject promise if not successful',function(){
                         $httpBackend.expectGET('/api/account/customers?ids=cus-1,cus-2,cus-3')
                             .respond(404,'Unable to find customers.');
-                        adapter.getAll({ids: 'cus-1,cus-2,cus-3'}).then(successSpy,failureSpy);
+                        CustomerService.getAll({ids: 'cus-1,cus-2,cus-3'}).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).not.toHaveBeenCalled();
                         expect(failureSpy).toHaveBeenCalledWith('Unable to find customers.');
@@ -286,8 +283,8 @@
                     it('will reject promise if decoration call is not successful',function(){
                         $httpBackend.expectGET('/api/account/customers?ids=cus-1,cus-2,cus-3')
                             .respond(200,mockCustomers,{'Content-Range': 'items 1-19/19'});
-                        adapter.getAll({ids: 'cus-1,cus-2,cus-3'}).then(successSpy,failureSpy);
-                        Cinema6Service.getAll.deferred.reject();
+                        CustomerService.getAll({ids: 'cus-1,cus-2,cus-3'}).then(successSpy,failureSpy);
+                        AdvertiserService.getAll.deferred.reject();
                         $httpBackend.flush();
                         expect(successSpy).not.toHaveBeenCalled();
                         expect(failureSpy).toHaveBeenCalledWith('Unable to complete request');
@@ -303,7 +300,7 @@
                     it('will resolve promise if successfull',function(){
                         $httpBackend.expectPUT('/api/account/customer/cus-111')
                             .respond(200,mockCustomer);
-                        adapter.put(mockCustomer.id, mockCustomer).then(successSpy,failureSpy);
+                        CustomerService.put(mockCustomer.id, mockCustomer).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).toHaveBeenCalledWith(mockCustomer);
                         expect(failureSpy).not.toHaveBeenCalled();
@@ -312,7 +309,7 @@
                     it('will reject promise if not successful',function(){
                         $httpBackend.expectPUT('/api/account/customer/cus-111')
                             .respond(404,'Unable to update customer.');
-                        adapter.put(mockCustomer.id, mockCustomer).then(successSpy,failureSpy);
+                        CustomerService.put(mockCustomer.id, mockCustomer).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).not.toHaveBeenCalled();
                         expect(failureSpy).toHaveBeenCalledWith('Unable to update customer.');
@@ -328,7 +325,7 @@
                     it('will resolve promise if successfull',function(){
                         $httpBackend.expectPOST('/api/account/customer')
                             .respond(200,mockCustomer);
-                        adapter.post(mockCustomer).then(successSpy,failureSpy);
+                        CustomerService.post(mockCustomer).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).toHaveBeenCalledWith(mockCustomer);
                         expect(failureSpy).not.toHaveBeenCalled();
@@ -337,7 +334,7 @@
                     it('will reject promise if not successful',function(){
                         $httpBackend.expectPOST('/api/account/customer')
                             .respond(404,'Unable to create customer.');
-                        adapter.post(mockCustomer).then(successSpy,failureSpy);
+                        CustomerService.post(mockCustomer).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).not.toHaveBeenCalled();
                         expect(failureSpy).toHaveBeenCalledWith('Unable to create customer.');
@@ -353,7 +350,7 @@
                     it('will resolve promise if successfull',function(){
                         $httpBackend.expectDELETE('/api/account/customer/cus-111')
                             .respond(204,'');
-                        adapter.delete(mockCustomer.id).then(successSpy,failureSpy);
+                        CustomerService.delete(mockCustomer.id).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).toHaveBeenCalled();
                         expect(failureSpy).not.toHaveBeenCalled();
@@ -362,7 +359,7 @@
                     it('will reject promise if not successful',function(){
                         $httpBackend.expectDELETE('/api/account/customer/cus-111')
                             .respond(401,'Unauthorized.');
-                        adapter.delete(mockCustomer.id).then(successSpy,failureSpy);
+                        CustomerService.delete(mockCustomer.id).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).not.toHaveBeenCalled();
                         expect(failureSpy).toHaveBeenCalledWith('Unauthorized.');

@@ -2,11 +2,10 @@
     'use strict';
 
     define(['app'], function(proshop) {
-        describe('AdvertiserAdapter', function() {
+        describe('AdvertiserService', function() {
             var $rootScope,
                 $httpBackend,
-                AdvertiserAdapter,
-                adapter,
+                AdvertiserService,
                 c6UrlMaker,
                 successSpy,
                 failureSpy;
@@ -101,15 +100,13 @@
                         return '/' + base + '/' + path;
                     });
 
-                    AdvertiserAdapter = $injector.get('AdvertiserAdapter');
-
-                    adapter = $injector.instantiate(AdvertiserAdapter);
+                    AdvertiserService = $injector.get('AdvertiserService');
                 });
             });
 
             describe('initialization', function() {
                 it('should exist', function() {
-                    expect(adapter).toEqual(jasmine.any(Object));
+                    expect(AdvertiserService).toEqual(jasmine.any(Object));
                 });
 
                 it('should set the apiBase', function() {
@@ -127,7 +124,7 @@
                     it('will resolve promise if successfull',function(){
                         $httpBackend.expectGET('/api/account/advertiser/a-111')
                             .respond(200,mockAdvertiser);
-                        adapter.get('a-111').then(successSpy,failureSpy);
+                        AdvertiserService.get('a-111').then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).toHaveBeenCalledWith(mockAdvertiser);
                         expect(failureSpy).not.toHaveBeenCalled();
@@ -136,7 +133,7 @@
                     it('will reject promise if not successful',function(){
                         $httpBackend.expectGET('/api/account/advertiser/a-111')
                             .respond(404,'Unable to find advertisers.');
-                        adapter.get('a-111').then(successSpy,failureSpy);
+                        AdvertiserService.get('a-111').then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).not.toHaveBeenCalled();
                         expect(failureSpy).toHaveBeenCalledWith('Unable to find advertisers.');
@@ -152,7 +149,7 @@
                     it('will accept empty params', function() {
                         $httpBackend.expectGET('/api/account/advertisers')
                             .respond(200,mockAdvertisers,{'Content-Range': 'items 1-19/19'});
-                        adapter.getAll().then(successSpy,failureSpy);
+                        AdvertiserService.getAll().then(successSpy,failureSpy);
                         $httpBackend.flush();
 
                         expect(successSpy).toHaveBeenCalledWith(jasmine.objectContaining({
@@ -172,7 +169,7 @@
                     it('will resolve promise if successfull',function(){
                         $httpBackend.expectGET('/api/account/advertisers?ids=e-1,e-2,e-3&limit=3')
                             .respond(200,mockAdvertisers,{'Content-Range': 'items 1-19/19'});
-                        adapter.getAll({ids: 'e-1,e-2,e-3', limit: 3}).then(successSpy,failureSpy);
+                        AdvertiserService.getAll({ids: 'e-1,e-2,e-3', limit: 3}).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).toHaveBeenCalledWith(jasmine.objectContaining({
                             data: mockAdvertisers,
@@ -190,7 +187,7 @@
                     it('will reject promise if not successful',function(){
                         $httpBackend.expectGET('/api/account/advertisers?ids=e-1,e-2,e-3')
                             .respond(404,'Unable to find advertisers.');
-                        adapter.getAll({ids: 'e-1,e-2,e-3'}).then(successSpy,failureSpy);
+                        AdvertiserService.getAll({ids: 'e-1,e-2,e-3'}).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).not.toHaveBeenCalled();
                         expect(failureSpy).toHaveBeenCalledWith('Unable to find advertisers.');
@@ -206,7 +203,7 @@
                     it('will resolve promise if successfull',function(){
                         $httpBackend.expectPUT('/api/account/advertiser/a-111')
                             .respond(200,mockAdvertiser);
-                        adapter.put(mockAdvertiser.id, mockAdvertiser).then(successSpy,failureSpy);
+                        AdvertiserService.put(mockAdvertiser.id, mockAdvertiser).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).toHaveBeenCalledWith(mockAdvertiser);
                         expect(failureSpy).not.toHaveBeenCalled();
@@ -215,7 +212,7 @@
                     it('will reject promise if not successful',function(){
                         $httpBackend.expectPUT('/api/account/advertiser/a-111')
                             .respond(404,'Unable to update advertiser.');
-                        adapter.put(mockAdvertiser.id, mockAdvertiser).then(successSpy,failureSpy);
+                        AdvertiserService.put(mockAdvertiser.id, mockAdvertiser).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).not.toHaveBeenCalled();
                         expect(failureSpy).toHaveBeenCalledWith('Unable to update advertiser.');
@@ -231,7 +228,7 @@
                     it('will resolve promise if successfull',function(){
                         $httpBackend.expectPOST('/api/account/advertiser')
                             .respond(200,mockAdvertiser);
-                        adapter.post(mockAdvertiser).then(successSpy,failureSpy);
+                        AdvertiserService.post(mockAdvertiser).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).toHaveBeenCalledWith(mockAdvertiser);
                         expect(failureSpy).not.toHaveBeenCalled();
@@ -240,7 +237,7 @@
                     it('will reject promise if not successful',function(){
                         $httpBackend.expectPOST('/api/account/advertiser')
                             .respond(404,'Unable to create advertiser.');
-                        adapter.post(mockAdvertiser).then(successSpy,failureSpy);
+                        AdvertiserService.post(mockAdvertiser).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).not.toHaveBeenCalled();
                         expect(failureSpy).toHaveBeenCalledWith('Unable to create advertiser.');
@@ -256,7 +253,7 @@
                     it('will resolve promise if successfull',function(){
                         $httpBackend.expectDELETE('/api/account/advertiser/a-111')
                             .respond(204,'');
-                        adapter.delete(mockAdvertiser.id).then(successSpy,failureSpy);
+                        AdvertiserService.delete(mockAdvertiser.id).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).toHaveBeenCalled();
                         expect(failureSpy).not.toHaveBeenCalled();
@@ -265,7 +262,7 @@
                     it('will reject promise if not successful',function(){
                         $httpBackend.expectDELETE('/api/account/advertiser/a-111')
                             .respond(401,'Unauthorized.');
-                        adapter.delete(mockAdvertiser.id).then(successSpy,failureSpy);
+                        AdvertiserService.delete(mockAdvertiser.id).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).not.toHaveBeenCalled();
                         expect(failureSpy).toHaveBeenCalledWith('Unauthorized.');
