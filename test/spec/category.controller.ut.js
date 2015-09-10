@@ -11,7 +11,7 @@
                 $routeParams,
                 $location,
                 CategoryCtrl,
-                CategoriesService,
+                Cinema6Service,
                 ConfirmDialogService,
                 mockCategory;
 
@@ -24,7 +24,7 @@
                     $log: $log,
                     $scope: $scope,
                     $routeParams: $routeParams,
-                    CategoriesService: CategoriesService,
+                    Cinema6Service: Cinema6Service,
                     ConfirmDialogService: ConfirmDialogService
                 });
             }
@@ -37,11 +37,11 @@
                     close: jasmine.createSpy('ConfirmDialogService.close()')
                 };
 
-                CategoriesService = {
-                    getCategory: jasmine.createSpy('CategoriesService.getCategory'),
-                    putCategory: jasmine.createSpy('CategoriesService.putCategory'),
-                    postCategory: jasmine.createSpy('CategoriesService.postCategory'),
-                    deleteCategory: jasmine.createSpy('CategoriesService.deleteCategory')
+                Cinema6Service = {
+                    get: jasmine.createSpy('Cinema6Service.get'),
+                    put: jasmine.createSpy('Cinema6Service.put'),
+                    post: jasmine.createSpy('Cinema6Service.post'),
+                    delete: jasmine.createSpy('Cinema6Service.delete')
                 };
 
                 /* jshint quotmark:false */
@@ -64,17 +64,17 @@
 
                     spyOn($location, 'path');
 
-                    CategoriesService.getCategory.deferred = $q.defer();
-                    CategoriesService.getCategory.and.returnValue(CategoriesService.getCategory.deferred.promise);
+                    Cinema6Service.get.deferred = $q.defer();
+                    Cinema6Service.get.and.returnValue(Cinema6Service.get.deferred.promise);
 
-                    CategoriesService.putCategory.deferred = $q.defer();
-                    CategoriesService.putCategory.and.returnValue(CategoriesService.putCategory.deferred.promise);
+                    Cinema6Service.put.deferred = $q.defer();
+                    Cinema6Service.put.and.returnValue(Cinema6Service.put.deferred.promise);
 
-                    CategoriesService.postCategory.deferred = $q.defer();
-                    CategoriesService.postCategory.and.returnValue(CategoriesService.postCategory.deferred.promise);
+                    Cinema6Service.post.deferred = $q.defer();
+                    Cinema6Service.post.and.returnValue(Cinema6Service.post.deferred.promise);
 
-                    CategoriesService.deleteCategory.deferred = $q.defer();
-                    CategoriesService.deleteCategory.and.returnValue(CategoriesService.deleteCategory.deferred.promise);
+                    Cinema6Service.delete.deferred = $q.defer();
+                    Cinema6Service.delete.and.returnValue(Cinema6Service.delete.deferred.promise);
                 });
             });
 
@@ -89,7 +89,7 @@
                     });
 
                     it('should load the category', function() {
-                        expect(CategoriesService.getCategory).toHaveBeenCalled();
+                        expect(Cinema6Service.get).toHaveBeenCalled();
                     });
                 });
 
@@ -103,7 +103,7 @@
                     });
 
                     it('should not load a category', function() {
-                        expect(CategoriesService.getCategory).not.toHaveBeenCalled();
+                        expect(Cinema6Service.get).not.toHaveBeenCalled();
                     });
                 });
             });
@@ -128,7 +128,7 @@
 
                         it('should be false after all data promises resolve', function() {
                             $scope.$apply(function() {
-                                CategoriesService.getCategory.deferred.resolve(angular.copy(mockCategory));
+                                Cinema6Service.get.deferred.resolve(angular.copy(mockCategory));
                             });
 
                             expect(CategoryCtrl.loading).toBe(false);
@@ -136,7 +136,7 @@
 
                         it('should be false even if there are errors loading data', function() {
                             $scope.$apply(function() {
-                                CategoriesService.getCategory.deferred.reject();
+                                Cinema6Service.get.deferred.reject();
                             });
 
                             expect(CategoryCtrl.loading).toBe(false);
@@ -159,7 +159,7 @@
                         it('should POST the category', function() {
                             CategoryCtrl.save(CategoryCtrl.category);
 
-                            expect(CategoriesService.postCategory).toHaveBeenCalledWith({
+                            expect(Cinema6Service.post).toHaveBeenCalledWith('categories', {
                                 name: 'New Category',
                                 label: 'new_category',
                                 status: 'active'
@@ -170,7 +170,7 @@
                             CategoryCtrl.save(CategoryCtrl.category);
 
                             $scope.$apply(function() {
-                                CategoriesService.postCategory.deferred.resolve(CategoryCtrl.category);
+                                Cinema6Service.post.deferred.resolve(CategoryCtrl.category);
                             });
 
                             expect($location.path).toHaveBeenCalledWith('/categories');
@@ -180,7 +180,7 @@
                             CategoryCtrl.save(CategoryCtrl.category);
 
                             $scope.$apply(function() {
-                                CategoriesService.postCategory.deferred.reject('Error message');
+                                Cinema6Service.post.deferred.reject('Error message');
                             });
 
                             expect(ConfirmDialogService.display).toHaveBeenCalled();
@@ -193,14 +193,14 @@
                             compileCtrl('c-111');
 
                             $scope.$apply(function() {
-                                CategoriesService.getCategory.deferred.resolve(mockCategory);
+                                Cinema6Service.get.deferred.resolve(mockCategory);
                             });
                         });
 
                         it('should PUT the category', function() {
                             CategoryCtrl.save(CategoryCtrl.category);
 
-                            expect(CategoriesService.putCategory).toHaveBeenCalledWith('c-111', {
+                            expect(Cinema6Service.put).toHaveBeenCalledWith('categories', 'c-111', {
                                 name: 'sports',
                                 label: 'Sports',
                                 status: 'active'
@@ -212,7 +212,7 @@
 
                             CategoryCtrl.save(CategoryCtrl.category);
 
-                            expect(CategoriesService.putCategory).toHaveBeenCalledWith('c-111', {
+                            expect(Cinema6Service.put).toHaveBeenCalledWith('categories', 'c-111', {
                                 name: 'sports_and_stuff',
                                 label: 'Sports & Stuff',
                                 status: 'inactive'
@@ -223,7 +223,7 @@
                             CategoryCtrl.save(CategoryCtrl.category);
 
                             $scope.$apply(function() {
-                                CategoriesService.putCategory.deferred.resolve(CategoryCtrl.category);
+                                Cinema6Service.put.deferred.resolve(CategoryCtrl.category);
                             });
 
                             expect($location.path).toHaveBeenCalledWith('/categories');
@@ -233,7 +233,7 @@
                             CategoryCtrl.save(CategoryCtrl.category);
 
                             $scope.$apply(function() {
-                                CategoriesService.putCategory.deferred.reject('Error message');
+                                Cinema6Service.put.deferred.reject('Error message');
                             });
 
                             expect(ConfirmDialogService.display).toHaveBeenCalled();
@@ -249,7 +249,7 @@
                         compileCtrl('c-111');
 
                         $scope.$apply(function() {
-                            CategoriesService.getCategory.deferred.resolve(mockCategory);
+                            Cinema6Service.get.deferred.resolve(mockCategory);
                         });
 
                         CategoryCtrl.delete();
@@ -267,7 +267,7 @@
                             onAffirm();
 
                             expect(ConfirmDialogService.close).toHaveBeenCalled();
-                            expect(CategoriesService.deleteCategory).toHaveBeenCalled();
+                            expect(Cinema6Service.delete).toHaveBeenCalled();
                         });
 
                         describe('when delete is successful', function() {
@@ -275,7 +275,7 @@
                                 onAffirm();
 
                                 $scope.$apply(function() {
-                                    CategoriesService.deleteCategory.deferred.resolve();
+                                    Cinema6Service.delete.deferred.resolve();
                                 });
 
                                 expect($location.path).toHaveBeenCalledWith('/categories');
@@ -289,7 +289,7 @@
                                 ConfirmDialogService.display.calls.reset();
 
                                 $scope.$apply(function() {
-                                    CategoriesService.deleteCategory.deferred.reject('Error message');
+                                    Cinema6Service.delete.deferred.reject('Error message');
                                 });
 
                                 expect(ConfirmDialogService.display).toHaveBeenCalled();
@@ -303,7 +303,7 @@
                             onCancel();
 
                             expect(ConfirmDialogService.close).toHaveBeenCalled();
-                            expect(CategoriesService.deleteCategory).not.toHaveBeenCalled();
+                            expect(Cinema6Service.delete).not.toHaveBeenCalled();
                         });
                     });
                 });
@@ -336,7 +336,7 @@
                             compileCtrl('c-111');
 
                             $scope.$apply(function() {
-                                CategoriesService.getCategory.deferred.resolve(mockCategory);
+                                Cinema6Service.get.deferred.resolve(mockCategory);
                             });
 
                             CategoryCtrl.category.label = 'Some New Label';

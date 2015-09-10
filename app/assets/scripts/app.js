@@ -1,7 +1,7 @@
-define(['angular','ngAnimate','ngRoute','c6ui','c6log','c6defines',
+define(['angular','ngAnimate','ngRoute','c6ui','c6log','c6defines','services',
         'auth','login','users','orgs','minireels','sites','advertisers',
         'categories','customers','groups','templates'],
-function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines ,
+function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines , services ,
          auth  , login , users , orgs , minireels , sites , advertisers ,
          categories , customers , groups , templates ) {
     /* jshint -W106 */
@@ -15,6 +15,7 @@ function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines ,
             ngRoute.name,
             c6ui.name,
             c6log.name,
+            services.name,
             auth.name,
             login.name,
             users.name,
@@ -356,6 +357,34 @@ function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines ,
                     });
             });
 
+        }])
+
+        .factory('scopePromise', ['$q',
+        function                 ( $q ) {
+            function ScopedPromise(promise, initialValue) {
+                var self = this,
+                    myPromise = promise
+                        .then(function setValue(value) {
+                            self.value = value;
+                            return self;
+                        }, function setError(reason) {
+                            self.error = reason;
+                            return $q.reject(self);
+                        });
+
+                this.promise = promise;
+
+                this.value = initialValue;
+                this.error = null;
+
+                this.ensureResolution = function() {
+                    return myPromise;
+                };
+            }
+
+            return function(promise, initialValue) {
+                return new ScopedPromise(promise, initialValue || null);
+            };
         }])
 
         .service('ConfirmDialogService', ['$window',

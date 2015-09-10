@@ -1,15 +1,16 @@
 (function() {
     'use strict';
 
-    define(['advertisers'], function(advertisersModule) {
-        describe('AdvertisersService', function() {
-            var $httpBackend,
-                $timeout,
-                AdvertisersService,
-                successSpy,
-                failureSpy,
+    define(['app'], function(proshop) {
+        describe('AdvertiserService', function() {
+            var $rootScope,
+                $httpBackend,
+                AdvertiserService,
                 c6UrlMaker,
-                mockAdvertiser,
+                successSpy,
+                failureSpy;
+
+            var mockAdvertiser,
                 mockAdvertisers;
 
             beforeEach(function() {
@@ -89,206 +90,185 @@
                     });
                 });
 
-                module(advertisersModule.name);
+                module(proshop.name);
 
                 inject(function($injector) {
+                    $rootScope = $injector.get('$rootScope');
                     $httpBackend = $injector.get('$httpBackend');
-                    $timeout = $injector.get('$timeout');
-                    AdvertisersService = $injector.get('AdvertisersService');
                     c6UrlMaker = $injector.get('c6UrlMaker');
+                    c6UrlMaker.and.callFake(function(path, base) {
+                        return '/' + base + '/' + path;
+                    });
+
+                    AdvertiserService = $injector.get('AdvertiserService');
+                });
+            });
+
+            describe('initialization', function() {
+                it('should exist', function() {
+                    expect(AdvertiserService).toEqual(jasmine.any(Object));
                 });
 
-                c6UrlMaker.and.callFake(function(path, base) {
-                    return '/' + base + '/' + path;
+                it('should set the apiBase', function() {
+                    expect(c6UrlMaker).toHaveBeenCalledWith('account/advertiser','api');
                 });
             });
 
             describe('methods', function() {
-                describe('getAdvertisers()', function() {
+                describe('get(id)', function() {
                     beforeEach(function(){
-                        successSpy = jasmine.createSpy('getSites.success');
-                        failureSpy = jasmine.createSpy('getSites.failure');
-                        spyOn($timeout,'cancel');
-                    });
-
-                    it('will resolve promise if successfull',function(){
-                        $httpBackend.expectGET('/api/account/advertisers')
-                            .respond(200,mockAdvertisers);
-                        AdvertisersService.getAdvertisers().then(successSpy,failureSpy);
-                        $httpBackend.flush();
-                        expect(successSpy).toHaveBeenCalledWith(mockAdvertisers);
-                        expect(failureSpy).not.toHaveBeenCalled();
-                        expect($timeout.cancel).toHaveBeenCalled();
-                    });
-
-                    it('will reject promise if not successful',function(){
-                        $httpBackend.expectGET('/api/account/advertisers')
-                            .respond(404,'Unable to find advertisers.');
-                        AdvertisersService.getAdvertisers().then(successSpy,failureSpy);
-                        $httpBackend.flush();
-                        expect(successSpy).not.toHaveBeenCalled();
-                        expect(failureSpy).toHaveBeenCalledWith('Unable to find advertisers.');
-                        expect($timeout.cancel).toHaveBeenCalled();
-                    });
-
-                    it('will reject promise if times out',function(){
-                        $httpBackend.expectGET('/api/account/advertisers')
-                            .respond(200,'');
-                        AdvertisersService.getAdvertisers().then(successSpy,failureSpy);
-                        $timeout.flush(60000);
-                        expect(successSpy).not.toHaveBeenCalled();
-                        expect(failureSpy).toHaveBeenCalledWith('Request timed out.');
-                    });
-                });
-
-                describe('getAdvertiser(id)', function() {
-                    beforeEach(function(){
-                        successSpy = jasmine.createSpy('getAdvertiser.success');
-                        failureSpy = jasmine.createSpy('getAdvertiser.failure');
-                        spyOn($timeout,'cancel');
+                        successSpy = jasmine.createSpy('get().success');
+                        failureSpy = jasmine.createSpy('get().failure');
                     });
 
                     it('will resolve promise if successfull',function(){
                         $httpBackend.expectGET('/api/account/advertiser/a-111')
                             .respond(200,mockAdvertiser);
-                        AdvertisersService.getAdvertiser(mockAdvertiser.id).then(successSpy,failureSpy);
+                        AdvertiserService.get('a-111').then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).toHaveBeenCalledWith(mockAdvertiser);
                         expect(failureSpy).not.toHaveBeenCalled();
-                        expect($timeout.cancel).toHaveBeenCalled();
                     });
 
                     it('will reject promise if not successful',function(){
                         $httpBackend.expectGET('/api/account/advertiser/a-111')
-                            .respond(404,'Unable to find advertiser.');
-                        AdvertisersService.getAdvertiser(mockAdvertiser.id).then(successSpy,failureSpy);
+                            .respond(404,'Unable to find advertisers.');
+                        AdvertiserService.get('a-111').then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).not.toHaveBeenCalled();
-                        expect(failureSpy).toHaveBeenCalledWith('Unable to find advertiser.');
-                        expect($timeout.cancel).toHaveBeenCalled();
-                    });
-
-                    it('will reject promise if times out',function(){
-                        $httpBackend.expectGET('/api/account/advertiser/a-111')
-                            .respond(200,'');
-                        AdvertisersService.getAdvertiser(mockAdvertiser.id).then(successSpy,failureSpy);
-                        $timeout.flush(60000);
-                        expect(successSpy).not.toHaveBeenCalled();
-                        expect(failureSpy).toHaveBeenCalledWith('Request timed out.');
+                        expect(failureSpy).toHaveBeenCalledWith('Unable to find advertisers.');
                     });
                 });
 
-                describe('putAdvertiser(id, advertiser)', function() {
+                describe('getAll(params)', function() {
                     beforeEach(function(){
-                        successSpy = jasmine.createSpy('putAdvertiser.success');
-                        failureSpy = jasmine.createSpy('putAdvertiser.failure');
-                        spyOn($timeout,'cancel');
+                        successSpy = jasmine.createSpy('getAll().success');
+                        failureSpy = jasmine.createSpy('getAll.failure');
+                    });
+
+                    it('will accept empty params', function() {
+                        $httpBackend.expectGET('/api/account/advertisers')
+                            .respond(200,mockAdvertisers,{'Content-Range': 'items 1-19/19'});
+                        AdvertiserService.getAll().then(successSpy,failureSpy);
+                        $httpBackend.flush();
+
+                        expect(successSpy).toHaveBeenCalledWith(jasmine.objectContaining({
+                            data: mockAdvertisers,
+                            meta: {
+                                items: {
+                                    start: 1,
+                                    end: 19,
+                                    total: 19
+                                }
+                            }
+                        }));
+
+                        expect(failureSpy).not.toHaveBeenCalled();
+                    });
+
+                    it('will resolve promise if successfull',function(){
+                        $httpBackend.expectGET('/api/account/advertisers?ids=e-1,e-2,e-3&limit=3')
+                            .respond(200,mockAdvertisers,{'Content-Range': 'items 1-19/19'});
+                        AdvertiserService.getAll({ids: 'e-1,e-2,e-3', limit: 3}).then(successSpy,failureSpy);
+                        $httpBackend.flush();
+                        expect(successSpy).toHaveBeenCalledWith(jasmine.objectContaining({
+                            data: mockAdvertisers,
+                            meta: {
+                                items: {
+                                    start: 1,
+                                    end: 19,
+                                    total: 19
+                                }
+                            }
+                        }));
+                        expect(failureSpy).not.toHaveBeenCalled();
+                    });
+
+                    it('will reject promise if not successful',function(){
+                        $httpBackend.expectGET('/api/account/advertisers?ids=e-1,e-2,e-3')
+                            .respond(404,'Unable to find advertisers.');
+                        AdvertiserService.getAll({ids: 'e-1,e-2,e-3'}).then(successSpy,failureSpy);
+                        $httpBackend.flush();
+                        expect(successSpy).not.toHaveBeenCalled();
+                        expect(failureSpy).toHaveBeenCalledWith('Unable to find advertisers.');
+                    });
+                });
+
+                describe('put(id, model)', function() {
+                    beforeEach(function(){
+                        successSpy = jasmine.createSpy('put.success');
+                        failureSpy = jasmine.createSpy('put.failure');
                     });
 
                     it('will resolve promise if successfull',function(){
                         $httpBackend.expectPUT('/api/account/advertiser/a-111')
                             .respond(200,mockAdvertiser);
-                        AdvertisersService.putAdvertiser(mockAdvertiser.id, mockAdvertiser).then(successSpy,failureSpy);
+                        AdvertiserService.put(mockAdvertiser.id, mockAdvertiser).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).toHaveBeenCalledWith(mockAdvertiser);
                         expect(failureSpy).not.toHaveBeenCalled();
-                        expect($timeout.cancel).toHaveBeenCalled();
                     });
 
                     it('will reject promise if not successful',function(){
                         $httpBackend.expectPUT('/api/account/advertiser/a-111')
                             .respond(404,'Unable to update advertiser.');
-                        AdvertisersService.putAdvertiser(mockAdvertiser.id, mockAdvertiser).then(successSpy,failureSpy);
+                        AdvertiserService.put(mockAdvertiser.id, mockAdvertiser).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).not.toHaveBeenCalled();
                         expect(failureSpy).toHaveBeenCalledWith('Unable to update advertiser.');
-                        expect($timeout.cancel).toHaveBeenCalled();
-                    });
-
-                    it('will reject promise if times out',function(){
-                        $httpBackend.expectPUT('/api/account/advertiser/a-111')
-                            .respond(200,'');
-                        AdvertisersService.putAdvertiser(mockAdvertiser.id, mockAdvertiser).then(successSpy,failureSpy);
-                        $timeout.flush(60000);
-                        expect(successSpy).not.toHaveBeenCalled();
-                        expect(failureSpy).toHaveBeenCalledWith('Request timed out.');
                     });
                 });
 
-                describe('postAdvertiser(advertiser)', function() {
+                describe('post(model)', function() {
                     beforeEach(function(){
-                        successSpy = jasmine.createSpy('postSite.success');
-                        failureSpy = jasmine.createSpy('postSite.failure');
-                        spyOn($timeout,'cancel');
+                        successSpy = jasmine.createSpy('post.success');
+                        failureSpy = jasmine.createSpy('post.failure');
                     });
 
                     it('will resolve promise if successfull',function(){
                         $httpBackend.expectPOST('/api/account/advertiser')
                             .respond(200,mockAdvertiser);
-                        AdvertisersService.postAdvertiser(mockAdvertiser).then(successSpy,failureSpy);
+                        AdvertiserService.post(mockAdvertiser).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).toHaveBeenCalledWith(mockAdvertiser);
                         expect(failureSpy).not.toHaveBeenCalled();
-                        expect($timeout.cancel).toHaveBeenCalled();
                     });
 
                     it('will reject promise if not successful',function(){
                         $httpBackend.expectPOST('/api/account/advertiser')
                             .respond(404,'Unable to create advertiser.');
-                        AdvertisersService.postAdvertiser(mockAdvertiser).then(successSpy,failureSpy);
+                        AdvertiserService.post(mockAdvertiser).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).not.toHaveBeenCalled();
                         expect(failureSpy).toHaveBeenCalledWith('Unable to create advertiser.');
-                        expect($timeout.cancel).toHaveBeenCalled();
-                    });
-
-                    it('will reject promise if times out',function(){
-                        $httpBackend.expectPOST('/api/account/advertiser')
-                            .respond(200,'');
-                        AdvertisersService.postAdvertiser(mockAdvertiser).then(successSpy,failureSpy);
-                        $timeout.flush(60000);
-                        expect(successSpy).not.toHaveBeenCalled();
-                        expect(failureSpy).toHaveBeenCalledWith('Request timed out.');
                     });
                 });
 
-                describe('deleteAdvertiser(id)', function() {
+                describe('delete(id)', function() {
                     beforeEach(function(){
-                        successSpy = jasmine.createSpy('deleteAdvertiser.success');
-                        failureSpy = jasmine.createSpy('deleteAdvertiser.failure');
-                        spyOn($timeout,'cancel');
+                        successSpy = jasmine.createSpy('delete.success');
+                        failureSpy = jasmine.createSpy('delete.failure');
                     });
 
                     it('will resolve promise if successfull',function(){
                         $httpBackend.expectDELETE('/api/account/advertiser/a-111')
                             .respond(204,'');
-                        AdvertisersService.deleteAdvertiser(mockAdvertiser.id).then(successSpy,failureSpy);
+                        AdvertiserService.delete(mockAdvertiser.id).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).toHaveBeenCalled();
                         expect(failureSpy).not.toHaveBeenCalled();
-                        expect($timeout.cancel).toHaveBeenCalled();
                     });
 
                     it('will reject promise if not successful',function(){
                         $httpBackend.expectDELETE('/api/account/advertiser/a-111')
                             .respond(401,'Unauthorized.');
-                        AdvertisersService.deleteAdvertiser(mockAdvertiser.id).then(successSpy,failureSpy);
+                        AdvertiserService.delete(mockAdvertiser.id).then(successSpy,failureSpy);
                         $httpBackend.flush();
                         expect(successSpy).not.toHaveBeenCalled();
                         expect(failureSpy).toHaveBeenCalledWith('Unauthorized.');
-                        expect($timeout.cancel).toHaveBeenCalled();
-                    });
-
-                    it('will reject promise if times out',function(){
-                        $httpBackend.expectDELETE('/api/account/advertiser/a-111')
-                            .respond(200,'');
-                        AdvertisersService.deleteAdvertiser(mockAdvertiser.id).then(successSpy,failureSpy);
-                        $timeout.flush(60000);
-                        expect(successSpy).not.toHaveBeenCalled();
-                        expect(failureSpy).toHaveBeenCalledWith('Request timed out.');
                     });
                 });
             });
         });
-    })
+    });
 }());

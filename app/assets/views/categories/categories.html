@@ -5,7 +5,10 @@
 
     <div class="clearfix">
         <button ng-click="CategoriesCtrl.addNew()">Add New Category</button>
-        <input style="float:right;width:250px;" type="text" ng-model="query" ng-change="CategoriesCtrl.filterData(query)" placeholder="Search Categories by Name">
+        <form name="search" ng-submit="CategoriesCtrl.search(query)">
+            <input type="submit" value="Search" style="float:right;">
+            <input style="float:right;width:250px;" type="text" ng-model="query" placeholder="Search Categories by Name">
+        </form>
     </div>
 
     <paginator-controls page="CategoriesCtrl.page" limit="CategoriesCtrl.limit" limits="CategoriesCtrl.limits" total="CategoriesCtrl.total"></paginator-controls>
@@ -15,10 +18,10 @@
     <table class="table table-striped table-hover table-bordered">
         <tbody>
             <tr>
-                <th ng-repeat="th in tableHeaders" ng-click="doSort(th.value)" style="cursor:pointer;">
+                <th ng-repeat="th in tableHeaders" ng-click="CategoriesCtrl.doSort(th)" ng-style="{cursor: th.sortable ? 'pointer' : 'default'}">
                     {{th.label}} <span style="padding-left:5px;opacity:0.5;float:right;" ng-style="{visibility: sort.column === th.value ? 'visible' : 'hidden'}" ng-class="{'glyphicon-chevron-up': !sort.descending, 'glyphicon-chevron-down': sort.descending }" class="glyphicon "></span></th>
             </tr>
-            <tr ng-repeat="category in CategoriesCtrl.categories | orderBy:sort.column:sort.descending | paginatorlimits:[(CategoriesCtrl.page - 1) * CategoriesCtrl.limit, (CategoriesCtrl.page * CategoriesCtrl.limit)]">
+            <tr ng-repeat="category in CategoriesCtrl.data">
                 <td><a href="/#/category/{{category.id}}">{{category.label}}</a></td>
                 <td>{{category.name}}</td>
                 <td>{{category.status}}</td>

@@ -1,81 +1,40 @@
-define(['angular'], function(angular) {
+define(['angular','./mixins/paginatedListController'], function(angular, PaginatedListCtrl) {
     'use strict';
 
     return angular.module('c6.proshop.advertisers',[])
-        .controller('AdvertisersController', ['$scope','$log','$location','AdvertisersService',
-        function                             ( $scope , $log , $location , AdvertisersService ) {
-            var self = this,
-                _data = {};
+        .controller('AdvertisersController', ['$scope','$log','$location','Cinema6Service','scopePromise','$injector',
+        function                             ( $scope , $log , $location , Cinema6Service , scopePromise , $injector ) {
+            var self = this;
 
             $log = $log.context('AdvertisersCtrl');
             $log.info('instantiated');
-
-            function initView() {
-                self.loading = true;
-
-                AdvertisersService.getAdvertisers()
-                    .then(function(advertisers) {
-                        self.advertisers = advertisers;
-                        _data.advertisers = advertisers;
-                    })
-                    .finally(function() {
-                        self.loading = false;
-                    });
-            }
-
-            self.query = null;
-            self.page = 1;
-            self.limit = 50;
-            self.limits = [5,10,50,100];
-            Object.defineProperties(self, {
-                total: {
-                    get: function() {
-                        return self.advertisers && Math.ceil(self.advertisers.length / self.limit);
-                    }
-                }
-            });
 
             self.addNew = function() {
                 $location.path('/advertiser/new');
             };
 
-            self.filterData = function(query) {
-                var _query = query.toLowerCase();
-
-                self.advertisers = _data.advertisers.filter(function(advertiser) {
-                    return advertiser.name.toLowerCase().indexOf(_query) >= 0 ||
-                        advertiser.adtechId.indexOf(_query) >= 0;
-                });
-
-                self.page = 1;
-            };
+            $scope.endpoint = 'advertisers';
 
             $scope.tableHeaders = [
-                {label:'Name',value:'name'},
-                {label:'Adtech ID',value:'adtechId'},
-                {label:'Status',value:'status'},
-                {label:'Last Updated',value:'lastUpdated'}
+                {label:'Name',value:'name',sortable:true},
+                {label:'Adtech ID',value:'adtechId',sortable:false},
+                {label:'Status',value:'status',sortable:false},
+                {label:'Last Updated',value:'lastUpdated',sortable:true}
             ];
 
             $scope.sort = {
-                column: 'name',
-                descending: false
+                column: 'lastUpdated',
+                descending: true
             };
 
-            $scope.doSort = function(column) {
-                var sort = $scope.sort;
-                if (sort.column === column) {
-                    sort.descending = !sort.descending;
-                } else {
-                    sort.column = column;
-                    sort.descending = false;
-                }
-            };
-
-            initView();
+            $injector.invoke(PaginatedListCtrl, self, {
+                $scope: $scope,
+                scopePromise: scopePromise,
+                Cinema6Service: Cinema6Service
+            });
         }])
-        .controller('AdvertiserController', ['$scope','$log','ConfirmDialogService','$location','AdvertisersService','$routeParams',
-        function                            ( $scope , $log , ConfirmDialogService , $location , AdvertisersService , $routeParams ) {
+        .controller('AdvertiserController', ['$scope','$log','ConfirmDialogService','$location','$routeParams','Cinema6Service',
+        function                            ( $scope , $log , ConfirmDialogService , $location , $routeParams , Cinema6Service ) {
             var self = this;
 
             $log = $log.context('AdvertiserCtrl');
@@ -85,7 +44,7 @@ define(['angular'], function(angular) {
                 self.loading = true;
 
                 if ($routeParams.id) {
-                    AdvertisersService.getAdvertiser($routeParams.id)
+                    Cinema6Service.get('advertisers', $routeParams.id)
                         .then(function(advertiser) {
                             self.advertiser = advertiser;
                             enableActiveLinks(self.advertiser.defaultLinks);
@@ -218,10 +177,10 @@ define(['angular'], function(angular) {
                 a.defaultLogos = convertLogosForSaving();
 
                 if (advertiser.id) {
-                    AdvertisersService.putAdvertiser(advertiser.id, a)
+                    Cinema6Service.put('advertisers', advertiser.id, a)
                         .then(handleSuccess, handleError);
                 } else {
-                    AdvertisersService.postAdvertiser(a)
+                    Cinema6Service.post('advertisers', a)
                         .then(handleSuccess, handleError);
                 }
             };
@@ -233,7 +192,7 @@ define(['angular'], function(angular) {
                     cancel: 'Cancel',
                     onAffirm: function() {
                         ConfirmDialogService.close();
-                        AdvertisersService.deleteAdvertiser(self.advertiser.id)
+                        Cinema6Service.delete('advertisers', self.advertiser.id)
                             .then(function() {
                                 $scope.message = 'Successfully deleted Advertiser: ' + self.advertiser.name;
                                 $location.path('/advertisers');
@@ -255,72 +214,5 @@ define(['angular'], function(angular) {
             };
 
             initView();
-        }])
-        .service('AdvertisersService', ['c6UrlMaker','$http','$q','$timeout',
-        function                       ( c6UrlMaker , $http , $q , $timeout ) {
-            function httpWrapper(request) {
-                var deferred = $q.defer(),
-                    deferredTimeout = $q.defer(),
-                    cancelTimeout;
-
-                request.timeout = deferredTimeout.promise;
-
-                $http(request)
-                .success(function(data) {
-                    $timeout.cancel(cancelTimeout);
-                    deferred.resolve(data);
-                })
-                .error(function(data) {
-                    if (!data) {
-                        data = 'Unable to locate failed';
-                    }
-                    $timeout.cancel(cancelTimeout);
-                    deferred.reject(data);
-                });
-
-                cancelTimeout = $timeout(function() {
-                    deferredTimeout.resolve();
-                    deferred.reject('Request timed out.');
-                },10000);
-
-                return deferred.promise;
-            }
-
-            this.getAdvertisers = function() {
-                return httpWrapper({
-                    method: 'GET',
-                    url: c6UrlMaker('account/advertisers', 'api')
-                });
-            };
-
-            this.getAdvertiser = function(id) {
-                return httpWrapper({
-                    method: 'GET',
-                    url: c6UrlMaker('account/advertiser/' + id, 'api')
-                });
-            };
-
-            this.putAdvertiser = function(id, advertiser) {
-                return httpWrapper({
-                    method: 'PUT',
-                    url: c6UrlMaker('account/advertiser/' + id, 'api'),
-                    data: advertiser
-                });
-            };
-
-            this.postAdvertiser = function(advertiser) {
-                return httpWrapper({
-                    method: 'POST',
-                    url: c6UrlMaker('account/advertiser', 'api'),
-                    data: advertiser
-                });
-            };
-
-            this.deleteAdvertiser = function(id) {
-                return httpWrapper({
-                    method: 'DELETE',
-                    url: c6UrlMaker('account/advertiser/' + id, 'api')
-                });
-            };
         }]);
 });
