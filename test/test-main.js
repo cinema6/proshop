@@ -34,14 +34,13 @@
             paths: {
                 jquery: 'http://lib.cinema6.com/jquery/2.0.3-0-gf576d00/jquery.min',
                 modernizr: 'http://lib.cinema6.com/modernizr/modernizr.custom.71747',
-                angular: 'http://lib.cinema6.com/angular/v1.2.14-0-g729fb13/angular',
-                ngAnimate: 'http://lib.cinema6.com/angular/v1.2.14-0-g729fb13/angular-animate',
-                ngRoute: 'http://lib.cinema6.com/angular/v1.2.14-0-g729fb13/angular-route',
-                ngMock: 'http://lib.cinema6.com/angular/v1.2.14-0-g729fb13/angular-mocks',
+                angular: 'http://lib.cinema6.com/angular/v1.2.22-0-g93b0c2d/angular',
+                ngAnimate: 'http://lib.cinema6.com/angular/v1.2.22-0-g93b0c2d/angular-animate',
+                ngRoute: 'http://lib.cinema6.com/angular/v1.2.22-0-g93b0c2d/angular-route',
+                ngMock: 'http://lib.cinema6.com/angular/v1.2.22-0-g93b0c2d/angular-mocks',
                 c6ui: 'http://lib.cinema6.com/c6ui/v2.6.4-0-g0df471c/c6uilib.min',
                 c6log: 'http://lib.cinema6.com/c6ui/v2.6.4-0-g0df471c/c6log.min',
                 templates: '/base/.tmp/templates'
-                
             },
             shim: {
                 modernizr: {

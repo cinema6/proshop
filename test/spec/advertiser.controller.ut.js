@@ -11,7 +11,7 @@
                 $routeParams,
                 $location,
                 AdvertiserCtrl,
-                AdvertisersService,
+                Cinema6Service,
                 ConfirmDialogService,
                 mockAdvertiser;
 
@@ -24,8 +24,8 @@
                     $log: $log,
                     $scope: $scope,
                     $routeParams: $routeParams,
-                    AdvertisersService: AdvertisersService,
-                    ConfirmDialogService: ConfirmDialogService
+                    ConfirmDialogService: ConfirmDialogService,
+                    Cinema6Service: Cinema6Service
                 });
             }
 
@@ -37,12 +37,12 @@
                     close: jasmine.createSpy('ConfirmDialogService.close()')
                 };
 
-                AdvertisersService = {
-                    getAdvertiser: jasmine.createSpy('AdvertisersService.getAdvertiser'),
-                    putAdvertiser: jasmine.createSpy('AdvertisersService.putAdvertiser'),
-                    postAdvertiser: jasmine.createSpy('AdvertisersService.postAdvertiser'),
-                    deleteAdvertiser: jasmine.createSpy('AdvertisersService.deleteAdvertiser')
-                };
+                Cinema6Service = {
+                    get: jasmine.createSpy('Cinema6Service.get'),
+                    put: jasmine.createSpy('Cinema6Service.put'),
+                    post: jasmine.createSpy('Cinema6Service.post'),
+                    delete: jasmine.createSpy('Cinema6Service.delete')
+                }
 
                 /* jshint quotmark:false */
                 mockAdvertiser = {
@@ -72,17 +72,17 @@
                     spyOn($location, 'path');
                     $log.context = function(){ return $log; }
 
-                    AdvertisersService.getAdvertiser.deferred = $q.defer();
-                    AdvertisersService.getAdvertiser.and.returnValue(AdvertisersService.getAdvertiser.deferred.promise);
+                    Cinema6Service.get.deferred = $q.defer();
+                    Cinema6Service.get.and.returnValue(Cinema6Service.get.deferred.promise);
 
-                    AdvertisersService.putAdvertiser.deferred = $q.defer();
-                    AdvertisersService.putAdvertiser.and.returnValue(AdvertisersService.putAdvertiser.deferred.promise);
+                    Cinema6Service.put.deferred = $q.defer();
+                    Cinema6Service.put.and.returnValue(Cinema6Service.put.deferred.promise);
 
-                    AdvertisersService.postAdvertiser.deferred = $q.defer();
-                    AdvertisersService.postAdvertiser.and.returnValue(AdvertisersService.postAdvertiser.deferred.promise);
+                    Cinema6Service.post.deferred = $q.defer();
+                    Cinema6Service.post.and.returnValue(Cinema6Service.post.deferred.promise);
 
-                    AdvertisersService.deleteAdvertiser.deferred = $q.defer();
-                    AdvertisersService.deleteAdvertiser.and.returnValue(AdvertisersService.deleteAdvertiser.deferred.promise);
+                    Cinema6Service.delete.deferred = $q.defer();
+                    Cinema6Service.delete.and.returnValue(Cinema6Service.delete.deferred.promise);
                 });
             });
 
@@ -97,7 +97,7 @@
                     });
 
                     it('should load the advertiser', function() {
-                        expect(AdvertisersService.getAdvertiser).toHaveBeenCalled();
+                        expect(Cinema6Service.get).toHaveBeenCalled();
                     });
                 });
 
@@ -111,7 +111,7 @@
                     });
 
                     it('should not load a advertiser', function() {
-                        expect(AdvertisersService.getAdvertiser).not.toHaveBeenCalled();
+                        expect(Cinema6Service.get).not.toHaveBeenCalled();
                     });
                 });
             });
@@ -136,7 +136,7 @@
 
                         it('should be false after all data promises resolve', function() {
                             $scope.$apply(function() {
-                                AdvertisersService.getAdvertiser.deferred.resolve(angular.copy(mockAdvertiser));
+                                Cinema6Service.get.deferred.resolve(angular.copy(mockAdvertiser));
                             });
 
                             expect(AdvertiserCtrl.loading).toBe(false);
@@ -144,7 +144,7 @@
 
                         it('should be false even if there are errors loading data', function() {
                             $scope.$apply(function() {
-                                AdvertisersService.getAdvertiser.deferred.reject();
+                                Cinema6Service.get.deferred.reject();
                             });
 
                             expect(AdvertiserCtrl.loading).toBe(false);
@@ -240,7 +240,7 @@
                         it('should POST the advertiser', function() {
                             AdvertiserCtrl.save(AdvertiserCtrl.advertiser);
 
-                            expect(AdvertisersService.postAdvertiser).toHaveBeenCalledWith({
+                            expect(Cinema6Service.post).toHaveBeenCalledWith('advertisers', {
                                 name: 'New Advertiser',
                                 status: 'active',
                                 defaultLinks: {},
@@ -252,7 +252,7 @@
                             AdvertiserCtrl.save(AdvertiserCtrl.advertiser);
 
                             $scope.$apply(function() {
-                                AdvertisersService.postAdvertiser.deferred.resolve(AdvertiserCtrl.advertiser);
+                                Cinema6Service.post.deferred.resolve(AdvertiserCtrl.advertiser);
                             });
 
                             expect($location.path).toHaveBeenCalledWith('/advertisers');
@@ -262,7 +262,7 @@
                             AdvertiserCtrl.save(AdvertiserCtrl.advertiser);
 
                             $scope.$apply(function() {
-                                AdvertisersService.postAdvertiser.deferred.reject('Error message');
+                                Cinema6Service.post.deferred.reject('Error message');
                             });
 
                             expect(ConfirmDialogService.display).toHaveBeenCalled();
@@ -275,14 +275,14 @@
                             compileCtrl('a-111');
 
                             $scope.$apply(function() {
-                                AdvertisersService.getAdvertiser.deferred.resolve(mockAdvertiser);
+                                Cinema6Service.get.deferred.resolve(mockAdvertiser);
                             });
                         });
 
                         it('should PUT the advertiser', function() {
                             AdvertiserCtrl.save(AdvertiserCtrl.advertiser);
 
-                            expect(AdvertisersService.putAdvertiser).toHaveBeenCalledWith('a-111', {
+                            expect(Cinema6Service.put).toHaveBeenCalledWith('advertisers', 'a-111', {
                                 name: 'Ybrant',
                                 status: 'active',
                                 defaultLinks: {
@@ -314,7 +314,7 @@
 
                             AdvertiserCtrl.save(AdvertiserCtrl.advertiser);
 
-                            expect(AdvertisersService.putAdvertiser).toHaveBeenCalledWith('a-111', {
+                            expect(Cinema6Service.put).toHaveBeenCalledWith('advertisers', 'a-111', {
                                 name: 'DashBid',
                                 status: 'inactive',
                                 defaultLinks: {
@@ -333,7 +333,7 @@
                             AdvertiserCtrl.save(AdvertiserCtrl.advertiser);
 
                             $scope.$apply(function() {
-                                AdvertisersService.putAdvertiser.deferred.resolve(AdvertiserCtrl.advertiser);
+                                Cinema6Service.put.deferred.resolve(AdvertiserCtrl.advertiser);
                             });
 
                             expect($location.path).toHaveBeenCalledWith('/advertisers');
@@ -343,7 +343,7 @@
                             AdvertiserCtrl.save(AdvertiserCtrl.advertiser);
 
                             $scope.$apply(function() {
-                                AdvertisersService.putAdvertiser.deferred.reject('Error message');
+                                Cinema6Service.put.deferred.reject('Error message');
                             });
 
                             expect(ConfirmDialogService.display).toHaveBeenCalled();
@@ -359,7 +359,7 @@
                         compileCtrl('a-111');
 
                         $scope.$apply(function() {
-                            AdvertisersService.getAdvertiser.deferred.resolve(mockAdvertiser);
+                            Cinema6Service.get.deferred.resolve(mockAdvertiser);
                         });
 
                         AdvertiserCtrl.delete();
@@ -377,7 +377,7 @@
                             onAffirm();
 
                             expect(ConfirmDialogService.close).toHaveBeenCalled();
-                            expect(AdvertisersService.deleteAdvertiser).toHaveBeenCalled();
+                            expect(Cinema6Service.delete).toHaveBeenCalled();
                         });
 
                         describe('when delete is successful', function() {
@@ -385,7 +385,7 @@
                                 onAffirm();
 
                                 $scope.$apply(function() {
-                                    AdvertisersService.deleteAdvertiser.deferred.resolve();
+                                    Cinema6Service.delete.deferred.resolve();
                                 });
 
                                 expect($location.path).toHaveBeenCalledWith('/advertisers');
@@ -399,7 +399,7 @@
                                 ConfirmDialogService.display.calls.reset();
 
                                 $scope.$apply(function() {
-                                    AdvertisersService.deleteAdvertiser.deferred.reject('Error message');
+                                    Cinema6Service.delete.deferred.reject('Error message');
                                 });
 
                                 expect(ConfirmDialogService.display).toHaveBeenCalled();
@@ -413,7 +413,7 @@
                             onCancel();
 
                             expect(ConfirmDialogService.close).toHaveBeenCalled();
-                            expect(AdvertisersService.deleteAdvertiser).not.toHaveBeenCalled();
+                            expect(Cinema6Service.delete).not.toHaveBeenCalled();
                         });
                     });
                 });

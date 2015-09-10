@@ -1,0 +1,15 @@
+{
+   "id": "a-115",
+   "adtechId": "12121215",
+   "name": "Diageo",
+   "created": "2014-06-13T19:28:39.408Z",
+   "lastUpdated": "2015-01-12T18:06:52.877Z",
+   "defaultLinks": {
+      "Facebook": "http://facebook.com",
+      "Twitter": "http://twitter.com"
+   },
+   "defaultLogos": {
+      "Main": "http://example.com/logo.jpg"
+   },
+   "status": "active"
+}

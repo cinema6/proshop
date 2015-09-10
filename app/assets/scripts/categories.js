@@ -1,60 +1,25 @@
-define(['angular'], function(angular) {
+define(['angular','./mixins/paginatedListController'], function(angular, PaginatedListCtrl) {
     'use strict';
 
     return angular.module('c6.proshop.categories',[])
-        .controller('CategoriesController', ['$scope','$log','$location','CategoriesService',
-        function                            ( $scope , $log , $location , CategoriesService ) {
-            var self = this,
-                _data = {};
+        .controller('CategoriesController', ['$scope','$log','$location','Cinema6Service','scopePromise','$injector',
+        function                            ( $scope , $log , $location , Cinema6Service , scopePromise , $injector ) {
+            var self = this;
 
             $log = $log.context('CategoriesCtrl');
             $log.info('instantiated');
 
-            function initView() {
-                self.loading = true;
-
-                CategoriesService.getCategories()
-                    .then(function(categories) {
-                        self.categories = categories;
-                        _data.categories = categories;
-                    })
-                    .finally(function() {
-                        self.loading = false;
-                    });
-            }
-
-            self.query = null;
-            self.page = 1;
-            self.limit = 50;
-            self.limits = [5,10,50,100];
-            Object.defineProperties(self, {
-                total: {
-                    get: function() {
-                        return self.categories && Math.ceil(self.categories.length / self.limit);
-                    }
-                }
-            });
+            $scope.endpoint = 'categories';
 
             self.addNew = function() {
                 $location.path('/category/new');
             };
 
-            self.filterData = function(query) {
-                var _query = query.toLowerCase();
-
-                self.categories = _data.categories.filter(function(category) {
-                    return category.name.toLowerCase().indexOf(_query) >= 0 ||
-                        category.label.toLowerCase().indexOf(_query) >= 0;
-                });
-
-                self.page = 1;
-            };
-
             $scope.tableHeaders = [
-                {label:'Label',value:'label'},
-                {label:'Name',value:'name'},
-                {label:'Status',value:'status'},
-                {label:'Last Updated',value:'lastUpdated'}
+                {label:'Label',value:'label',sortable:true},
+                {label:'Name',value:'name',sortable:false},
+                {label:'Status',value:'status',sortable:false},
+                {label:'Last Updated',value:'lastUpdated',sortable:true}
             ];
 
             $scope.sort = {
@@ -62,20 +27,14 @@ define(['angular'], function(angular) {
                 descending: false
             };
 
-            $scope.doSort = function(column) {
-                var sort = $scope.sort;
-                if (sort.column === column) {
-                    sort.descending = !sort.descending;
-                } else {
-                    sort.column = column;
-                    sort.descending = false;
-                }
-            };
-
-            initView();
+            $injector.invoke(PaginatedListCtrl, self, {
+                $scope: $scope,
+                scopePromise: scopePromise,
+                Cinema6Service: Cinema6Service
+            });
         }])
-        .controller('CategoryController', ['$scope','$log','ConfirmDialogService','$q','$location','CategoriesService','$routeParams',
-        function                          ( $scope , $log , ConfirmDialogService , $q , $location , CategoriesService , $routeParams ) {
+        .controller('CategoryController', ['$scope','$log','ConfirmDialogService','$q','$location','Cinema6Service','$routeParams',
+        function                          ( $scope , $log , ConfirmDialogService , $q , $location , Cinema6Service , $routeParams ) {
             var self = this,
                 bindLabelToName = false;
 
@@ -83,7 +42,7 @@ define(['angular'], function(angular) {
                 self.loading = true;
 
                 if ($routeParams.id) {
-                    CategoriesService.getCategory($routeParams.id)
+                    Cinema6Service.get('categories', $routeParams.id)
                         .then(function(category) {
                             self.category = category;
                         })
@@ -132,10 +91,10 @@ define(['angular'], function(angular) {
                 });
 
                 if (category.id) {
-                    CategoriesService.putCategory(category.id, c)
+                    Cinema6Service.put('categories', category.id, c)
                         .then(handleSuccess, handleError);
                 } else {
-                    CategoriesService.postCategory(c)
+                    Cinema6Service.post('categories', c)
                         .then(handleSuccess, handleError);
                 }
             };
@@ -147,7 +106,7 @@ define(['angular'], function(angular) {
                     cancel: 'Cancel',
                     onAffirm: function() {
                         ConfirmDialogService.close();
-                        CategoriesService.deleteCategory(self.category.id)
+                        Cinema6Service.delete('categories', self.category.id)
                             .then(function() {
                                 $scope.message = 'Successfully deleted Category: ' + self.category.name;
                                 $location.path('/categories');
@@ -179,72 +138,5 @@ define(['angular'], function(angular) {
             });
 
             initView();
-        }])
-        .service('CategoriesService', ['c6UrlMaker','$http','$q','$timeout',
-        function                      ( c6UrlMaker , $http , $q , $timeout ) {
-            function httpWrapper(request) {
-                var deferred = $q.defer(),
-                    deferredTimeout = $q.defer(),
-                    cancelTimeout;
-
-                request.timeout = deferredTimeout.promise;
-
-                $http(request)
-                .success(function(data) {
-                    $timeout.cancel(cancelTimeout);
-                    deferred.resolve(data);
-                })
-                .error(function(data) {
-                    if (!data) {
-                        data = 'Unable to locate failed';
-                    }
-                    $timeout.cancel(cancelTimeout);
-                    deferred.reject(data);
-                });
-
-                cancelTimeout = $timeout(function() {
-                    deferredTimeout.resolve();
-                    deferred.reject('Request timed out.');
-                },10000);
-
-                return deferred.promise;
-            }
-
-            this.getCategories = function() {
-                return httpWrapper({
-                    method: 'GET',
-                    url: c6UrlMaker('content/categories', 'api')
-                });
-            };
-
-            this.getCategory = function(id) {
-                return httpWrapper({
-                    method: 'GET',
-                    url: c6UrlMaker('content/category/' + id, 'api')
-                });
-            };
-
-            this.putCategory = function(id, cat) {
-                return httpWrapper({
-                    method: 'PUT',
-                    url: c6UrlMaker('content/category/' + id, 'api'),
-                    data: cat
-                });
-            };
-
-            this.postCategory = function(cat) {
-                return httpWrapper({
-                    method: 'POST',
-                    url: c6UrlMaker('content/category', 'api'),
-                    data: cat
-                });
-            };
-
-            this.deleteCategory = function(id) {
-                return httpWrapper({
-                    method: 'DELETE',
-                    url: c6UrlMaker('content/category/' + id, 'api')
-                });
-            };
         }]);
 });
