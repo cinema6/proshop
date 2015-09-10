@@ -21,10 +21,10 @@
         <div class="form-group" style="padding-top:20px">
             <label for="org" class="control-label"> Applications: </label>
             <div ng-repeat="application in PolicyCtrl.policy.applications">
-                <span class="glyphicon glyphicon-remove" ng-click="PolicyCtrl.removeApplication($index)"></span><strong> {{application.name}} </strong>
+                <span class="glyphicon glyphicon-remove" ng-click="PolicyCtrl.removeApplication($index)"></span><strong> {{application.title}} </strong>
             </div>
             <div>
-                <select ng-model="PolicyCtrl.application" name="application" ng-options="application.name for application in PolicyCtrl.applications | orderBy:'name'">
+                <select ng-model="PolicyCtrl.application" name="application" ng-options="application.title for application in PolicyCtrl.applications | orderBy:'title'">
                     <option value="">-- Choose application --</option>
                 </select>
                 <span ng-click="PolicyCtrl.addapplication(PolicyCtrl.application)">Add</span>
