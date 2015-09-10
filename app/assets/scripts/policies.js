@@ -17,7 +17,6 @@ define(['angular','./mixins/paginatedListController'], function(angular, Paginat
 
             $scope.tableHeaders = [
                 {label:'Name',value:'name',sortable:true},
-                {label:'Adtech ID',value:'adtechId',sortable:false},
                 {label:'Status',value:'status',sortable:false},
                 {label:'Last Updated',value:'lastUpdated',sortable:true}
             ];
@@ -60,6 +59,7 @@ define(['angular','./mixins/paginatedListController'], function(angular, Paginat
                     };
                 }
             }
+            initView();
 
             self.addApplication = function(app) {
                 var applications = self.policy.applications;

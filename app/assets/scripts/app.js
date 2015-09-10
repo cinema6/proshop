@@ -1,9 +1,9 @@
 define(['angular','ngAnimate','ngRoute','c6ui','c6log','c6defines','services',
         'auth','login','users','orgs','minireels','sites','advertisers',
-        'categories','customers','groups','templates'],
+        'categories','customers','groups','policies','templates'],
 function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines , services ,
          auth  , login , users , orgs , minireels , sites , advertisers ,
-         categories , customers , groups , templates ) {
+         categories , customers , groups , policies , templates ) {
     /* jshint -W106 */
     'use strict';
 
@@ -26,6 +26,7 @@ function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines , services ,
             categories.name,
             customers.name,
             groups.name,
+            policies.name,
             templates.name
         ])
         .constant('c6Defines',c6Defines)
