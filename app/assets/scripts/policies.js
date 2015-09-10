@@ -1,7 +1,7 @@
-define(['angular','./mixins/paginatedListController'], function(angular, PaginatedListCtrl) {
+define(['angular','./mixins/paginatedListController','ngAce'], function(angular, PaginatedListCtrl) {
     'use strict';
 
-    return angular.module('c6.proshop.policies',[])
+    return angular.module('c6.proshop.policies',['ui.ace'])
         .controller('PoliciesController', ['$scope','$log','$location','$injector','Cinema6Service','scopePromise',
         function                          ( $scope , $log , $location , $injector , Cinema6Service , scopePromise ) {
             var self = this;
@@ -79,12 +79,32 @@ define(['angular','./mixins/paginatedListController'], function(angular, Paginat
 
                         self.policy = policy;
                         self.applications = applications;
+                        self.permissions = JSON.stringify(policy.permissions, null, '\t');
                     })
                     .finally(function() {
                         self.loading = false;
                     });
             }
             initView();
+
+            self.aceLoaded = function(editor) {
+                var session = editor.getSession();
+
+                session.on('changeAnnotation', function() {
+                    var errors = session.getAnnotations()
+                            .filter(function(annotation) {
+                                return annotation.type === 'error';
+                            }).length;
+
+                    $scope.$apply(function() {
+                        self.permissionsError = !!errors;
+                    });
+                });
+            };
+
+            self.aceChanged = function() {
+
+            };
 
             self.addApplication = function(app) {
                 var applications = self.policy.applications;

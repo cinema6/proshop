@@ -31,6 +31,18 @@
             </div>
         </div>
 
+        <div class="form-group">
+            <label for="permissions" class="control-label"> Permissions: </label>
+            <span class="help-block">
+                <span ng-show="PolicyCtrl.permissionsError"> JSON Error. </span>
+            </span>
+            <div ng-model="PolicyCtrl.permissions" ui-ace="{
+                mode: 'json',
+                onLoad: PolicyCtrl.aceLoaded,
+                onChange: PolicyCtrl.aceChanged
+            }"></div>
+        </div>
+
         <div class="form-group" ng-class="{'has-error': theForm.status.$error.required}">
             <label for="status" class="control-label"> Status: </label>
             <div>
