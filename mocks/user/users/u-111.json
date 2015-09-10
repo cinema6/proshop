@@ -39,6 +39,15 @@
             "read": "org"
         }
     },
+    "fieldValidation": {
+        "policies": {
+            "applications": {
+                "__entries": {
+                    "__acceptableValues": ["e-99263e70058290"]
+                }
+            }
+        }
+    },
     "lastName": "sdfsdf",
     "firstName": "sfdsf",
     "branding": "khaki",
