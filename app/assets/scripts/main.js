@@ -10,6 +10,8 @@
             angular: 'https://lib.cinema6.com/angular/v1.2.22-0-g93b0c2d/angular.min',
             ngRoute: 'https://lib.cinema6.com/angular/v1.2.22-0-g93b0c2d/angular-route.min',
             ngAnimate: 'https://lib.cinema6.com/angular/v1.2.22-0-g93b0c2d/angular-animate.min',
+            ace: 'lib/ace',
+            ngAce: 'lib/ui-ace.min',
             c6ui: 'https://lib.cinema6.com/c6ui/v2.6.4-0-g0df471c/c6uilib.min',
             c6log: 'https://lib.cinema6.com/c6ui/v2.6.4-0-g0df471c/c6log.min'
         },
@@ -32,6 +34,9 @@
                 init: function(angular) {
                     return angular.module('ngAnimate');
                 }
+            },
+            ngAce: {
+                deps: ['angular','ace']
             },
             c6ui: {
                 deps: ['angular'],
