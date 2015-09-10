@@ -258,9 +258,38 @@ define(['angular'], function(angular) {
             };
         }])
 
-        .service('PolicyService', ['$http','$q','c6UrlMaker',
-        function                  ( $http , $q , c6UrlMaker ) {
+        .service('PolicyService', ['$http','$q','c6UrlMaker','content',
+        function                  ( $http , $q , c6UrlMaker , content ) {
             var apiBase = c6UrlMaker('account/policies', 'api');
+
+            function decoratePolicy(policy) {
+                var deferred = $q.defer(),
+                    apps = (policy.applications || []).toString();
+
+                if (apps) {
+                    content.getExperiences({ids: apps})
+                        .then(function(exps) {
+                            policy.applications = exps;
+                            deferred.resolve(policy);
+                        })
+                        .catch(function() {
+                            policy.applications = [];
+                            deferred.resolve(policy);
+                        });
+                } else {
+                    deferred.resolve(policy);
+                }
+
+                return deferred.promise;
+            }
+
+            function undecoratePolicy(policy) {
+                policy.applications = (policy.applications || []).map(function(app) {
+                    return app.id;
+                });
+
+                return $q.when(policy);
+            }
 
             function handleError(err) {
                 return $q.reject((err && err.data) || 'Unable to complete request');
@@ -273,7 +302,7 @@ define(['angular'], function(angular) {
                 }).then(
                     pick('data'),
                     handleError
-                );
+                ).then(decoratePolicy);
             };
 
             this.getAll = function(params) {
@@ -284,29 +313,35 @@ define(['angular'], function(angular) {
                 }).then(
                     fillMeta,
                     handleError
-                );
+                ).then(decoratePolicy);
             };
 
             this.put = function(id, model) {
-                return $http({
-                    method: 'PUT',
-                    url: apiBase + '/' + id,
-                    data: model
-                }).then(
-                    pick('data'),
-                    handleError
-                );
+                return undecoratePolicy(model)
+                    .then(function(policy) {
+                        return $http({
+                            method: 'PUT',
+                            url: apiBase + '/' + id,
+                            data: policy
+                        });
+                    }).then(
+                        pick('data'),
+                        handleError
+                    );
             };
 
             this.post = function(model) {
-                return $http({
-                    method: 'POST',
-                    url: apiBase,
-                    data: model
-                }).then(
-                    pick('data'),
-                    handleError
-                );
+                return undecoratePolicy(model)
+                    .then(function(policy) {
+                        return $http({
+                            method: 'POST',
+                            url: apiBase,
+                            data: policy
+                        });
+                    }).then(
+                        pick('data'),
+                        handleError
+                    );
             };
 
             this.delete = function(id) {
