@@ -185,6 +185,21 @@ function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines , services ,
                     controllerAs: 'GroupCtrl',
                     templateUrl: 'views/groups/group.html'
                 })
+                .when('/policies', {
+                    controller: 'PoliciesController',
+                    controllerAs: 'PoliciesCtrl',
+                    templateUrl: 'views/policies/policies.html'
+                })
+                .when('/policy/new', {
+                    controller: 'PolicyController',
+                    controllerAs: 'PolicyCtrl',
+                    templateUrl: 'views/policies/policy.html'
+                })
+                .when('/policy/:id', {
+                    controller: 'PolicyController',
+                    controllerAs: 'PolicyCtrl',
+                    templateUrl: 'views/policies/policy.html'
+                })
                 .otherwise({redirectTo: '/users'});
         }])
         .value('appData', {appUser: null, user: null, users: null, org: null, orgs: null})
