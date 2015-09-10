@@ -33,31 +33,56 @@ define(['angular','./mixins/paginatedListController'], function(angular, Paginat
             });
         }])
 
-        .controller('PolicyController', ['$scope','$log','$location','$routeParams','Cinema6Service','ConfirmDialogService',
-        function                        ( $scope , $log , $location , $routeParams , Cinema6Service , ConfirmDialogService ) {
+        .controller('PolicyController', ['$scope','$log','$location','$routeParams','$q','Cinema6Service',
+                                         'ConfirmDialogService','appData','content',
+        function                        ( $scope , $log , $location , $routeParams , $q , Cinema6Service ,
+                                          ConfirmDialogService , appData , content ) {
             var self = this;
 
             $log = $log.context('PoliciyCtrl');
             $log.info('instantiated');
 
             function initView() {
+                var user = appData.appUser,
+                    allApps = appData.proshop.data.allApplications
+                        .filter(function(app) {
+                            if (
+                                !user.fieldValidation.policies ||
+                                !user.fieldValidation.policies.applications ||
+                                !user.fieldValidation.policies.applications.__entries ||
+                                !user.fieldValidation.policies.applications.__entries.__acceptableValues
+                            ) {
+                                return false;
+                            }
+
+                            return user.fieldValidation.policies.applications.__entries.__acceptableValues.indexOf(app) !== -1;
+                        }).toString(),
+                    promiseArray = [];
+
                 self.loading = true;
 
-                if ($routeParams.id) {
-                    Cinema6Service.get('policies', $routeParams.id)
-                        .then(function(policy) {
-                            self.policy = policy;
-                        })
-                        .finally(function() {
-                            self.loading = false;
-                        });
-                } else {
-                    self.loading = false;
-                    self.policy = {
-                        status: 'active',
-                        name: null
-                    };
+                if (allApps.length) {
+                    promiseArray.push(content.getExperiences({ids: allApps}));
                 }
+
+                if ($routeParams.id) {
+                    promiseArray.push(Cinema6Service.get('policies', $routeParams.id));
+                }
+
+                $q.all(promiseArray)
+                    .then(function(promises) {
+                        var applications = promises[0] || [],
+                            policy = promises[1] || {
+                                status: 'active',
+                                name: null
+                            };
+
+                        self.policy = policy;
+                        self.applications = applications;
+                    })
+                    .finally(function() {
+                        self.loading = false;
+                    });
             }
             initView();
 
