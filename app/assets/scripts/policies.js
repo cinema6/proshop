@@ -79,7 +79,10 @@ define(['angular','./mixins/paginatedListController','ngAce'], function(angular,
 
                         self.policy = policy;
                         self.applications = applications;
+
                         self.permissions = JSON.stringify(policy.permissions, null, '\t');
+                        self.fieldValidation = JSON.stringify(policy.fieldValidation, null, '\t');
+                        self.entitlements = JSON.stringify(policy.entitlements, null, '\t');
                     })
                     .finally(function() {
                         self.loading = false;
@@ -87,24 +90,31 @@ define(['angular','./mixins/paginatedListController','ngAce'], function(angular,
             }
             initView();
 
-            self.aceLoaded = function(editor) {
-                var session = editor.getSession();
+            self.sessions = {};
 
-                session.on('changeAnnotation', function() {
-                    var errors = session.getAnnotations()
+            function ACE(session) {
+                var self = this;
+
+                self.error = false;
+                self.session = session;
+                self.handleAnnotationChange = function() {
+                    $scope.$apply(function() {
+                        self.error = !!self.session.getAnnotations()
                             .filter(function(annotation) {
                                 return annotation.type === 'error';
                             }).length;
-
-                    $scope.$apply(function() {
-                        self.permissionsError = !!errors;
                     });
-                });
+                };
+
+                self.session.on('changeAnnotation', self.handleAnnotationChange);
+            }
+
+            self.aceLoaded = function(editor) {
+                var session = editor.getSession();
+                self.sessions[editor.container.id] = new ACE(session);
             };
 
-            self.aceChanged = function() {
-
-            };
+            self.aceChanged = function() {};
 
             self.addApplication = function(app) {
                 var applications = self.policy.applications;
