@@ -125,6 +125,11 @@
         "type": "",
         "name": "Custom"
       }
+    ],
+    "allApplications": [
+      "e-99263e70058290",
+      "e-adda13c4777cda",
+      "e-51ae37625cb57f"
     ]
   },
   "versionId": "42426dc9",
