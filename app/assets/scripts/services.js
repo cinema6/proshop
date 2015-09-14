@@ -274,11 +274,26 @@ define(['angular'], function(angular) {
                         })
                         .catch(function() {
                             policy.applications = [];
-                            deferred.resolve(policy);
+                            deferred.reject();
                         });
                 } else {
                     deferred.resolve(policy);
                 }
+
+                return deferred.promise;
+            }
+
+            function decoratePolicies(policies) {
+                var deferred = $q.defer();
+
+                $q.all(policies.data.map(decoratePolicy))
+                    .then(function(decoratedPolicies) {
+                        policies.data = decoratedPolicies;
+                        deferred.resolve(policies);
+                    })
+                    .catch(function() {
+                        deferred.reject();
+                    });
 
                 return deferred.promise;
             }
@@ -301,10 +316,9 @@ define(['angular'], function(angular) {
                 return $http({
                     method: 'GET',
                     url: apiBase + '/' + id
-                }).then(
-                    pick('data'),
-                    handleError
-                ).then(decoratePolicy);
+                }).then(pick('data'))
+                .then(decoratePolicy)
+                .catch(handleError);
             };
 
             this.getAll = function(params) {
@@ -312,10 +326,9 @@ define(['angular'], function(angular) {
                     method: 'GET',
                     url: apiBase,
                     params: params || {}
-                }).then(
-                    fillMeta,
-                    handleError
-                ).then(decoratePolicy);
+                }).then(fillMeta)
+                .then(decoratePolicies)
+                .catch(handleError);
             };
 
             this.put = function(id, model) {

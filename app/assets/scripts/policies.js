@@ -92,8 +92,12 @@ define(['angular','./mixins/paginatedListController','ngAce'], function(angular,
                     .then(function(promises) {
                         var applications = promises[0] || [],
                             policy = promises[1] || {
-                                status: 'active',
-                                name: null
+                                name: null,
+                                priority: 1,
+                                applications: [],
+                                permissions: {},
+                                fieldValidation: {},
+                                entitlements: {}
                             };
 
                         self.policy = policy;
@@ -129,8 +133,6 @@ define(['angular','./mixins/paginatedListController','ngAce'], function(angular,
                 var session = editor.getSession();
                 self.sessions[editor.container.id] = new ACE(session);
             };
-
-            self.aceChanged = function() {};
 
             self.addApplication = function(app) {
                 var applications = self.policy.applications;

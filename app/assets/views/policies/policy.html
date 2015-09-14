@@ -18,6 +18,18 @@
             </div>
         </div>
 
+        <div class="form-group" style="padding-top:20px" ng-class="{'has-error': theForm.priority.$error.required}">
+            <label for="priority" class="control-label"> Priority: </label>
+            <div>
+                <input class="col-md-3" class="form-control" type="number" name="priority" ng-model="PolicyCtrl.policy.priority" autocomplete="off" ng-trim="true" ng-minlength="1" ng-maxlength="3" required ignore-spaces>
+                <span class="help-block">
+                    <span ng-show="theForm.priority.$error.required"> Required. </span>
+                    <span ng-show="theForm.priority.$error.minlength"> Too short. </span>
+                    <span ng-show="theForm.priority.$error.maxlength"> Too long. </span>
+                </span>
+            </div>
+        </div>
+
         <div class="form-group" style="padding-top:20px">
             <label for="org" class="control-label"> Applications: </label>
             <div ng-repeat="application in PolicyCtrl.policy.applications">
