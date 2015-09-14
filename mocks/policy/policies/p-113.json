@@ -4,6 +4,7 @@
     "created": "2015-07-13T19:28:39.408Z",
     "lastUpdated": "2015-07-13T19:28:39.408Z",
     "status": "active",
+    "priority": 1,
     "permissions": {
         "campaigns": {
             "read": "org",
