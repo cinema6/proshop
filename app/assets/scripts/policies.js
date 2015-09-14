@@ -1,6 +1,8 @@
 define(['angular','./mixins/paginatedListController','ngAce'], function(angular, PaginatedListCtrl) {
     'use strict';
 
+    var forEach = angular.forEach;
+
     return angular.module('c6.proshop.policies',['ui.ace'])
         .controller('PoliciesController', ['$scope','$log','$location','$injector','Cinema6Service','scopePromise',
         function                          ( $scope , $log , $location , $injector , Cinema6Service , scopePromise ) {
@@ -42,6 +44,23 @@ define(['angular','./mixins/paginatedListController','ngAce'], function(angular,
             $log = $log.context('PoliciyCtrl');
             $log.info('instantiated');
 
+            function ACE(session) {
+                var self = this;
+
+                self.error = false;
+                self.session = session;
+                self.handleAnnotationChange = function() {
+                    $scope.$apply(function() {
+                        self.error = !!self.session.getAnnotations()
+                            .filter(function(annotation) {
+                                return annotation.type === 'error';
+                            }).length;
+                    });
+                };
+
+                self.session.on('changeAnnotation', self.handleAnnotationChange);
+            }
+
             function initView() {
                 var user = appData.appUser,
                     allApps = appData.proshop.data.allApplications
@@ -80,9 +99,9 @@ define(['angular','./mixins/paginatedListController','ngAce'], function(angular,
                         self.policy = policy;
                         self.applications = applications;
 
-                        self.permissions = JSON.stringify(policy.permissions, null, '\t');
-                        self.fieldValidation = JSON.stringify(policy.fieldValidation, null, '\t');
-                        self.entitlements = JSON.stringify(policy.entitlements, null, '\t');
+                        self.permissions = JSON.stringify(policy.permissions || {}, null, '\t');
+                        self.fieldValidation = JSON.stringify(policy.fieldValidation || {}, null, '\t');
+                        self.entitlements = JSON.stringify(policy.entitlements || {}, null, '\t');
                     })
                     .finally(function() {
                         self.loading = false;
@@ -90,24 +109,21 @@ define(['angular','./mixins/paginatedListController','ngAce'], function(angular,
             }
             initView();
 
+            Object.defineProperties(this, {
+                validJSON: {
+                    get: function() {
+                        var valid = true;
+
+                        forEach(this.sessions, function(session) {
+                            if (session.error) { valid = false; }
+                        });
+
+                        return valid;
+                    }
+                }
+            });
+
             self.sessions = {};
-
-            function ACE(session) {
-                var self = this;
-
-                self.error = false;
-                self.session = session;
-                self.handleAnnotationChange = function() {
-                    $scope.$apply(function() {
-                        self.error = !!self.session.getAnnotations()
-                            .filter(function(annotation) {
-                                return annotation.type === 'error';
-                            }).length;
-                    });
-                };
-
-                self.session.on('changeAnnotation', self.handleAnnotationChange);
-            }
 
             self.aceLoaded = function(editor) {
                 var session = editor.getSession();
@@ -129,8 +145,6 @@ define(['angular','./mixins/paginatedListController','ngAce'], function(angular,
             };
 
             self.save = function(policy) {
-                var _policy = {};
-
                 function handleError(err) {
                     $log.error(err);
                     ConfirmDialogService.display({
@@ -148,15 +162,15 @@ define(['angular','./mixins/paginatedListController','ngAce'], function(angular,
                     $location.path('/policies');
                 }
 
-                ['name','status'].forEach(function(prop) {
-                    _policy[prop] = policy[prop];
-                });
+                policy.fieldValidation = JSON.parse(self.fieldValidation);
+                policy.permissions = JSON.parse(self.permissions);
+                policy.entitlements = JSON.parse(self.entitlements);
 
                 if (policy.id) {
-                    Cinema6Service.put('policies', policy.id, _policy)
+                    Cinema6Service.put('policies', policy.id, policy)
                         .then(handleSuccess, handleError);
                 } else {
-                    Cinema6Service.post('policies', _policy)
+                    Cinema6Service.post('policies', policy)
                         .then(handleSuccess, handleError);
                 }
             };

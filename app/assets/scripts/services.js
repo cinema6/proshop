@@ -284,6 +284,8 @@ define(['angular'], function(angular) {
             }
 
             function undecoratePolicy(policy) {
+                delete policy.id;
+
                 policy.applications = (policy.applications || []).map(function(app) {
                     return app.id;
                 });

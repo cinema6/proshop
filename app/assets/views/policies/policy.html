@@ -45,7 +45,7 @@
         </div>
 
         <div class="form-group">
-            <label for="permissions" class="control-label"> Field Validation: </label>
+            <label for="fieldValidation" class="control-label"> Field Validation: </label>
             <span class="help-block">
                 <span ng-show="PolicyCtrl.sessions.fieldValidation.error"> JSON Error. </span>
             </span>
@@ -57,28 +57,24 @@
             }"></div>
         </div>
 
-        <div class="form-group" ng-class="{'has-error': theForm.status.$error.required}">
-            <label for="status" class="control-label"> Status: </label>
-            <div>
-                <input type="radio" name="status" ng-model="PolicyCtrl.policy.status" value="active" required>
-                <label for="new_org_status"> Active</label>
-                <br>
-                <input type="radio" name="status" ng-model="PolicyCtrl.policy.status" value="inactive" required>
-                <label for="new_org_status"> Inactive</label>
-                <br>
-                <input type="radio" name="status" ng-model="PolicyCtrl.policy.status" value="pending" required>
-                <label for="new_org_status"> Pending</label>
-                <br>
-                <span class="help-block">
-                    <span ng-show="theForm.status.$error.required"> Required. </span>
-                </span>
-            </div>
+        <div class="form-group">
+            <label for="entitlements" class="control-label"> Entitlements: </label>
+            <span class="help-block">
+                <span ng-show="PolicyCtrl.sessions.entitlements.error"> JSON Error. </span>
+            </span>
+            <div id="entitlements" ng-model="PolicyCtrl.entitlements" ui-ace="{
+                showPrintMargin: false,
+                mode: 'json',
+                onLoad: PolicyCtrl.aceLoaded,
+                onChange: PolicyCtrl.aceChanged
+            }"></div>
         </div>
+
         <div style="padding:20px 0 40px 0;">
-            <input type="submit" value="Save" ng-disabled="!theForm.$valid">
+            <input type="submit" value="Save" ng-disabled="!theForm.$valid || !PolicyCtrl.validJSON">
             <input c6-href="/policies" type="button" value="Cancel">
             <input type="button" value="Delete" ng-show="PolicyCtrl.policy.id" ng-click="PolicyCtrl.delete()">
-            <span ng-show="!theForm.$valid" class="text-danger"> There are errors above. See highlighted fields. </span>
+            <span ng-show="!theForm.$valid || !PolicyCtrl.validJSON" class="text-danger"> There are errors above. See highlighted fields. </span>
         </div>
     </form>
 
