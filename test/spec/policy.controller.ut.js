@@ -256,6 +256,22 @@
                         expect(content.getExperiences).toHaveBeenCalledWith({ ids: 'e-proshop-experience,e-studio-experience'});
                     });
                 });
+
+                describe('when app user has wilcard (*) policy applications', function() {
+                    it('should load all applications', function() {
+                        appData.appUser.fieldValidation.policies = {
+                            applications: {
+                                __entries: {
+                                    __acceptableValues: '*'
+                                }
+                            }
+                        };
+
+                        compileCtrl();
+
+                        expect(content.getExperiences).toHaveBeenCalledWith({ ids: 'e-proshop-experience,e-selfie-experience,e-studio-experience'});
+                    })
+                });
             });
 
             describe('properties', function() {

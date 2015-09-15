@@ -74,6 +74,10 @@ define(['angular','./mixins/paginatedListController','ngAce'], function(angular,
                                 return false;
                             }
 
+                            if (user.fieldValidation.policies.applications.__entries.__acceptableValues === '*') {
+                                return true;
+                            }
+
                             return user.fieldValidation.policies.applications.__entries.__acceptableValues.indexOf(app) !== -1;
                         }).toString(),
                     promiseArray = [];
