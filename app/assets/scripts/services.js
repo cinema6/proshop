@@ -258,12 +258,127 @@ define(['angular'], function(angular) {
             };
         }])
 
+        .service('PolicyService', ['$http','$q','c6UrlMaker','content',
+        function                  ( $http , $q , c6UrlMaker , content ) {
+            var apiBase = c6UrlMaker('account/policies', 'api');
+
+            function decoratePolicy(policy) {
+                var deferred = $q.defer(),
+                    apps = (policy.applications || []).toString();
+
+                if (apps) {
+                    content.getExperiences({ids: apps})
+                        .then(function(exps) {
+                            policy.applications = exps;
+                            deferred.resolve(policy);
+                        })
+                        .catch(function() {
+                            policy.applications = [];
+                            deferred.reject();
+                        });
+                } else {
+                    deferred.resolve(policy);
+                }
+
+                return deferred.promise;
+            }
+
+            function decoratePolicies(policies) {
+                var deferred = $q.defer();
+
+                $q.all(policies.data.map(decoratePolicy))
+                    .then(function(decoratedPolicies) {
+                        policies.data = decoratedPolicies;
+                        deferred.resolve(policies);
+                    })
+                    .catch(function() {
+                        deferred.reject();
+                    });
+
+                return deferred.promise;
+            }
+
+            function undecoratePolicy(policy) {
+                delete policy.id;
+
+                policy.applications = (policy.applications || []).map(function(app) {
+                    return app.id;
+                });
+
+                return $q.when(policy);
+            }
+
+            function handleError(err) {
+                return $q.reject((err && err.data) || 'Unable to complete request');
+            }
+
+            this.get = function(id) {
+                return $http({
+                    method: 'GET',
+                    url: apiBase + '/' + id
+                }).then(pick('data'))
+                .then(decoratePolicy)
+                .catch(handleError);
+            };
+
+            this.getAll = function(params) {
+                return $http({
+                    method: 'GET',
+                    url: apiBase,
+                    params: params || {}
+                }).then(fillMeta)
+                .then(decoratePolicies)
+                .catch(handleError);
+            };
+
+            this.put = function(id, model) {
+                return undecoratePolicy(model)
+                    .then(function(policy) {
+                        return $http({
+                            method: 'PUT',
+                            url: apiBase + '/' + id,
+                            data: policy
+                        });
+                    }).then(
+                        pick('data'),
+                        handleError
+                    );
+            };
+
+            this.post = function(model) {
+                return undecoratePolicy(model)
+                    .then(function(policy) {
+                        return $http({
+                            method: 'POST',
+                            url: apiBase,
+                            data: policy
+                        });
+                    }).then(
+                        pick('data'),
+                        handleError
+                    );
+            };
+
+            this.delete = function(id) {
+                return $http({
+                    method: 'DELETE',
+                    url: apiBase + '/' + id
+                }).then(
+                    pick('data'),
+                    handleError
+                );
+            };
+        }])
+
         .service('Cinema6Service', ['$timeout','$q','CategoryService','CustomerService','AdvertiserService',
-        function                   ( $timeout , $q , CategoryService , CustomerService , AdvertiserService ) {
+                                    'PolicyService',
+        function                   ( $timeout , $q , CategoryService , CustomerService , AdvertiserService ,
+                                     PolicyService ) {
             var services = {
                     categories: CategoryService,
                     customers: CustomerService,
-                    advertisers: AdvertiserService
+                    advertisers: AdvertiserService,
+                    policies: PolicyService
                 },
                 noopService = {
                     get: noop,

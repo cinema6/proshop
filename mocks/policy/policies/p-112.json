@@ -1,0 +1,11 @@
+{
+    "id": "p-112",
+    "name": "MiniReelCreator",
+    "created": "2015-06-13T19:28:39.408Z",
+    "lastUpdated": "2015-06-13T19:28:39.408Z",
+    "status": "active",
+    "priority": 2,
+    "applications": ["e-51ae37625cb57f"],
+    "permissions": {},
+    "fieldValidation": {}
+}

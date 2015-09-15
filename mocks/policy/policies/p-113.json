@@ -1,0 +1,20 @@
+{
+    "id": "p-113",
+    "name": "SelfieUser",
+    "created": "2015-07-13T19:28:39.408Z",
+    "lastUpdated": "2015-07-13T19:28:39.408Z",
+    "status": "active",
+    "priority": 1,
+    "permissions": {
+        "campaigns": {
+            "read": "org",
+            "create": "org",
+            "edit": "org",
+            "delete": "org"
+        }
+    },
+    "fieldValidation": {
+        "campaigns": {}
+    },
+    "applications": ["e-99263e70058290"]
+}

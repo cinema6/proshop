@@ -1,0 +1,34 @@
+<h1>Policies</h1>
+<br>
+<section class="view">
+    <div style="padding-bottom:20px">{{message}}</div>
+
+    <div class="clearfix">
+        <button ng-click="PoliciesCtrl.addNew()">Add New Policy</button>
+        <form name="search" ng-submit="PoliciesCtrl.search(query)">
+            <input type="submit" value="Search" style="float:right;">
+            <input style="float:right;width:250px;" type="text" ng-model="query" placeholder="Search Policys by Name">
+        </form>
+    </div>
+
+    <paginator-controls page="PoliciesCtrl.page" limit="PoliciesCtrl.limit" limits="PoliciesCtrl.limits" total="PoliciesCtrl.total"></paginator-controls>
+
+    <div class="clearfix"></div>
+
+    <table class="table table-striped table-hover table-bordered">
+        <tbody>
+            <tr>
+                <th ng-repeat="th in tableHeaders" ng-click="PoliciesCtrl.doSort(th)" ng-style="{cursor: th.sortable ? 'pointer' : 'default'}">
+                    {{th.label}} <span style="padding-left:5px;opacity:0.5;float:right;" ng-style="{visibility: sort.column === th.value ? 'visible' : 'hidden'}" ng-class="{'glyphicon-chevron-up': !sort.descending, 'glyphicon-chevron-down': sort.descending }" class="glyphicon "></span></th>
+            </tr>
+            <tr ng-repeat="policy in PoliciesCtrl.data">
+                <td><a href="/#/policy/{{policy.id}}">{{policy.name}}</a></td>
+                <td>{{policy.status}}</td>
+                <td>{{policy.lastUpdated | date}}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="mask" ng-show="PoliciesCtrl.loading"></div>
+
+</section>

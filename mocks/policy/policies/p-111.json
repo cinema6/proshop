@@ -1,0 +1,48 @@
+{
+    "id": "p-111",
+    "name": "CampaignManager",
+    "created": "2014-06-13T19:28:39.408Z",
+    "lastUpdated": "2014-06-13T19:28:39.408Z",
+    "status": "active",
+    "priority": 1,
+    "permissions": {
+        "campaigns": {
+            "read": "all",
+            "create": "all",
+            "edit": "all",
+            "delete": "all"
+        }
+    },
+    "applications": [
+        "e-99263e70058290",
+        "e-adda13c4777cda"
+    ],
+    "fieldValidation": {
+        "campaigns": {
+            "status": {
+                "__allowed": true
+            },
+            "user": {
+                "__allowed": true
+            },
+            "org": {
+                "__allowed": true
+            },
+            "minViewTime": {
+                "__allowed": true
+            },
+            "pricing": {
+                "cost": {
+                    "__allowed": true
+                }
+            },
+            "cards": {
+                "__allowed": true,
+                "__unchangeable": false
+            }
+        }
+    },
+    "entitlements": {
+        "canEditSomething": true
+    }
+}
