@@ -283,20 +283,20 @@ define(['angular'], function(angular) {
                 return deferred.promise;
             }
 
-            function decoratePolicies(policies) {
-                var deferred = $q.defer();
+            // function decoratePolicies(policies) {
+            //     var deferred = $q.defer();
 
-                $q.all(policies.data.map(decoratePolicy))
-                    .then(function(decoratedPolicies) {
-                        policies.data = decoratedPolicies;
-                        deferred.resolve(policies);
-                    })
-                    .catch(function() {
-                        deferred.reject();
-                    });
+            //     $q.all(policies.data.map(decoratePolicy))
+            //         .then(function(decoratedPolicies) {
+            //             policies.data = decoratedPolicies;
+            //             deferred.resolve(policies);
+            //         })
+            //         .catch(function() {
+            //             deferred.reject();
+            //         });
 
-                return deferred.promise;
-            }
+            //     return deferred.promise;
+            // }
 
             function undecoratePolicy(policy) {
                 delete policy.id;
