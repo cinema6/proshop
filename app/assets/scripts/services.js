@@ -327,7 +327,7 @@ define(['angular'], function(angular) {
                     url: apiBase,
                     params: params || {}
                 }).then(fillMeta)
-                .then(decoratePolicies)
+                // .then(decoratePolicies)
                 .catch(handleError);
             };
 
@@ -370,15 +370,78 @@ define(['angular'], function(angular) {
             };
         }])
 
+        .service('RoleService', ['$http','$q','c6UrlMaker',
+        function                ( $http , $q , c6UrlMaker ) {
+            var apiBase = c6UrlMaker('account/roles', 'api');
+
+            function handleError(err) {
+                return $q.reject((err && err.data) || 'Unable to complete request');
+            }
+
+            this.get = function(id) {
+                return $http({
+                    method: 'GET',
+                    url: apiBase + '/' + id
+                }).then(
+                    pick('data'),
+                    handleError
+                );
+            };
+
+            this.getAll = function(params) {
+                return $http({
+                    method: 'GET',
+                    url: apiBase,
+                    params: params || {}
+                }).then(
+                    fillMeta,
+                    handleError
+                );
+            };
+
+            this.put = function(id, model) {
+                return $http({
+                    method: 'PUT',
+                    url: apiBase + '/' + id,
+                    data: model
+                }).then(
+                    pick('data'),
+                    handleError
+                );
+            };
+
+            this.post = function(model) {
+                return $http({
+                    method: 'POST',
+                    url: apiBase,
+                    data: model
+                }).then(
+                    pick('data'),
+                    handleError
+                );
+            };
+
+            this.delete = function(id) {
+                return $http({
+                    method: 'DELETE',
+                    url: apiBase + '/' + id
+                }).then(
+                    pick('data'),
+                    handleError
+                );
+            };
+        }])
+
         .service('Cinema6Service', ['$timeout','$q','CategoryService','CustomerService','AdvertiserService',
-                                    'PolicyService',
+                                    'PolicyService','RoleService',
         function                   ( $timeout , $q , CategoryService , CustomerService , AdvertiserService ,
-                                     PolicyService ) {
+                                     PolicyService , RoleService ) {
             var services = {
                     categories: CategoryService,
                     customers: CustomerService,
                     advertisers: AdvertiserService,
-                    policies: PolicyService
+                    policies: PolicyService,
+                    roles: RoleService
                 },
                 noopService = {
                     get: noop,

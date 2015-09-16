@@ -1,9 +1,9 @@
 define(['angular','ngAnimate','ngRoute','c6ui','c6log','c6defines','services',
         'auth','login','users','orgs','minireels','sites','advertisers',
-        'categories','customers','groups','policies','templates'],
+        'categories','customers','groups','policies','roles','templates'],
 function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines , services ,
          auth  , login , users , orgs , minireels , sites , advertisers ,
-         categories , customers , groups , policies , templates ) {
+         categories , customers , groups , policies , roles , templates ) {
     /* jshint -W106 */
     'use strict';
 
@@ -27,6 +27,7 @@ function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines , services ,
             customers.name,
             groups.name,
             policies.name,
+            roles.name,
             templates.name
         ])
         .constant('c6Defines',c6Defines)
@@ -200,6 +201,21 @@ function(angular , ngAnimate , ngRoute , c6ui , c6log , c6Defines , services ,
                     controller: 'PolicyController',
                     controllerAs: 'PolicyCtrl',
                     templateUrl: 'views/policies/policy.html'
+                })
+                .when('/roles', {
+                    controller: 'RolesController',
+                    controllerAs: 'RolesCtrl',
+                    templateUrl: 'views/roles/roles.html'
+                })
+                .when('/role/new', {
+                    controller: 'RoleController',
+                    controllerAs: 'RoleCtrl',
+                    templateUrl: 'views/roles/role.html'
+                })
+                .when('/role/:id', {
+                    controller: 'RoleController',
+                    controllerAs: 'RoleCtrl',
+                    templateUrl: 'views/roles/role.html'
                 })
                 .otherwise({redirectTo: '/users'});
         }])
