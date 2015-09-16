@@ -1,0 +1,47 @@
+<h1>Role</h1>
+<br>
+<section class="view">
+    <div style="padding-bottom:20px">{{message}}</div>
+
+    <form name="theForm" ng-submit="RoleCtrl.save(RoleCtrl.policy)">
+        <a href="/#/roles">&lsaquo; Back to list</a>
+
+        <div class="form-group" style="padding-top:20px" ng-class="{'has-error': theForm.name.$error.required || !theForm.name.$valid }">
+            <label for="name" class="control-label"> Name: </label>
+            <div>
+                <input class="col-md-3" class="form-control" type="text" name="name" ng-model="RoleCtrl.policy.name" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" ng-pattern="/^\w+$/" required ignore-spaces>
+                <span class="help-block">
+                    <span ng-show="theForm.name.$error.required"> Required. </span>
+                    <span ng-show="theForm.name.$error.minlength"> Too short. </span>
+                    <span ng-show="theForm.name.$error.maxlength"> Too long. </span>
+                    <span ng-show="theForm.name.$error.pattern"> Invalid characters. </span>
+                </span>
+            </div>
+        </div>
+
+        <div class="form-group" style="padding-top:20px">
+            <label for="org" class="control-label"> Policies: </label>
+            <div ng-repeat="policy in RoleCtrl.role.policies">
+                <span class="glyphicon glyphicon-remove" ng-click="RoleCtrl.removePolicy($index)"></span><strong> {{policy.name}} </strong>
+            </div>
+            <div>
+                <select ng-model="RoleCtrl.policy" name="policy" ng-options="policy.name for policy in RoleCtrl.policies | orderBy:'name'">
+                    <option value="">-- Choose policy --</option>
+                </select>
+                <button ng-click="RoleCtrl.addPolicy(RoleCtrl.policy)" type="button" title="Save">
+                    <span>Add</span>
+                </button>
+            </div>
+        </div>
+
+        <div style="padding:20px 0 40px 0;">
+            <input type="submit" value="Save" ng-disabled="!theForm.$valid">
+            <input c6-href="/roles" type="button" value="Cancel">
+            <input type="button" value="Delete" ng-show="RoleCtrl.role.id" ng-click="RoleCtrl.delete()">
+            <span ng-show="!theForm.$valid" class="text-danger"> There are errors above. See highlighted fields. </span>
+        </div>
+    </form>
+
+    <div class="mask" ng-show="RoleCtrl.loading"></div>
+
+</section>
