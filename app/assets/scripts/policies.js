@@ -41,7 +41,7 @@ define(['angular','./mixins/paginatedListController','ngAce'], function(angular,
                                           ConfirmDialogService , appData , content ) {
             var self = this;
 
-            $log = $log.context('PoliciyCtrl');
+            $log = $log.context('PolicyCtrl');
             $log.info('instantiated');
 
             function ACE(session) {

@@ -13,8 +13,8 @@ module.exports = function(http) {
         withDefaults = fn.withDefaults,
         mapObject = fn.mapObject;;
 
-    function policyPath(id) {
-        return path.resolve(__dirname, './policies/' + id + '.json');
+    function getPath(id) {
+        return path.resolve(__dirname, './roles/' + id + '.json');
     }
 
     function contains(haystack, needle) {
@@ -27,14 +27,14 @@ module.exports = function(http) {
         });
     }
 
-    http.whenGET('/api/account/policies', function(request) {
+    http.whenGET('/api/account/roles', function(request) {
         var filters = pluckExcept(request.query, ['sort', 'limit', 'skip', 'text']),
             page = withDefaults(mapObject(pluck(request.query, ['limit', 'skip']), parseFloat), {
                 limit: Infinity,
                 skip: 0
             }),
             sort = (request.query.sort || null) && request.query.sort.split(','),
-            all = grunt.file.expand(path.resolve(__dirname, './policies/*.json'))
+            all = grunt.file.expand(path.resolve(__dirname, './roles/*.json'))
                 .map(function(path) {
                     var id = path.match(/[^\/]+(?=\.json)/)[0];
 
@@ -95,9 +95,9 @@ module.exports = function(http) {
             });
     });
 
-    http.whenGET('/api/account/policies/**', function(request) {
+    http.whenGET('/api/account/roles/**', function(request) {
         var id = idFromPath(request.pathname),
-            filePath = policyPath(id);
+            filePath = getPath(id);
 
         try {
             this.respond(200, grunt.file.readJSON(filePath));
@@ -106,9 +106,9 @@ module.exports = function(http) {
         }
     });
 
-    http.whenPOST('/api/account/policies', function(request) {
-        var id = 'p-' + Math.floor(Math.random() * 10000) + 1,
-            filePath = policyPath(id),
+    http.whenPOST('/api/account/roles', function(request) {
+        var id = 'r-' + Math.floor(Math.random() * 10000) + 1,
+            filePath = getPath(id),
             currentTime = (new Date()).toISOString(),
             data = request.body,
             _new = extend(data, {
@@ -122,15 +122,15 @@ module.exports = function(http) {
         this.respond(201, _new);
     });
 
-    http.whenPUT('/api/account/policies/**', function(request) {
+    http.whenPUT('/api/account/roles/**', function(request) {
         var id = idFromPath(request.pathname),
-            filePath = policyPath(id),
+            filePath = getPath(id),
             current = grunt.file.readJSON(filePath),
             updated = extend(current, request.body, {
                 lastUpdated: (new Date()).toISOString()
             });
 
-        if (id === 'p-113') {
+        if (id === 'r-113') {
             this.respond(401, 'Not Authorized');
         } else {
             grunt.file.write(filePath, JSON.stringify(updated, null, '   '));
@@ -139,8 +139,8 @@ module.exports = function(http) {
         }
     });
 
-    http.whenDELETE('/api/account/policies/**', function(request) {
-        grunt.file.delete(policyPath(idFromPath(request.pathname)));
+    http.whenDELETE('/api/account/roles/**', function(request) {
+        grunt.file.delete(getPath(idFromPath(request.pathname)));
 
         this.respond(204, '');
     });

@@ -272,6 +272,63 @@
                     beforeEach(function(){
                         successSpy = jasmine.createSpy('getAll().success');
                         failureSpy = jasmine.createSpy('getAll.failure');
+                    });
+
+                    it('will accept empty params', function() {
+                        $httpBackend.expectGET('/api/account/policies')
+                            .respond(200,mockPolicies,{'Content-Range': 'items 1-19/19'});
+                        PolicyService.getAll().then(successSpy,failureSpy);
+                        $httpBackend.flush();
+
+                        expect(successSpy).toHaveBeenCalledWith(jasmine.objectContaining({
+                            data: mockPolicies,
+                            meta: {
+                                items: {
+                                    start: 1,
+                                    end: 19,
+                                    total: 19
+                                }
+                            }
+                        }));
+
+                        expect(failureSpy).not.toHaveBeenCalled();
+                    });
+
+                    it('will resolve promise if successfull',function(){
+                        $httpBackend.expectGET('/api/account/policies?ids=p-111,p-112,p-113&limit=3')
+                            .respond(200,mockPolicies,{'Content-Range': 'items 1-19/19'});
+                        PolicyService.getAll({ids: 'p-111,p-112,p-113', limit: 3}).then(successSpy,failureSpy);
+                        $httpBackend.flush();
+
+                        expect(successSpy).toHaveBeenCalledWith(jasmine.objectContaining({
+                            data: mockPolicies,
+                            meta: {
+                                items: {
+                                    start: 1,
+                                    end: 19,
+                                    total: 19
+                                }
+                            }
+                        }));
+                        expect(failureSpy).not.toHaveBeenCalled();
+                    });
+
+                    it('will reject promise if not successful',function(){
+                        $httpBackend.expectGET('/api/account/policies?ids=p-111,p-112,p-113')
+                            .respond(404,'Unable to find policies.');
+                        PolicyService.getAll({ids: 'p-111,p-112,p-113'}).then(successSpy,failureSpy);
+                        $httpBackend.flush();
+                        expect(successSpy).not.toHaveBeenCalled();
+                        expect(failureSpy).toHaveBeenCalledWith('Unable to find policies.');
+                    });
+                });
+
+                xdescribe('getAll(params)', function() {
+                    // currently the getAll() method should not decorate the policies with full application experiences
+
+                    beforeEach(function(){
+                        successSpy = jasmine.createSpy('getAll().success');
+                        failureSpy = jasmine.createSpy('getAll.failure');
 
                         content.getExperiences.and.callFake(function(params) {
                             var ids = params.ids.split(',');
