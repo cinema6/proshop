@@ -62,7 +62,7 @@ define(['angular','./mixins/paginatedListController'], function(angular, Paginat
                             };
 
                         self.role = role;
-                        self.policies = policies;
+                        self.policies = policies.data;
                     })
                     .finally(function() {
                         self.loading = false;
@@ -73,8 +73,8 @@ define(['angular','./mixins/paginatedListController'], function(angular, Paginat
             self.addPolicy = function(policy) {
                 var policies = self.role.policies;
 
-                if (policies.indexOf(policy) === -1) {
-                    policies.push(policy);
+                if (policies.indexOf(policy.name) === -1) {
+                    policies.push(policy.name);
                 }
             };
 
@@ -116,7 +116,7 @@ define(['angular','./mixins/paginatedListController'], function(angular, Paginat
                     cancel: 'Cancel',
                     onAffirm: function() {
                         ConfirmDialogService.close();
-                        Cinema6Service.delete('policies', self.role.id)
+                        Cinema6Service.delete('roles', self.role.id)
                             .then(function() {
                                 $scope.message = 'Successfully deleted Role: ' + self.role.name;
                                 $location.path('/roles');

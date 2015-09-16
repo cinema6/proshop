@@ -13,7 +13,7 @@ module.exports = function(http) {
         withDefaults = fn.withDefaults,
         mapObject = fn.mapObject;;
 
-    function path(id) {
+    function getPath(id) {
         return path.resolve(__dirname, './roles/' + id + '.json');
     }
 
@@ -97,7 +97,7 @@ module.exports = function(http) {
 
     http.whenGET('/api/account/roles/**', function(request) {
         var id = idFromPath(request.pathname),
-            filePath = path(id);
+            filePath = getPath(id);
 
         try {
             this.respond(200, grunt.file.readJSON(filePath));
@@ -108,7 +108,7 @@ module.exports = function(http) {
 
     http.whenPOST('/api/account/roles', function(request) {
         var id = 'r-' + Math.floor(Math.random() * 10000) + 1,
-            filePath = path(id),
+            filePath = getPath(id),
             currentTime = (new Date()).toISOString(),
             data = request.body,
             _new = extend(data, {
@@ -124,7 +124,7 @@ module.exports = function(http) {
 
     http.whenPUT('/api/account/roles/**', function(request) {
         var id = idFromPath(request.pathname),
-            filePath = path(id),
+            filePath = getPath(id),
             current = grunt.file.readJSON(filePath),
             updated = extend(current, request.body, {
                 lastUpdated: (new Date()).toISOString()
@@ -140,7 +140,7 @@ module.exports = function(http) {
     });
 
     http.whenDELETE('/api/account/roles/**', function(request) {
-        grunt.file.delete(path(idFromPath(request.pathname)));
+        grunt.file.delete(getPath(idFromPath(request.pathname)));
 
         this.respond(204, '');
     });

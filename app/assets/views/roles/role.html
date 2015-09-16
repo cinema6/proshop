@@ -3,13 +3,13 @@
 <section class="view">
     <div style="padding-bottom:20px">{{message}}</div>
 
-    <form name="theForm" ng-submit="RoleCtrl.save(RoleCtrl.policy)">
+    <form name="theForm" ng-submit="RoleCtrl.save(RoleCtrl.role)">
         <a href="/#/roles">&lsaquo; Back to list</a>
 
         <div class="form-group" style="padding-top:20px" ng-class="{'has-error': theForm.name.$error.required || !theForm.name.$valid }">
             <label for="name" class="control-label"> Name: </label>
             <div>
-                <input class="col-md-3" class="form-control" type="text" name="name" ng-model="RoleCtrl.policy.name" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" ng-pattern="/^\w+$/" required ignore-spaces>
+                <input class="col-md-3" class="form-control" type="text" name="name" ng-model="RoleCtrl.role.name" autocomplete="off" ng-trim="true" ng-minlength="3" ng-maxlength="128" ng-pattern="/^\w+$/" required ignore-spaces>
                 <span class="help-block">
                     <span ng-show="theForm.name.$error.required"> Required. </span>
                     <span ng-show="theForm.name.$error.minlength"> Too short. </span>
@@ -22,7 +22,7 @@
         <div class="form-group" style="padding-top:20px">
             <label for="org" class="control-label"> Policies: </label>
             <div ng-repeat="policy in RoleCtrl.role.policies">
-                <span class="glyphicon glyphicon-remove" ng-click="RoleCtrl.removePolicy($index)"></span><strong> {{policy.name}} </strong>
+                <span class="glyphicon glyphicon-remove" ng-click="RoleCtrl.removePolicy($index)"></span><strong> {{policy}} </strong>
             </div>
             <div>
                 <select ng-model="RoleCtrl.policy" name="policy" ng-options="policy.name for policy in RoleCtrl.policies | orderBy:'name'">
