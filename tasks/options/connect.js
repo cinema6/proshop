@@ -39,6 +39,7 @@
                             '/api/account/customer': 'mocks/customer/main.js',
                             '/api/account/customers': 'mocks/customer/main.js',
                             '/api/account/policies': 'mocks/policy/main.js',
+                            '/api/account/roles': 'mocks/role/main.js',
                             '/api/content/experience': 'mocks/content/main.js',
                             '/api/content/experiences': 'mocks/content/main.js',
                             '/api/content/category': 'mocks/category/main.js',
