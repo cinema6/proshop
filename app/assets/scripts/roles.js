@@ -1,8 +1,6 @@
 define(['angular','./mixins/paginatedListController'], function(angular, PaginatedListCtrl) {
     'use strict';
 
-    var forEach = angular.forEach;
-
     return angular.module('c6.proshop.roles',[])
         .controller('RolesController', ['$scope','$log','$location','$injector','Cinema6Service','scopePromise',
         function                       ( $scope , $log , $location , $injector , Cinema6Service , scopePromise ) {
