@@ -3,7 +3,7 @@
 <section ng-switch="UserCtrl.action" class="view">
     <div style="padding-bottom:20px">{{message}}</div>
 
-    <form name="theForm" ng-submit="UserCtrl.saveUser()">
+    <form name="theForm" ng-submit="UserCtrl.save()">
         <a href="/#/users">&lsaquo; Back to list</a>
         <br>
         <br>
@@ -74,38 +74,6 @@
             </div>
         </div>
 
-        <div class="form-group" ng-class="{'has-error': theForm.user_role.$error.required}">
-            <label for="user_role" class="control-label"> Role: </label>
-            <div>
-                <select ng-model="UserCtrl.role" name="user_role" required>
-                    <option value="">-- Choose Role --</option>
-                    <option value="Publisher">Publisher</option>
-                    <option value="ContentProvider">Content Provider</option>
-                    <option value="Admin">System Admin</option>
-                </select>
-                <span class="help-block">
-                    <span ng-show="theForm.user_role.$error.required"> Required. </span>
-                </span>
-            </div>
-        </div>
-
-        <div ng-show="UserCtrl.role === 'Publisher'">
-            <div class="form-group">
-                <div>
-                    <input type="checkbox" name="can_edit_org_ad_settings" ng-model="UserCtrl.editAdConfigOptions[0].enabled">
-                    <label for="can_edit_org_ad_settings" class="control-label"> Can manage Organization's Ad default settings </label>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <div>
-                    <input type="checkbox" name="can_edit_experience_ad_settings" ng-model="UserCtrl.editAdConfigOptions[1].enabled">
-                    <label for="can_edit_experience_ad_settings" class="control-label"> Can manage MiniReel Ad settings </label>
-                </div>
-            </div>
-        </div>
-
-
         <div ng-if="UserCtrl.org">
             <div class="form-group">
                 <div ng-repeat="setting in UserCtrl.appData.defaultSplashOptions">
@@ -136,8 +104,8 @@
             <div style="padding-bottom:40px;">
                 <input type="submit" value="Save" ng-disabled="!theForm.$valid">
                 <input c6-href="/users" type="button" value="Cancel">
-                <input type="button" value="Delete" ng-show="UserCtrl.user.id" ng-click="UserCtrl.confirmDelete()">
-                <input type="button" value="Freeze" ng-show="UserCtrl.user.id" ng-click="UserCtrl.confirmFreeze()">
+                <input type="button" value="Delete" ng-show="UserCtrl.user.id" ng-click="UserCtrl.delete()">
+                <input type="button" value="Freeze" ng-show="UserCtrl.user.id" ng-click="UserCtrl.freeze()">
                 <span ng-show="!theForm.$valid" class="text-danger"> There are errors above. See highlighted fields. </span>
             </div>
         </div>

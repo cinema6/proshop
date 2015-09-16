@@ -1,46 +1,22 @@
-define(['account'],function(account) {
+define(['angular','./mixins/paginatedListController'],function(angular, PaginatedListCtrl) {
     'use strict';
 
     var extend = angular.extend,
         copy = angular.copy;
 
-    return angular.module('c6.proshop.users',[account.name])
-        .controller('UsersController', ['$scope','$log','account','$q','$location',
-        function                       ( $scope , $log,  account , $q , $location ) {
-            var self = this,
-                _data = {};
+    return angular.module('c6.proshop.users',[])
+        .controller('UsersController', ['$scope','$log','$location','Cinema6Service','scopePromise','$injector',
+        function                       ( $scope , $log , $location , Cinema6Service , scopePromise , $injector ) {
+            var self = this;
 
             $log = $log.context('UsersCtrl');
             $log.info('instantiated');
 
-            function initView() {
-                self.loading = true;
+            self.addNew = function() {
+                $location.path('/user/new');
+            };
 
-                $q.all([account.getOrgs(), account.getUsers()])
-                    .then(function(promises) {
-                        var orgs = promises[0],
-                            users = promises[1],
-                            userOrgPromiseArray = [];
-
-                        self.users = users;
-                        _data.users = users;
-
-                        self.orgs = orgs;
-                        _data.orgs = orgs;
-
-                        users.forEach(function(user) {
-                            userOrgPromiseArray.push(account.getOrg(user.org)
-                                .then(function(org) {
-                                    user.org = org;
-                                }));
-                        });
-
-                        return $q.all(userOrgPromiseArray);
-                    })
-                    .finally(function() {
-                        self.loading = false;
-                    });
-            }
+            $scope.endpoint = 'users';
 
             $scope.tableHeaders = [
                 {label:'Email',value:'email'},
@@ -54,176 +30,22 @@ define(['account'],function(account) {
                 descending: false
             };
 
-            $scope.doSort = function(column) {
-                var sort = $scope.sort;
-                if (sort.column === column) {
-                    sort.descending = !sort.descending;
-                } else {
-                    sort.column = column;
-                    sort.descending = false;
-                }
-            };
-
-            self.page = 1;
-            self.limit = 50;
-            self.limits = [5,10,50,100];
-            Object.defineProperties(self, {
-                total: {
-                    get: function() {
-                        return self.users && Math.ceil(self.users.length / self.limit);
-                    }
-                }
+            $injector.invoke(PaginatedListCtrl, self, {
+                $scope: $scope,
+                scopePromise: scopePromise,
+                Cinema6Service: Cinema6Service
             });
-
-            self.filterData = function(query) {
-                var _query = query.toLowerCase(),
-                    orgs = _data.orgs.filter(function(org) {
-                        return org.name.toLowerCase().indexOf(_query) >= 0;
-                    });
-
-                self.page = 1;
-
-                self.users = _data.users.filter(function(user) {
-                    var bool = false;
-
-                    orgs.forEach(function(org) {
-                        bool = (user.org.id.indexOf(org.id) >= 0) || bool;
-                    });
-
-                    [user.email, user.firstName, user.lastName].forEach(function(field) {
-                        bool = (field && field.toLowerCase().indexOf(_query) >= 0) || bool;
-                    });
-
-                    return bool;
-                });
-            };
-
-            self.sortUsers = function(/*field*/) {
-                // I imagine there will be something in the UI to allow sorting the list
-                // return account.getOrgs(field).then(updateOrgs);
-            };
-
-            self.addNewUser = function() {
-                $location.path('/user/new');
-            };
-
-            $scope.$watch(function() {
-                return self.page + ':' + self.limit;
-            }, function(newVal, oldVal) {
-                var samePage;
-
-                if (newVal === oldVal) { return; }
-
-                newVal = newVal.split(':');
-                oldVal = oldVal.split(':');
-
-                samePage = newVal[0] === oldVal[0];
-
-                if (self.page !== 1 && samePage) {
-                    /* jshint boss:true */
-                    return self.page = 1;
-                    /* jshint boss:false */
-                }
-            });
-
-            initView();
 
         }])
 
-        .controller('UserController', ['$scope','$log','account','ConfirmDialogService','$q','appData','$routeParams','$location',
-        function                      ( $scope , $log,  account , ConfirmDialogService , $q , appData , $routeParams , $location ) {
-            var self = this,
-                userRoles = appData.proshop.data.userRoles;
+        .controller('UserController', ['$scope','$log','ConfirmDialogService','$q','appData','$routeParams','$location','Cinema6Service','AccountService',
+        function                      ( $scope , $log , ConfirmDialogService , $q , appData , $routeParams , $location , Cinema6Service , AccountService ) {
+            var self = this;
 
             $log = $log.context('UserCtrl');
             $log.info('instantiated');
 
-            function initView() {
-                var promiseArray = [account.getOrgs()];
-
-                self.loading = true;
-
-                if ($routeParams.id) {
-                    promiseArray.push(account.getUser($routeParams.id));
-                }
-
-                $q.all(promiseArray)
-                    .then(function(promises) {
-                        var orgs = promises[0],
-                            user = promises[1] || {
-                                status: 'active',
-                                type: 'Publisher'
-                            };
-
-                        self.orgs = orgs;
-                        self.org = orgs.filter(function(org) {
-                            return user.org === org.id;
-                        })[0];
-                        self.user = convertUserForEditing(user, self.org || {});
-                    })
-                    .finally(function() {
-                        self.loading = false;
-                    });
-            }
-
-            function deleteUser() {
-                $log.info('deleting user: ', self.user);
-
-                account.deleteUser(self.user)
-                    .then(function() {
-                        $scope.message = 'Successfully deleted user: ' + self.user.email;
-                        $location.path('/users');
-                    }, function(err) {
-                        $log.error(err);
-                        ConfirmDialogService.display({
-                            prompt: 'There was a problem deleting the user. ' + err + '.',
-                            affirm: 'Close',
-                            onAffirm: function() {
-                                ConfirmDialogService.close();
-                            }
-                        });
-                    });
-            }
-
-            function getPermissions() {
-                var permissions = self.role === 'Admin' ?
-                    copy(userRoles.admin) :
-                    copy(userRoles.publisher);
-
-                if (self.role === 'Publisher') {
-                    self.editAdConfigOptions.forEach(function(option) {
-                        if (option.enabled) {
-                            permissions[option.name].editAdConfig = option.value;
-                        }
-                    });
-                }
-
-                return permissions;
-            }
-
-            function getApplications() {
-                return self.role === 'Admin' ?
-                    [appData.proshop.id, appData['mini-reel-maker'].id] :
-                    [appData['mini-reel-maker'].id];
-            }
-
-            function isAdmin(user) {
-                return !!user.permissions && Object.keys(user.permissions).every(function(type) {
-                    return Object.keys(user.permissions[type]).every(function(verb) {
-                        return user.permissions[type][verb] === 'all';
-                    });
-                });
-            }
-
-            function convertUserForEditing(user, org) {
-                if (user.permissions) {
-                    self.editAdConfigOptions[0].enabled = !!user.permissions.orgs.editAdConfig;
-                    self.editAdConfigOptions[1].enabled = !!user.permissions.experiences.editAdConfig;
-                    user.type = user.type || 'Publisher';
-                }
-
-                self.role = isAdmin(user) ? 'Admin' : user.type;
-
+            function addConfig(user, org) {
                 user.config = (user.config &&
                     user.config.minireelinator &&
                     user.config.minireelinator.minireelDefaults) ?
@@ -249,46 +71,45 @@ define(['account'],function(account) {
                 return user;
             }
 
+            function initView() {
+                var promiseArray = [Cinema6Service.getAll('orgs',{})];
+
+                self.loading = true;
+
+                if ($routeParams.id) {
+                    promiseArray.push(Cinema6Service.get('users',$routeParams.id));
+                }
+
+                $q.all(promiseArray)
+                    .then(function(promises) {
+                        var orgs = promises[0],
+                            user = promises[1] || {
+                                status: 'active',
+                                org: {}
+                            };
+
+                        self.orgs = orgs.data;
+                        self.org = orgs.data.filter(function(org) {
+                            return user.org.id === org.id;
+                        })[0];
+                        self.user = addConfig(user, self.org || {});
+                    })
+                    .finally(function() {
+                        self.loading = false;
+                    });
+            }
+            initView();
+
             self.appData = appData;
             self.emailPattern = /^\w+.*\w@\w.*\.\w{2,}$/;
-            self.editAdConfigOptions = [
-                {
-                    name: 'orgs',
-                    enabled: false,
-                    value: 'own'
-                },
-                {
-                    name: 'experiences',
-                    enabled: false,
-                    value: 'org'
-                }
-            ];
 
-            self.confirmDelete = function() {
-                ConfirmDialogService.display({
-                    prompt: 'Are you sure you want to delete this User?',
-                    affirm: 'Yes',
-                    cancel: 'Cancel',
-                    onAffirm: function() {
-                        ConfirmDialogService.close();
-                        deleteUser();
-                    },
-                    onCancel: function() {
-                        ConfirmDialogService.close();
-                    }
-                });
-            };
-
-            self.saveUser = function() {
+            self.save = function() {
                 var user = {
                     firstName: self.user.firstName,
                     lastName: self.user.lastName,
                     org: self.org.id,
                     config: self.user.config,
-                    type: (self.role === 'Admin' ? 'Publisher' : self.role),
-                    status: self.user.status,
-                    permissions: getPermissions(),
-                    applications: getApplications()
+                    status: self.user.status
                 };
 
                 function handleError(err) {
@@ -311,7 +132,7 @@ define(['account'],function(account) {
                 if (self.user.id) {
                     $log.info('PUT', self.user.id, self.user.email, self.user.firstName, self.user.lastName, self.org.id);
 
-                    account.putUser(self.user.id, user)
+                    Cinema6Service.put('users', self.user.id, user)
                         .then(handleSuccess, handleError);
 
                 } else {
@@ -322,24 +143,12 @@ define(['account'],function(account) {
                         password: self.user.password,
                     });
 
-                    account.postUser(user)
+                    Cinema6Service.post('users', user)
                         .then(handleSuccess, handleError);
                 }
             };
 
-            self.cancelOrgChange = function() {
-                self.org = self.orgs.filter(function(org) {
-                    return org.id === self.user.org;
-                })[0];
-            };
-
-            self.confirmOrgChange = function() {
-                self.user.org = self.org.id;
-                self.user.config = null;
-                self.user = convertUserForEditing(self.user, self.org);
-            };
-
-            self.confirmFreeze = function() {
+            self.freeze = function() {
                 ConfirmDialogService.display({
                     prompt: 'Freezing a User will log them out and make them inactive, ' +
                         'are you sure you want to proceed?',
@@ -349,22 +158,47 @@ define(['account'],function(account) {
                         $log.info('freezing user: ', self.user);
                         ConfirmDialogService.close();
 
-                        $q.all([
-                            account.putUser(self.user.id, { status: 'inactive' }),
-                            account.logoutUser(self.user.id)
-                        ])
-                        .then(function() {
-                            $scope.message = 'Successfully froze user: ' + self.user.email + '.';
-                        }, function(err) {
-                            $log.error(err);
-                            ConfirmDialogService.display({
-                                prompt: 'There was a problem freezing the user. ' + err + '.',
-                                affirm: 'Close',
-                                onAffirm: function() {
-                                    ConfirmDialogService.close();
-                                }
+                        AccountService.freezeUser(self.user.id)
+                            .then(function() {
+                                $scope.message = 'Successfully froze user: ' + self.user.email + '.';
+                            }, function(err) {
+                                $log.error(err);
+                                ConfirmDialogService.display({
+                                    prompt: 'There was a problem freezing the user. ' + err + '.',
+                                    affirm: 'Close',
+                                    onAffirm: function() {
+                                        ConfirmDialogService.close();
+                                    }
+                                });
                             });
-                        });
+                    },
+                    onCancel: function() {
+                        ConfirmDialogService.close();
+                    }
+                });
+            };
+
+            self.delete = function() {
+                ConfirmDialogService.display({
+                    prompt: 'Are you sure you want to delete this User?',
+                    affirm: 'Yes',
+                    cancel: 'Cancel',
+                    onAffirm: function() {
+                        ConfirmDialogService.close();
+                        Cinema6Service.delete('users', self.user.id)
+                            .then(function() {
+                                $scope.message = 'Successfully deleted user: ' + self.user.email;
+                                $location.path('/users');
+                            }, function(err) {
+                                $log.error(err);
+                                ConfirmDialogService.display({
+                                    prompt: 'There was a problem deleting the user. ' + err + '.',
+                                    affirm: 'Close',
+                                    onAffirm: function() {
+                                        ConfirmDialogService.close();
+                                    }
+                                });
+                            });
                     },
                     onCancel: function() {
                         ConfirmDialogService.close();
@@ -379,20 +213,28 @@ define(['account'],function(account) {
                 }
             });
 
-            $scope.$watch(function() { return self.org; }, function(newOrg) {
+            $scope.$watch(function() {
+                return self.org;
+            }, function(newOrg) {
                 if (newOrg) {
-                    if (self.user.id && self.user.org !== self.org.id) {
+                    if (self.user.id && self.user.org.id !== self.org.id) {
                         ConfirmDialogService.display({
                             prompt: 'Warning: All of this User\'s Minireels will remain with the original Org.',
                             affirm: 'OK, move User without Minireels',
                             cancel: 'No, leave the User on current Org',
                             onAffirm: function() {
                                 ConfirmDialogService.close();
-                                self.confirmOrgChange();
+                                // add the org to the user, remove the old config, add the new org's config
+                                self.user.org = self.org;
+                                self.user.config = null;
+                                self.user = addConfig(self.user, self.org);
                             },
                             onCancel: function() {
                                 ConfirmDialogService.close();
-                                self.cancelOrgChange();
+                                // set the org back to the user's original org
+                                self.org = self.orgs.filter(function(org) {
+                                    return org.id === self.user.org;
+                                })[0];
                             }
                         });
                     }
@@ -400,12 +242,9 @@ define(['account'],function(account) {
                     if (!self.user.id) {
                         self.user.config = null;
                         self.user.branding = null;
-                        self.user = convertUserForEditing(self.user, newOrg);
+                        self.user = addConfig(self.user, newOrg);
                     }
                 }
             });
-
-            initView();
-
         }]);
 });
