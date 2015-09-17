@@ -62,6 +62,37 @@
                     <a href="" ng-click="showPassword = !showPassword"> {{passwordMessage}} </a>
             </div>
         </div>
+
+        <div class="form-group">
+            <label for="role" class="control-label"> Roles: </label>
+            <div ng-repeat="role in UserCtrl.user.roles">
+                <span class="glyphicon glyphicon-remove" ng-click="UserCtrl.remove('roles',$index)"></span><strong> {{role}} </strong>
+            </div>
+            <div>
+                <select ng-model="UserCtrl.role" name="role" ng-options="role.name for role in UserCtrl.roles | orderBy:'name'">
+                    <option value="">-- Choose role --</option>
+                </select>
+                <button ng-click="UserCtrl.add('roles',UserCtrl.role.name)" type="button" title="Add">
+                    <span>Add</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="policy" class="control-label"> Policies: </label>
+            <div ng-repeat="policy in UserCtrl.user.policies">
+                <span class="glyphicon glyphicon-remove" ng-click="UserCtrl.remove('policies',$index)"></span><strong> {{policy}} </strong>
+            </div>
+            <div>
+                <select ng-model="UserCtrl.policy" name="policy" ng-options="policy.name for policy in UserCtrl.policies | orderBy:'name'">
+                    <option value="">-- Choose policy --</option>
+                </select>
+                <button ng-click="UserCtrl.add('policies',UserCtrl.policy.name)" type="button" title="Add">
+                    <span>Add</span>
+                </button>
+            </div>
+        </div>
+
         <div class="form-group" ng-class="{'has-error': theForm.org.$error.required}">
             <label for="org" class="control-label"> Org: </label>
             <div>

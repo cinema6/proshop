@@ -647,8 +647,6 @@ define(['angular'], function(angular) {
 
         .service('AccountService', ['$http','$q','c6UrlMaker','requestWrapper','UserService',
         function                   ( $http , $q , c6UrlMaker , requestWrapper , UserService ) {
-            var apiBase = c6UrlMaker('account/org', 'api');
-
             function handleError(err) {
                 return $q.reject((err && err.data) || 'Unable to complete request');
             }
@@ -713,6 +711,6 @@ define(['angular'], function(angular) {
                 },30000);
 
                 return deferred.promise;
-            }
+            };
         }]);
 });

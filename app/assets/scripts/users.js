@@ -1,8 +1,7 @@
 define(['angular','./mixins/paginatedListController'],function(angular, PaginatedListCtrl) {
     'use strict';
 
-    var extend = angular.extend,
-        copy = angular.copy;
+    var extend = angular.extend;
 
     return angular.module('c6.proshop.users',[])
         .controller('UsersController', ['$scope','$log','$location','Cinema6Service','scopePromise','$injector',
@@ -45,7 +44,7 @@ define(['angular','./mixins/paginatedListController'],function(angular, Paginate
             $log = $log.context('UserCtrl');
             $log.info('instantiated');
 
-            function addConfig(user, org) {
+            function addDefaults(user, org) {
                 user.config = (user.config &&
                     user.config.minireelinator &&
                     user.config.minireelinator.minireelDefaults) ?
@@ -68,22 +67,31 @@ define(['angular','./mixins/paginatedListController'],function(angular, Paginate
                         }
                     };
 
+                user.policies = user.policies || [];
+                user.roles = user.roles || [];
+
                 return user;
             }
 
             function initView() {
-                var promiseArray = [Cinema6Service.getAll('orgs',{})];
+                var promiseObject = {
+                    orgs: Cinema6Service.getAll('orgs',{}),
+                    roles: Cinema6Service.getAll('roles',{}),
+                    policies: Cinema6Service.getAll('policies',{})
+                };
 
                 self.loading = true;
 
                 if ($routeParams.id) {
-                    promiseArray.push(Cinema6Service.get('users',$routeParams.id));
+                    promiseObject.user = Cinema6Service.get('users',$routeParams.id);
                 }
 
-                $q.all(promiseArray)
+                $q.all(promiseObject)
                     .then(function(promises) {
-                        var orgs = promises[0],
-                            user = promises[1] || {
+                        var orgs = promises.orgs,
+                            roles = promises.roles,
+                            policies = promises.policies,
+                            user = promises.user || {
                                 status: 'active',
                                 org: {}
                             };
@@ -92,7 +100,9 @@ define(['angular','./mixins/paginatedListController'],function(angular, Paginate
                         self.org = orgs.data.filter(function(org) {
                             return user.org.id === org.id;
                         })[0];
-                        self.user = addConfig(user, self.org || {});
+                        self.roles = roles.data;
+                        self.policies = policies.data;
+                        self.user = addDefaults(user, self.org || {});
                     })
                     .finally(function() {
                         self.loading = false;
@@ -103,13 +113,27 @@ define(['angular','./mixins/paginatedListController'],function(angular, Paginate
             self.appData = appData;
             self.emailPattern = /^\w+.*\w@\w.*\.\w{2,}$/;
 
+            self.add = function(prop, item) {
+                var items = self.user[prop];
+
+                if (items.indexOf(item) === -1) {
+                    items.push(item);
+                }
+            };
+
+            self.remove = function(prop, index) {
+                self.user[prop].splice(index, 1);
+            };
+
             self.save = function() {
                 var user = {
                     firstName: self.user.firstName,
                     lastName: self.user.lastName,
                     org: self.org.id,
                     config: self.user.config,
-                    status: self.user.status
+                    status: self.user.status,
+                    policies: self.user.policies,
+                    roles: self.user.roles
                 };
 
                 function handleError(err) {
@@ -227,7 +251,7 @@ define(['angular','./mixins/paginatedListController'],function(angular, Paginate
                                 // add the org to the user, remove the old config, add the new org's config
                                 self.user.org = self.org;
                                 self.user.config = null;
-                                self.user = addConfig(self.user, self.org);
+                                self.user = addDefaults(self.user, self.org);
                             },
                             onCancel: function() {
                                 ConfirmDialogService.close();
@@ -242,7 +266,7 @@ define(['angular','./mixins/paginatedListController'],function(angular, Paginate
                     if (!self.user.id) {
                         self.user.config = null;
                         self.user.branding = null;
-                        self.user = addConfig(self.user, newOrg);
+                        self.user = addDefaults(self.user, newOrg);
                     }
                 }
             });
