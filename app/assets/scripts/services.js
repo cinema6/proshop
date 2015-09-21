@@ -668,7 +668,7 @@ define(['angular'], function(angular) {
                         password: password,
                         newEmail: newEmail
                     }
-                }));
+                })).then(pick('data'), handleError);
             };
 
             this.changePassword = function(email,password,newPassword) {
@@ -680,7 +680,7 @@ define(['angular'], function(angular) {
                         password: password,
                         newPassword: newPassword
                     }
-                }));
+                })).then(pick('data'), handleError);
             };
 
             this.waterfallData = [];

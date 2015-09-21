@@ -16,6 +16,8 @@
                 appData,
                 mockOrgs,
                 mockUser,
+                mockPolicies,
+                mockRoles,
                 ConfirmDialogService;
 
             function compileCtrl(id) {
@@ -166,6 +168,133 @@
                     status: 'active'
                 };
 
+                /* jsHint quotmark:false */
+                mockRoles = {
+                    meta: {
+                        items: {
+                            start: 1,
+                            end: 3,
+                            total: 3
+                        }
+                    },
+                    data: [
+                        {
+                            "id": "r-111",
+                            "name": "StudioRole",
+                            "created": "2015-06-13T19:28:39.408Z",
+                            "lastUpdated": "2015-06-13T19:28:39.408Z",
+                            "status": "active",
+                            "policies": ["MiniReelCreator"]
+                        },
+                        {
+                            "id": "r-112",
+                            "name": "Creator",
+                            "created": "2015-06-13T19:28:39.408Z",
+                            "lastUpdated": "2015-06-13T19:28:39.408Z",
+                            "status": "active",
+                            "policies": ["MiniReelCreator","SelfieUser"]
+                        },
+                        {
+                            "id": "r-113",
+                            "name": "AdminRole",
+                            "created": "2015-06-13T19:28:39.408Z",
+                            "lastUpdated": "2015-06-13T19:28:39.408Z",
+                            "status": "active",
+                            "policies": ["MiniReelCreator","SelfieUser","CampaignManager"]
+                        }
+                    ]
+                };
+
+                mockPolicies = {
+                    meta: {
+                        items: {
+                            start: 1,
+                            end: 3,
+                            total: 3
+                        }
+                    },
+                    data: [
+                        {
+                            "id": "p-111",
+                            "name": "Campaign Manager",
+                            "created": "2014-06-13T19:28:39.408Z",
+                            "lastUpdated": "2014-06-13T19:28:39.408Z",
+                            "status": "active",
+                            "priority": 1,
+                            "permissions": {
+                                "campaigns": {
+                                    "read": "all",
+                                    "create": "all",
+                                    "edit": "all",
+                                    "delete": "all"
+                                }
+                            },
+                            "applications": [
+                                "e-selfie-experience",
+                                "e-studio-experience"
+                            ],
+                            "fieldValidation": {
+                                "campaigns": {
+                                    "status": {
+                                        "__allowed": true
+                                    },
+                                    "user": {
+                                        "__allowed": true
+                                    },
+                                    "org": {
+                                        "__allowed": true
+                                    },
+                                    "minViewTime": {
+                                        "__allowed": true
+                                    },
+                                    "pricing": {
+                                        "cost": {
+                                            "__allowed": true
+                                        }
+                                    },
+                                    "cards": {
+                                        "__allowed": true,
+                                        "__unchangeable": false
+                                    }
+                                }
+                            },
+                            "entitlements": {
+                                "canEditSomething": true
+                            }
+                        },
+                        {
+                            "id": "p-112",
+                            "name": "MiniReel Creator",
+                            "created": "2015-06-13T19:28:39.408Z",
+                            "lastUpdated": "2015-06-13T19:28:39.408Z",
+                            "status": "active",
+                            "applications": ["e-studio-experience"],
+                            "permissions": {},
+                            "fieldValidation": {}
+                        },
+                        {
+                            "id": "p-113",
+                            "name": "Selfie User",
+                            "created": "2015-07-13T19:28:39.408Z",
+                            "lastUpdated": "2015-07-13T19:28:39.408Z",
+                            "status": "active",
+                            "permissions": {
+                                "campaigns": {
+                                    "read": "org",
+                                    "create": "org",
+                                    "edit": "org",
+                                    "delete": "org"
+                                }
+                            },
+                            "fieldValidation": {
+                                "campaigns": {}
+                            },
+                            "applications": ["e-selfie-experience"]
+                        }
+                    ]
+                }
+                /* jshint quotmark:single */
+
                 ConfirmDialogService = {
                     display: jasmine.createSpy('ConfirmDialogService.display()'),
                     close: jasmine.createSpy('ConfirmDialogService.close()')
@@ -183,8 +312,12 @@
                     Cinema6Service.get.deferred = $q.defer();
                     Cinema6Service.get.and.returnValue(Cinema6Service.get.deferred.promise);
 
-                    Cinema6Service.getAll.deferred = $q.defer();
-                    Cinema6Service.getAll.and.returnValue(Cinema6Service.getAll.deferred.promise);
+                    Cinema6Service.getAll.orgs = $q.defer();
+                    Cinema6Service.getAll.roles = $q.defer();
+                    Cinema6Service.getAll.policies = $q.defer();
+                    Cinema6Service.getAll.and.callFake(function(entity) {
+                        return Cinema6Service.getAll[entity].promise;
+                    });
 
                     Cinema6Service.put.deferred = $q.defer();
                     Cinema6Service.put.and.returnValue(Cinema6Service.put.deferred.promise);
@@ -216,21 +349,29 @@
 
                     it('should call the Cinema6Service service to get all orgs', function() {
                         expect(Cinema6Service.getAll).toHaveBeenCalledWith('orgs',{});
+                        expect(Cinema6Service.getAll).toHaveBeenCalledWith('roles',{});
+                        expect(Cinema6Service.getAll).toHaveBeenCalledWith('policies',{});
                     });
 
                     it('should not call Cinema6Service.get', function() {
                         expect(Cinema6Service.get).not.toHaveBeenCalled();
                     });
 
-                    it('should put the orgs and a new user with default config on the Ctrl', function() {
+                    it('should put the orgs, roles, policies and a new user with default config on the Ctrl', function() {
                         $scope.$apply(function() {
-                            Cinema6Service.getAll.deferred.resolve(angular.copy(mockOrgs));
+                            Cinema6Service.getAll.orgs.resolve(angular.copy(mockOrgs));
+                            Cinema6Service.getAll.roles.resolve(angular.copy(mockRoles));
+                            Cinema6Service.getAll.policies.resolve(angular.copy(mockPolicies));
                         });
 
                         expect(UserCtrl.orgs).toEqual(mockOrgs.data);
+                        expect(UserCtrl.roles).toEqual(mockRoles.data);
+                        expect(UserCtrl.policies).toEqual(mockPolicies.data);
                         expect(UserCtrl.user).toEqual({
                             status: 'active',
                             org: {},
+                            roles: [],
+                            policies: [],
                             config: {
                                 minireelinator: {
                                     minireelDefaults: {
@@ -256,25 +397,33 @@
 
                     it('should call the Cinema6Service service to get all orgs', function() {
                         expect(Cinema6Service.getAll).toHaveBeenCalledWith('orgs',{});
+                        expect(Cinema6Service.getAll).toHaveBeenCalledWith('roles',{});
+                        expect(Cinema6Service.getAll).toHaveBeenCalledWith('policies',{});
                     });
 
                     it('should call Cinema6Service.get', function() {
                         expect(Cinema6Service.get).toHaveBeenCalledWith('users','u-1');
                     });
 
-                    it('should put the orgs on the Ctrl', function() {
+                    it('should put the orgs, roles and policies on the Ctrl', function() {
                         $scope.$apply(function() {
                             Cinema6Service.get.deferred.resolve(angular.copy(mockUser));
-                            Cinema6Service.getAll.deferred.resolve(angular.copy(mockOrgs));
+                            Cinema6Service.getAll.orgs.resolve(angular.copy(mockOrgs));
+                            Cinema6Service.getAll.roles.resolve(angular.copy(mockRoles));
+                            Cinema6Service.getAll.policies.resolve(angular.copy(mockPolicies));
                         });
 
                         expect(UserCtrl.orgs).toEqual(mockOrgs.data);
+                        expect(UserCtrl.roles).toEqual(mockRoles.data);
+                        expect(UserCtrl.policies).toEqual(mockPolicies.data);
                     });
 
                     it('should put the User\'s Org on the Ctrl', function() {
                         $scope.$apply(function() {
                             Cinema6Service.get.deferred.resolve(angular.copy(mockUser));
-                            Cinema6Service.getAll.deferred.resolve(angular.copy(mockOrgs));
+                            Cinema6Service.getAll.orgs.resolve(angular.copy(mockOrgs));
+                            Cinema6Service.getAll.roles.resolve(angular.copy(mockRoles));
+                            Cinema6Service.getAll.policies.resolve(angular.copy(mockPolicies));
                         });
 
                         expect(UserCtrl.org).toEqual(mockOrgs.data[0]);
@@ -297,10 +446,12 @@
 
                             $scope.$apply(function() {
                                 Cinema6Service.get.deferred.resolve(angular.copy(_user));
-                                Cinema6Service.getAll.deferred.resolve(angular.copy(mockOrgs));
+                                Cinema6Service.getAll.orgs.resolve(angular.copy(mockOrgs));
+                                Cinema6Service.getAll.roles.resolve(angular.copy(mockRoles));
+                                Cinema6Service.getAll.policies.resolve(angular.copy(mockPolicies));
                             });
 
-                            expect(UserCtrl.user).toEqual(_user);
+                            expect(UserCtrl.user.config).toEqual(_user.config);
                         });
                     });
 
@@ -327,7 +478,9 @@
 
                                 $scope.$apply(function() {
                                     Cinema6Service.get.deferred.resolve(angular.copy(mockUser));
-                                    Cinema6Service.getAll.deferred.resolve(angular.copy(_orgs));
+                                    Cinema6Service.getAll.orgs.resolve(angular.copy(_orgs));
+                                    Cinema6Service.getAll.roles.resolve(angular.copy(mockRoles));
+                                    Cinema6Service.getAll.policies.resolve(angular.copy(mockPolicies));
                                 });
 
                                 expect(UserCtrl.user.config).toEqual(_org.config);
@@ -338,21 +491,21 @@
                             it('should set defaults', function() {
                                 $scope.$apply(function() {
                                     Cinema6Service.get.deferred.resolve(angular.copy(mockUser));
-                                    Cinema6Service.getAll.deferred.resolve(angular.copy(mockOrgs));
+                                    Cinema6Service.getAll.orgs.resolve(angular.copy(mockOrgs));
+                                    Cinema6Service.getAll.roles.resolve(angular.copy(mockRoles));
+                                    Cinema6Service.getAll.policies.resolve(angular.copy(mockPolicies));
                                 });
 
-                                expect(UserCtrl.user).toEqual(angular.extend(mockUser, {
-                                    config: {
-                                        minireelinator: {
-                                            minireelDefaults: {
-                                                splash: {
-                                                    ratio: '3-2',
-                                                    theme: 'img-text-overlay'
-                                                }
+                                expect(UserCtrl.user.config).toEqual({
+                                    minireelinator: {
+                                        minireelDefaults: {
+                                            splash: {
+                                                ratio: '3-2',
+                                                theme: 'img-text-overlay'
                                             }
                                         }
                                     }
-                                }));
+                                });
                             });
                         });
                     });
@@ -360,14 +513,75 @@
             });
 
             describe('methods', function() {
+                describe('add(prop, item)', function() {
+                    beforeEach(function() {
+                        compileCtrl();
+
+                        $scope.$apply(function() {
+                            Cinema6Service.getAll.orgs.resolve(angular.copy(mockOrgs));
+                            Cinema6Service.getAll.roles.resolve(angular.copy(mockRoles));
+                            Cinema6Service.getAll.policies.resolve(angular.copy(mockPolicies));
+                        });
+                    });
+
+                    describe('when the item already exists', function() {
+                        it('should not add it', function() {
+                            expect(UserCtrl.user.roles).toEqual([]);
+                            expect(UserCtrl.user.policies).toEqual([]);
+
+                            UserCtrl.add('roles', mockRoles.data[0].name);
+                            UserCtrl.add('roles', mockRoles.data[0].name);
+                            UserCtrl.add('roles', mockRoles.data[0].name);
+                            UserCtrl.add('roles', mockRoles.data[0].name);
+
+                            expect(UserCtrl.user.roles).toEqual([mockRoles.data[0].name]);
+                        });
+                    });
+
+                    describe('when the item does not exist', function() {
+                        it('should add it to the array', function() {
+                            expect(UserCtrl.user.roles).toEqual([]);
+                            expect(UserCtrl.user.policies).toEqual([]);
+
+                            UserCtrl.add('policies', mockPolicies.data[1].name);
+
+                            expect(UserCtrl.user.policies).toEqual([mockPolicies.data[1].name]);
+                        });
+                    });
+                });
+
+                describe('remove(prop, index)', function() {
+                    it('should remove the item at the provided index', function() {
+                        compileCtrl();
+
+                        $scope.$apply(function() {
+                            Cinema6Service.getAll.orgs.resolve(angular.copy(mockOrgs));
+                            Cinema6Service.getAll.roles.resolve(angular.copy(mockRoles));
+                            Cinema6Service.getAll.policies.resolve(angular.copy(mockPolicies));
+                        });
+
+                        UserCtrl.add('roles', mockRoles.data[0].name);
+                        UserCtrl.add('roles', mockRoles.data[1].name);
+                        UserCtrl.add('roles', mockRoles.data[2].name);
+
+                        expect(UserCtrl.user.roles).toEqual([mockRoles.data[0].name, mockRoles.data[1].name, mockRoles.data[2].name]);
+
+                        UserCtrl.remove('roles',1);
+
+                        expect(UserCtrl.user.roles).toEqual([mockRoles.data[0].name, mockRoles.data[2].name]);
+                    });
+                });
+
                 describe('save()', function() {
                     describe('when updating a user', function() {
                         beforeEach(function() {
                             compileCtrl('u-1');
 
                             $scope.$apply(function() {
-                                Cinema6Service.getAll.deferred.resolve(angular.copy(mockOrgs));
                                 Cinema6Service.get.deferred.resolve(angular.copy(mockUser));
+                                Cinema6Service.getAll.orgs.resolve(angular.copy(mockOrgs));
+                                Cinema6Service.getAll.roles.resolve(angular.copy(mockRoles));
+                                Cinema6Service.getAll.policies.resolve(angular.copy(mockPolicies));
                             });
                         });
 
@@ -379,6 +593,8 @@
                                 lastName: UserCtrl.user.lastName,
                                 org: UserCtrl.user.org.id,
                                 config: UserCtrl.user.config,
+                                policies: [],
+                                roles: [],
                                 status: 'active'
                             });
                         });
@@ -412,8 +628,10 @@
                             compileCtrl();
 
                             $scope.$apply(function() {
-                                Cinema6Service.getAll.deferred.resolve(angular.copy(mockOrgs));
                                 Cinema6Service.get.deferred.resolve(angular.copy(mockUser));
+                                Cinema6Service.getAll.orgs.resolve(angular.copy(mockOrgs));
+                                Cinema6Service.getAll.roles.resolve(angular.copy(mockRoles));
+                                Cinema6Service.getAll.policies.resolve(angular.copy(mockPolicies));
                             });
 
                             UserCtrl.org = UserCtrl.orgs[0];
@@ -444,6 +662,8 @@
                                         }
                                     }
                                 },
+                                policies: [],
+                                roles: [],
                                 status: 'active'
                             });
                         });
@@ -477,8 +697,10 @@
                         compileCtrl('u-1');
 
                         $scope.$apply(function() {
-                            Cinema6Service.getAll.deferred.resolve(angular.copy(mockOrgs));
                             Cinema6Service.get.deferred.resolve(angular.copy(mockUser));
+                            Cinema6Service.getAll.orgs.resolve(angular.copy(mockOrgs));
+                            Cinema6Service.getAll.roles.resolve(angular.copy(mockRoles));
+                            Cinema6Service.getAll.policies.resolve(angular.copy(mockPolicies));
                         });
                     });
 
@@ -528,8 +750,10 @@
                         compileCtrl('u-1');
 
                         $scope.$apply(function() {
-                            Cinema6Service.getAll.deferred.resolve(angular.copy(mockOrgs));
                             Cinema6Service.get.deferred.resolve(angular.copy(mockUser));
+                            Cinema6Service.getAll.orgs.resolve(angular.copy(mockOrgs));
+                            Cinema6Service.getAll.roles.resolve(angular.copy(mockRoles));
+                            Cinema6Service.getAll.policies.resolve(angular.copy(mockPolicies));
                         });
                     });
 
@@ -575,90 +799,6 @@
                         expect(ConfirmDialogService.display.calls.count()).toBe(2);
                     });
                 });
-
-                xdescribe('cancelOrgChange()', function() {
-                    it('should reset the Ctrl.org to match the User\'s Org', function() {
-                        compileCtrl('u-1');
-                        $scope.$apply(function() {
-                            Cinema6Service.getAll.deferred.resolve(angular.copy(mockOrgs));
-                            Cinema6Service.get.deferred.resolve(angular.copy(mockUser));
-                        });
-
-                        UserCtrl.org = mockOrgs.data[1];
-
-                        UserCtrl.cancelOrgChange();
-
-                        expect(UserCtrl.org).toEqual(mockOrgs.data[0]);
-                    });
-                });
-
-                xdescribe('confirmOrgChange()', function() {
-                    it('should set the User\'s Org', function() {
-                        compileCtrl('u-1');
-                        $scope.$apply(function() {
-                            Cinema6Service.getAll.deferred.resolve(angular.copy(mockOrgs));
-                            Cinema6Service.get.deferred.resolve(angular.copy(mockUser));
-                        });
-
-                        UserCtrl.org = mockOrgs.data[1];
-
-                        UserCtrl.confirmOrgChange();
-
-                        expect(UserCtrl.user.org).toBe(mockOrgs.data[1].id);
-                    });
-
-                    describe('if new Org has a config', function() {
-                        it('should set the User\'s config to match', function() {
-                            mockOrgs.data[1].config = {
-                                minireelinator: {
-                                    minireelDefaults: {
-                                        splash: {
-                                            ratio: '6-5',
-                                            theme: 'img-only'
-                                        }
-                                    }
-                                }
-                            };
-
-                            compileCtrl('u-1');
-                            $scope.$apply(function() {
-                                Cinema6Service.getAll.deferred.resolve(angular.copy(mockOrgs));
-                                Cinema6Service.get.deferred.resolve(angular.copy(mockUser));
-                            });
-
-                            UserCtrl.org = mockOrgs.data[1];
-
-                            UserCtrl.confirmOrgChange();
-
-                            expect(UserCtrl.user.config).toEqual(mockOrgs.data[1].config);
-                        });
-                    });
-
-                    describe('if new Org does not have a config', function() {
-                        it('should set the User\'s config to match', function() {
-                            compileCtrl('u-1');
-                            $scope.$apply(function() {
-                                Cinema6Service.getAll.deferred.resolve(angular.copy(mockOrgs));
-                                Cinema6Service.get.deferred.resolve(angular.copy(mockUser));
-                            });
-
-                            UserCtrl.org = mockOrgs.data[1];
-
-                            UserCtrl.confirmOrgChange();
-
-                            expect(UserCtrl.user.config).toEqual({
-                                minireelinator: {
-                                    minireelDefaults: {
-                                        splash: {
-                                            ratio: '3-2',
-                                            theme: 'img-text-overlay'
-                                        }
-                                    }
-                                }
-                            });
-                        });
-                    });
-                });
             });
 
             describe('properties', function() {
@@ -690,8 +830,10 @@
 
                     it('should be false after all data promises resolve', function() {
                         $scope.$apply(function() {
-                            Cinema6Service.getAll.deferred.resolve(angular.copy(mockOrgs));
                             Cinema6Service.get.deferred.resolve(angular.copy(mockUser));
+                            Cinema6Service.getAll.orgs.resolve(angular.copy(mockOrgs));
+                            Cinema6Service.getAll.roles.resolve(angular.copy(mockRoles));
+                            Cinema6Service.getAll.policies.resolve(angular.copy(mockPolicies));
                         });
 
                         expect(UserCtrl.loading).toBe(false);
@@ -699,8 +841,10 @@
 
                     it('should be false even if there are errors loading data', function() {
                         $scope.$apply(function() {
-                            Cinema6Service.getAll.deferred.reject();
                             Cinema6Service.get.deferred.reject();
+                            Cinema6Service.getAll.orgs.reject();
+                            Cinema6Service.getAll.roles.reject();
+                            Cinema6Service.getAll.policies.reject();
                         });
 
                         expect(UserCtrl.loading).toBe(false);
@@ -716,8 +860,10 @@
                         beforeEach(function() {
                             compileCtrl('u-1');
                             $scope.$apply(function() {
-                                Cinema6Service.getAll.deferred.resolve(angular.copy(mockOrgs));
                                 Cinema6Service.get.deferred.resolve(angular.copy(mockUser));
+                                Cinema6Service.getAll.orgs.resolve(angular.copy(mockOrgs));
+                                Cinema6Service.getAll.roles.resolve(angular.copy(mockRoles));
+                                Cinema6Service.getAll.policies.resolve(angular.copy(mockPolicies));
                             });
 
                             UserCtrl.org = mockOrgs.data[1];
@@ -725,9 +871,6 @@
 
                             onAffirm = ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm;
                             onCancel = ConfirmDialogService.display.calls.mostRecent().args[0].onCancel;
-
-                            // spyOn(UserCtrl, 'confirmOrgChange');
-                            // spyOn(UserCtrl, 'cancelOrgChange');
                         });
 
                         it('should warn about minireels staying with the Org', function() {
@@ -735,16 +878,56 @@
                         });
 
                         describe('onAffirm()', function() {
-                            it('should call confirmOrgChange()', function() {
+                            it('should put the new org on the user', function() {
                                 onAffirm();
-                                // expect(UserCtrl.confirmOrgChange).toHaveBeenCalled();
+                                expect(UserCtrl.user.org).toEqual(mockOrgs.data[1]);
+                            });
+
+                            describe('when the new Org has config', function() {
+                                it('should add the Org config to the user', function() {
+                                    expect(UserCtrl.user.config).toEqual({
+                                        minireelinator: {
+                                            minireelDefaults: {
+                                                splash: {
+                                                    ratio: '3-2',
+                                                    theme: 'img-text-overlay'
+                                                }
+                                            }
+                                        }
+                                    });
+
+                                    mockOrgs.data[1].config = {
+                                        minireelinator: {
+                                            minireelDefaults: {
+                                                splash: {
+                                                    ratio: '6-5',
+                                                    theme: 'img-only'
+                                                }
+                                            }
+                                        }
+                                    };
+
+                                    onAffirm();
+
+                                    expect(UserCtrl.user.config).toEqual({
+                                        minireelinator: {
+                                            minireelDefaults: {
+                                                splash: {
+                                                    ratio: '6-5',
+                                                    theme: 'img-only'
+                                                }
+                                            }
+                                        }
+                                    });
+                                });
                             });
                         });
 
                         describe('onCancel()', function() {
                             it('should call cancelOrgChange()', function() {
                                 onCancel();
-                                // expect(UserCtrl.cancelOrgChange).toHaveBeenCalled();
+                                expect(UserCtrl.user.org.id).toEqual(mockOrgs.data[0].id);
+                                expect(UserCtrl.org).toEqual(mockOrgs.data[0]);
                             });
                         });
                     });
@@ -764,8 +947,10 @@
 
                             compileCtrl();
                             $scope.$apply(function() {
-                                Cinema6Service.getAll.deferred.resolve(angular.copy(mockOrgs));
                                 Cinema6Service.get.deferred.resolve(angular.copy(mockUser));
+                                Cinema6Service.getAll.orgs.resolve(angular.copy(mockOrgs));
+                                Cinema6Service.getAll.roles.resolve(angular.copy(mockRoles));
+                                Cinema6Service.getAll.policies.resolve(angular.copy(mockPolicies));
                             });
                             UserCtrl.user.branding = 'test_branding';
 

@@ -257,7 +257,7 @@ define(['angular','./mixins/paginatedListController'],function(angular, Paginate
                                 ConfirmDialogService.close();
                                 // set the org back to the user's original org
                                 self.org = self.orgs.filter(function(org) {
-                                    return org.id === self.user.org;
+                                    return org.id === self.user.org.id;
                                 })[0];
                             }
                         });
