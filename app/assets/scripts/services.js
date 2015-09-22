@@ -532,7 +532,10 @@ define(['angular'], function(angular) {
                 return $http({
                     method: 'POST',
                     url: c6UrlMaker('account/user/logout/' + id, 'api')
-                });
+                }).then(
+                    pick('data'),
+                    handleError
+                );
             };
         }])
 

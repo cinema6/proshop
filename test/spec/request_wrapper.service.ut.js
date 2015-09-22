@@ -2,7 +2,7 @@
     'use strict';
 
     define(['app'], function(proshop) {
-        ddescribe('requestWrapper', function() {
+        describe('requestWrapper', function() {
             var $rootScope,
                 $timeout,
                 $q,
