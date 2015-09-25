@@ -43,8 +43,7 @@ define(['angular'], function(angular) {
             this.get = function(id) {
                 return $http({
                     method: 'GET',
-                    url: apiBase + '/' + id,
-                    cache: true
+                    url: apiBase + '/' + id
                 }).then(
                     pick('data'),
                     handleError
@@ -148,8 +147,7 @@ define(['angular'], function(angular) {
             this.get = function(id) {
                 return $http({
                     method: 'GET',
-                    url: apiBase + '/' + id,
-                    cache: true
+                    url: apiBase + '/' + id
                 }).then(pick('data'))
                     .then(decorateCustomer)
                     .catch(handleError);
@@ -209,8 +207,7 @@ define(['angular'], function(angular) {
             this.get = function(id) {
                 return $http({
                     method: 'GET',
-                    url: apiBase + '/' + id,
-                    cache: true
+                    url: apiBase + '/' + id
                 }).then(
                     pick('data'),
                     handleError
@@ -318,8 +315,7 @@ define(['angular'], function(angular) {
             this.get = function(id) {
                 return $http({
                     method: 'GET',
-                    url: apiBase + '/' + id,
-                    cache: true
+                    url: apiBase + '/' + id
                 }).then(pick('data'))
                 .then(decoratePolicy)
                 .catch(handleError);
@@ -385,8 +381,7 @@ define(['angular'], function(angular) {
             this.get = function(id) {
                 return $http({
                     method: 'GET',
-                    url: apiBase + '/' + id,
-                    cache: true
+                    url: apiBase + '/' + id
                 }).then(
                     pick('data'),
                     handleError
@@ -458,18 +453,17 @@ define(['angular'], function(angular) {
             }
 
             function decorateUsers(users) {
-                var deferred = $q.defer();
-
-                $q.all(users.data.map(decorateUser))
-                    .then(function(decoratedUsers) {
-                        users.data = decoratedUsers;
-                        deferred.resolve(users);
-                    })
-                    .catch(function() {
-                        deferred.reject();
+                return $q.all(users.data.reduce(function(orgs, user) {
+                    if (!orgs[user.org]) {
+                        orgs[user.org] = OrgService.get(user.org);
+                    }
+                    return orgs;
+                }, {})).then(function(orgs) {
+                    users.data.map(function(user) {
+                        user.org = orgs[user.org];
                     });
-
-                return deferred.promise;
+                    return users;
+                });
             }
 
             function handleError(err) {
@@ -479,8 +473,7 @@ define(['angular'], function(angular) {
             this.get = function(id) {
                 return $http({
                     method: 'GET',
-                    url: apiBase + '/' + id,
-                    cache: true
+                    url: apiBase + '/' + id
                 }).then(pick('data'))
                 .then(decorateUser)
                 .catch(handleError);
@@ -550,8 +543,7 @@ define(['angular'], function(angular) {
             this.get = function(id) {
                 return $http({
                     method: 'GET',
-                    url: apiBase + '/' + id,
-                    cache: true
+                    url: apiBase + '/' + id
                 }).then(
                     pick('data'),
                     handleError
