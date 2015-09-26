@@ -1,11 +1,14 @@
 <h1>Users</h1>
 <br>
-<section ng-switch="UsersCtrl.action" class="view">
+<section class="view">
     <div style="padding-bottom:20px">{{message}}</div>
 
     <div class="clearfix">
-        <button ng-click="UsersCtrl.addNewUser()">Add New User</button>
-        <input style="float:right;width:250px;" type="text" ng-model="query" ng-change="UsersCtrl.filterData(query)" placeholder="Search Users by Email, Name or Org">
+        <button ng-click="UsersCtrl.addNew()">Add New User</button>
+        <form name="search" ng-submit="PoliciesCtrl.search(query)">
+            <input type="submit" value="Search" style="float:right;">
+            <input style="float:right;width:250px;" type="text" ng-model="query" placeholder="Search Users by Name">
+        </form>
     </div>
 
     <paginator-controls page="UsersCtrl.page" limit="UsersCtrl.limit" limits="UsersCtrl.limits" total="UsersCtrl.total"></paginator-controls>
@@ -18,7 +21,7 @@
                 <th ng-repeat="th in tableHeaders" ng-click="doSort(th.value)" style="cursor:pointer;">
                     {{th.label}} <span style="padding-left:5px;opacity:0.5;float:right;" ng-style="{visibility: sort.column === th.value ? 'visible' : 'hidden'}" ng-class="{'glyphicon-chevron-up': !sort.descending, 'glyphicon-chevron-down': sort.descending }" class="glyphicon "></span></th>
             </tr>
-            <tr ng-repeat="user in UsersCtrl.users | orderBy:sort.column:sort.descending | paginatorlimits:[(UsersCtrl.page - 1) * UsersCtrl.limit, (UsersCtrl.page * UsersCtrl.limit)]">
+            <tr ng-repeat="user in UsersCtrl.data">
                 <td><a href="/#/user/{{user.id}}">{{user.email}}</a></td>
                 <td>{{user.firstName}} {{user.lastName}}</td>
                 <td>{{user.org.name}}</td>

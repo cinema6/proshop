@@ -11,10 +11,13 @@
                 $log,
                 $q,
                 UserCtrl,
-                account,
+                Cinema6Service,
+                AccountService,
                 appData,
                 mockOrgs,
                 mockUser,
+                mockPolicies,
+                mockRoles,
                 ConfirmDialogService;
 
             function compileCtrl(id) {
@@ -25,7 +28,8 @@
                     $scope: $scope,
                     $location: $location,
                     $routeParams: $routeParams,
-                    account: account,
+                    Cinema6Service: Cinema6Service,
+                    AccountService: AccountService,
                     appData: appData,
                     ConfirmDialogService: ConfirmDialogService
                 });
@@ -119,36 +123,177 @@
                     }
                 };
 
-                account = {
-                    getOrg: jasmine.createSpy('account.getOrg'),
-                    getOrgs: jasmine.createSpy('account.getOrgs'),
-                    getUser: jasmine.createSpy('account.getUser'),
-                    putUser: jasmine.createSpy('account.putUser'),
-                    postUser: jasmine.createSpy('account.postUser'),
-                    deleteUser: jasmine.createSpy('account.deleteUser'),
-                    logoutUser: jasmine.createSpy('account.logoutUser')
+                Cinema6Service = {
+                    get: jasmine.createSpy('Cinema6Service.get'),
+                    getAll: jasmine.createSpy('Cinema6Service.getAll'),
+                    put: jasmine.createSpy('Cinema6Service.put'),
+                    post: jasmine.createSpy('Cinema6Service.post'),
+                    delete: jasmine.createSpy('Cinema6Service.delete')
                 };
 
-                mockOrgs = [
-                    {
-                        id: 'o-1',
-                        name: 'Org1'
-                    },
-                    {
-                        id: 'o-2',
-                        name: 'Org2'
-                    }
-                ];
+                AccountService = {
+                    freezeUser: jasmine.createSpy('AccountService.freezeUser')
+                }
 
+                mockOrgs = {
+                    meta: {
+                        items: {
+                            start: 1,
+                            end: 3,
+                            total: 3
+                        }
+                    },
+                    data: [
+                        {
+                            id: 'o-1',
+                            name: 'Org1'
+                        },
+                        {
+                            id: 'o-2',
+                            name: 'Org2'
+                        }
+                    ]
+                };
+
+                // user id decoarted with org, this happens in UserService
                 mockUser = {
                     id: 'u-1',
                     email: 'e@mail.com',
                     firstName: 'J',
                     lastName: 'F',
-                    org: 'o-1',
+                    org: {
+                        id: 'o-1'
+                    },
                     type: 'Publisher',
                     status: 'active'
                 };
+
+                /* jsHint quotmark:false */
+                mockRoles = {
+                    meta: {
+                        items: {
+                            start: 1,
+                            end: 3,
+                            total: 3
+                        }
+                    },
+                    data: [
+                        {
+                            "id": "r-111",
+                            "name": "StudioRole",
+                            "created": "2015-06-13T19:28:39.408Z",
+                            "lastUpdated": "2015-06-13T19:28:39.408Z",
+                            "status": "active",
+                            "policies": ["MiniReelCreator"]
+                        },
+                        {
+                            "id": "r-112",
+                            "name": "Creator",
+                            "created": "2015-06-13T19:28:39.408Z",
+                            "lastUpdated": "2015-06-13T19:28:39.408Z",
+                            "status": "active",
+                            "policies": ["MiniReelCreator","SelfieUser"]
+                        },
+                        {
+                            "id": "r-113",
+                            "name": "AdminRole",
+                            "created": "2015-06-13T19:28:39.408Z",
+                            "lastUpdated": "2015-06-13T19:28:39.408Z",
+                            "status": "active",
+                            "policies": ["MiniReelCreator","SelfieUser","CampaignManager"]
+                        }
+                    ]
+                };
+
+                mockPolicies = {
+                    meta: {
+                        items: {
+                            start: 1,
+                            end: 3,
+                            total: 3
+                        }
+                    },
+                    data: [
+                        {
+                            "id": "p-111",
+                            "name": "Campaign Manager",
+                            "created": "2014-06-13T19:28:39.408Z",
+                            "lastUpdated": "2014-06-13T19:28:39.408Z",
+                            "status": "active",
+                            "priority": 1,
+                            "permissions": {
+                                "campaigns": {
+                                    "read": "all",
+                                    "create": "all",
+                                    "edit": "all",
+                                    "delete": "all"
+                                }
+                            },
+                            "applications": [
+                                "e-selfie-experience",
+                                "e-studio-experience"
+                            ],
+                            "fieldValidation": {
+                                "campaigns": {
+                                    "status": {
+                                        "__allowed": true
+                                    },
+                                    "user": {
+                                        "__allowed": true
+                                    },
+                                    "org": {
+                                        "__allowed": true
+                                    },
+                                    "minViewTime": {
+                                        "__allowed": true
+                                    },
+                                    "pricing": {
+                                        "cost": {
+                                            "__allowed": true
+                                        }
+                                    },
+                                    "cards": {
+                                        "__allowed": true,
+                                        "__unchangeable": false
+                                    }
+                                }
+                            },
+                            "entitlements": {
+                                "canEditSomething": true
+                            }
+                        },
+                        {
+                            "id": "p-112",
+                            "name": "MiniReel Creator",
+                            "created": "2015-06-13T19:28:39.408Z",
+                            "lastUpdated": "2015-06-13T19:28:39.408Z",
+                            "status": "active",
+                            "applications": ["e-studio-experience"],
+                            "permissions": {},
+                            "fieldValidation": {}
+                        },
+                        {
+                            "id": "p-113",
+                            "name": "Selfie User",
+                            "created": "2015-07-13T19:28:39.408Z",
+                            "lastUpdated": "2015-07-13T19:28:39.408Z",
+                            "status": "active",
+                            "permissions": {
+                                "campaigns": {
+                                    "read": "org",
+                                    "create": "org",
+                                    "edit": "org",
+                                    "delete": "org"
+                                }
+                            },
+                            "fieldValidation": {
+                                "campaigns": {}
+                            },
+                            "applications": ["e-selfie-experience"]
+                        }
+                    ]
+                }
+                /* jshint quotmark:single */
 
                 ConfirmDialogService = {
                     display: jasmine.createSpy('ConfirmDialogService.display()'),
@@ -164,32 +309,27 @@
 
                     spyOn($location, 'path');
 
-                    account.getOrg.and.callFake(function(arg) {
-                        account.getOrg.deferred = $q.defer();
-                        var org = mockOrgs.filter(function(o) {
-                            return o.id === arg;
-                        })[0];
-                        account.getOrg.deferred.resolve(org);
-                        return account.getOrg.deferred.promise;
+                    Cinema6Service.get.deferred = $q.defer();
+                    Cinema6Service.get.and.returnValue(Cinema6Service.get.deferred.promise);
+
+                    Cinema6Service.getAll.orgs = $q.defer();
+                    Cinema6Service.getAll.roles = $q.defer();
+                    Cinema6Service.getAll.policies = $q.defer();
+                    Cinema6Service.getAll.and.callFake(function(entity) {
+                        return Cinema6Service.getAll[entity].promise;
                     });
 
-                    account.getOrgs.deferred = $q.defer();
-                    account.getOrgs.and.returnValue(account.getOrgs.deferred.promise);
+                    Cinema6Service.put.deferred = $q.defer();
+                    Cinema6Service.put.and.returnValue(Cinema6Service.put.deferred.promise);
 
-                    account.getUser.deferred = $q.defer();
-                    account.getUser.and.returnValue(account.getUser.deferred.promise);
+                    Cinema6Service.post.deferred = $q.defer();
+                    Cinema6Service.post.and.returnValue(Cinema6Service.post.deferred.promise);
 
-                    account.putUser.deferred = $q.defer();
-                    account.putUser.and.returnValue(account.putUser.deferred.promise);
+                    Cinema6Service.delete.deferred = $q.defer();
+                    Cinema6Service.delete.and.returnValue(Cinema6Service.delete.deferred.promise);
 
-                    account.postUser.deferred = $q.defer();
-                    account.postUser.and.returnValue(account.postUser.deferred.promise);
-
-                    account.deleteUser.deferred = $q.defer();
-                    account.deleteUser.and.returnValue(account.deleteUser.deferred.promise);
-
-                    account.logoutUser.deferred = $q.defer();
-                    account.logoutUser.and.returnValue(account.logoutUser.deferred.promise);
+                    AccountService.freezeUser.deferred = $q.defer();
+                    AccountService.freezeUser.and.returnValue(AccountService.freezeUser.deferred.promise);
 
                     $log.context = function(){ return $log; }
 
@@ -207,23 +347,31 @@
                         expect(UserCtrl).toBeDefined();
                     });
 
-                    it('should call the account service to get all orgs', function() {
-                        expect(account.getOrgs).toHaveBeenCalled();
+                    it('should call the Cinema6Service service to get all orgs', function() {
+                        expect(Cinema6Service.getAll).toHaveBeenCalledWith('orgs',{});
+                        expect(Cinema6Service.getAll).toHaveBeenCalledWith('roles',{});
+                        expect(Cinema6Service.getAll).toHaveBeenCalledWith('policies',{});
                     });
 
-                    it('should not call account.getUser', function() {
-                        expect(account.getUser).not.toHaveBeenCalled();
+                    it('should not call Cinema6Service.get', function() {
+                        expect(Cinema6Service.get).not.toHaveBeenCalled();
                     });
 
-                    it('should put the orgs and a new user with default config on the Ctrl', function() {
+                    it('should put the orgs, roles, policies and a new user with default config on the Ctrl', function() {
                         $scope.$apply(function() {
-                            account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
+                            Cinema6Service.getAll.orgs.resolve(angular.copy(mockOrgs));
+                            Cinema6Service.getAll.roles.resolve(angular.copy(mockRoles));
+                            Cinema6Service.getAll.policies.resolve(angular.copy(mockPolicies));
                         });
 
-                        expect(UserCtrl.orgs).toEqual(mockOrgs);
+                        expect(UserCtrl.orgs).toEqual(mockOrgs.data);
+                        expect(UserCtrl.roles).toEqual(mockRoles.data);
+                        expect(UserCtrl.policies).toEqual(mockPolicies.data);
                         expect(UserCtrl.user).toEqual({
                             status: 'active',
-                            type: 'Publisher',
+                            org: {},
+                            roles: [],
+                            policies: [],
                             config: {
                                 minireelinator: {
                                     minireelDefaults: {
@@ -247,51 +395,38 @@
                         expect(UserCtrl).toBeDefined();
                     });
 
-                    it('should call the account service to get all orgs', function() {
-                        expect(account.getOrgs).toHaveBeenCalled();
+                    it('should call the Cinema6Service service to get all orgs', function() {
+                        expect(Cinema6Service.getAll).toHaveBeenCalledWith('orgs',{});
+                        expect(Cinema6Service.getAll).toHaveBeenCalledWith('roles',{});
+                        expect(Cinema6Service.getAll).toHaveBeenCalledWith('policies',{});
                     });
 
-                    it('should call account.getUser', function() {
-                        expect(account.getUser).toHaveBeenCalledWith('u-1');
+                    it('should call Cinema6Service.get', function() {
+                        expect(Cinema6Service.get).toHaveBeenCalledWith('users','u-1');
                     });
 
-                    it('should put the orgs on the Ctrl', function() {
+                    it('should put the orgs, roles and policies on the Ctrl', function() {
                         $scope.$apply(function() {
-                            account.getUser.deferred.resolve(angular.copy(mockUser));
-                            account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
+                            Cinema6Service.get.deferred.resolve(angular.copy(mockUser));
+                            Cinema6Service.getAll.orgs.resolve(angular.copy(mockOrgs));
+                            Cinema6Service.getAll.roles.resolve(angular.copy(mockRoles));
+                            Cinema6Service.getAll.policies.resolve(angular.copy(mockPolicies));
                         });
 
-                        expect(UserCtrl.orgs).toEqual(mockOrgs);
+                        expect(UserCtrl.orgs).toEqual(mockOrgs.data);
+                        expect(UserCtrl.roles).toEqual(mockRoles.data);
+                        expect(UserCtrl.policies).toEqual(mockPolicies.data);
                     });
 
                     it('should put the User\'s Org on the Ctrl', function() {
                         $scope.$apply(function() {
-                            account.getUser.deferred.resolve(angular.copy(mockUser));
-                            account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
+                            Cinema6Service.get.deferred.resolve(angular.copy(mockUser));
+                            Cinema6Service.getAll.orgs.resolve(angular.copy(mockOrgs));
+                            Cinema6Service.getAll.roles.resolve(angular.copy(mockRoles));
+                            Cinema6Service.getAll.policies.resolve(angular.copy(mockPolicies));
                         });
 
-                        expect(UserCtrl.org).toEqual(mockOrgs[0]);
-                    });
-
-                    it('should enable the adConfig checkboxes if the user permissions indicate', function() {
-                        var _user = angular.extend(mockUser, {
-                            permissions: {
-                                orgs: {
-                                    editAdConfig: 'own'
-                                },
-                                experiences: {
-                                    editAdConfig: 'org'
-                                }
-                            }
-                        });
-
-                        $scope.$apply(function() {
-                            account.getUser.deferred.resolve(angular.copy(_user));
-                            account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
-                        });
-
-                        expect(UserCtrl.editAdConfigOptions[0].enabled).toBe(true);
-                        expect(UserCtrl.editAdConfigOptions[1].enabled).toBe(true);
+                        expect(UserCtrl.org).toEqual(mockOrgs.data[0]);
                     });
 
                     describe('if user has config', function() {
@@ -310,18 +445,20 @@
                             });
 
                             $scope.$apply(function() {
-                                account.getUser.deferred.resolve(angular.copy(_user));
-                                account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
+                                Cinema6Service.get.deferred.resolve(angular.copy(_user));
+                                Cinema6Service.getAll.orgs.resolve(angular.copy(mockOrgs));
+                                Cinema6Service.getAll.roles.resolve(angular.copy(mockRoles));
+                                Cinema6Service.getAll.policies.resolve(angular.copy(mockPolicies));
                             });
 
-                            expect(UserCtrl.user).toEqual(_user);
+                            expect(UserCtrl.user.config).toEqual(_user.config);
                         });
                     });
 
                     describe('if user does not have config', function() {
                         describe('if org has config', function() {
                             it('should use the Org config', function() {
-                                var _org = angular.extend(mockOrgs[0], {
+                                var _org = angular.extend(mockOrgs.data[0], {
                                     config: {
                                         minireelinator: {
                                             minireelDefaults: {
@@ -334,9 +471,16 @@
                                     }
                                 });
 
+                                var _orgs = {
+                                    meta:{},
+                                    data: [_org]
+                                };
+
                                 $scope.$apply(function() {
-                                    account.getUser.deferred.resolve(angular.copy(mockUser));
-                                    account.getOrgs.deferred.resolve(angular.copy([_org]));
+                                    Cinema6Service.get.deferred.resolve(angular.copy(mockUser));
+                                    Cinema6Service.getAll.orgs.resolve(angular.copy(_orgs));
+                                    Cinema6Service.getAll.roles.resolve(angular.copy(mockRoles));
+                                    Cinema6Service.getAll.policies.resolve(angular.copy(mockPolicies));
                                 });
 
                                 expect(UserCtrl.user.config).toEqual(_org.config);
@@ -346,22 +490,22 @@
                         describe('if org does not have config', function() {
                             it('should set defaults', function() {
                                 $scope.$apply(function() {
-                                    account.getUser.deferred.resolve(angular.copy(mockUser));
-                                    account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
+                                    Cinema6Service.get.deferred.resolve(angular.copy(mockUser));
+                                    Cinema6Service.getAll.orgs.resolve(angular.copy(mockOrgs));
+                                    Cinema6Service.getAll.roles.resolve(angular.copy(mockRoles));
+                                    Cinema6Service.getAll.policies.resolve(angular.copy(mockPolicies));
                                 });
 
-                                expect(UserCtrl.user).toEqual(angular.extend(mockUser, {
-                                    config: {
-                                        minireelinator: {
-                                            minireelDefaults: {
-                                                splash: {
-                                                    ratio: '3-2',
-                                                    theme: 'img-text-overlay'
-                                                }
+                                expect(UserCtrl.user.config).toEqual({
+                                    minireelinator: {
+                                        minireelDefaults: {
+                                            splash: {
+                                                ratio: '3-2',
+                                                theme: 'img-text-overlay'
                                             }
                                         }
                                     }
-                                }));
+                                });
                             });
                         });
                     });
@@ -369,170 +513,109 @@
             });
 
             describe('methods', function() {
-                describe('saveUser()', function() {
+                describe('add(prop, item)', function() {
+                    beforeEach(function() {
+                        compileCtrl();
+
+                        $scope.$apply(function() {
+                            Cinema6Service.getAll.orgs.resolve(angular.copy(mockOrgs));
+                            Cinema6Service.getAll.roles.resolve(angular.copy(mockRoles));
+                            Cinema6Service.getAll.policies.resolve(angular.copy(mockPolicies));
+                        });
+                    });
+
+                    describe('when the item already exists', function() {
+                        it('should not add it', function() {
+                            expect(UserCtrl.user.roles).toEqual([]);
+                            expect(UserCtrl.user.policies).toEqual([]);
+
+                            UserCtrl.add('roles', mockRoles.data[0].name);
+                            UserCtrl.add('roles', mockRoles.data[0].name);
+                            UserCtrl.add('roles', mockRoles.data[0].name);
+                            UserCtrl.add('roles', mockRoles.data[0].name);
+
+                            expect(UserCtrl.user.roles).toEqual([mockRoles.data[0].name]);
+                        });
+                    });
+
+                    describe('when the item does not exist', function() {
+                        it('should add it to the array', function() {
+                            expect(UserCtrl.user.roles).toEqual([]);
+                            expect(UserCtrl.user.policies).toEqual([]);
+
+                            UserCtrl.add('policies', mockPolicies.data[1].name);
+
+                            expect(UserCtrl.user.policies).toEqual([mockPolicies.data[1].name]);
+                        });
+                    });
+                });
+
+                describe('remove(prop, index)', function() {
+                    it('should remove the item at the provided index', function() {
+                        compileCtrl();
+
+                        $scope.$apply(function() {
+                            Cinema6Service.getAll.orgs.resolve(angular.copy(mockOrgs));
+                            Cinema6Service.getAll.roles.resolve(angular.copy(mockRoles));
+                            Cinema6Service.getAll.policies.resolve(angular.copy(mockPolicies));
+                        });
+
+                        UserCtrl.add('roles', mockRoles.data[0].name);
+                        UserCtrl.add('roles', mockRoles.data[1].name);
+                        UserCtrl.add('roles', mockRoles.data[2].name);
+
+                        expect(UserCtrl.user.roles).toEqual([mockRoles.data[0].name, mockRoles.data[1].name, mockRoles.data[2].name]);
+
+                        UserCtrl.remove('roles',1);
+
+                        expect(UserCtrl.user.roles).toEqual([mockRoles.data[0].name, mockRoles.data[2].name]);
+                    });
+                });
+
+                describe('save()', function() {
                     describe('when updating a user', function() {
                         beforeEach(function() {
                             compileCtrl('u-1');
 
                             $scope.$apply(function() {
-                                account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
-                                account.getUser.deferred.resolve(angular.copy(mockUser));
+                                Cinema6Service.get.deferred.resolve(angular.copy(mockUser));
+                                Cinema6Service.getAll.orgs.resolve(angular.copy(mockOrgs));
+                                Cinema6Service.getAll.roles.resolve(angular.copy(mockRoles));
+                                Cinema6Service.getAll.policies.resolve(angular.copy(mockPolicies));
                             });
                         });
 
                         it('should PUT the user', function() {
-                            UserCtrl.saveUser();
+                            UserCtrl.save();
 
-                            expect(account.putUser).toHaveBeenCalledWith(UserCtrl.user.id, {
+                            expect(Cinema6Service.put).toHaveBeenCalledWith('users',UserCtrl.user.id, {
                                 firstName: UserCtrl.user.firstName,
                                 lastName: UserCtrl.user.lastName,
-                                org: UserCtrl.user.org,
+                                org: UserCtrl.user.org.id,
                                 config: UserCtrl.user.config,
-                                type: UserCtrl.user.type,
-                                status: 'active',
-                                applications: ['e-MRinator'],
-                                permissions: {
-                                    elections: {
-                                        read    : 'org',
-                                        create  : 'org',
-                                        edit    : 'org',
-                                        delete  : 'org'
-                                    },
-                                    experiences: {
-                                        read    : 'org',
-                                        create  : 'org',
-                                        edit    : 'org',
-                                        delete  : 'org'
-                                    },
-                                    users: {
-                                        read    : 'org',
-                                        edit    : 'own'
-                                    },
-                                    orgs: {
-                                        read    : 'own',
-                                        edit    : 'own'
-                                    },
-                                    sites: {
-                                        read    : 'org'
-                                    }
-                                }
-                            });
-                        });
-
-                        describe('when role is Admin', function() {
-                            it('should POST permissions with scope of "all" and enable the editaAdConfig settings', function() {
-                                UserCtrl.role = 'Admin';
-
-                                UserCtrl.saveUser();
-
-                                expect(account.putUser.calls.mostRecent().args[1].type).toEqual('Publisher');
-                                expect(account.putUser.calls.mostRecent().args[1].applications).toEqual(['e-Proshop','e-MRinator']);
-                                expect(account.putUser.calls.mostRecent().args[1].permissions).toEqual({
-                                    elections: {
-                                        read    : 'all',
-                                        create  : 'all',
-                                        edit    : 'all',
-                                        delete  : 'all'
-                                    },
-                                    experiences: {
-                                        read    : 'all',
-                                        create  : 'all',
-                                        edit    : 'all',
-                                        delete  : 'all',
-                                        editAdConfig: 'all',
-                                        editSponsorships: 'all'
-                                    },
-                                    users: {
-                                        read    : 'all',
-                                        create  : 'all',
-                                        edit    : 'all',
-                                        delete  : 'all'
-                                    },
-                                    orgs: {
-                                        read    : 'all',
-                                        create  : 'all',
-                                        edit    : 'all',
-                                        delete  : 'all',
-                                        editAdConfig: 'all'
-                                    },
-                                    sites: {
-                                        read    : 'all',
-                                        create  : 'all',
-                                        edit    : 'all',
-                                        delete  : 'all'
-                                    },
-                                    cards: {
-                                        read    : 'all',
-                                        create  : 'all',
-                                        edit    : 'all',
-                                        delete  : 'all'
-                                    },
-                                    categories: {
-                                        read    : 'all',
-                                        create  : 'all',
-                                        edit    : 'all',
-                                        delete  : 'all'
-                                    }
-                                });
-                            });
-                        });
-
-                        describe('when role is Publisher', function() {
-                            it('should POST the editAdConfig settings if set', function() {
-                                UserCtrl.role = 'Publisher';
-
-                                UserCtrl.editAdConfigOptions[0].enabled = true;
-                                UserCtrl.editAdConfigOptions[1].enabled = true;
-
-                                UserCtrl.saveUser();
-
-                                expect(account.putUser.calls.mostRecent().args[1].permissions.experiences.editAdConfig).toEqual('org');
-                                expect(account.putUser.calls.mostRecent().args[1].permissions.orgs.editAdConfig).toEqual('own');
-                                expect(account.putUser.calls.mostRecent().args[1].type).toEqual('Publisher');
-
-                                UserCtrl.editAdConfigOptions[0].enabled = false;
-                                UserCtrl.editAdConfigOptions[1].enabled = false;
-
-                                UserCtrl.saveUser();
-
-                                expect(account.putUser.calls.mostRecent().args[1].permissions.experiences.editAdConfig).toBeUndefined();
-                                expect(account.putUser.calls.mostRecent().args[1].permissions.orgs.editAdConfig).toBeUndefined();
-                                expect(account.putUser.calls.mostRecent().args[1].type).toEqual('Publisher');
-                            });
-                        });
-
-                        describe('when role is ContentProvider', function() {
-                            it('should POST default user permissions and disable editAdConfig settings', function() {
-                                UserCtrl.role = 'ContentProvider';
-
-                                UserCtrl.editAdConfigOptions[0].enabled = true;
-                                UserCtrl.editAdConfigOptions[1].enabled = true;
-
-                                UserCtrl.saveUser();
-
-                                expect(account.putUser.calls.mostRecent().args[1].permissions.experiences.editAdConfig).toBeUndefined();
-                                expect(account.putUser.calls.mostRecent().args[1].permissions.orgs.editAdConfig).toBeUndefined();
-                                expect(account.putUser.calls.mostRecent().args[1].type).toEqual('ContentProvider');
+                                policies: [],
+                                roles: [],
+                                status: 'active'
                             });
                         });
 
                         it('on success should redirect to /users page', function() {
-                            UserCtrl.saveUser();
+                            UserCtrl.save();
 
                             $scope.$apply(function() {
-                                account.putUser.deferred.resolve(UserCtrl.user);
+                                Cinema6Service.put.deferred.resolve(UserCtrl.user);
                             });
 
                             expect($location.path).toHaveBeenCalledWith('/users');
                         });
 
                         it('on error should stay on the edit page and display an error dialog', function() {
-                            UserCtrl.saveUser();
+                            UserCtrl.save();
 
                             expect($scope.message).toBe(null);
 
                             $scope.$apply(function() {
-                                account.putUser.deferred.reject();
+                                Cinema6Service.put.deferred.reject();
                             });
 
                             expect($location.path).not.toHaveBeenCalledWith('/users');
@@ -545,8 +628,10 @@
                             compileCtrl();
 
                             $scope.$apply(function() {
-                                account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
-                                account.getUser.deferred.resolve(angular.copy(mockUser));
+                                Cinema6Service.get.deferred.resolve(angular.copy(mockUser));
+                                Cinema6Service.getAll.orgs.resolve(angular.copy(mockOrgs));
+                                Cinema6Service.getAll.roles.resolve(angular.copy(mockRoles));
+                                Cinema6Service.getAll.policies.resolve(angular.copy(mockPolicies));
                             });
 
                             UserCtrl.org = UserCtrl.orgs[0];
@@ -556,14 +641,12 @@
                             UserCtrl.user.password = 'secret';
                             UserCtrl.user.firstName = 'Test';
                             UserCtrl.user.lastName = 'Name';
-
-                            UserCtrl.role = 'Publisher';
                         });
 
                         it('should POST the user', function() {
-                            UserCtrl.saveUser();
+                            UserCtrl.save();
 
-                            expect(account.postUser).toHaveBeenCalledWith({
+                            expect(Cinema6Service.post).toHaveBeenCalledWith('users', {
                                 email: 'foo@bar.com',
                                 password: 'secret',
                                 firstName: 'Test',
@@ -579,151 +662,29 @@
                                         }
                                     }
                                 },
-                                type: 'Publisher',
-                                status: 'active',
-                                applications: ['e-MRinator'],
-                                permissions: {
-                                    elections: {
-                                        read    : 'org',
-                                        create  : 'org',
-                                        edit    : 'org',
-                                        delete  : 'org'
-                                    },
-                                    experiences: {
-                                        read    : 'org',
-                                        create  : 'org',
-                                        edit    : 'org',
-                                        delete  : 'org'
-                                    },
-                                    users: {
-                                        read    : 'org',
-                                        edit    : 'own'
-                                    },
-                                    orgs: {
-                                        read    : 'own',
-                                        edit    : 'own'
-                                    },
-                                    sites: {
-                                        read    : 'org'
-                                    }
-                                }
-                            });
-                        });
-
-                        describe('when role is Admin', function() {
-                            it('should POST permissions with scope of "all" and enable the editaAdConfig settings', function() {
-                                UserCtrl.role = 'Admin';
-
-                                UserCtrl.saveUser();
-
-                                expect(account.postUser.calls.mostRecent().args[0].type).toEqual('Publisher');
-                                expect(account.postUser.calls.mostRecent().args[0].applications).toEqual(['e-Proshop','e-MRinator']);
-                                expect(account.postUser.calls.mostRecent().args[0].permissions).toEqual({
-                                    elections: {
-                                        read    : 'all',
-                                        create  : 'all',
-                                        edit    : 'all',
-                                        delete  : 'all'
-                                    },
-                                    experiences: {
-                                        read    : 'all',
-                                        create  : 'all',
-                                        edit    : 'all',
-                                        delete  : 'all',
-                                        editAdConfig: 'all',
-                                        editSponsorships: 'all'
-                                    },
-                                    users: {
-                                        read    : 'all',
-                                        create  : 'all',
-                                        edit    : 'all',
-                                        delete  : 'all'
-                                    },
-                                    orgs: {
-                                        read    : 'all',
-                                        create  : 'all',
-                                        edit    : 'all',
-                                        delete  : 'all',
-                                        editAdConfig: 'all'
-                                    },
-                                    sites: {
-                                        read    : 'all',
-                                        create  : 'all',
-                                        edit    : 'all',
-                                        delete  : 'all'
-                                    },
-                                    cards: {
-                                        read    : 'all',
-                                        create  : 'all',
-                                        edit    : 'all',
-                                        delete  : 'all'
-                                    },
-                                    categories: {
-                                        read    : 'all',
-                                        create  : 'all',
-                                        edit    : 'all',
-                                        delete  : 'all'
-                                    }
-                                });
-                            });
-                        });
-
-                        describe('when role is Publisher', function() {
-                            it('should POST the editAdConfig settings if set', function() {
-                                UserCtrl.role = 'Publisher';
-
-                                UserCtrl.editAdConfigOptions[0].enabled = true;
-                                UserCtrl.editAdConfigOptions[1].enabled = true;
-
-                                UserCtrl.saveUser();
-
-                                expect(account.postUser.calls.mostRecent().args[0].permissions.experiences.editAdConfig).toEqual('org');
-                                expect(account.postUser.calls.mostRecent().args[0].permissions.orgs.editAdConfig).toEqual('own');
-                                expect(account.postUser.calls.mostRecent().args[0].type).toEqual('Publisher');
-
-                                UserCtrl.editAdConfigOptions[0].enabled = false;
-                                UserCtrl.editAdConfigOptions[1].enabled = false;
-
-                                UserCtrl.saveUser();
-
-                                expect(account.postUser.calls.mostRecent().args[0].permissions.experiences.editAdConfig).toBeUndefined();
-                                expect(account.postUser.calls.mostRecent().args[0].permissions.orgs.editAdConfig).toBeUndefined();
-                                expect(account.postUser.calls.mostRecent().args[0].type).toEqual('Publisher');
-                            });
-                        });
-
-                        describe('when role is ContentProvider', function() {
-                            it('should POST default user permissions and disable editAdConfig settings', function() {
-                                UserCtrl.role = 'ContentProvider';
-
-                                UserCtrl.editAdConfigOptions[0].enabled = true;
-                                UserCtrl.editAdConfigOptions[1].enabled = true;
-
-                                UserCtrl.saveUser();
-
-                                expect(account.postUser.calls.mostRecent().args[0].permissions.experiences.editAdConfig).toBeUndefined();
-                                expect(account.postUser.calls.mostRecent().args[0].permissions.orgs.editAdConfig).toBeUndefined();
-                                expect(account.postUser.calls.mostRecent().args[0].type).toEqual('ContentProvider');
+                                policies: [],
+                                roles: [],
+                                status: 'active'
                             });
                         });
 
                         it('on success should put a message on the scope, set the action, and reload org and user data', function() {
-                            UserCtrl.saveUser();
+                            UserCtrl.save();
 
                             $scope.$apply(function() {
-                                account.postUser.deferred.resolve(UserCtrl.user);
+                                Cinema6Service.post.deferred.resolve(UserCtrl.user);
                             });
 
                             expect($location.path).toHaveBeenCalledWith('/users');
                         });
 
                         it('on error should stay on the edit page and display an error message', function() {
-                            UserCtrl.saveUser();
+                            UserCtrl.save();
 
                             expect($scope.message).toBe(null);
 
                             $scope.$apply(function() {
-                                account.postUser.deferred.reject();
+                                Cinema6Service.post.deferred.reject();
                             });
 
                             expect(ConfirmDialogService.display).toHaveBeenCalled();
@@ -731,194 +692,111 @@
                     });
                 });
 
-                describe('confirmDelete()', function() {
+                describe('delete()', function() {
                     beforeEach(function() {
                         compileCtrl('u-1');
 
                         $scope.$apply(function() {
-                            account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
-                            account.getUser.deferred.resolve(angular.copy(mockUser));
+                            Cinema6Service.get.deferred.resolve(angular.copy(mockUser));
+                            Cinema6Service.getAll.orgs.resolve(angular.copy(mockOrgs));
+                            Cinema6Service.getAll.roles.resolve(angular.copy(mockRoles));
+                            Cinema6Service.getAll.policies.resolve(angular.copy(mockPolicies));
                         });
                     });
 
                     it('should DELETE the user when confirmed', function() {
-                        UserCtrl.confirmDelete();
+                        UserCtrl.delete();
 
                         ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm();
 
-                        expect(account.deleteUser).toHaveBeenCalledWith(UserCtrl.user);
+                        expect(Cinema6Service.delete).toHaveBeenCalledWith('users',UserCtrl.user.id);
                     });
 
                     it('should not DELETE the user if canceled', function() {
-                        UserCtrl.confirmDelete();
+                        UserCtrl.delete();
 
                         ConfirmDialogService.display.calls.mostRecent().args[0].onCancel();
 
-                        expect(account.deleteUser).not.toHaveBeenCalled();
+                        expect(Cinema6Service.delete).not.toHaveBeenCalled();
                     });
 
                     it('on success should', function() {
-                        UserCtrl.confirmDelete();
+                        UserCtrl.delete();
 
                         ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm();
 
                         $scope.$apply(function() {
-                            account.deleteUser.deferred.resolve();
+                            Cinema6Service.delete.deferred.resolve();
                         });
 
                         expect($location.path).toHaveBeenCalledWith('/users');
                     });
 
                     it('on error', function() {
-                        UserCtrl.confirmDelete();
+                        UserCtrl.delete();
 
                         ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm();
 
                         $scope.$apply(function() {
-                            account.deleteUser.deferred.reject();
+                            Cinema6Service.delete.deferred.reject();
                         });
 
                         expect(ConfirmDialogService.display.calls.count()).toBe(2);
                     });
                 });
 
-                describe('confirmFreeze()', function() {
+                describe('freeze()', function() {
                     beforeEach(function() {
                         compileCtrl('u-1');
 
                         $scope.$apply(function() {
-                            account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
-                            account.getUser.deferred.resolve(angular.copy(mockUser));
+                            Cinema6Service.get.deferred.resolve(angular.copy(mockUser));
+                            Cinema6Service.getAll.orgs.resolve(angular.copy(mockOrgs));
+                            Cinema6Service.getAll.roles.resolve(angular.copy(mockRoles));
+                            Cinema6Service.getAll.policies.resolve(angular.copy(mockPolicies));
                         });
                     });
 
                     it('should Freeze the user when confirmed', function() {
-                        UserCtrl.confirmFreeze();
+                        UserCtrl.freeze();
 
                         ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm();
 
-                        expect(account.putUser).toHaveBeenCalledWith(UserCtrl.user.id, {status:'inactive'});
-                        expect(account.logoutUser).toHaveBeenCalledWith(UserCtrl.user.id);
+                        expect(AccountService.freezeUser).toHaveBeenCalledWith(UserCtrl.user.id);
                     });
 
                     it('should not Freeze the user if canceled', function() {
-                        UserCtrl.confirmFreeze();
+                        UserCtrl.freeze();
 
                         ConfirmDialogService.display.calls.mostRecent().args[0].onCancel();
 
-                        expect(account.putUser).not.toHaveBeenCalled();
-                        expect(account.logoutUser).not.toHaveBeenCalled();
+                        expect(AccountService.freezeUser).not.toHaveBeenCalledWith(UserCtrl.user.id);
                     });
 
                     it('on success should', function() {
-                        UserCtrl.confirmFreeze();
+                        UserCtrl.freeze();
 
                         ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm();
 
                         expect($scope.message).toBe(null);
 
                         $scope.$apply(function() {
-                            account.putUser.deferred.resolve();
-                            account.logoutUser.deferred.resolve();
+                            AccountService.freezeUser.deferred.resolve();
                         });
 
                         expect($scope.message).toBe('Successfully froze user: ' + UserCtrl.user.email + '.');
                     });
 
                     it('on error', function() {
-                        UserCtrl.confirmFreeze();
+                        UserCtrl.freeze();
 
                         ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm();
 
                         $scope.$apply(function() {
-                            account.putUser.deferred.reject();
+                            AccountService.freezeUser.deferred.reject();
                         });
 
                         expect(ConfirmDialogService.display.calls.count()).toBe(2);
-                    });
-                });
-
-                describe('cancelOrgChange()', function() {
-                    it('should reset the Ctrl.org to match the User\'s Org', function() {
-                        compileCtrl('u-1');
-                        $scope.$apply(function() {
-                            account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
-                            account.getUser.deferred.resolve(angular.copy(mockUser));
-                        });
-
-                        UserCtrl.org = mockOrgs[1];
-
-                        UserCtrl.cancelOrgChange();
-
-                        expect(UserCtrl.org).toEqual(mockOrgs[0]);
-                    });
-                });
-
-                describe('confirmOrgChange()', function() {
-                    it('should set the User\'s Org', function() {
-                        compileCtrl('u-1');
-                        $scope.$apply(function() {
-                            account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
-                            account.getUser.deferred.resolve(angular.copy(mockUser));
-                        });
-
-                        UserCtrl.org = mockOrgs[1];
-
-                        UserCtrl.confirmOrgChange();
-
-                        expect(UserCtrl.user.org).toBe(mockOrgs[1].id);
-                    });
-
-                    describe('if new Org has a config', function() {
-                        it('should set the User\'s config to match', function() {
-                            mockOrgs[1].config = {
-                                minireelinator: {
-                                    minireelDefaults: {
-                                        splash: {
-                                            ratio: '6-5',
-                                            theme: 'img-only'
-                                        }
-                                    }
-                                }
-                            };
-
-                            compileCtrl('u-1');
-                            $scope.$apply(function() {
-                                account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
-                                account.getUser.deferred.resolve(angular.copy(mockUser));
-                            });
-
-                            UserCtrl.org = mockOrgs[1];
-
-                            UserCtrl.confirmOrgChange();
-
-                            expect(UserCtrl.user.config).toEqual(mockOrgs[1].config);
-                        });
-                    });
-
-                    describe('if new Org does not have a config', function() {
-                        it('should set the User\'s config to match', function() {
-                            compileCtrl('u-1');
-                            $scope.$apply(function() {
-                                account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
-                                account.getUser.deferred.resolve(angular.copy(mockUser));
-                            });
-
-                            UserCtrl.org = mockOrgs[1];
-
-                            UserCtrl.confirmOrgChange();
-
-                            expect(UserCtrl.user.config).toEqual({
-                                minireelinator: {
-                                    minireelDefaults: {
-                                        splash: {
-                                            ratio: '3-2',
-                                            theme: 'img-text-overlay'
-                                        }
-                                    }
-                                }
-                            });
-                        });
                     });
                 });
             });
@@ -941,77 +819,6 @@
                     });
                 });
 
-                describe('role', function() {
-                    describe('when editing a user', function() {
-                        it('should equal user.type if permissions are not set to "all"', function() {
-                            mockUser.type = 'ContentProvider';
-                            compileCtrl('u-1');
-                            $scope.$apply(function() {
-                                account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
-                                account.getUser.deferred.resolve(angular.copy(mockUser));
-                            });
-
-                            expect(UserCtrl.role).toBe('ContentProvider');
-                        });
-
-                        it('should be Admin if all permissions are set to "all"', function() {
-                            mockUser.permissions = {
-                                elections: {
-                                    read    : 'all',
-                                    create  : 'all',
-                                    edit    : 'all',
-                                    delete  : 'all'
-                                },
-                                experiences: {
-                                    read    : 'all',
-                                    create  : 'all',
-                                    edit    : 'all',
-                                    delete  : 'all',
-                                    editAdConfig: 'all',
-                                    editSponsorships: 'all'
-                                },
-                                users: {
-                                    read    : 'all',
-                                    create  : 'all',
-                                    edit    : 'all',
-                                    delete  : 'all'
-                                },
-                                orgs: {
-                                    read    : 'all',
-                                    create  : 'all',
-                                    edit    : 'all',
-                                    delete  : 'all',
-                                    editAdConfig: 'all'
-                                },
-                                sites: {
-                                    read    : 'all',
-                                    create  : 'all',
-                                    edit    : 'all',
-                                    delete  : 'all',
-                                }
-                            };
-
-                            compileCtrl('u-1');
-                            $scope.$apply(function() {
-                                account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
-                                account.getUser.deferred.resolve(angular.copy(mockUser));
-                            });
-
-                            expect(UserCtrl.role).toBe('Admin');
-                        });
-                    });
-                    describe('when creating a user', function() {
-                        it('should default to "Publisher"', function() {
-                            compileCtrl();
-                            $scope.$apply(function() {
-                                account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
-                                account.getUser.deferred.resolve(angular.copy(mockUser));
-                            });
-                            expect(UserCtrl.role).toBe('Publisher');
-                        });
-                    });
-                });
-
                 describe('loading', function() {
                     beforeEach(function() {
                         compileCtrl();
@@ -1023,8 +830,10 @@
 
                     it('should be false after all data promises resolve', function() {
                         $scope.$apply(function() {
-                            account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
-                            account.getUser.deferred.resolve(angular.copy(mockUser));
+                            Cinema6Service.get.deferred.resolve(angular.copy(mockUser));
+                            Cinema6Service.getAll.orgs.resolve(angular.copy(mockOrgs));
+                            Cinema6Service.getAll.roles.resolve(angular.copy(mockRoles));
+                            Cinema6Service.getAll.policies.resolve(angular.copy(mockPolicies));
                         });
 
                         expect(UserCtrl.loading).toBe(false);
@@ -1032,8 +841,10 @@
 
                     it('should be false even if there are errors loading data', function() {
                         $scope.$apply(function() {
-                            account.getOrgs.deferred.reject();
-                            account.getUser.deferred.reject();
+                            Cinema6Service.get.deferred.reject();
+                            Cinema6Service.getAll.orgs.reject();
+                            Cinema6Service.getAll.roles.reject();
+                            Cinema6Service.getAll.policies.reject();
                         });
 
                         expect(UserCtrl.loading).toBe(false);
@@ -1049,18 +860,17 @@
                         beforeEach(function() {
                             compileCtrl('u-1');
                             $scope.$apply(function() {
-                                account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
-                                account.getUser.deferred.resolve(angular.copy(mockUser));
+                                Cinema6Service.get.deferred.resolve(angular.copy(mockUser));
+                                Cinema6Service.getAll.orgs.resolve(angular.copy(mockOrgs));
+                                Cinema6Service.getAll.roles.resolve(angular.copy(mockRoles));
+                                Cinema6Service.getAll.policies.resolve(angular.copy(mockPolicies));
                             });
 
-                            UserCtrl.org = mockOrgs[1];
+                            UserCtrl.org = mockOrgs.data[1];
                             $scope.$digest();
 
                             onAffirm = ConfirmDialogService.display.calls.mostRecent().args[0].onAffirm;
                             onCancel = ConfirmDialogService.display.calls.mostRecent().args[0].onCancel;
-
-                            spyOn(UserCtrl, 'confirmOrgChange');
-                            spyOn(UserCtrl, 'cancelOrgChange');
                         });
 
                         it('should warn about minireels staying with the Org', function() {
@@ -1068,23 +878,63 @@
                         });
 
                         describe('onAffirm()', function() {
-                            it('should call confirmOrgChange()', function() {
+                            it('should put the new org on the user', function() {
                                 onAffirm();
-                                expect(UserCtrl.confirmOrgChange).toHaveBeenCalled();
+                                expect(UserCtrl.user.org).toEqual(mockOrgs.data[1]);
+                            });
+
+                            describe('when the new Org has config', function() {
+                                it('should add the Org config to the user', function() {
+                                    expect(UserCtrl.user.config).toEqual({
+                                        minireelinator: {
+                                            minireelDefaults: {
+                                                splash: {
+                                                    ratio: '3-2',
+                                                    theme: 'img-text-overlay'
+                                                }
+                                            }
+                                        }
+                                    });
+
+                                    mockOrgs.data[1].config = {
+                                        minireelinator: {
+                                            minireelDefaults: {
+                                                splash: {
+                                                    ratio: '6-5',
+                                                    theme: 'img-only'
+                                                }
+                                            }
+                                        }
+                                    };
+
+                                    onAffirm();
+
+                                    expect(UserCtrl.user.config).toEqual({
+                                        minireelinator: {
+                                            minireelDefaults: {
+                                                splash: {
+                                                    ratio: '6-5',
+                                                    theme: 'img-only'
+                                                }
+                                            }
+                                        }
+                                    });
+                                });
                             });
                         });
 
                         describe('onCancel()', function() {
                             it('should call cancelOrgChange()', function() {
                                 onCancel();
-                                expect(UserCtrl.cancelOrgChange).toHaveBeenCalled();
+                                expect(UserCtrl.user.org.id).toEqual(mockOrgs.data[0].id);
+                                expect(UserCtrl.org).toEqual(mockOrgs.data[0]);
                             });
                         });
                     });
 
                     describe('when creating a User', function() {
                         it('should reset the branding and change the config to match the new Org', function() {
-                            mockOrgs[1].config = {
+                            mockOrgs.data[1].config = {
                                 minireelinator: {
                                     minireelDefaults: {
                                         splash: {
@@ -1097,8 +947,10 @@
 
                             compileCtrl();
                             $scope.$apply(function() {
-                                account.getOrgs.deferred.resolve(angular.copy(mockOrgs));
-                                account.getUser.deferred.resolve(angular.copy(mockUser));
+                                Cinema6Service.get.deferred.resolve(angular.copy(mockUser));
+                                Cinema6Service.getAll.orgs.resolve(angular.copy(mockOrgs));
+                                Cinema6Service.getAll.roles.resolve(angular.copy(mockRoles));
+                                Cinema6Service.getAll.policies.resolve(angular.copy(mockPolicies));
                             });
                             UserCtrl.user.branding = 'test_branding';
 
@@ -1113,7 +965,7 @@
                                 }
                             });
 
-                            UserCtrl.org = mockOrgs[1];
+                            UserCtrl.org = mockOrgs.data[1];
                             $scope.$digest();
 
                             expect(UserCtrl.user.config).toEqual({

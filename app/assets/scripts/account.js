@@ -165,6 +165,7 @@ define(['angular','c6ui'], function(angular,c6ui){
             return org;
         }
 
+        // TODO: move to proshop experience!
         this.waterfallData = {
             settings: [
                 {
@@ -216,6 +217,7 @@ define(['angular','c6ui'], function(angular,c6ui){
             ]
         };
 
+        // TODO: move to proshop experience!
         this.adConfig = {
             types: [
                 {
@@ -342,6 +344,7 @@ define(['angular','c6ui'], function(angular,c6ui){
             ]
         };
 
+        // TODO: move to proshop experience!
         this.defaultSplashOptions = [
             {
                 title: 'Default Splash Ratio',

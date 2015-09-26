@@ -6,6 +6,8 @@
     Filtering by column heading and searching by name now loads new
     results from the server.
   * [FEATURE]: Policy Manager
+  * [FEATURE]: Roles Manager
+  * [FEATURE]: Update User Manager to use roles and policies
 
 ## v0.7.4 (June 15, 2015)
 

@@ -432,16 +432,180 @@ define(['angular'], function(angular) {
             };
         }])
 
-        .service('Cinema6Service', ['$timeout','$q','CategoryService','CustomerService','AdvertiserService',
-                                    'PolicyService','RoleService',
-        function                   ( $timeout , $q , CategoryService , CustomerService , AdvertiserService ,
-                                     PolicyService , RoleService ) {
+        .service('UserService', ['$http','$q','c6UrlMaker','OrgService',
+        function                ( $http , $q , c6UrlMaker , OrgService ) {
+            var apiBase = c6UrlMaker('account/user', 'api');
+
+            function decorateUser(user) {
+                var deferred = $q.defer(),
+                    id = user.org;
+
+                OrgService.get(id)
+                    .then(function(org) {
+                        user.org = org;
+                        deferred.resolve(user);
+                    })
+                    .catch(function(err) {
+                        deferred.reject(err);
+                    });
+
+                return deferred.promise;
+            }
+
+            function decorateUsers(users) {
+                return $q.all(users.data.reduce(function(orgs, user) {
+                    if (!orgs[user.org]) {
+                        orgs[user.org] = OrgService.get(user.org);
+                    }
+                    return orgs;
+                }, {})).then(function(orgs) {
+                    users.data.map(function(user) {
+                        user.org = orgs[user.org];
+                    });
+                    return users;
+                });
+            }
+
+            function handleError(err) {
+                return $q.reject((err && err.data) || 'Unable to complete request');
+            }
+
+            this.get = function(id) {
+                return $http({
+                    method: 'GET',
+                    url: apiBase + '/' + id
+                }).then(pick('data'))
+                .then(decorateUser)
+                .catch(handleError);
+            };
+
+            this.getAll = function(params) {
+                return $http({
+                    method: 'GET',
+                    url: apiBase + 's',
+                    params: params || {}
+                }).then(fillMeta)
+                .then(decorateUsers)
+                .catch(handleError);
+            };
+
+            this.put = function(id, model) {
+                return $http({
+                    method: 'PUT',
+                    url: apiBase + '/' + id,
+                    data: model
+                }).then(
+                    pick('data'),
+                    handleError
+                );
+            };
+
+            this.post = function(model) {
+                return $http({
+                    method: 'POST',
+                    url: apiBase,
+                    data: model
+                }).then(
+                    pick('data'),
+                    handleError
+                );
+            };
+
+            this.delete = function(id) {
+                return $http({
+                    method: 'DELETE',
+                    url: apiBase + '/' + id
+                }).then(
+                    pick('data'),
+                    handleError
+                );
+            };
+
+            this.logout = function(id) {
+                return $http({
+                    method: 'POST',
+                    url: c6UrlMaker('account/user/logout/' + id, 'api')
+                }).then(
+                    pick('data'),
+                    handleError
+                );
+            };
+        }])
+
+        .service('OrgService', ['$http','$q','c6UrlMaker',
+        function               ( $http , $q , c6UrlMaker ) {
+            var apiBase = c6UrlMaker('account/org', 'api');
+
+            function handleError(err) {
+                return $q.reject((err && err.data) || 'Unable to complete request');
+            }
+
+            this.get = function(id) {
+                return $http({
+                    method: 'GET',
+                    url: apiBase + '/' + id
+                }).then(
+                    pick('data'),
+                    handleError
+                );
+            };
+
+            this.getAll = function(params) {
+                return $http({
+                    method: 'GET',
+                    url: apiBase + 's',
+                    params: params || {}
+                }).then(
+                    fillMeta,
+                    handleError
+                );
+            };
+
+            this.put = function(id, model) {
+                return $http({
+                    method: 'PUT',
+                    url: apiBase + '/' + id,
+                    data: model
+                }).then(
+                    pick('data'),
+                    handleError
+                );
+            };
+
+            this.post = function(model) {
+                return $http({
+                    method: 'POST',
+                    url: apiBase,
+                    data: model
+                }).then(
+                    pick('data'),
+                    handleError
+                );
+            };
+
+            this.delete = function(id) {
+                return $http({
+                    method: 'DELETE',
+                    url: apiBase + '/' + id
+                }).then(
+                    pick('data'),
+                    handleError
+                );
+            };
+        }])
+
+        .service('Cinema6Service', ['requestWrapper','CategoryService','CustomerService','AdvertiserService',
+                                    'PolicyService','RoleService','UserService','OrgService',
+        function                   ( requestWrapper , CategoryService , CustomerService , AdvertiserService ,
+                                     PolicyService , RoleService , UserService , OrgService ) {
             var services = {
                     categories: CategoryService,
                     customers: CustomerService,
                     advertisers: AdvertiserService,
                     policies: PolicyService,
-                    roles: RoleService
+                    roles: RoleService,
+                    users: UserService,
+                    orgs: OrgService
                 },
                 noopService = {
                     get: noop,
@@ -453,29 +617,6 @@ define(['angular'], function(angular) {
 
             function getService(type) {
                 return services[type] || noopService;
-            }
-
-            function requestWrapper(promise) {
-                var deferred = $q.defer(),
-                    cancelTimeout;
-
-                (promise || $q.reject('Unable to resolve request'))
-                    .then(function(data) {
-                        $timeout.cancel(cancelTimeout);
-                        deferred.resolve(data);
-                    }, function(err) {
-                        if (!err) {
-                            err = 'Unable to locate failed';
-                        }
-                        $timeout.cancel(cancelTimeout);
-                        deferred.reject(err);
-                    });
-
-                cancelTimeout = $timeout(function() {
-                    deferred.reject('Request timed out.');
-                },30000);
-
-                return deferred.promise;
             }
 
             this.get = function(type, id) {
@@ -496,6 +637,75 @@ define(['angular'], function(angular) {
 
             this.delete = function(type, id) {
                 return requestWrapper(getService(type).delete(id));
+            };
+        }])
+
+        .service('AccountService', ['$http','$q','c6UrlMaker','requestWrapper','UserService',
+        function                   ( $http , $q , c6UrlMaker , requestWrapper , UserService ) {
+            function handleError(err) {
+                return $q.reject((err && err.data) || 'Unable to complete request');
+            }
+
+            this.freezeUser = function(id) {
+                // use requestWrapper so there's a nice timeout
+                return requestWrapper($q.all([
+                    UserService.put(id, { status: 'inactive' }),
+                    UserService.logout(id)
+                ])).catch(handleError);
+            };
+
+            this.changeEmail = function(email,password,newEmail) {
+                return requestWrapper($http({
+                    method: 'POST',
+                    url: c6UrlMaker('account/user/email','api'),
+                    data: {
+                        email: email,
+                        password: password,
+                        newEmail: newEmail
+                    }
+                })).then(pick('data'), handleError);
+            };
+
+            this.changePassword = function(email,password,newPassword) {
+                return requestWrapper($http({
+                    method: 'POST',
+                    url: c6UrlMaker('account/user/password','api'),
+                    data: {
+                        email: email,
+                        password: password,
+                        newPassword: newPassword
+                    }
+                })).then(pick('data'), handleError);
+            };
+
+            this.waterfallData = [];
+            this.adConfig = {};
+            this.defaultSplashOptions = [];
+        }])
+
+        .service('requestWrapper', ['$q','$timeout',
+        function                   ( $q , $timeout ) {
+            return function(promise) {
+                var deferred = $q.defer(),
+                    cancelTimeout;
+
+                (promise || $q.reject('Unable to resolve request'))
+                    .then(function(data) {
+                        $timeout.cancel(cancelTimeout);
+                        deferred.resolve(data);
+                    }, function(err) {
+                        if (!err) {
+                            err = 'Unable to locate failed';
+                        }
+                        $timeout.cancel(cancelTimeout);
+                        deferred.reject(err);
+                    });
+
+                cancelTimeout = $timeout(function() {
+                    deferred.reject('Request timed out.');
+                },30000);
+
+                return deferred.promise;
             };
         }]);
 });
