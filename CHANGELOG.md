@@ -1,5 +1,7 @@
 # ProShop
 
+## v0.7.5 (September 28, 2015)
+
 * *[v0.7.5]*
   * [DEV]: Advertisers, Customers and Categories lists no longer load every
     entity when displaying results. Results are fetched as users paginate.
@@ -8,6 +10,7 @@
   * [FEATURE]: Policy Manager
   * [FEATURE]: Roles Manager
   * [FEATURE]: Update User Manager to use roles and policies
+* *[/v0.7.5]*
 
 ## v0.7.4 (June 15, 2015)
 
