@@ -1,5 +1,12 @@
 # ProShop
 
+## v0.7.6 (September 28, 2015)
+
+* *[v0.7.6]*
+  * [FIX]: Fix for an issue where ACE editor dependency was improperly
+    loaded by require.js
+* *[/v0.7.6]*
+
 ## v0.7.5 (September 28, 2015)
 
 * *[v0.7.5]*
