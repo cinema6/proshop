@@ -86,7 +86,7 @@ module.exports = function(http) {
 
                     return index >= startIndex && index <= endIndex;
                 }),
-            startPosition = page.skip + 1,
+            startPosition = sorted.length === 0 ? 0 : page.skip + 1,
             endPosition = page.skip + Math.min(page.limit, sorted.length);
 
         this.respond(200, sorted)

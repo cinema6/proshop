@@ -25,7 +25,6 @@ define(['angular'], function(angular) {
             var info = items.value.meta.items,
                 limit = self.limit;
 
-            self.page = ((info.start - 1) / limit) + 1;
             self.total = Math.ceil(info.total / limit);
 
             return items.value;
