@@ -1,5 +1,11 @@
 # ProShop
 
+## v0.7.10 (September 29, 2015)
+
+* *[v0.7.10]*
+  * [FIX]: Hide search box in most manager areas
+* *[/v0.7.10]*
+
 ## v0.7.9 (September 29, 2015)
 
 * *[v0.7.9]*
