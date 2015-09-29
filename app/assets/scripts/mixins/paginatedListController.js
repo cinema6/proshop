@@ -39,6 +39,7 @@ define(['angular'], function(angular) {
         function fetch(query) {
             var page = self.page,
                 limit = self.limit,
+                text = self.query,
                 sort = [
                     $scope.sort.column,
                     toNum($scope.sort.descending)
@@ -46,11 +47,13 @@ define(['angular'], function(angular) {
 
             self.loading = true;
 
-            return doQuery(extend((query || {}), {
-                    limit: limit,
-                    skip: (page - 1) * limit,
-                    sort: sort
-                }))
+            query = extend((query || {}), {
+                limit: limit,
+                skip: (page - 1) * limit,
+                sort: sort
+            });
+
+            return doQuery(extend(query, (text ? {text: text} : {})))
                 .then(setPaginationValues)
                 .then(setData)
                 .finally(function() {
@@ -83,7 +86,11 @@ define(['angular'], function(angular) {
                 sort.descending = false;
             }
 
-            fetch();
+            if (self.page !== 1) {
+                self.page = 1;
+            } else {
+                fetch();
+            }
         };
 
         self.query = null;
@@ -110,7 +117,7 @@ define(['angular'], function(angular) {
                     /* jshint boss:false */
                 }
 
-                return self.query ? fetch({text: self.query}) : fetch();
+                return fetch();
             }
         );
 
