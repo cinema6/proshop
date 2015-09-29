@@ -1,5 +1,12 @@
 # ProShop
 
+## v0.7.9 (September 29, 2015)
+
+* *[v0.7.9]*
+  * [DEV]: Fix for an issue where the custom ACE Angular directive
+    file dependency was breaking the ACE editor
+* *[/v0.7.9]*
+
 ## v0.7.8 (September 29, 2015)
 
 * *[v0.7.8]*
