@@ -18,10 +18,10 @@ define(['angular','./mixins/paginatedListController'],function(angular, Paginate
             $scope.endpoint = 'users';
 
             $scope.tableHeaders = [
-                {label:'Email',value:'email'},
-                {label:'Name',value:'lastName'},
-                {label:'Org',value:'org.name'},
-                {label:'Status',value:'status'}
+                {label:'Email',value:'email',sortable:true},
+                {label:'Name',value:'lastName',sortable:true},
+                {label:'Org',value:'org.name',sortable:false},
+                {label:'Status',value:'status',sortable:false}
             ];
 
             $scope.sort = {

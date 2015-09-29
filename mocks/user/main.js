@@ -137,7 +137,7 @@ module.exports = function(http) {
                     var startIndex = page.skip,
                         endIndex = startIndex + page.limit;
 
-                    return index >= startIndex && index <= endIndex;
+                    return index >= startIndex && index < endIndex;
                 })
                 .sort(function(a, b) {
                     var prop = sort && sort[0],
