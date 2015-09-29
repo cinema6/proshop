@@ -1,5 +1,12 @@
 # ProShop
 
+## v0.7.7 (September 29, 2015)
+
+* *[v0.7.7]*
+  * [FIX]: Fix for an issue where a paginated list with zero results
+    triggered extra requests
+* *[/v0.7.7]*
+
 ## v0.7.6 (September 28, 2015)
 
 * *[v0.7.6]*

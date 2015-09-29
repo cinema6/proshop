@@ -25,7 +25,6 @@ define(['angular'], function(angular) {
             var info = items.value.meta.items,
                 limit = self.limit;
 
-            self.page = ((info.start - 1) / limit) + 1;
             self.total = Math.ceil(info.total / limit);
 
             return items.value;
@@ -40,6 +39,7 @@ define(['angular'], function(angular) {
         function fetch(query) {
             var page = self.page,
                 limit = self.limit,
+                text = self.query,
                 sort = [
                     $scope.sort.column,
                     toNum($scope.sort.descending)
@@ -47,11 +47,13 @@ define(['angular'], function(angular) {
 
             self.loading = true;
 
-            return doQuery(extend((query || {}), {
-                    limit: limit,
-                    skip: (page - 1) * limit,
-                    sort: sort
-                }))
+            query = extend((query || {}), {
+                limit: limit,
+                skip: (page - 1) * limit,
+                sort: sort
+            });
+
+            return doQuery(extend(query, (text ? {text: text} : {})))
                 .then(setPaginationValues)
                 .then(setData)
                 .finally(function() {
@@ -68,7 +70,7 @@ define(['angular'], function(angular) {
                 /* jshint boss:false */
             }
 
-            return self.query ? fetch({text: self.query}) : fetch();
+            return fetch();
         };
 
         self.doSort = function(heading) {
@@ -84,7 +86,13 @@ define(['angular'], function(angular) {
                 sort.descending = false;
             }
 
-            fetch();
+            if (self.page !== 1) {
+                /* jshint boss:true */
+                return self.page = 1;
+                /* jshint boss:false */
+            }
+
+            return fetch();
         };
 
         self.query = null;
@@ -111,7 +119,7 @@ define(['angular'], function(angular) {
                     /* jshint boss:false */
                 }
 
-                return self.query ? fetch({text: self.query}) : fetch();
+                return fetch();
             }
         );
 
