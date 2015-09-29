@@ -70,7 +70,7 @@ define(['angular'], function(angular) {
                 /* jshint boss:false */
             }
 
-            return self.query ? fetch({text: self.query}) : fetch();
+            return fetch();
         };
 
         self.doSort = function(heading) {
@@ -87,10 +87,12 @@ define(['angular'], function(angular) {
             }
 
             if (self.page !== 1) {
-                self.page = 1;
-            } else {
-                fetch();
+                /* jshint boss:true */
+                return self.page = 1;
+                /* jshint boss:false */
             }
+
+            return fetch();
         };
 
         self.query = null;

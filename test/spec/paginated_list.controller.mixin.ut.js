@@ -122,6 +122,7 @@
                             Cinema6Service.getAll.deferred.resolve(mockResponse);
                         });
 
+                        expect(Cinema6Service.getAll.calls.count()).toBe(1);
                         expect(PaginatedListCtrl.loading).toBe(false);
                     });
 
@@ -130,6 +131,7 @@
                             Cinema6Service.getAll.deferred.reject();
                         });
 
+                        expect(Cinema6Service.getAll.calls.count()).toBe(1);
                         expect(PaginatedListCtrl.loading).toBe(false);
                     });
                 });
@@ -140,6 +142,7 @@
                             Cinema6Service.getAll.deferred.resolve(mockResponse);
                         });
 
+                        expect(Cinema6Service.getAll.calls.count()).toBe(1);
                         expect(PaginatedListCtrl.data).toEqual(mockResponse.data);
                     });
                 });
@@ -161,30 +164,45 @@
                         describe('if there is a valid query', function() {
                             it('should query for advertisers', function() {
                                 PaginatedListCtrl.search('Ybrant');
-                                expect(Cinema6Service.getAll).toHaveBeenCalledWith('advertisers', jasmine.objectContaining({text: 'Ybrant'}));
+
+                                expect(Cinema6Service.getAll.calls.count()).toBe(1);
+                                expect(Cinema6Service.getAll).toHaveBeenCalledWith('advertisers', jasmine.objectContaining({
+                                    text: 'Ybrant',
+                                    skip: 0
+                                }));
                             });
 
                             it('should filter out invalid characters form the query', function() {
                                 PaginatedListCtrl.search('Ybr&*^&%^%$an)(&^t');
-                                expect(Cinema6Service.getAll).toHaveBeenCalledWith('advertisers', jasmine.objectContaining({text: 'Ybrant'}));
+
+                                expect(Cinema6Service.getAll.calls.count()).toBe(1);
+                                expect(Cinema6Service.getAll).toHaveBeenCalledWith('advertisers', jasmine.objectContaining({
+                                    text: 'Ybrant',
+                                    skip: 0
+                                }));
                             });
                         });
 
                         describe('if the query is empty', function() {
                             it('should query for advertisers', function() {
                                 PaginatedListCtrl.search('');
-                                expect(Cinema6Service.getAll).not.toHaveBeenCalledWith('advertisers', jasmine.objectContaining({text: 'Ybrant'}));
+
+                                expect(Cinema6Service.getAll.calls.count()).toBe(1);
+                                expect(Cinema6Service.getAll).not.toHaveBeenCalledWith('advertisers', jasmine.objectContaining({
+                                    text: 'Ybrant',
+                                    skip: 0
+                                }));
                             });
                         });
                     });
 
                     describe('if the page is !== 1', function() {
                         beforeEach(function() {
-                            Cinema6Service.getAll.calls.reset();
                             PaginatedListCtrl.page = 1;
                             $scope.$digest();
                             PaginatedListCtrl.page = 2;
                             $scope.$digest();
+                            Cinema6Service.getAll.calls.reset();
                         });
 
                         describe('if there is a valid query', function() {
@@ -194,13 +212,22 @@
 
                                 $scope.$digest();
 
-                                expect(Cinema6Service.getAll).toHaveBeenCalledWith('advertisers', jasmine.objectContaining({text: 'Ybrant'}));
+                                expect(Cinema6Service.getAll.calls.count()).toBe(1);
+                                expect(Cinema6Service.getAll).toHaveBeenCalledWith('advertisers', jasmine.objectContaining({
+                                    text: 'Ybrant',
+                                    skip: 0
+                                }));
                             });
 
                             it('should filter out invalid characters from the query', function() {
                                 PaginatedListCtrl.search('Ybr&*^&%^%$an)(&^t');
                                 $scope.$digest();
-                                expect(Cinema6Service.getAll).toHaveBeenCalledWith('advertisers', jasmine.objectContaining({text: 'Ybrant'}));
+
+                                expect(Cinema6Service.getAll.calls.count()).toBe(1);
+                                expect(Cinema6Service.getAll).toHaveBeenCalledWith('advertisers', jasmine.objectContaining({
+                                    text: 'Ybrant',
+                                    skip: 0
+                                }));
                             });
                         });
 
@@ -211,7 +238,11 @@
 
                                 $scope.$digest();
 
-                                expect(Cinema6Service.getAll).not.toHaveBeenCalledWith('advertisers', jasmine.objectContaining({text: 'Ybrant'}));
+                                expect(Cinema6Service.getAll.calls.count()).toBe(1);
+                                expect(Cinema6Service.getAll).not.toHaveBeenCalledWith('advertisers', jasmine.objectContaining({
+                                    text: 'Ybrant',
+                                    skip: 0
+                                }));
                             });
                         });
                     });
@@ -247,6 +278,36 @@
                     PaginatedListCtrl.doSort({value:'lastUpdated',sortable:false});
                     expect($scope.sort).toEqual({column:'lastUpdated',descending:true});
                     expect(Cinema6Service.getAll).not.toHaveBeenCalled();
+                });
+
+                describe('when page === 1', function() {
+                    it('should fetch()', function() {
+                        PaginatedListCtrl.page = 1;
+
+                        Cinema6Service.getAll.calls.reset();
+
+                        PaginatedListCtrl.doSort({value:'active',sortable:true});
+
+                        expect(Cinema6Service.getAll).toHaveBeenCalledWith('advertisers', jasmine.objectContaining({sort: 'active,-1'}));
+                        expect(PaginatedListCtrl.page).toBe(1);
+                    });
+                });
+
+                describe('when page !== 1', function() {
+                    it('should set page to 1, causing a fetch()', function() {
+                        $scope.$apply(function() {
+                            PaginatedListCtrl.page = 3;
+                        });
+
+                        Cinema6Service.getAll.calls.reset();
+
+                        $scope.$apply(function() {
+                            PaginatedListCtrl.doSort({value:'active',sortable:true});
+                        });
+
+                        expect(Cinema6Service.getAll).toHaveBeenCalledWith('advertisers', jasmine.objectContaining({sort: 'active,-1'}));
+                        expect(PaginatedListCtrl.page).toBe(1);
+                    });
                 });
             });
 
