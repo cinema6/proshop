@@ -11,7 +11,8 @@ module.exports = {
                 templates: '../../../.tmp/templates'
             },
             modules: [{
-                name: 'main'
+                name: 'main',
+                exclude: ['ace']
             }]
         }
     }
