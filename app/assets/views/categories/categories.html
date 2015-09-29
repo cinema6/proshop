@@ -5,10 +5,10 @@
 
     <div class="clearfix">
         <button ng-click="CategoriesCtrl.addNew()">Add New Category</button>
-        <form name="search" ng-submit="CategoriesCtrl.search(query)">
+        <!-- <form name="search" ng-submit="CategoriesCtrl.search(query)">
             <input type="submit" value="Search" style="float:right;">
             <input style="float:right;width:250px;" type="text" ng-model="query" placeholder="Search Categories by Name">
-        </form>
+        </form> -->
     </div>
 
     <paginator-controls page="CategoriesCtrl.page" limit="CategoriesCtrl.limit" limits="CategoriesCtrl.limits" total="CategoriesCtrl.total"></paginator-controls>

@@ -5,10 +5,10 @@
 
     <div class="clearfix">
         <button ng-click="CustomersCtrl.addNew()">Add New Customer</button>
-        <form name="search" ng-submit="CustomersCtrl.search(query)">
+        <!-- <form name="search" ng-submit="CustomersCtrl.search(query)">
             <input type="submit" value="Search" style="float:right;">
             <input style="float:right;width:250px;" type="text" ng-model="query" placeholder="Search Customers by Name">
-        </form>
+        </form> -->
     </div>
 
     <paginator-controls page="CustomersCtrl.page" limit="CustomersCtrl.limit" limits="CustomersCtrl.limits" total="CustomersCtrl.total"></paginator-controls>
