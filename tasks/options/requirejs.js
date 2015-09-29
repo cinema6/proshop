@@ -12,7 +12,7 @@ module.exports = {
             },
             modules: [{
                 name: 'main',
-                exclude: ['ace']
+                exclude: ['ace','ngAce']
             }]
         }
     }
