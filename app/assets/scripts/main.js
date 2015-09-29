@@ -35,8 +35,8 @@
                     return angular.module('ngAnimate');
                 }
             },
-            ngAce: {
-                deps: ['angular','ace']
+            ace: {
+                exports: 'ace'
             },
             c6ui: {
                 deps: ['angular'],

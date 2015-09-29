@@ -1,5 +1,12 @@
 # ProShop
 
+## v0.7.8 (September 29, 2015)
+
+* *[v0.7.8]*
+  * [DEV]: Fix for an issue where the ACE library was being minified
+    and included in the Require.js build and breaking the ACE editor
+* *[/v0.7.8]*
+
 ## v0.7.7 (September 29, 2015)
 
 * *[v0.7.7]*
