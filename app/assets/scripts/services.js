@@ -440,27 +440,33 @@ define(['angular'], function(angular) {
                 var deferred = $q.defer(),
                     id = user.org;
 
-                OrgService.get(id)
-                    .then(function(org) {
-                        user.org = org;
-                        deferred.resolve(user);
-                    })
-                    .catch(function(err) {
-                        deferred.reject(err);
-                    });
+                if (id) {
+                    OrgService.get(id)
+                        .then(function(org) {
+                            user.org = org;
+                            deferred.resolve(user);
+                        })
+                        .catch(function(err) {
+                            deferred.reject(err);
+                        });
+                } else {
+                    deferred.resolve(user);
+                }
 
                 return deferred.promise;
             }
 
             function decorateUsers(users) {
                 return $q.all(users.data.reduce(function(orgs, user) {
-                    if (!orgs[user.org]) {
+                    if (user.org && !orgs[user.org]) {
                         orgs[user.org] = OrgService.get(user.org);
                     }
                     return orgs;
                 }, {})).then(function(orgs) {
                     users.data.map(function(user) {
-                        user.org = orgs[user.org];
+                        if (user.org) {
+                            user.org = orgs[user.org];
+                        }
                     });
                     return users;
                 });

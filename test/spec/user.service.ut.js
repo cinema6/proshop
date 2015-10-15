@@ -178,6 +178,20 @@
                         expect(failureSpy).not.toHaveBeenCalled();
                     });
 
+                    it('will handle a user with no Org', function() {
+                        var user = copy(mockUser);
+                        delete user.org;
+
+                        $httpBackend.expectGET('/api/account/user/u-111')
+                            .respond(200,user);
+                        UserService.get('u-111').then(successSpy,failureSpy);
+                        $httpBackend.flush();
+
+                        expect(OrgService.get).not.toHaveBeenCalled();
+                        expect(successSpy).toHaveBeenCalledWith(user);
+                        expect(failureSpy).not.toHaveBeenCalled();
+                    });
+
                     it('will reject promise if not successful',function(){
                         $httpBackend.expectGET('/api/account/user/u-115')
                             .respond(404,'Unable to find users.');
@@ -228,6 +242,39 @@
                                 }
                             }
                         }));
+
+                        expect(failureSpy).not.toHaveBeenCalled();
+                    });
+
+                    it('will handle users with no Org', function() {
+                        var users = copy(mockUsers),
+                            decoratedUsers;
+
+                        delete users[1].org;
+
+                        decoratedUsers = copy(users);
+                        decoratedUsers[0].org = copy(mockOrg);
+                        decoratedUsers[2].org = copy(mockOrg);
+
+                        $httpBackend.expectGET('/api/account/users')
+                            .respond(200,users,{'Content-Range': 'items 1-19/19'});
+                        UserService.getAll().then(successSpy,failureSpy);
+                        OrgService.get.deferred.resolve(mockOrg);
+                        $httpBackend.flush();
+
+                        expect(OrgService.get).toHaveBeenCalledWith('o-115');
+                        expect(successSpy).toHaveBeenCalledWith(jasmine.objectContaining({
+                            data: decoratedUsers,
+                            meta: {
+                                items: {
+                                    start: 1,
+                                    end: 19,
+                                    total: 19
+                                }
+                            }
+                        }));
+
+                        expect(successSpy.calls.mostRecent().args[0].data[1].org).toBe(undefined);
 
                         expect(failureSpy).not.toHaveBeenCalled();
                     });
