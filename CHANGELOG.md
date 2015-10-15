@@ -1,5 +1,8 @@
 # ProShop
 
+* *[v0.7.11]*
+  * [FIX]: Handle fetching Users that don't have Orgs
+
 ## v0.7.10 (September 29, 2015)
 
 * *[v0.7.10]*
