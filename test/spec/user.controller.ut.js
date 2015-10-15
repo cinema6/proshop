@@ -429,6 +429,24 @@
                         expect(UserCtrl.org).toEqual(mockOrgs.data[0]);
                     });
 
+                    it('should handle a User with no Org', function() {
+                        delete mockUser.org;
+                        $scope = $rootScope.$new();
+                        compileCtrl('u-1');
+
+                        $scope.$apply(function() {
+                            Cinema6Service.get.deferred.resolve(angular.copy(mockUser));
+                            Cinema6Service.getAll.orgs.resolve(angular.copy(mockOrgs));
+                            Cinema6Service.getAll.roles.resolve(angular.copy(mockRoles));
+                            Cinema6Service.getAll.policies.resolve(angular.copy(mockPolicies));
+                        });
+
+                        expect(UserCtrl.org).toEqual(undefined);
+                        expect(UserCtrl.orgs).toEqual(mockOrgs.data);
+                        expect(UserCtrl.roles).toEqual(mockRoles.data);
+                        expect(UserCtrl.policies).toEqual(mockPolicies.data);
+                    });
+
                     describe('if user has config', function() {
                         it('should use it', function() {
                             var _user = angular.extend(mockUser, {
