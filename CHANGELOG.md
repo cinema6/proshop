@@ -2,6 +2,7 @@
 
 * *[v0.7.11]*
   * [FIX]: Handle fetching Users that don't have Orgs
+  * [FIX]: Handle editing User with no Org
 
 ## v0.7.10 (September 29, 2015)
 

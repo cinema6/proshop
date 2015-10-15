@@ -98,7 +98,7 @@ define(['angular','./mixins/paginatedListController'],function(angular, Paginate
 
                         self.orgs = orgs.data;
                         self.org = orgs.data.filter(function(org) {
-                            return user.org.id === org.id;
+                            return user.org && user.org.id === org.id;
                         })[0];
                         self.roles = roles.data;
                         self.policies = policies.data;
