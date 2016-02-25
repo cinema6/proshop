@@ -6,7 +6,8 @@
     module.exports = {
         options: {
             port: '<%= settings.connectPort %>',
-            hostname: '*'
+            hostname: '*',
+            protocol: 'https'
         },
         proxies: [
             {
@@ -14,14 +15,24 @@
                 host: 'platform-staging.reelcontent.com',
                 port: 443,
                 https: true,
-                changeOrigin: true
+                protocol: 'https:',
+                changeOrigin: true,
+                headers: {
+                    origin : 'https://platform-staging.reelcontent.com',
+                    host: 'platform-staging.reelcontent.com'
+                }
             },
             {
                 context: '/collateral',
                 host: 'platform-staging.reelcontent.com',
                 port: 443,
                 https: true,
-                changeOrigin: true
+                protocol: 'https:',
+                changeOrigin: true,
+                headers: {
+                    origin : 'https://platform-staging.reelcontent.com',
+                    host: 'platform-staging.reelcontent.com'
+                }
             }
         ],
         dev: {
