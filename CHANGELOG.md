@@ -1,5 +1,12 @@
 # ProShop
 
+## v0.8.0 (February 25, 2015)
+
+* *[v0.8.0]*
+  * Update all references to cinema6.com to reelcontent.com
+  * [DEV]: Update local grunt server to run on https
+* *[/v0.8.0]*
+
 ## v0.7.11 (October 15, 2015)
 
 * *[v0.7.11]*

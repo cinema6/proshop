@@ -5,7 +5,7 @@ module.exports = function() {
     this.userEmail = element(by.binding('AppCtrl.user.email'));
 
     this.get = function() {
-        browser.get('http://localhost:9000');
+        browser.get('https://localhost:9000');
     };
 
     this.url = function() {
@@ -16,7 +16,7 @@ module.exports = function() {
         var LoginPage = require('./LoginPage.js'),
             loginPage = new LoginPage();
 
-        loginPage.setEmail('tester');
+        loginPage.setEmail('howard@reelcontent.com');
         loginPage.setPassword('password');
         loginPage.emailInput.submit();
     };

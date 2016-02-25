@@ -20,7 +20,7 @@
         describe('when logged in', function() {
             it('should redirect to /users', function() {
                 loginPage.login();
-                expect(loginPage.url()).toBe('http://localhost:9000/#/users');
+                expect(loginPage.url()).toBe('https://localhost:9000/#/users');
                 element(by.buttonText('Log Out')).click();
             });
         });
@@ -48,23 +48,23 @@
 
             describe('with an invalid username and password', function() {
                 it('should show an error', function() {
-                    loginPage.setEmail('fail@cinema6.com');
+                    loginPage.setEmail('fail@bad.com');
                     loginPage.setPassword('password');
 
                     loginPage.emailInput.submit();
 
-                    expect(loginPage.loginError.getText()).toEqual('failed');
+                    expect(loginPage.loginError.getText()).toEqual('Invalid email or password');
                 });
             });
 
             describe('with a valid username and password', function() {
                 it('should redirect to /users', function() {
-                    loginPage.setEmail('Julie');
+                    loginPage.setEmail('julie@reelcontent.com');
                     loginPage.setPassword('password');
 
                     loginPage.emailInput.submit();
 
-                    expect(loginPage.url()).toBe('http://localhost:9000/#/users');
+                    expect(loginPage.url()).toBe('https://localhost:9000/#/users');
                 });
             });
         });

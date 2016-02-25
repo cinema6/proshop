@@ -12,7 +12,7 @@
 
         describe('when not logged in', function() {
             it('should load redirect to /login', function() {
-                expect(indexPage.url()).toBe('http://localhost:9000/#/login');
+                expect(indexPage.url()).toBe('https://localhost:9000/#/login');
             });
 
             it('should hide user info', function() {
@@ -33,12 +33,12 @@
             it('should resolve to /users', function() {
                 indexPage.get();
 
-                expect(indexPage.url()).toBe('http://localhost:9000/#/users');
+                expect(indexPage.url()).toBe('https://localhost:9000/#/users');
             });
 
             it('should resolve /login to /users', function() {
-                browser.get('http://localhost:9000/#/login');
-                expect(indexPage.url()).toBe('http://localhost:9000/#/users');
+                browser.get('https://localhost:9000/#/login');
+                expect(indexPage.url()).toBe('https://localhost:9000/#/users');
             });
 
             it('should show the user email and logout button', function() {

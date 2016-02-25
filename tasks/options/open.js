@@ -3,7 +3,7 @@
 
     module.exports = {
         server: {
-            url: 'http://localhost:<%= settings.connectPort %>/',
+            url: 'https://localhost:<%= settings.connectPort %>/',
             app: '<%= settings.openBrowser %>'
         }
     };

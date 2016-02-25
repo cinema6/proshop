@@ -825,7 +825,7 @@
                         compileCtrl('u-1');
                     });
                     it('should return true when valid', function() {
-                        expect('josh@cinema6.com').toMatch(UserCtrl.emailPattern);
+                        expect('josh@reelcontent.com').toMatch(UserCtrl.emailPattern);
                         expect('josh.o\'minzner@minzner.exposed').toMatch(UserCtrl.emailPattern);
                         expect('123@blah.co').toMatch(UserCtrl.emailPattern);
                     });
@@ -833,7 +833,7 @@
                     it('should return false when not valid', function() {
                         expect(' josh@blah.com').not.toMatch(UserCtrl.emailPattern);
                         expect('hello').not.toMatch(UserCtrl.emailPattern);
-                        expect('josh@cinema6.c').not.toMatch(UserCtrl.emailPattern);
+                        expect('josh@reelcontent.c').not.toMatch(UserCtrl.emailPattern);
                     });
                 });
 

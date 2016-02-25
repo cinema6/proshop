@@ -15,7 +15,7 @@ module.exports = function(http) {
     }
 
     http.whenPOST('/api/auth/login', function(request) {
-        if ((/\w+@cinema6\.com$/).test(request.body.email)) {
+        if ((/\w+@reelcontent\.com$/).test(request.body.email)) {
             var user = grunt.file.readJSON(userPath(userId));
 
             this.respond(200, (userCache.user = extend(user, {

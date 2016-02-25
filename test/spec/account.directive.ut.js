@@ -65,7 +65,7 @@
 
             describe('<change-email>', function() {
                 beforeEach(function(){
-                    createDirective('change-email','howard@cinema6.com');
+                    createDirective('change-email','howard@reelcontent.com');
                 });
 
                 describe('form.$valid', function() {
@@ -106,7 +106,7 @@
                     });
 
                     it('is false if email has trailing spaces',function(){
-                        $isolate.email = 'not-howard@cinema6.com  ';
+                        $isolate.email = 'not-howard@reelcontent.com  ';
                         $isolate.password = 'abcdefghijkl';
                         $isolate.$digest();
                         expect($isolate.theForm.$valid).toEqual(false);
@@ -132,7 +132,7 @@
 
                         it('ng-disabled kept on if $valid = true, but usernames are same',function(){
                             expect($submit.prop('disabled')).toEqual(true);
-                            $isolate.email = 'howard@cinema6.com';
+                            $isolate.email = 'howard@reelcontent.com';
                             $isolate.password = 'abc';
                             $isolate.$digest();
                             expect($submit.prop('disabled')).toEqual(true);
@@ -149,7 +149,7 @@
                         $isolate.submit();
                         $isolate.$digest();
                         expect(ctrl.changeEmail)
-                            .toHaveBeenCalledWith('howard@cinema6.com','password','not-howard');
+                            .toHaveBeenCalledWith('howard@reelcontent.com','password','not-howard');
                         expect($isolate.lastStatus).toEqual('User name has been changed.');
                     });
 
@@ -161,7 +161,7 @@
                         $isolate.submit();
                         $isolate.$digest();
                         expect(ctrl.changeEmail)
-                            .toHaveBeenCalledWith('howard@cinema6.com','password','not-howard');
+                            .toHaveBeenCalledWith('howard@reelcontent.com','password','not-howard');
                         expect($isolate.lastStatus).toEqual('User name change failed: booo');
                     });
 
@@ -170,7 +170,7 @@
 
             describe('<change-password>', function() {
                 beforeEach(function(){
-                    createDirective('change-password','howard@cinema6.com');
+                    createDirective('change-password','howard@reelcontent.com');
                 });
 
                 describe('form.$valid',function(){
@@ -276,7 +276,7 @@
 
                 describe('$scope.submit()',function(){
                     it('successful submit sets lastStatus',function(){
-                        $isolate.email = 'howard@cinema6.com';
+                        $isolate.email = 'howard@reelcontent.com';
                         $isolate.password[0] = 'password';
                         $isolate.password[1] = 'new-password';
                         ctrl.changePassword.and.returnValue($q.when('hurray'));
@@ -284,12 +284,12 @@
                         $isolate.submit();
                         $isolate.$digest();
                         expect(ctrl.changePassword)
-                            .toHaveBeenCalledWith('howard@cinema6.com','password','new-password');
+                            .toHaveBeenCalledWith('howard@reelcontent.com','password','new-password');
                         expect($isolate.lastStatus).toEqual('Password has been changed.');
                     });
 
                     it('failed submit sets lastStatus',function(){
-                        $isolate.email = 'howard@cinema6.com';
+                        $isolate.email = 'howard@reelcontent.com';
                         $isolate.password[0] = 'password';
                         $isolate.password[1] = 'new-password';
                         ctrl.changePassword.and.returnValue($q.reject('booo'));
@@ -297,7 +297,7 @@
                         $isolate.submit();
                         $isolate.$digest();
                         expect(ctrl.changePassword)
-                            .toHaveBeenCalledWith('howard@cinema6.com','password','new-password');
+                            .toHaveBeenCalledWith('howard@reelcontent.com','password','new-password');
                         expect($isolate.lastStatus).toEqual('Password change failed: booo');
                     });
                 });
