@@ -6,7 +6,7 @@ module.exports = function() {
     this.loginError = element(by.binding('LoginCtrl.loginError'));
 
     this.get = function() {
-        browser.get('http://localhost:9000/#/login');
+        browser.get('https://localhost:9000/#/login');
     };
 
     this.setEmail = function(name) {

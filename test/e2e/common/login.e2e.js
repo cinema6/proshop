@@ -20,7 +20,7 @@
         describe('when logged in', function() {
             it('should redirect to /users', function() {
                 loginPage.login();
-                expect(loginPage.url()).toBe('http://localhost:9000/#/users');
+                expect(loginPage.url()).toBe('https://localhost:9000/#/users');
                 element(by.buttonText('Log Out')).click();
             });
         });
@@ -64,7 +64,7 @@
 
                     loginPage.emailInput.submit();
 
-                    expect(loginPage.url()).toBe('http://localhost:9000/#/users');
+                    expect(loginPage.url()).toBe('https://localhost:9000/#/users');
                 });
             });
         });

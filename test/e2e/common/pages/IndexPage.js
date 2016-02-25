@@ -5,7 +5,7 @@ module.exports = function() {
     this.userEmail = element(by.binding('AppCtrl.user.email'));
 
     this.get = function() {
-        browser.get('http://localhost:9000');
+        browser.get('https://localhost:9000');
     };
 
     this.url = function() {
