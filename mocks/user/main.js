@@ -28,7 +28,7 @@ module.exports = function(http) {
     }
 
     http.whenPOST('/api/account/user/email', function(request) {
-        if (request.body.newEmail !== 'howard@cinema6.com') {
+        if (request.body.newEmail !== 'howard@reelcontent.com') {
             this.respond(404, 'You are not howard!');
         } else {
             this.respond(200, 'Congratulations, you are howard');

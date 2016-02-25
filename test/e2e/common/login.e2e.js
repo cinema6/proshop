@@ -48,7 +48,7 @@
 
             describe('with an invalid username and password', function() {
                 it('should show an error', function() {
-                    loginPage.setEmail('fail@cinema6.com');
+                    loginPage.setEmail('fail@reelcontent.com');
                     loginPage.setPassword('password');
 
                     loginPage.emailInput.submit();

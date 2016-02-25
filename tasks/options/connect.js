@@ -11,14 +11,14 @@
         proxies: [
             {
                 context: '/api',
-                host: 'staging.cinema6.com',
+                host: 'platform-staging.reelcontent.com',
                 port: 443,
                 https: true,
                 changeOrigin: true
             },
             {
                 context: '/collateral',
-                host: 'staging.cinema6.com',
+                host: 'platform-staging.reelcontent.com',
                 port: 443,
                 https: true,
                 changeOrigin: true

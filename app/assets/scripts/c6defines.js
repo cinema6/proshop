@@ -9,9 +9,9 @@ define(function() {
     c6.kLogLevels = c6.kDebug ? ['error','warn','log','info'] : [];
     c6.kApiUrl = '/api';
     c6.kPreviewUrl = 'http://' +
-        ((c6.kDebug || window.location.hostname === 'dv-proshop1.corp.cinema6.com') ?
-            'staging.cinema6.com' :
-            'cinema6.com');
+        ((c6.kDebug || window.location.hostname === 'dv-proshop1.corp.reelcontent.com') ?
+            'platform-staging.reelcontent.com' :
+            'reelcontent.com');
 
     return c6;
 });

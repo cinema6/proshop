@@ -5,15 +5,15 @@
     require.config({
         baseUrl: 'scripts',
         paths: {
-            jquery: 'https://lib.cinema6.com/jquery/2.0.3-0-gf576d00/jquery.min',
-            modernizr: 'https://lib.cinema6.com/modernizr/modernizr.custom.71747',
-            angular: 'https://lib.cinema6.com/angular/v1.2.22-0-g93b0c2d/angular.min',
-            ngRoute: 'https://lib.cinema6.com/angular/v1.2.22-0-g93b0c2d/angular-route.min',
-            ngAnimate: 'https://lib.cinema6.com/angular/v1.2.22-0-g93b0c2d/angular-animate.min',
+            jquery: 'https://lib.reelcontent.com/jquery/2.0.3-0-gf576d00/jquery.min',
+            modernizr: 'https://lib.reelcontent.com/modernizr/modernizr.custom.71747',
+            angular: 'https://lib.reelcontent.com/angular/v1.2.22-0-g93b0c2d/angular.min',
+            ngRoute: 'https://lib.reelcontent.com/angular/v1.2.22-0-g93b0c2d/angular-route.min',
+            ngAnimate: 'https://lib.reelcontent.com/angular/v1.2.22-0-g93b0c2d/angular-animate.min',
             ace: 'lib/ace',
             ngAce: 'lib/ui-ace.min',
-            c6ui: 'https://lib.cinema6.com/c6ui/v2.6.4-0-g0df471c/c6uilib.min',
-            c6log: 'https://lib.cinema6.com/c6ui/v2.6.4-0-g0df471c/c6log.min'
+            c6ui: 'https://lib.reelcontent.com/c6ui/v2.6.4-0-g0df471c/c6uilib.min',
+            c6log: 'https://lib.reelcontent.com/c6ui/v2.6.4-0-g0df471c/c6log.min'
         },
         shim: {
             modernizr: {

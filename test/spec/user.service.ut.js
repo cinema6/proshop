@@ -22,7 +22,7 @@
                 /* jsHint quotmark:false */
                 mockUser = {
                     "id": "u-115",
-                    "email": "saxguy@cinema6.com",
+                    "email": "saxguy@reelcontent.com",
                     "status": "active",
                     "org": "o-115",
                     "config": {
@@ -45,7 +45,7 @@
 
                 mockUsers = [
                     {
-                        "email": "saxguy@cinema6.com",
+                        "email": "saxguy@reelcontent.com",
                         "status": "active",
                         "org": "o-115",
                         "config": {
