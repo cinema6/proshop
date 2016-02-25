@@ -18,7 +18,7 @@ module.exports = function() {
     };
 
     this.login = function() {
-        this.setEmail('kjhdfkjsd');
+        this.setEmail('howard@reelcontent.com');
         this.setPassword('sdfjhsdfs');
         this.emailInput.submit();
     };

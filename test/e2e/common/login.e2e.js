@@ -48,18 +48,18 @@
 
             describe('with an invalid username and password', function() {
                 it('should show an error', function() {
-                    loginPage.setEmail('fail@reelcontent.com');
+                    loginPage.setEmail('fail@bad.com');
                     loginPage.setPassword('password');
 
                     loginPage.emailInput.submit();
 
-                    expect(loginPage.loginError.getText()).toEqual('failed');
+                    expect(loginPage.loginError.getText()).toEqual('Invalid email or password');
                 });
             });
 
             describe('with a valid username and password', function() {
                 it('should redirect to /users', function() {
-                    loginPage.setEmail('Julie');
+                    loginPage.setEmail('julie@reelcontent.com');
                     loginPage.setPassword('password');
 
                     loginPage.emailInput.submit();
