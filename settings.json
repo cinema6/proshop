@@ -11,7 +11,7 @@
     "defaultE2EEnv": "browserstack",
     "s3": {
         "staging": {
-            "bucket": "test.proshop",
+            "bucket": "com.cinema6.staging.proshop",
             "app": ""
         },
         "production": {
