@@ -97,6 +97,17 @@ module.exports = function(grunt) {
         grunt.task.run('replace:dist');
     });
 
+    /*********************************************************************************************
+     *
+     * UPLOAD TASKS
+     *
+     *********************************************************************************************/
+
+    grunt.registerTask('publish', 'build and upload the application to s3', function(target) {
+        grunt.task.run('build');
+        grunt.task.run('s3:' + target);
+    });
+
 //    grunt.registerTask('build', 'build app into distDir', [
 //        'test:unit',
 //        'git_describe_tags:any',
