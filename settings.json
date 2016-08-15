@@ -10,12 +10,12 @@
     "libUrl": "http://s3.amazonaws.com/c6.dev/ext/",
     "defaultE2EEnv": "browserstack",
     "s3": {
-        "test": {
+        "staging": {
             "bucket": "com.cinema6.staging.proshop",
             "app": ""
         },
         "production": {
-            "bucket": "com.cinema6.portal.proshop",
+            "bucket": "com.cinema6.proshop",
             "app": ""
         }
     }

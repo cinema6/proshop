@@ -1,5 +1,9 @@
 # ProShop
 
+* *[v0.9.0]*
+  * [DEV]: Add publish:<stage> grunt task task for uploading to s3
+* *[/v0.9.0]*
+
 ## v0.8.0 (February 25, 2015)
 
 * *[v0.8.0]*
